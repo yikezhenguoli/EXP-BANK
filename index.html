@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0a0b10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="EXP BANK">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="icon" type="image/png" href="./icon-192.png">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}</script>
+</head>
+<body>
+<x-dc>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0d0b12"/><path d="M50 30 L64 44 L50 58 L36 44 Z" fill="#a878e2"/><path d="M50 39 L55 44 L50 49 L45 44 Z" fill="#0d0b12"/><text x="50" y="76" font-family="monospace" font-size="13" font-weight="700" fill="#e6d8ff" text-anchor="middle">EXP</text></svg></template>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0a0b10;}
+a{color:#4ade80;text-decoration:none;} a:hover{color:#86efac;}
+::placeholder{color:#535a6a;}
+input,select{outline:none;}
+input[type="date"]{color-scheme:dark;}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(1100px 480px at 75% -8%,rgba(139,92,246,0.10),transparent 62%),radial-gradient(900px 420px at 8% 4%,rgba(96,165,250,0.07),transparent 60%),radial-gradient(1400px 700px at 50% 115%,rgba(139,92,246,0.05),transparent 65%),linear-gradient(180deg,#0d0e14 0%,#0a0b10 55%,#0b0c12 100%);color:#e6e9f0;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;padding-bottom:96px;">
+  <div style="position:fixed;inset:0;pointer-events:none;z-index:0;background:{{ tierScene }};"></div>
+
+  <!-- HERO -->
+  <div style="position:relative;z-index:1;height:{{ heroH }};min-height:{{ heroH }};overflow:hidden;border-bottom:1px solid #1e222b;">
+    <div style="position:absolute;inset:0;background:{{ heroBg }};"></div>
+    <div style="position:absolute;inset:0;background:{{ heroSheen }};mix-blend-mode:screen;opacity:0.55;pointer-events:none;"></div>
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent);pointer-events:none;"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,11,16,0.12) 0%,rgba(10,11,16,0.55) 68%,rgba(10,11,16,0.92) 100%);pointer-events:none;"></div>
+    <div style="position:relative;max-width:1160px;margin:0 auto;padding:22px 24px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;gap:18px;pointer-events:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:baseline;gap:14px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ titleSize }};line-height:1;letter-spacing:4px;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.18)) drop-shadow(0 4px 14px rgba(0,0,0,0.7));">EXP BANK</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;letter-spacing:2px;">自律积分银行 / v0.1</div>
+        </div>
+        <div onClick="{{ toggleWar }}" style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">WAR MODE</span>
+          <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}">
+            <div style="width:34px;height:18px;border-radius:99px;background:#262b36;position:relative;"><div style="position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#6b7385;"></div></div>
+          </sc-if>
+          <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}">
+            <div style="width:34px;height:18px;border-radius:99px;background:#7f1d1d;position:relative;"><div style="position:absolute;top:2px;left:18px;width:14px;height:14px;border-radius:50%;background:#f87171;"></div></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;">{{ coreDone }}/{{ coreTotal }}</span>
+          </sc-if>
+          <sc-if value="{{ fullDone }}" hint-placeholder-val="{{ false }}">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4ade80;">✦ 当日满勤</span>
+          </sc-if>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div style="margin-left:2px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:#8b93a4;">EXP BALANCE</div>
+            <div style="pointer-events:auto;border:1px solid {{ tierBorder }};background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 6px 18px rgba(0,0,0,0.4);border-radius:99px;padding:3px 10px;backdrop-filter:blur(6px);" title="{{ tierHint }}"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:2px;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.65));">{{ tierIcon }} {{ tierName }}</span></div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ balSize }};line-height:1;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.22)) drop-shadow(0 4px 14px rgba(0,0,0,0.75));">{{ exp }}</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div style="background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:10px;padding:8px 14px;backdrop-filter:blur(6px);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;">今日挣分</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:{{ accent }};">{{ todayEarned }}</div>
+          </div>
+          <div style="background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:10px;padding:8px 14px;backdrop-filter:blur(6px);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;">累计挣分</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;">{{ earned }}</div>
+          </div>
+          <div style="background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:10px;padding:8px 14px;backdrop-filter:blur(6px);">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;">累计兑换</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#f87171;">{{ spent }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID (LISTS TAB) -->
+  <sc-if value="{{ isLists }}" hint-placeholder-val="{{ true }}">
+  <div style="position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:18px 24px 0;display:grid;grid-template-columns:{{ gridCols }};gap:16px;align-items:start;">
+
+    <!-- TASKS -->
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">任务 // EARN</div></div>
+        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;">仅核心微习惯</div>
+        </sc-if>
+      </div>
+      <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="4">
+        <div onClick="{{ t.onEdit }}" onDragOver="{{ t.onDragOver }}" onDrop="{{ t.onDrop }}" onDragEnd="{{ t.onDragEnd }}" title="点击编辑此任务 · 拖左侧手柄可排序" style="cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+          <sc-if value="{{ t.showGrip }}" hint-placeholder-val="{{ true }}">
+            <div draggable="{{ true }}" onDragStart="{{ t.onDragStart }}" onClick="{{ t.stop }}" title="拖动可排序" style="cursor:grab;color:#464d5e;font-size:13px;line-height:1;user-select:none;" style-hover="color:#8b93a4;">⠿</div>
+          </sc-if>
+          <div onClick="{{ t.onToggleCore }}" title="设为核心微习惯(战时模式)" style="cursor:pointer;font-size:13px;color:{{ t.starColor }};width:16px;text-align:center;">★</div>
+          <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
+            <div style="width:3px;align-self:stretch;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
+          </sc-if>
+          <div style="flex:1;min-width:96px;">
+            <div style="font-size:15px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;">{{ t.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:1px;">{{ t.cycleLabel }}</div>
+          </div>
+          <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
+            <div title="连续打卡满 7 天 · 已成势" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.55),0 2px 8px rgba(0,0,0,0.4);border-radius:99px;padding:3px 10px;white-space:nowrap;">✦ {{ t.formedLabel }}</div>
+          </sc-if>
+          <sc-if value="{{ t.hasStreak }}" hint-placeholder-val="{{ true }}">
+            <div title="连续打卡天数 · 昨天没完成会归零" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:{{ accent }};border:1px solid {{ tierBorder }};border-radius:99px;padding:3px 10px;white-space:nowrap;">▲ {{ t.streakLabel }}</div>
+          </sc-if>
+          <sc-if value="{{ t.hasRing }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div style="width:18px;height:18px;border-radius:50%;background:{{ t.ringBg }};display:grid;place-items:center;">
+                <div style="width:11px;height:11px;border-radius:50%;background:#0d0f14;"></div>
+              </div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;width:30px;">{{ t.pctStr }}</span>
+            </div>
+          </sc-if>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};">{{ t.expStr }}</div>
+          <sc-if value="{{ t.pending }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ t.onUndo }}" title="已完成 · 点一下可撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">✓ 已完成</div>
+          </sc-if>
+          <sc-if value="{{ t.showDone }}" hint-placeholder-val="{{ true }}">
+            <div onClick="{{ t.onDone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">完成</div>
+          </sc-if>
+          <sc-if value="{{ t.showDoneLabel }}" hint-placeholder-val="{{ false }}">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px solid #262b36;border-radius:8px;padding:6px 12px;">✓ 已完成</div>
+          </sc-if>
+          <div onClick="{{ t.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;padding:0 2px;" style-hover="color:#f87171;">×</div>
+        </div>
+      </sc-for>
+      <div style="display:flex;gap:8px;margin-top:6px;align-items:center;flex-wrap:wrap;">
+        <input id="nt-name" placeholder="新任务名" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
+        <input id="nt-exp" placeholder="分值" type="number" style="width:56px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <input id="nt-times" placeholder="次数" type="number" title="每个周期内需完成几次" style="width:48px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <select id="nt-cycle" style="background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
+          <option value="daily">每日</option><option value="weekly">每周</option><option value="monthly">每月</option><option value="once">单次</option><option value="free">不限次</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:#8b93a4;cursor:pointer;white-space:nowrap;"><input id="nt-core" type="checkbox" style="accent-color:#4ade80;">核心</label>
+        <div onClick="{{ addTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:#4ade80;">+ 添加</div>
+      </div>
+    </div>
+
+    <!-- STORE -->
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">SHOPPING MALL // REDEEM</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <sc-for list="{{ rewards }}" as="r" hint-placeholder-count="4">
+          <div style="background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05) 42%,rgba(255,255,255,0.02)) border-box;border:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 28px rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;position:relative;">
+            <div onClick="{{ r.onDel }}" style="cursor:pointer;position:absolute;top:6px;right:8px;z-index:2;color:rgba(230,233,240,0.55);font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,0.8);" style-hover="color:#f87171;">×</div>
+            <div style="position:relative;height:104px;">
+              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ r.imgId }}" shape="rect" radius="0" placeholder="{{ r.imgHint }}" hint-size="100%,104px" style="position:absolute;inset:0;"></x-import>
+            </div>
+            <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+                <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;min-width:0;flex:1 1 auto;">{{ r.name }}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};">{{ r.costStr }}</div>
+              </div>
+              <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ r.onUndo }}" title="已兑换 · 点一下可撤销(几秒后自动确认)" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 0;" style-hover="filter:brightness(1.15);">✓ 已兑换</div>
+              </sc-if>
+              <sc-if value="{{ r.canAfford }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ r.onRedeem }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 0;" style-hover="filter:brightness(1.12);">兑换</div>
+              </sc-if>
+              <sc-if value="{{ r.cannot }}" hint-placeholder-val="{{ false }}">
+                <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px dashed #262b36;border-radius:8px;padding:6px 0;">余额不足</div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="nr-name" placeholder="新奖励名" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
+        <input id="nr-cost" placeholder="价格" type="number" style="width:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <div onClick="{{ addReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:#4ade80;">+ 添加</div>
+      </div>
+    </div>
+
+    <!-- MILESTONES -->
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">里程碑 // MILESTONE</div></div>
+      <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="1">
+        <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:12px;display:flex;flex-direction:column;gap:8px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="flex:1;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;">{{ m.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8b93a4;">{{ m.cur }}/{{ m.target }}</div>
+            <sc-if value="{{ m.hasDeadline }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ m.deadlineColor }};">⏳ {{ m.deadlineLabel }}</div>
+            </sc-if>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ accent }};">达成 {{ m.bonusStr }} EXP</div>
+            <div onClick="{{ m.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+          </div>
+          <div style="height:6px;border-radius:99px;background:#1e222b;overflow:hidden;">
+            <div style="height:100%;width:{{ m.barW }};background:{{ accent }};border-radius:99px;transition:width 0.3s;"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <sc-if value="{{ m.pending }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ m.onUndo }}" title="点一下可撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:5px 14px;" style-hover="filter:brightness(1.15);">{{ m.pendingLabel }}</div>
+            </sc-if>
+            <sc-if value="{{ m.showProgress }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ m.onPlus }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#e6e9f0;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:5px 12px;" style-hover="border-color:#4ade80;">推进 {{ m.stepStr }}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#697084;">还差 {{ m.remain }}</div>
+            </sc-if>
+            <sc-if value="{{ m.showReady }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ m.onClaim }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:5px 14px;">✦ 领取 {{ m.bonusStr }} EXP</div>
+            </sc-if>
+            <sc-if value="{{ m.showClaimed }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4ade80;">✓ 已达成并入账</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <input id="nm-name" placeholder="大目标名" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
+        <input id="nm-target" placeholder="总量" type="number" style="width:56px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <input id="nm-step" placeholder="步长" type="number" style="width:52px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <input id="nm-bonus" placeholder="奖励EXP" type="number" style="width:72px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <input id="nm-deadline" type="date" title="截止日期(可选)" style="width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 8px;color:#aeb6c6;font-size:12px;font-family:'JetBrains Mono',monospace;">
+        <div onClick="{{ addMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:#4ade80;">+ 添加</div>
+      </div>
+    </div>
+
+    <!-- LEDGER -->
+    <sc-if value="{{ showLedger }}" hint-placeholder-val="{{ true }}">
+      <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:2px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">时间轴 // TIMELINE</div>
+          <div style="flex:1;"></div>
+          <input type="date" value="{{ selDateISO }}" max="{{ todayISO }}" onChange="{{ onPickDate }}" title="跳转到某一天" style="background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:5px 8px;color:#aeb6c6;font-size:11.5px;font-family:'JetBrains Mono',monospace;">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div onClick="{{ onPrevDay }}" title="前一天" style="cursor:pointer;width:30px;height:30px;display:grid;place-items:center;border-radius:8px;border:1px solid #262b36;background:#0d0f14;color:#c3c9d6;font-size:15px;" style-hover="border-color:{{ accent }};">‹</div>
+          <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:#eef1f7;letter-spacing:0.5px;">{{ selDateLabel }}</div>
+            <sc-if value="{{ selDateRelShow }}" hint-placeholder-val="{{ true }}">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;color:#14151c;background:{{ btnGrad }};border-radius:99px;padding:2px 9px;">{{ selDateRel }}</div>
+            </sc-if>
+          </div>
+          <div onClick="{{ onNextDay }}" title="后一天" style="cursor:pointer;width:30px;height:30px;display:grid;place-items:center;border-radius:8px;border:1px solid #262b36;background:#0d0f14;color:{{ nextColor }};font-size:15px;" style-hover="border-color:{{ nextHover }};">›</div>
+          <div onClick="{{ onToday }}" title="回到今天" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#aeb6c6;border:1px solid #262b36;background:#0d0f14;border-radius:8px;padding:0 12px;height:30px;display:grid;place-items:center;" style-hover="border-color:{{ accent }};color:#eef1f7;">今天</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="border:1px solid #1a1e27;border-radius:9px;background:#0d0f14;padding:8px 10px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#8b93a4;">当日挣分</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#4ade80;">{{ dayEarnedStr }}</div>
+          </div>
+          <div style="border:1px solid #1a1e27;border-radius:9px;background:#0d0f14;padding:8px 10px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#8b93a4;">当日兑换</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#f87171;">{{ daySpentStr }}</div>
+          </div>
+          <div style="border:1px solid #1a1e27;border-radius:9px;background:#0d0f14;padding:8px 10px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#8b93a4;">当日净变化</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ dayNetColor }};">{{ dayNetStr }}</div>
+          </div>
+        </div>
+        <sc-if value="{{ dayEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="text-align:center;padding:22px 0;color:#535a6a;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">· 这一天还没有记录 ·</div>
+        </sc-if>
+        <sc-for list="{{ dayLedger }}" as="e" hint-placeholder-count="0">
+          <div style="display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px solid #14171e;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#535a6a;white-space:nowrap;">{{ e.time }}</div>
+            <div style="flex:1;font-size:13px;color:#c3c9d6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ e.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ e.deltaColor }};">{{ e.deltaStr }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- POMODORO TAB -->
+  <sc-if value="{{ isPomo }}" hint-placeholder-val="{{ false }}">
+  <div style="position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:18px 24px 0;display:grid;grid-template-columns:{{ pomoCols }};gap:16px;align-items:start;">
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:16px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">番茄专注 // FOCUS</div></div>
+      <div style="display:flex;justify-content:center;gap:8px;">
+        <div onClick="{{ setP25 }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ p25.color }};background:{{ p25.bg }};border:1px solid {{ p25.border }};border-radius:8px;padding:7px 16px;">25 min</div>
+        <div onClick="{{ setP45 }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ p45.color }};background:{{ p45.bg }};border:1px solid {{ p45.border }};border-radius:8px;padding:7px 16px;">45 min</div>
+        <div onClick="{{ setPCustom }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ pcustom.color }};background:{{ pcustom.bg }};border:1px solid {{ pcustom.border }};border-radius:8px;padding:7px 16px;">自定义</div>
+      </div>
+      <sc-if value="{{ isPCustom }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+          <input type="number" value="{{ pomoCustomMin }}" onInput="{{ onCustomMin }}" min="1" style="width:78px;text-align:center;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:14px;font-family:'JetBrains Mono',monospace;">
+          <span style="font-size:12.5px;color:#8b93a4;">分钟</span>
+        </div>
+      </sc-if>
+      <div style="display:flex;justify-content:center;padding:6px 0;">
+        <div style="width:236px;height:236px;border-radius:50%;background:{{ pomoRingBg }};display:grid;place-items:center;box-shadow:0 12px 40px rgba(0,0,0,0.4);">
+          <div style="width:204px;height:204px;border-radius:50%;background:radial-gradient(circle at 50% 34%,#191c25,#0e1016);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);">
+            <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:52px;line-height:1;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.6));">{{ pomoTime }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#8b93a4;">{{ pomoStateLabel }}</div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:10px;">
+        <sc-if value="{{ pomoRunning }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ pomoPause }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:9px;padding:9px 26px;" style-hover="filter:brightness(1.12);">暂停</div>
+        </sc-if>
+        <sc-if value="{{ pomoIdle }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ pomoStart }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:9px;padding:9px 26px;" style-hover="filter:brightness(1.12);">{{ pomoStartLabel }}</div>
+        </sc-if>
+        <div onClick="{{ pomoReset }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#aeb6c6;border:1px solid #2a2f3a;border-radius:9px;padding:9px 22px;" style-hover="border-color:{{ accent }};color:#eef1f7;">重置</div>
+      </div>
+    </div>
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">白噪音 // AMBIENCE</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div onClick="{{ setCafe }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ nCafe.color }};background:{{ nCafe.bg }};border:1px solid {{ nCafe.border }};border-radius:9px;padding:11px 0;">☕ 咖啡馆</div>
+        <div onClick="{{ setRain }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ nRain.color }};background:{{ nRain.bg }};border:1px solid {{ nRain.border }};border-radius:9px;padding:11px 0;">☂ 雨天</div>
+        <div onClick="{{ setSnow }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ nSnow.color }};background:{{ nSnow.bg }};border:1px solid {{ nSnow.border }};border-radius:9px;padding:11px 0;">❄ 雪天</div>
+        <div onClick="{{ setCustomNoise }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ nCustom.color }};background:{{ nCustom.bg }};border:1px solid {{ nCustom.border }};border-radius:9px;padding:11px 0;">♫ 自定义</div>
+      </div>
+      <sc-if value="{{ noiseHasFile }}" hint-placeholder-val="{{ false }}">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">本地音乐:{{ noiseFileName }}</div>
+      </sc-if>
+      <div onClick="{{ toggleNoise }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:9px;padding:10px 0;" style-hover="filter:brightness(1.12);">{{ noiseBtnLabel }}</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:1px;color:#8b93a4;white-space:nowrap;">音量</span>
+        <input type="range" min="0" max="1" step="0.05" value="{{ noiseVol }}" onInput="{{ onVol }}" style="flex:1;accent-color:{{ accent }};">
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.6;color:#535a6a;">环境音为本机实时合成,无需联网;「自定义」可选本地音乐循环播放。</div>
+      <input id="noise-file" type="file" accept="audio/*" onChange="{{ onNoiseFile }}" style="display:none;">
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- COUNTDOWN TAB -->
+  <sc-if value="{{ isCountdown }}" hint-placeholder-val="{{ false }}">
+  <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;padding:18px 24px 0;">
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">未来倒计时 // COUNTDOWN</div></div>
+      <sc-for list="{{ countdowns }}" as="cd" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);">
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ cd.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;margin-top:3px;">截止 {{ cd.dueStr }} · 以午夜 00:00 为界</div>
+          </div>
+          <sc-if value="{{ cd.isToday }}" hint-placeholder-val="{{ false }}">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#fbbf24;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));">就在今天</div>
+          </sc-if>
+          <sc-if value="{{ cd.showNum }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:baseline;gap:5px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ cd.prefix }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;line-height:1;color:{{ cd.numColor }};filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ cd.numText }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#c3c9d6;">天</span>
+            </div>
+          </sc-if>
+          <div onClick="{{ cd.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;padding-left:4px;" style-hover="color:#f87171;">×</div>
+        </div>
+      </sc-for>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:4px;flex-wrap:wrap;">
+        <input id="nc-name" placeholder="事件名(如:六级考试)" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
+        <input id="nc-date" type="date" title="目标日期" style="width:150px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:12.5px;font-family:'JetBrains Mono',monospace;">
+        <div onClick="{{ addCountdown }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:8px 14px;" style-hover="border-color:{{ accent }};">+ 添加</div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- BOTTOM NAV -->
+  <div style="position:fixed;left:0;right:0;bottom:0;z-index:40;background:linear-gradient(180deg,rgba(14,16,22,0.80),rgba(9,10,14,0.94));backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,0.08);box-shadow:0 -8px 30px rgba(0,0,0,0.4);">
+    <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;">
+      <div onClick="{{ goLists }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navListsColor }};">
+        <sc-if value="{{ navListsActive }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
+        <div style="font-size:18px;line-height:1;">▤</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;">Lists</div>
+      </div>
+      <div onClick="{{ goPomo }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navPomoColor }};">
+        <sc-if value="{{ navPomoActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
+        <div style="font-size:18px;line-height:1;">◷</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;">番茄专注</div>
+      </div>
+      <div onClick="{{ goCountdown }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navCountdownColor }};">
+        <sc-if value="{{ navCountdownActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
+        <div style="font-size:18px;line-height:1;">⧗</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;">未来倒计时</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT MODAL -->
+  <sc-if value="{{ editOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeEdit }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;">
+      <div onClick="{{ stopClick }}" style="width:340px;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <sc-if value="{{ editAsk }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:15px;font-weight:700;">要编辑「{{ editItemName }}」吗?</div>
+          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">可修改名称、分值、循环/截止日期等信息。照片不用进编辑:直接把新图片拖到卡片的图上即可更换。</div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <div onClick="{{ closeEdit }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:7px 14px;" style-hover="color:#e6e9f0;">取消</div>
+            <div onClick="{{ confirmEdit }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 16px;" style-hover="filter:brightness(1.12);">编辑</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ editFormOn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">编辑{{ editTypeName }} // EDIT</div>
+          <label style="display:block;font-size:11px;color:#697084;">名称
+            <input id="ed-name" defaultValue="{{ editName }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
+          </label>
+          <sc-if value="{{ editIsTask }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:8px;">
+              <label style="flex:1;font-size:11px;color:#697084;">EXP 分值
+                <input id="ed-exp" type="number" defaultValue="{{ editExp }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              </label>
+              <label style="flex:1;font-size:11px;color:#697084;">每周期次数
+                <input id="ed-times" type="number" defaultValue="{{ editTimes }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              </label>
+              <label style="flex:1;font-size:11px;color:#697084;">循环
+                <select id="ed-cycle" defaultValue="{{ editCycle }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
+                  <option value="daily">每日</option><option value="weekly">每周</option><option value="monthly">每月</option><option value="once">单次</option><option value="free">不限次</option>
+                </select>
+              </label>
+            </div>
+          </sc-if>
+          <sc-if value="{{ editIsReward }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">价格(EXP)
+              <input id="ed-cost" type="number" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            </label>
+          </sc-if>
+          <sc-if value="{{ editIsMilestone }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:8px;">
+              <label style="flex:1;font-size:11px;color:#697084;">总量
+                <input id="ed-target" type="number" defaultValue="{{ editTarget }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              </label>
+              <label style="flex:1;font-size:11px;color:#697084;">步长
+                <input id="ed-step" type="number" defaultValue="{{ editStep }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              </label>
+              <label style="flex:1;font-size:11px;color:#697084;">奖励 EXP
+                <input id="ed-bonus" type="number" defaultValue="{{ editBonus }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              </label>
+            </div>
+            <label style="display:block;font-size:11px;color:#697084;">截止日期(可留空)
+              <input id="ed-deadline" type="date" defaultValue="{{ editDeadline }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 8px;color:#aeb6c6;font-size:12px;font-family:'JetBrains Mono',monospace;">
+            </label>
+          </sc-if>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
+            <div onClick="{{ closeEdit }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:7px 14px;" style-hover="color:#e6e9f0;">取消</div>
+            <div onClick="{{ saveEdit }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 16px;" style-hover="filter:brightness(1.12);">保存</div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:200,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:400,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem('exp-bank-v1')); } catch (e) {}
+    if (s && s.tasks) {
+      s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, streak: t.streak || 0, lastDone: t.lastDone || '',
+        done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
+      if (!s.countdowns) s.countdowns = this.defaultCountdowns();
+      if (!s.tab) s.tab = 'lists';
+      if (!s.pomoPreset) s.pomoPreset = '25';
+      if (s.pomoCustomMin == null) s.pomoCustomMin = 30;
+      if (!s.noisePreset) s.noisePreset = '咖啡馆';
+      if (s.noiseVol == null) s.noiseVol = 0.5;
+      this.state = s;
+    } else this.state = this.defaults();
+  }
+  defaults() {
+    return {
+      exp: 0, warMode: false, nextId: 100,
+      tasks: [
+        { id: 1, name: '字帖练习', exp: 20, cycle: 'daily', times: 1, core: true, done: {} },
+        { id: 2, name: '科一刷题 · 50题/组', exp: 50, cycle: 'daily', times: 2, core: true, done: {} },
+        { id: 3, name: '当日复盘', exp: 50, cycle: 'daily', times: 1, core: true, done: {} },
+        { id: 4, name: '跑步课', exp: 50, cycle: 'weekly', times: 2, core: false, done: {} },
+        { id: 5, name: '早起(7:30 前)', exp: 10, cycle: 'daily', times: 1, core: false, done: {} },
+      ],
+      rewards: [
+        { id: 1, name: '燕麦拿铁', cost: 200 },
+        { id: 2, name: '一顿好饭', cost: 400 },
+        { id: 3, name: '休闲券 · 2h', cost: 100 },
+        { id: 4, name: '电影之夜', cost: 300 },
+      ],
+      milestones: [{ id: 1, name: '科一通过 · 刷满 300 题', cur: 0, target: 300, step: 10, bonus: 300, claimed: false }],
+      ledger: [],
+      tab: 'lists', countdowns: this.defaultCountdowns(),
+      pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
+    };
+  }
+  defaultCountdowns() {
+    const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
+    return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
+  }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
+  undo() {
+    const p = this.state.pending; if (!p) return;
+    clearTimeout(this._pt);
+    const rm = arr => arr.filter(e => e.ts !== p.ledgerTs);
+    if (p.kind === 'complete') this.save({ tasks: this.state.tasks.map(x => x.id === p.id ? { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, ...(p.streakChanged ? { streak: p.prevStreak, lastDone: p.prevLastDone } : {}) } : x), exp: this.state.exp - p.exp, ledger: rm(this.state.ledger), pending: null });
+    else if (p.kind === 'redeem') this.save({ exp: this.state.exp + p.cost, ledger: rm(this.state.ledger), pending: null });
+    else if (p.kind === 'msPlus') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
+    else if (p.kind === 'msClaim') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.state.exp - p.bonus, ledger: rm(this.state.ledger), pending: null });
+  }
+  componentDidMount() {
+    this.applyInterest();
+    this._intTimer = setInterval(() => this.applyInterest(), 300000);
+    this._onResize = () => { clearTimeout(this._rt); this._rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 150); };
+    window.addEventListener('resize', this._onResize);
+    if (this.state.vw == null) this.setState({ vw: window.innerWidth });
+  }
+  componentWillUnmount() { clearInterval(this._intTimer); clearTimeout(this._pt); clearInterval(this._pomoTimer); this.stopNoiseNodes(); if (this._onResize) window.removeEventListener('resize', this._onResize); }
+  setTab(t) { this.setState({ tab: t }); }
+  addCountdown() { const name = this.v('nc-name'), date = this.v('nc-date'); if (!name || !date) return; this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date }], nextId: this.state.nextId + 1 }); this.clear(['nc-name', 'nc-date']); }
+  delCountdown(id) { this.save({ countdowns: this.state.countdowns.filter(c => c.id !== id) }); }
+  pomoBase() { const p = this.state.pomoPreset || '25'; return (p === 'custom' ? (this.state.pomoCustomMin || 30) : parseInt(p)) * 60; }
+  pomoStart() { const st = this.state; if (st.pomoRunning) return; const rem = (st.pomoRemaining != null && st.pomoRemaining > 0) ? st.pomoRemaining : this.pomoBase(); const total = st.pomoTotal || this.pomoBase(); this.setState({ pomoRunning: true, pomoEndTs: Date.now() + rem * 1000, pomoRemaining: rem, pomoTotal: total }, () => this.pomoTick()); }
+  pomoPause() { const st = this.state; if (!st.pomoRunning) return; const rem = Math.max(0, Math.round((st.pomoEndTs - Date.now()) / 1000)); clearInterval(this._pomoTimer); this.setState({ pomoRunning: false, pomoEndTs: null, pomoRemaining: rem }); }
+  pomoReset() { clearInterval(this._pomoTimer); const base = this.pomoBase(); this.setState({ pomoRunning: false, pomoEndTs: null, pomoRemaining: base, pomoTotal: base }); }
+  pomoSetPreset(p) { clearInterval(this._pomoTimer); this.setState({ pomoPreset: p, pomoRunning: false, pomoEndTs: null }, () => { const base = this.pomoBase(); this.setState({ pomoRemaining: base, pomoTotal: base }); }); }
+  pomoSetCustom(v) { const m = Math.max(1, parseInt(v) || 1); this.setState({ pomoCustomMin: m }, () => { if (this.state.pomoPreset === 'custom' && !this.state.pomoRunning) { const base = m * 60; this.setState({ pomoRemaining: base, pomoTotal: base }); } }); }
+  pomoTick() { clearInterval(this._pomoTimer); this._pomoTimer = setInterval(() => { const s = this.state; if (!s.pomoRunning || !s.pomoEndTs) { clearInterval(this._pomoTimer); return; } if (Date.now() >= s.pomoEndTs) { clearInterval(this._pomoTimer); this.setState({ pomoRunning: false, pomoRemaining: 0, pomoEndTs: null }); this.pomoDing(); } else this.forceUpdate(); }, 500); }
+  pomoDing() { try { const a = this.ensureAudio(); if (a.ctx.state === 'suspended') a.ctx.resume(); const o = a.ctx.createOscillator(), g = a.ctx.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.ctx.destination); const t = a.ctx.currentTime; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.3, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9); o.start(t); o.stop(t + 0.95); } catch (_) {} }
+  ensureAudio() { if (!this._au) { const C = window.AudioContext || window.webkitAudioContext; const ctx = new C(); const gain = ctx.createGain(); gain.gain.value = this.state.noiseVol ?? 0.5; gain.connect(ctx.destination); this._au = { ctx, gain, node: null, filter: null, mediaEl: null }; } return this._au; }
+  makeNoise(ctx) { const len = ctx.sampleRate * 2; const buf = ctx.createBuffer(1, len, ctx.sampleRate); const d = buf.getChannelData(0); let last = 0; for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.2; } return buf; }
+  stopNoiseNodes() { const a = this._au; if (!a) return; if (a.node) { try { a.node.stop(); } catch (_) {} try { a.node.disconnect(); } catch (_) {} a.node = null; } if (a.mediaEl) { try { a.mediaEl.pause(); } catch (_) {} a.mediaEl = null; } }
+  startNoise(preset) { if (preset === 'custom') { const el = document.getElementById('noise-file'); if (el) el.click(); return; } const a = this.ensureAudio(); if (a.ctx.state === 'suspended') a.ctx.resume(); this.stopNoiseNodes(); const src = a.ctx.createBufferSource(); src.buffer = this.makeNoise(a.ctx); src.loop = true; const f = a.ctx.createBiquadFilter(); const cfg = { '咖啡馆': { type: 'lowpass', freq: 480, g: 1.0 }, '雨天': { type: 'highpass', freq: 900, g: 0.55 }, '雪天': { type: 'lowpass', freq: 1500, g: 0.4 } }[preset] || { type: 'lowpass', freq: 800, g: 0.7 }; f.type = cfg.type; f.frequency.value = cfg.freq; a.gain.gain.value = (this.state.noiseVol ?? 0.5) * cfg.g; src.connect(f); f.connect(a.gain); src.start(); a.node = src; a.filter = f; }
+  toggleNoise() { if (this.state.noiseOn) { this.stopNoiseNodes(); this.setState({ noiseOn: false }); } else { const p = this.state.noisePreset || '咖啡馆'; if (p === 'custom') this.startNoise('custom'); else { this.startNoise(p); this.setState({ noiseOn: true }); } } }
+  setNoisePreset(p) { this.setState({ noisePreset: p }, () => { if (this.state.noiseOn) this.startNoise(p); }); }
+  onNoiseFile(e) { const file = e.target.files && e.target.files[0]; if (!file) return; const url = URL.createObjectURL(file); this.stopNoiseNodes(); const el = new Audio(url); el.loop = true; el.volume = this.state.noiseVol ?? 0.5; el.play(); this.ensureAudio().mediaEl = el; this.setState({ noisePreset: 'custom', noiseOn: true, noiseFileName: file.name }); }
+  setNoiseVol(v) { const vol = parseFloat(v); this.setState({ noiseVol: vol }); if (this._au) { if (this._au.gain) this._au.gain.gain.value = vol; if (this._au.mediaEl) this._au.mediaEl.volume = vol; } }
+  sevenAM(t) { const d = new Date(t); d.setHours(7, 0, 0, 0); return d.getTime(); }
+  applyInterest() {
+    const rate = (this.props.interestRate ?? 5) / 100;
+    const st = this.state, now = Date.now();
+    if (!st.lastInterest) {
+      let b = this.sevenAM(now); if (b > now) b -= 864e5;
+      this.save({ lastInterest: b }); return;
+    }
+    let exp = st.exp, ledger = [...st.ledger], last = st.lastInterest, changed = false;
+    let b = this.sevenAM(last); if (b <= last) b += 864e5;
+    while (b <= now) {
+      const lastRedeem = Math.max(0, ...st.ledger.filter(e => e.delta < 0 && e.ts <= b).map(e => e.ts));
+      if (b - lastRedeem >= 864e5 && exp > 0) {
+        const gain = Math.round(exp * rate);
+        if (gain > 0) { exp += gain; ledger = [{ ts: b, name: 'EXP BANK · 定期利息 ' + (rate * 100) + '%/日', delta: gain }, ...ledger].slice(0, 200); changed = true; }
+      }
+      last = b; b += 864e5;
+    }
+    if (changed || last !== st.lastInterest) this.save({ exp, ledger, lastInterest: last });
+  }
+  openEdit(type, id) { this.setState({ editing: { type, id, confirmed: false } }); }
+  confirmEdit() { this.setState({ editing: { ...this.state.editing, confirmed: true } }); }
+  closeEdit() { this.setState({ editing: null }); }
+  saveEdit() {
+    const ed = this.state.editing; if (!ed) return;
+    const name = this.v('ed-name');
+    const num = (id, fb) => { const n = parseInt(this.v(id)); return isNaN(n) ? fb : n; };
+    if (ed.type === 'task') {
+      this.save({ editing: null, tasks: this.state.tasks.map(x => x.id === ed.id ? { ...x,
+        name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
+        cycle: document.getElementById('ed-cycle').value } : x) });
+    } else if (ed.type === 'reward') {
+      this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
+        name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)) } : x) });
+    } else {
+      this.save({ editing: null, milestones: this.state.milestones.map(x => x.id === ed.id ? { ...x,
+        name: name || x.name, target: Math.max(1, num('ed-target', x.target)), step: Math.max(1, num('ed-step', x.step)),
+        bonus: num('ed-bonus', x.bonus), deadline: this.v('ed-deadline') || '' } : x) });
+    }
+  }
+  key(c) {
+    const d = new Date(), p = n => String(n).padStart(2, '0');
+    if (c === 'daily') return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+    if (c === 'weekly') { const t = new Date(d); t.setHours(0,0,0,0); t.setDate(t.getDate() + 3 - ((t.getDay() + 6) % 7)); const w1 = new Date(t.getFullYear(), 0, 4); const wn = 1 + Math.round(((t - w1) / 864e5 - 3 + ((w1.getDay() + 6) % 7)) / 7); return t.getFullYear() + '-W' + wn; }
+    if (c === 'monthly') return `${d.getFullYear()}-M${d.getMonth() + 1}`;
+    if (c === 'once') return 'once';
+    return null;
+  }
+  log(name, delta) { return [{ ts: Date.now(), name, delta }, ...this.state.ledger].slice(0, 200); }
+  complete(id) {
+    const t = this.state.tasks.find(x => x.id === id), k = this.key(t.cycle);
+    const cnt = k ? (t.done[k] || 0) : 0;
+    if (k && cnt >= (t.times || 1)) return;
+    const ts = Date.now(), key = 'task:' + id;
+    const today = this.todayKey(), yest = this.shiftDay(today, -1);
+    const prevStreak = t.streak || 0, prevLastDone = t.lastDone || '';
+    const streakChanged = prevLastDone !== today;
+    const newStreak = streakChanged ? ((prevLastDone === yest ? prevStreak : 0) + 1) : prevStreak;
+    const newLastDone = streakChanged ? today : prevLastDone;
+    const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, streak: newStreak, lastDone: newLastDone } : x);
+    this.armTimer(key);
+    this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevLastDone } });
+  }
+  redeem(id) {
+    const r = this.state.rewards.find(x => x.id === id);
+    if (this.state.exp < r.cost) return;
+    const ts = Date.now(), key = 'reward:' + id;
+    this.armTimer(key);
+    this.save({ exp: this.state.exp - r.cost, ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts } });
+  }
+  toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
+  delTask(id) { this.save({ tasks: this.state.tasks.filter(x => x.id !== id) }); }
+  delReward(id) { this.save({ rewards: this.state.rewards.filter(x => x.id !== id) }); }
+  delMilestone(id) { this.save({ milestones: this.state.milestones.filter(x => x.id !== id) }); }
+  v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  clear(ids) { ids.forEach(i => { const el = document.getElementById(i); if (el) el.value = ''; }); }
+  addTask() {
+    const name = this.v('nt-name'); if (!name) return;
+    const exp = parseInt(this.v('nt-exp')) || 10;
+    const cycle = document.getElementById('nt-cycle').value;
+    const times = Math.max(1, parseInt(this.v('nt-times')) || 1);
+    const core = document.getElementById('nt-core').checked;
+    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, core, done: {} }], nextId: this.state.nextId + 1 });
+    this.clear(['nt-name', 'nt-exp', 'nt-times']); document.getElementById('nt-core').checked = false;
+  }
+  addReward() {
+    const name = this.v('nr-name'); if (!name) return;
+    const cost = parseInt(this.v('nr-cost')) || 100;
+    this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost }], nextId: this.state.nextId + 1 });
+    this.clear(['nr-name', 'nr-cost']);
+  }
+  addMilestone() {
+    const name = this.v('nm-name'); if (!name) return;
+    const target = parseInt(this.v('nm-target')) || 100;
+    const step = parseInt(this.v('nm-step')) || 1;
+    const bonus = parseInt(this.v('nm-bonus')) || 100;
+    const deadline = this.v('nm-deadline') || '';
+    this.save({ milestones: [...this.state.milestones, { id: this.state.nextId, name, cur: 0, target, step, bonus, deadline, claimed: false }], nextId: this.state.nextId + 1 });
+    this.clear(['nm-name', 'nm-target', 'nm-step', 'nm-bonus', 'nm-deadline']);
+  }
+  msPlus(id) {
+    const m = this.state.milestones.find(x => x.id === id); if (!m) return;
+    const key = 'ms:' + id; this.armTimer(key);
+    this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, cur: Math.min(x.target, x.cur + x.step) } : x), pending: { key, kind: 'msPlus', id, prev: m.cur } });
+  }
+  msClaim(id) {
+    const m = this.state.milestones.find(x => x.id === id);
+    if (!m || m.claimed || m.cur < m.target) return;
+    const ts = Date.now(), key = 'ms:' + id; this.armTimer(key);
+    this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, claimed: true } : x), exp: this.state.exp + m.bonus, ledger: [{ ts, name: '里程碑达成 · ' + m.name, delta: m.bonus }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'msClaim', id, bonus: m.bonus, ledgerTs: ts } });
+  }
+  sameDay(ts) { const a = new Date(ts), b = new Date(); return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+  dateKey(ts) { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; }
+  todayKey() { return this.dateKey(Date.now()); }
+  shiftDay(iso, delta) { const [y, m, dd] = iso.split('-').map(Number); const d = new Date(y, m - 1, dd); d.setDate(d.getDate() + delta); return this.dateKey(d); }
+  labelFromISO(iso) { const [y, m, dd] = iso.split('-').map(Number); const d = new Date(y, m - 1, dd); const wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()]; return `${m}月${dd}日 · ${wd}`; }
+  onDropTask(targetId) {
+    const from = this._dragId; this._dragId = null;
+    if (from == null || from === targetId) return;
+    const arr = [...this.state.tasks];
+    const fi = arr.findIndex(t => t.id === from), ti = arr.findIndex(t => t.id === targetId);
+    if (fi < 0 || ti < 0) return;
+    const [mv] = arr.splice(fi, 1); arr.splice(ti, 0, mv);
+    this.save({ tasks: arr });
+  }
+  renderVals() {
+    const goldAt = this.props.goldAt ?? 200, diamondAt = this.props.diamondAt ?? 400;
+    const tier = this.state.exp >= diamondAt
+      ? { name: 'DIAMOND · 钻星', icon: '◆', accent: '#c9a4f5', border: '#7c66a8', glow: 'rgba(150,90,230,0.16)',
+          cardTop: '#241b34', cardBot: '#160f22', rowTop: '#1f1730', rowBot: '#140d1e',
+          heroBg: 'radial-gradient(152% 178% at 80% -32%,rgba(222,182,255,0.68),transparent 56%),radial-gradient(112% 142% at 6% 122%,rgba(160,105,225,0.48),transparent 60%),radial-gradient(74% 92% at 58% 32%,rgba(255,244,214,0.30),transparent 58%),conic-gradient(from 210deg at 78% 4%,rgba(255,246,220,0.26),transparent 24%),linear-gradient(125deg,#332748 0%,#48356a 46%,#2b1f42 100%)',
+          heroSheen: 'repeating-linear-gradient(107deg,rgba(236,214,255,0.10) 0 1.5px,transparent 1.5px 8px)',
+          scene: 'radial-gradient(1380px 670px at 84% -14%,rgba(206,158,250,0.38),transparent 58%),radial-gradient(1160px 720px at 2% 112%,rgba(150,96,220,0.26),transparent 62%),radial-gradient(840px 560px at 56% 40%,rgba(244,208,152,0.13),transparent 60%),linear-gradient(180deg,#2b2140 0%,#221934 58%,#2d2144 100%)',
+          grad: 'linear-gradient(160deg,#ffffff 0%,#efe0ff 10%,#cda5f3 24%,#8f5bd8 40%,#5f36a8 50%,#fdf3d6 60%,#eed9a4 66%,#ffffff 72%,#c9a2ff 84%,#6f42c1 100%)',
+          btnGrad: 'linear-gradient(180deg,#f6edff 0%,#d9bcf7 22%,#a878e2 55%,#7e4fc9 82%,#9a6ade 100%)' }
+      : this.state.exp >= goldAt
+        ? { name: 'GOLD · 金星', icon: '✦', accent: '#e6c46a', border: '#6e5b2e', glow: 'rgba(220,168,72,0.14)',
+            cardTop: '#241e12', cardBot: '#17130b', rowTop: '#201b10', rowBot: '#14100a',
+            heroBg: 'radial-gradient(145% 168% at 80% -30%,rgba(255,230,158,0.66),transparent 56%),radial-gradient(104% 138% at 8% 120%,rgba(196,142,60,0.42),transparent 60%),radial-gradient(66% 84% at 55% 30%,rgba(255,246,214,0.28),transparent 60%),linear-gradient(122deg,#443a1f 0%,#524325 46%,#332a17 100%)',
+            heroSheen: 'repeating-linear-gradient(110deg,rgba(255,232,182,0.08) 0 1.5px,transparent 1.5px 8px)',
+            scene: 'radial-gradient(1320px 630px at 84% -14%,rgba(240,192,96,0.34),transparent 58%),radial-gradient(1120px 700px at 2% 112%,rgba(188,138,58,0.22),transparent 62%),radial-gradient(760px 520px at 56% 42%,rgba(255,238,196,0.10),transparent 60%),linear-gradient(180deg,#2c2617 0%,#221d11 58%,#2e2713 100%)',
+            grad: 'linear-gradient(160deg,#fffbe8 0%,#fdf0c0 12%,#eecf86 28%,#bc8c38 44%,#8a6323 52%,#fff6d8 62%,#f0d492 72%,#ffffff 78%,#d9ad55 90%,#a97d2e 100%)',
+            btnGrad: 'linear-gradient(180deg,#fdf3cd 0%,#f0d68e 22%,#d3a44c 55%,#a97d2e 82%,#c99a42 100%)' }
+        : { name: 'SILVER · 银星', icon: '✧', accent: '#c9d2de', border: '#4a5364', glow: 'rgba(150,172,205,0.10)',
+            cardTop: '#1c212c', cardBot: '#13161f', rowTop: '#181d27', rowBot: '#11141c',
+            heroBg: 'radial-gradient(145% 165% at 80% -30%,rgba(230,238,248,0.60),transparent 56%),radial-gradient(100% 132% at 8% 118%,rgba(160,185,215,0.34),transparent 60%),radial-gradient(62% 82% at 56% 30%,rgba(250,252,255,0.22),transparent 60%),linear-gradient(120deg,#333b48 0%,#434d5b 46%,#2b323f 100%)',
+            heroSheen: 'repeating-linear-gradient(112deg,rgba(255,255,255,0.07) 0 1.5px,transparent 1.5px 9px)',
+            scene: 'radial-gradient(1300px 620px at 84% -12%,rgba(206,222,244,0.34),transparent 58%),radial-gradient(1100px 690px at 2% 112%,rgba(150,176,210,0.22),transparent 62%),linear-gradient(180deg,#262c37 0%,#1e2430 58%,#272d39 100%)',
+            grad: 'linear-gradient(160deg,#ffffff 0%,#eef3fa 12%,#c6d1e0 28%,#8ea0b8 44%,#66768c 52%,#f6f9fd 62%,#d4dce8 72%,#ffffff 78%,#aab8ca 90%,#7e8ea4 100%)',
+            btnGrad: 'linear-gradient(180deg,#ffffff 0%,#dde5ef 22%,#adbccf 55%,#8395ac 82%,#a3b2c5 100%)' };
+    const accent = tier.accent;
+    const quota = this.props.coreQuota ?? 3;
+    const st = this.state;
+    const pend = st.pending;
+    const vw = st.vw || (typeof window !== 'undefined' ? window.innerWidth : 1200);
+    const mob = vw < 720;
+    const resp = { gridCols: mob ? '1fr' : '1.05fr 1fr', pomoCols: mob ? '1fr' : '1.15fr 1fr',
+      heroH: mob ? 'auto' : '264px', titleSize: mob ? '26px' : '38px', balSize: mob ? '40px' : '54px' };
+    const cyc = { daily: '每日', weekly: '每周', monthly: '每月', once: '单次', free: '不限次' };
+    const dec = t => {
+      const k = this.key(t.cycle), times = t.times || 1;
+      const cnt = k ? Math.min(times, t.done[k] || 0) : 0;
+      const doneNow = k ? cnt >= times : false;
+      const pct = k ? Math.round(cnt / times * 100) : 0;
+      const tp = !!pend && pend.key === 'task:' + t.id;
+      const _td = this.todayKey(), _yd = this.shiftDay(_td, -1);
+      const liveStreak = (t.lastDone === _td || t.lastDone === _yd) ? (t.streak || 0) : 0;
+      const isFormed = liveStreak >= 7;
+      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: !doneNow && !tp, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
+        isFormed, hasStreak: liveStreak > 0 && !isFormed, streakLabel: '连 ' + liveStreak + ' 天', formedLabel: '已成势 · ' + liveStreak + ' 连',
+        cycleLabel: k ? `${cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
+        hasRing: !!k, pctStr: pct + '%',
+        ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
+        starColor: t.core ? '#fbbf24' : '#2b3040',
+        onDone: e => { e.stopPropagation(); this.complete(t.id); },
+        onDel: e => { e.stopPropagation(); this.delTask(t.id); },
+        onToggleCore: e => { e.stopPropagation(); this.toggleCore(t.id); },
+        onEdit: () => this.openEdit('task', t.id), onUndo: e => { e.stopPropagation(); this.undo(); },
+        showGrip: !st.warMode, stop: e => e.stopPropagation(),
+        onDragStart: e => { this._dragId = t.id; try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(t.id)); } catch (_) {} },
+        onDragOver: e => e.preventDefault(),
+        onDrop: e => { e.preventDefault(); this.onDropTask(t.id); },
+        onDragEnd: () => { this._dragId = null; } };
+    };
+    const all = st.tasks.map(dec);
+    const coreAll = all.filter(t => t.core).slice(0, quota);
+    const coreDone = coreAll.filter(t => t.doneNow).length;
+    const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id; return { ...r,
+      canAfford: st.exp >= r.cost && !rp, cannot: st.exp < r.cost && !rp, pending: rp,
+      costStr: r.cost + ' EXP', imgId: 'rw-' + r.id, imgHint: '拖入「' + r.name + '」的照片',
+      onRedeem: e => { e.stopPropagation(); this.redeem(r.id); },
+      onDel: e => { e.stopPropagation(); this.delReward(r.id); },
+      onUndo: e => { e.stopPropagation(); this.undo(); },
+      onEdit: () => this.openEdit('reward', r.id) }; });
+    const milestones = st.milestones.map(m => {
+      const pct = Math.min(100, Math.round(m.cur / m.target * 100));
+      const dl = m.deadline || '';
+      const daysLeft = dl ? Math.ceil((new Date(dl + 'T23:59:59') - Date.now()) / 864e5) : null;
+      const mp = !!pend && pend.key === 'ms:' + m.id;
+      return { ...m, barW: pct + '%', remain: Math.max(0, m.target - m.cur),
+        pending: mp, pendingLabel: m.claimed ? '✓ 已领取' : '✓ 已推进', showProgress: !m.claimed && m.cur < m.target && !mp, showReady: !m.claimed && m.cur >= m.target && !mp, showClaimed: m.claimed && !mp,
+        stepStr: '+' + m.step, bonusStr: '+' + m.bonus,
+        hasDeadline: !!dl,
+        deadlineLabel: dl ? (daysLeft < 0 ? dl + ' 已截止' : dl + ' · 剩 ' + daysLeft + ' 天') : '',
+        deadlineColor: daysLeft !== null && daysLeft <= 3 ? '#f87171' : '#697084',
+        onPlus: e => { e.stopPropagation(); this.msPlus(m.id); },
+        onClaim: e => { e.stopPropagation(); this.msClaim(m.id); },
+        onDel: e => { e.stopPropagation(); this.delMilestone(m.id); },
+        onEdit: () => this.openEdit('milestone', m.id), onUndo: e => { e.stopPropagation(); this.undo(); } };
+    });
+    const fmt = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+    const ledger = st.ledger.slice(0, 30).map((e, i) => ({ ...e, key: e.ts + '-' + i, time: fmt(e.ts),
+      deltaStr: (e.delta > 0 ? '+' : '') + e.delta, deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
+    const earned = st.ledger.filter(e => e.delta > 0).reduce((a, e) => a + e.delta, 0);
+    const spent = -st.ledger.filter(e => e.delta < 0).reduce((a, e) => a + e.delta, 0);
+    const todayEarned = st.ledger.filter(e => e.delta > 0 && this.sameDay(e.ts)).reduce((a, e) => a + e.delta, 0);
+    const todayK = this.todayKey();
+    const sel = st.selectedDate || todayK;
+    const hm = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return p(d.getHours()) + ':' + p(d.getMinutes()); };
+    const dayLedger = st.ledger.filter(e => this.dateKey(e.ts) === sel).sort((a, b) => b.ts - a.ts)
+      .map((e, i) => ({ key: e.ts + '-' + i, time: hm(e.ts), name: e.name, deltaStr: (e.delta > 0 ? '+' : '') + e.delta, deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
+    const dayEarned = st.ledger.filter(e => this.dateKey(e.ts) === sel && e.delta > 0).reduce((a, e) => a + e.delta, 0);
+    const daySpent = -st.ledger.filter(e => this.dateKey(e.ts) === sel && e.delta < 0).reduce((a, e) => a + e.delta, 0);
+    const dayNet = dayEarned - daySpent;
+    const canNext = sel < todayK;
+    const chip = a => ({ bg: a ? tier.btnGrad : 'transparent', color: a ? '#14151c' : '#aeb6c6', border: a ? 'transparent' : '#2a2f3a' });
+    const preset = st.pomoPreset || '25';
+    const pBase = (preset === 'custom' ? (st.pomoCustomMin || 30) : parseInt(preset)) * 60;
+    const pTotal = st.pomoTotal || pBase;
+    const pRem = (st.pomoRunning && st.pomoEndTs) ? Math.max(0, Math.round((st.pomoEndTs - Date.now()) / 1000)) : (st.pomoRemaining != null ? st.pomoRemaining : pBase);
+    const mm = String(Math.floor(pRem / 60)).padStart(2, '0'), ss = String(pRem % 60).padStart(2, '0');
+    const pPct = pTotal ? (pRem / pTotal * 100) : 0;
+    const t0 = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); })();
+    const countdowns = (st.countdowns || []).map(c => {
+      const [y, m, dd] = c.date.split('-').map(Number);
+      const days = Math.round((new Date(y, m - 1, dd).getTime() - t0) / 864e5);
+      return { ...c, key: c.id, days, isToday: days === 0, showNum: days !== 0,
+        prefix: days < 0 ? '已过' : '还剩', numText: Math.abs(days), numColor: days < 0 ? '#f87171' : accent,
+        dueStr: `${y}年${String(m).padStart(2, '0')}月${String(dd).padStart(2, '0')}日`,
+        onDel: e => { e.stopPropagation(); this.delCountdown(c.id); } };
+    }).sort((a, b) => ((a.days < 0) - (b.days < 0)) || a.days - b.days);
+    const tabNow = st.tab || 'lists';
+    const ed = st.editing || null;
+    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones };
+    const editItem = ed ? (lists[ed.type] || []).find(x => x.id === ed.id) : null;
+    const editOpen = !!editItem;
+    return { accent, exp: st.exp, warMode: st.warMode, warOff: !st.warMode,
+      toggleWar: () => this.save({ warMode: !st.warMode }),
+      tasks: st.warMode ? coreAll : all, coreDone, coreTotal: coreAll.length,
+      fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
+      rewards, milestones, ledger, showLedger: this.props.showLedger ?? true,
+      earned, spent, todayEarned: '+' + todayEarned,
+      tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad: tier.btnGrad, tierScene: tier.scene, heroBg: tier.heroBg, heroSheen: tier.heroSheen,
+      cardTop: tier.cardTop, cardBot: tier.cardBot, rowTop: tier.rowTop, rowBot: tier.rowBot,
+      gridCols: resp.gridCols, pomoCols: resp.pomoCols, heroH: resp.heroH, titleSize: resp.titleSize, balSize: resp.balSize,
+      isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown',
+      goLists: () => this.setTab('lists'), goPomo: () => this.setTab('pomo'), goCountdown: () => this.setTab('countdown'),
+      navListsActive: tabNow === 'lists', navPomoActive: tabNow === 'pomo', navCountdownActive: tabNow === 'countdown',
+      navListsColor: tabNow === 'lists' ? accent : '#7c8494', navPomoColor: tabNow === 'pomo' ? accent : '#7c8494', navCountdownColor: tabNow === 'countdown' ? accent : '#7c8494',
+      pomoTime: mm + ':' + ss, pomoRingBg: `conic-gradient(${accent} ${pPct}%, #232833 0)`,
+      pomoRunning: !!st.pomoRunning, pomoIdle: !st.pomoRunning,
+      pomoStateLabel: st.pomoRunning ? '专注中…' : (pRem <= 0 ? '完成 ✦' : (pRem < pTotal ? '已暂停' : '准备开始')),
+      pomoStartLabel: (st.pomoRemaining != null && st.pomoRemaining > 0 && st.pomoRemaining < pTotal) ? '继续' : '开始',
+      isPCustom: preset === 'custom', pomoCustomMin: st.pomoCustomMin || 30,
+      p25: chip(preset === '25'), p45: chip(preset === '45'), pcustom: chip(preset === 'custom'),
+      nCafe: chip((st.noisePreset || '咖啡馆') === '咖啡馆'), nRain: chip(st.noisePreset === '雨天'), nSnow: chip(st.noisePreset === '雪天'), nCustom: chip(st.noisePreset === 'custom'),
+      noiseOn: !!st.noiseOn, noiseVol: st.noiseVol ?? 0.5, noiseBtnLabel: st.noiseOn ? '⏹ 停止' : '▶ 播放',
+      noiseHasFile: !!st.noiseFileName, noiseFileName: st.noiseFileName || '',
+      pomoStart: () => this.pomoStart(), pomoPause: () => this.pomoPause(), pomoReset: () => this.pomoReset(),
+      setP25: () => this.pomoSetPreset('25'), setP45: () => this.pomoSetPreset('45'), setPCustom: () => this.pomoSetPreset('custom'),
+      onCustomMin: e => this.pomoSetCustom(e.target.value),
+      toggleNoise: () => this.toggleNoise(), onVol: e => this.setNoiseVol(e.target.value),
+      setCafe: () => this.setNoisePreset('咖啡馆'), setRain: () => this.setNoisePreset('雨天'), setSnow: () => this.setNoisePreset('雪天'), setCustomNoise: () => this.setNoisePreset('custom'),
+      onNoiseFile: e => this.onNoiseFile(e),
+      countdowns, addCountdown: () => this.addCountdown(),
+      tierHint: `银星 < ${goldAt} EXP ≤ 金星 < ${diamondAt} EXP ≤ 钻星`,
+      editOpen, editAsk: editOpen && !ed.confirmed, editFormOn: editOpen && ed.confirmed,
+      editIsTask: editOpen && ed.confirmed && ed.type === 'task',
+      editIsReward: editOpen && ed.confirmed && ed.type === 'reward',
+      editIsMilestone: editOpen && ed.confirmed && ed.type === 'milestone',
+      editItemName: editItem ? editItem.name : '',
+      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑' }[ed.type]) : '',
+      editName: editItem ? editItem.name : '',
+      editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '',
+      editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
+      editCost: editItem ? (editItem.cost ?? '') : '',
+      editTarget: editItem ? (editItem.target ?? '') : '', editStep: editItem ? (editItem.step ?? '') : '',
+      editBonus: editItem ? (editItem.bonus ?? '') : '', editDeadline: editItem ? (editItem.deadline || '') : '',
+      closeEdit: () => this.closeEdit(), confirmEdit: () => this.confirmEdit(),
+      saveEdit: () => this.saveEdit(), stopClick: e => e.stopPropagation(),
+      selDateISO: sel, todayISO: todayK, selDateLabel: this.labelFromISO(sel),
+      selDateRel: sel === todayK ? '今天' : (sel === this.shiftDay(todayK, -1) ? '昨天' : ''),
+      selDateRelShow: sel === todayK || sel === this.shiftDay(todayK, -1),
+      nextColor: canNext ? '#c3c9d6' : '#3a404d', nextHover: canNext ? accent : '#262b36',
+      dayLedger, dayEmpty: dayLedger.length === 0,
+      dayEarnedStr: '+' + dayEarned, daySpentStr: '-' + daySpent,
+      dayNetStr: (dayNet >= 0 ? '+' : '') + dayNet, dayNetColor: dayNet >= 0 ? '#4ade80' : '#f87171',
+      onPrevDay: () => this.setState({ selectedDate: this.shiftDay(sel, -1) }),
+      onNextDay: () => { if (sel < todayK) this.setState({ selectedDate: this.shiftDay(sel, 1) }); },
+      onToday: () => this.setState({ selectedDate: todayK }),
+      onPickDate: e => { const v = e.target.value; if (v) this.setState({ selectedDate: v > todayK ? todayK : v }); },
+      addTask: () => this.addTask(), addReward: () => this.addReward(), addMilestone: () => this.addMilestone() };
+  }
+}
+</script>
+</body>
+</html>
