@@ -43,6 +43,10 @@ input[type="date"]{color-scheme:dark;}
           <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ titleSize }};line-height:1;letter-spacing:4px;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.18)) drop-shadow(0 4px 14px rgba(0,0,0,0.7));">EXP BANK</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;letter-spacing:2px;">自律积分银行 / v0.1</div>
         </div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;pointer-events:auto;">
+        <div onClick="{{ openBackup }}" title="导出/导入备份码 · 跨设备搬运数据" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">⤓ 备份</span>
+        </div>
         <div onClick="{{ toggleWar }}" style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">WAR MODE</span>
           <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}">
@@ -56,6 +60,7 @@ input[type="date"]{color-scheme:dark;}
             <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4ade80;">✦ 当日满勤</span>
           </sc-if>
         </div>
+        </div>
       </div>
       <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;">
         <div style="margin-left:2px;">
@@ -63,7 +68,12 @@ input[type="date"]{color-scheme:dark;}
             <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:#8b93a4;">EXP BALANCE</div>
             <div style="pointer-events:auto;border:1px solid {{ tierBorder }};background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 6px 18px rgba(0,0,0,0.4);border-radius:99px;padding:3px 10px;backdrop-filter:blur(6px);" title="{{ tierHint }}"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:2px;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.65));">{{ tierIcon }} {{ tierName }}</span></div>
           </div>
-          <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ balSize }};line-height:1;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.22)) drop-shadow(0 4px 14px rgba(0,0,0,0.75));">{{ exp }}</div>
+          <sc-if value="{{ expEditing }}" hint-placeholder-val="{{ false }}">
+            <input id="exp-edit" type="number" defaultValue="{{ exp }}" autoFocus="{{ true }}" onBlur="{{ commitExp }}" onKeyDown="{{ onExpKey }}" style="pointer-events:auto;width:180px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ balSize }};line-height:1;background:rgba(13,15,20,0.9);border:1px solid {{ accent }};border-radius:10px;padding:2px 10px;color:#eef1f7;box-sizing:border-box;">
+          </sc-if>
+          <sc-if value="{{ expShow }}" hint-placeholder-val="{{ true }}">
+            <div onClick="{{ startEditExp }}" title="点击直接修改余额" style="pointer-events:auto;cursor:text;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ balSize }};line-height:1;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.22)) drop-shadow(0 4px 14px rgba(0,0,0,0.75));">{{ exp }}</div>
+          </sc-if>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <div style="background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:10px;padding:8px 14px;backdrop-filter:blur(6px);">
@@ -95,11 +105,27 @@ input[type="date"]{color-scheme:dark;}
           <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;">仅核心微习惯</div>
         </sc-if>
       </div>
-      <sc-for list="{{ tasks }}" as="t" hint-placeholder-count="4">
-        <div onClick="{{ t.onEdit }}" onDragOver="{{ t.onDragOver }}" onDrop="{{ t.onDrop }}" onDragEnd="{{ t.onDragEnd }}" title="点击编辑此任务 · 拖左侧手柄可排序" style="cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
-          <sc-if value="{{ t.showGrip }}" hint-placeholder-val="{{ true }}">
-            <div draggable="{{ true }}" onDragStart="{{ t.onDragStart }}" onClick="{{ t.stop }}" title="拖动可排序" style="cursor:grab;color:#464d5e;font-size:13px;line-height:1;user-select:none;" style-hover="color:#8b93a4;">⠿</div>
-          </sc-if>
+      <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px;">
+        <div onClick="{{ openNewTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(0,0,0,0.3);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务</div>
+        <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 14px;" style-hover="border-color:#4ade80;">+ 新建任务集</div>
+        <div style="flex:1;"></div>
+        <div onClick="{{ startReorder }}" title="打开排序面板，长按拖动" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">⇅ 排序</div>
+      </div>
+      </sc-if>
+      <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="4">
+        <sc-if value="{{ t.isHeader }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ t.onToggle }}" title="点击折叠/展开任务集" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};width:14px;text-align:center;line-height:1;">{{ t.chevron }}</div>
+            <div style="font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;">▤ {{ t.name }}</div>
+            <div style="flex:1;"></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ t.countLabel }}</div>
+            <div onClick="{{ t.onEditSet }}" title="重命名任务集" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
+            <div onClick="{{ t.onDelSet }}" title="删除任务集（任务保留）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ t.isTask }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div onClick="{{ t.onToggleCore }}" title="设为核心微习惯(战时模式)" style="cursor:pointer;font-size:13px;color:{{ t.starColor }};width:16px;text-align:center;">★</div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div style="width:3px;align-self:stretch;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
@@ -134,17 +160,8 @@ input[type="date"]{color-scheme:dark;}
           </sc-if>
           <div onClick="{{ t.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;padding:0 2px;" style-hover="color:#f87171;">×</div>
         </div>
+        </sc-if>
       </sc-for>
-      <div style="display:flex;gap:8px;margin-top:6px;align-items:center;flex-wrap:wrap;">
-        <input id="nt-name" placeholder="新任务名" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
-        <input id="nt-exp" placeholder="分值" type="number" style="width:56px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <input id="nt-times" placeholder="次数" type="number" title="每个周期内需完成几次" style="width:48px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <select id="nt-cycle" style="background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
-          <option value="daily">每日</option><option value="weekly">每周</option><option value="monthly">每月</option><option value="once">单次</option><option value="free">不限次</option>
-        </select>
-        <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:#8b93a4;cursor:pointer;white-space:nowrap;"><input id="nt-core" type="checkbox" style="accent-color:#4ade80;">核心</label>
-        <div onClick="{{ addTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:#4ade80;">+ 添加</div>
-      </div>
     </div>
 
     <!-- STORE -->
@@ -416,6 +433,12 @@ input[type="date"]{color-scheme:dark;}
                 </select>
               </label>
             </div>
+            <label style="display:block;font-size:11px;color:#697084;">归入任务集
+              <select id="ed-set" defaultValue="{{ editSetId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
+                <option value="">无任务集</option>
+                <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
+              </select>
+            </label>
           </sc-if>
           <sc-if value="{{ editIsReward }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">价格(EXP)
@@ -446,6 +469,112 @@ input[type="date"]{color-scheme:dark;}
       </div>
     </div>
   </sc-if>
+
+  <!-- BACKUP MODAL -->
+  <sc-if value="{{ backupOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeBackup }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:420px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">数据备份 // BACKUP</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">数据默认只存在当前浏览器,不跨设备同步。要搬到别的手机/浏览器:在原设备<b style="color:#c3c9d6;">复制</b>下面这串备份码,在新设备打开本页 → 备份 → 粘贴 → <b style="color:#c3c9d6;">导入并覆盖</b>。</div>
+        <textarea id="bk-text" readonly value="{{ backupCode }}" style="width:100%;box-sizing:border-box;height:96px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#c3c9d6;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;"></textarea>
+        <div style="display:flex;gap:8px;">
+          <div onClick="{{ copyBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">{{ copyLabel }}</div>
+          <div onClick="{{ downloadBackup }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#c3c9d6;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:9px 14px;" style-hover="border-color:{{ accent }};">存为文件</div>
+        </div>
+        <div style="height:1px;background:#1e222b;margin:2px 0;"></div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在新设备粘贴备份码到下框,点导入(会<b style="color:#f87171;">覆盖</b>当前数据):</div>
+        <textarea id="bk-import" placeholder="在此粘贴备份码…" style="width:100%;box-sizing:border-box;height:80px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;"></textarea>
+        <sc-if value="{{ backupMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:{{ backupMsgColor }};">{{ backupMsg }}</div>
+        </sc-if>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeBackup }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">关闭</div>
+          <div onClick="{{ importBackup }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 16px;" style-hover="filter:brightness(1.12);">导入并覆盖</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- NEW TASK MODAL -->
+  <sc-if value="{{ newTaskOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:360px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建任务 // NEW TASK</div>
+        <label style="display:block;font-size:11px;color:#697084;">任务名称
+          <input id="nt-name" placeholder="例如:背 20 个单词" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;font-size:11px;color:#697084;">EXP 分值
+            <input id="nt-exp" type="number" placeholder="10" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+          <label style="flex:1;font-size:11px;color:#697084;">每周期次数
+            <input id="nt-times" type="number" placeholder="1" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;font-size:11px;color:#697084;">循环
+            <select id="nt-cycle" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;">
+              <option value="daily">每日</option><option value="weekly">每周</option><option value="monthly">每月</option><option value="once">单次</option><option value="free">不限次</option>
+            </select>
+          </label>
+          <label style="flex:1;font-size:11px;color:#697084;">归入任务集
+            <select id="nt-set" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;">
+              <option value="">无任务集</option>
+              <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
+            </select>
+          </label>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#8b93a4;cursor:pointer;"><input id="nt-core" type="checkbox" style="accent-color:#4ade80;">设为核心微习惯(战时模式显示)</label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加任务</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- NEW SET MODAL -->
+  <sc-if value="{{ newSetOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建任务集 // NEW SET</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">任务集是可折叠的分组,建好后可在任务里选择归入,或点集合标题折叠/展开。</div>
+        <label style="display:block;font-size:11px;color:#697084;">任务集名称
+          <input id="ns-name" placeholder="例如:学习区 / 健身区" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建任务集</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- REORDER MODAL -->
+  <sc-if value="{{ reorderOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeReorder }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">任务排序 // REORDER</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在某一条上<b style="color:#c3c9d6;">长按并上下拖动</b>即可调整顺序,松手完成。顺序会实时保存。</div>
+        <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding:2px;">
+          <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
+            <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" style="touch-action:none;user-select:none;cursor:grab;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+              <div style="font-size:16px;color:#5a6172;line-height:1;">⠿</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:14px;font-weight:700;color:#eef1f7;">{{ row.name }}</div>
+                <sc-if value="{{ row.hasSet }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:0.5px;">▤ {{ row.setName }}</div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;justify-content:flex-end;">
+          <div onClick="{{ closeReorder }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">完成</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:200,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:400,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
@@ -455,8 +584,9 @@ class Component extends DCLogic {
     let s = null;
     try { s = JSON.parse(localStorage.getItem('exp-bank-v1')); } catch (e) {}
     if (s && s.tasks) {
-      s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, streak: t.streak || 0, lastDone: t.lastDone || '',
+      s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
+      if (!s.sets) s.sets = [];
       if (!s.countdowns) s.countdowns = this.defaultCountdowns();
       if (!s.tab) s.tab = 'lists';
       if (!s.pomoPreset) s.pomoPreset = '25';
@@ -483,6 +613,7 @@ class Component extends DCLogic {
         { id: 4, name: '电影之夜', cost: 300 },
       ],
       milestones: [{ id: 1, name: '科一通过 · 刷满 300 题', cur: 0, target: 300, step: 10, bonus: 300, claimed: false }],
+      sets: [],
       ledger: [],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
@@ -492,7 +623,54 @@ class Component extends DCLogic {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
     return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, dragId, vw, newTaskOpen, newSetOpen, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  addSet() {
+    const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
+    if (!name) return;
+    this.save({ sets: [...(this.state.sets || []), { id: this.state.nextId, name, collapsed: false }], nextId: this.state.nextId + 1, newSetOpen: false });
+    if (el) el.value = '';
+  }
+  openNewTask() { this.setState({ newTaskOpen: true }); }
+  openNewSet() { this.setState({ newSetOpen: true }); }
+  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false }); }
+  startEditExp() { this.setState({ expEditing: true }); }
+  commitExp() {
+    const el = document.getElementById('exp-edit'); if (!el) { this.setState({ expEditing: false }); return; }
+    const n = parseInt(el.value);
+    if (!isNaN(n)) this.save({ exp: n, expEditing: false, ledger: [{ ts: Date.now(), name: '手动修改余额', delta: n - this.state.exp }, ...this.state.ledger].slice(0, 200) });
+    else this.setState({ expEditing: false });
+  }
+  toggleSet(id) { this.save({ sets: this.state.sets.map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
+  delSet(id) { this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
+  startReorder() { this.setState({ reorderOpen: true, dragId: null }); }
+  closeReorder() { clearTimeout(this._roTimer); this.setState({ reorderOpen: false, dragId: null }); }
+  roDown(id, e) {
+    this._roStart = { y: e.clientY, moved: false };
+    clearTimeout(this._roTimer);
+    this._roTimer = setTimeout(() => { this.setState({ dragId: id }); if (navigator.vibrate) navigator.vibrate(15); }, 280);
+    this._roMove = ev => this.roMove(ev);
+    this._roUp = () => this.roUp();
+    window.addEventListener('pointermove', this._roMove);
+    window.addEventListener('pointerup', this._roUp);
+  }
+  roMove(e) {
+    if (this.state.dragId == null) { if (Math.abs(e.clientY - this._roStart.y) > 8) clearTimeout(this._roTimer); return; }
+    e.preventDefault();
+    const items = [...document.querySelectorAll('[data-ro-id]')];
+    if (!items.length) return;
+    const y = e.clientY;
+    let targetId = null;
+    for (const el of items) { const r = el.getBoundingClientRect(); if (y >= r.top && y <= r.bottom) { targetId = el.getAttribute('data-ro-id'); break; } }
+    if (targetId == null) { const f = items[0].getBoundingClientRect(), l = items[items.length - 1].getBoundingClientRect(); if (y < f.top) targetId = items[0].getAttribute('data-ro-id'); else if (y > l.bottom) targetId = items[items.length - 1].getAttribute('data-ro-id'); }
+    if (targetId == null) return;
+    const arr = [...this.state.tasks];
+    const fi = arr.findIndex(t => String(t.id) === String(this.state.dragId));
+    const ti = arr.findIndex(t => String(t.id) === String(targetId));
+    if (fi < 0 || ti < 0 || fi === ti) return;
+    const [mv] = arr.splice(fi, 1); arr.splice(ti, 0, mv);
+    this.save({ tasks: arr });
+  }
+  roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
   armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
   undo() {
     const p = this.state.pending; if (!p) return;
@@ -553,14 +731,44 @@ class Component extends DCLogic {
   openEdit(type, id) { this.setState({ editing: { type, id, confirmed: false } }); }
   confirmEdit() { this.setState({ editing: { ...this.state.editing, confirmed: true } }); }
   closeEdit() { this.setState({ editing: null }); }
+  openBackup() { this.setState({ backupOpen: true, backupMsg: '', copyLabel: '复制备份码' }); }
+  closeBackup() { this.setState({ backupOpen: false, backupMsg: '' }); }
+  makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
+  copyBackup() {
+    const code = this.makeBackupCode();
+    const done = () => this.setState({ copyLabel: '✓ 已复制' });
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done).catch(() => { this.selectBackup(); });
+    else this.selectBackup();
+  }
+  selectBackup() { const el = document.getElementById('bk-text'); if (el) { el.focus(); el.select(); try { document.execCommand('copy'); this.setState({ copyLabel: '✓ 已复制' }); } catch (_) {} } }
+  downloadBackup() {
+    const code = this.makeBackupCode();
+    const blob = new Blob([code], { type: 'text/plain' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'exp-bank-backup-' + this.todayKey() + '.txt'; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  importBackup() {
+    const el = document.getElementById('bk-import'); const raw = el ? el.value.trim() : '';
+    if (!raw) { this.setState({ backupMsg: '请先粘贴备份码', backupMsgColor: '#f87171' }); return; }
+    let data;
+    try { data = JSON.parse(decodeURIComponent(escape(atob(raw)))); }
+    catch (e) { try { data = JSON.parse(raw); } catch (e2) { this.setState({ backupMsg: '备份码无法识别,请检查是否复制完整', backupMsgColor: '#f87171' }); return; } }
+    if (!data || !Array.isArray(data.tasks)) { this.setState({ backupMsg: '备份码内容无效', backupMsgColor: '#f87171' }); return; }
+    this.setState({ ...data, editing: null, pending: null, backupMsg: '✓ 导入成功,数据已恢复', backupMsgColor: '#4ade80' }, () => localStorage.setItem('exp-bank-v1', JSON.stringify(data)));
+  }
   saveEdit() {
     const ed = this.state.editing; if (!ed) return;
     const name = this.v('ed-name');
     const num = (id, fb) => { const n = parseInt(this.v(id)); return isNaN(n) ? fb : n; };
-    if (ed.type === 'task') {
+    if (ed.type === 'set') {
+      this.save({ editing: null, sets: this.state.sets.map(x => x.id === ed.id ? { ...x, name: name || x.name } : x) });
+    } else if (ed.type === 'task') {
+      const setSel = document.getElementById('ed-set');
+      const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
       this.save({ editing: null, tasks: this.state.tasks.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
-        cycle: document.getElementById('ed-cycle').value } : x) });
+        setId, cycle: document.getElementById('ed-cycle').value } : x) });
     } else if (ed.type === 'reward') {
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)) } : x) });
@@ -612,8 +820,10 @@ class Component extends DCLogic {
     const cycle = document.getElementById('nt-cycle').value;
     const times = Math.max(1, parseInt(this.v('nt-times')) || 1);
     const core = document.getElementById('nt-core').checked;
-    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, core, done: {} }], nextId: this.state.nextId + 1 });
-    this.clear(['nt-name', 'nt-exp', 'nt-times']); document.getElementById('nt-core').checked = false;
+    const setSel = document.getElementById('nt-set');
+    const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
+    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, core, setId, done: {} }], nextId: this.state.nextId + 1, newTaskOpen: false });
+    this.clear(['nt-name', 'nt-exp', 'nt-times']); const cb = document.getElementById('nt-core'); if (cb) cb.checked = false; if (setSel) setSel.value = '';
   }
   addReward() {
     const name = this.v('nr-name'); if (!name) return;
@@ -708,15 +918,42 @@ class Component extends DCLogic {
         onDel: e => { e.stopPropagation(); this.delTask(t.id); },
         onToggleCore: e => { e.stopPropagation(); this.toggleCore(t.id); },
         onEdit: () => this.openEdit('task', t.id), onUndo: e => { e.stopPropagation(); this.undo(); },
-        showGrip: !st.warMode, stop: e => e.stopPropagation(),
-        onDragStart: e => { this._dragId = t.id; try { e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', String(t.id)); } catch (_) {} },
-        onDragOver: e => e.preventDefault(),
-        onDrop: e => { e.preventDefault(); this.onDropTask(t.id); },
-        onDragEnd: () => { this._dragId = null; } };
+        stop: e => e.stopPropagation(), isHeader: false, isTask: true };
     };
     const all = st.tasks.map(dec);
     const coreAll = all.filter(t => t.core).slice(0, quota);
     const coreDone = coreAll.filter(t => t.doneNow).length;
+    const setsArr = st.sets || [];
+    const setOptions = setsArr.map(s => ({ idStr: String(s.id), name: s.name }));
+    let taskRows;
+    if (st.warMode) {
+      taskRows = coreAll.map(t => ({ ...t, rowKey: 't-' + t.id, inSet: false }));
+    } else {
+      taskRows = [];
+      const byId = {}; all.forEach(t => { byId[t.id] = t; });
+      const grouped = {}; setsArr.forEach(s => grouped[s.id] = []);
+      const ungrouped = [];
+      all.forEach(t => { if (t.setId != null && grouped[t.setId]) grouped[t.setId].push(t); else ungrouped.push(t); });
+      setsArr.forEach(s => {
+        const members = grouped[s.id] || [];
+        const done = members.filter(m => m.doneNow).length;
+        taskRows.push({ rowKey: 'set-' + s.id, isHeader: true, isTask: false, id: s.id, name: s.name,
+          countLabel: done + '/' + members.length, collapsed: !!s.collapsed, chevron: s.collapsed ? '›' : '‹',
+          onToggle: e => { e.stopPropagation(); this.toggleSet(s.id); },
+          onEditSet: e => { e.stopPropagation(); this.openEdit('set', s.id); },
+          onDelSet: e => { e.stopPropagation(); this.delSet(s.id); } });
+        if (!s.collapsed) members.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: true }));
+      });
+      ungrouped.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: false }));
+    }
+    const reorderRows = st.tasks.map(dec).map(t => ({ id: t.id, roId: String(t.id), name: t.name,
+      setName: (setsArr.find(s => s.id === t.setId) || {}).name || '',
+      hasSet: t.setId != null && !!setsArr.find(s => s.id === t.setId),
+      dragging: String(st.dragId) === String(t.id),
+      dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36',
+      dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
+      dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
+      onDown: e => this.roDown(t.id, e) }));
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id; return { ...r,
       canAfford: st.exp >= r.cost && !rp, cannot: st.exp < r.cost && !rp, pending: rp,
       costStr: r.cost + ' EXP', imgId: 'rw-' + r.id, imgHint: '拖入「' + r.name + '」的照片',
@@ -773,12 +1010,15 @@ class Component extends DCLogic {
     }).sort((a, b) => ((a.days < 0) - (b.days < 0)) || a.days - b.days);
     const tabNow = st.tab || 'lists';
     const ed = st.editing || null;
-    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones };
+    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones, set: st.sets };
     const editItem = ed ? (lists[ed.type] || []).find(x => x.id === ed.id) : null;
     const editOpen = !!editItem;
     return { accent, exp: st.exp, warMode: st.warMode, warOff: !st.warMode,
       toggleWar: () => this.save({ warMode: !st.warMode }),
-      tasks: st.warMode ? coreAll : all, coreDone, coreTotal: coreAll.length,
+      tasks: st.warMode ? coreAll : all, taskRows, setOptions, coreDone, coreTotal: coreAll.length,
+      addSet: () => this.addSet(),
+      reorderOpen: !!st.reorderOpen, reorderRows,
+      startReorder: () => this.startReorder(), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
       rewards, milestones, ledger, showLedger: this.props.showLedger ?? true,
       earned, spent, todayEarned: '+' + todayEarned,
@@ -810,8 +1050,10 @@ class Component extends DCLogic {
       editIsTask: editOpen && ed.confirmed && ed.type === 'task',
       editIsReward: editOpen && ed.confirmed && ed.type === 'reward',
       editIsMilestone: editOpen && ed.confirmed && ed.type === 'milestone',
+      editIsSet: editOpen && ed.confirmed && ed.type === 'set',
       editItemName: editItem ? editItem.name : '',
-      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑' }[ed.type]) : '',
+      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集' }[ed.type]) : '',
+      editSetId: editItem ? String(editItem.setId ?? '') : '',
       editName: editItem ? editItem.name : '',
       editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '',
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
@@ -820,6 +1062,10 @@ class Component extends DCLogic {
       editBonus: editItem ? (editItem.bonus ?? '') : '', editDeadline: editItem ? (editItem.deadline || '') : '',
       closeEdit: () => this.closeEdit(), confirmEdit: () => this.confirmEdit(),
       saveEdit: () => this.saveEdit(), stopClick: e => e.stopPropagation(),
+      backupOpen: !!st.backupOpen, backupCode: st.backupOpen ? this.makeBackupCode() : '',
+      copyLabel: st.copyLabel || '复制备份码', backupMsg: st.backupMsg || '', backupMsgColor: st.backupMsgColor || '#8b93a4',
+      openBackup: () => this.openBackup(), closeBackup: () => this.closeBackup(),
+      copyBackup: () => this.copyBackup(), downloadBackup: () => this.downloadBackup(), importBackup: () => this.importBackup(),
       selDateISO: sel, todayISO: todayK, selDateLabel: this.labelFromISO(sel),
       selDateRel: sel === todayK ? '今天' : (sel === this.shiftDay(todayK, -1) ? '昨天' : ''),
       selDateRelShow: sel === todayK || sel === this.shiftDay(todayK, -1),
@@ -831,7 +1077,11 @@ class Component extends DCLogic {
       onNextDay: () => { if (sel < todayK) this.setState({ selectedDate: this.shiftDay(sel, 1) }); },
       onToday: () => this.setState({ selectedDate: todayK }),
       onPickDate: e => { const v = e.target.value; if (v) this.setState({ selectedDate: v > todayK ? todayK : v }); },
-      addTask: () => this.addTask(), addReward: () => this.addReward(), addMilestone: () => this.addMilestone() };
+      addTask: () => this.addTask(), addReward: () => this.addReward(), addMilestone: () => this.addMilestone(),
+      newTaskOpen: !!st.newTaskOpen, newSetOpen: !!st.newSetOpen,
+      openNewTask: () => this.openNewTask(), openNewSet: () => this.openNewSet(), closeNew: () => this.closeNew(),
+      expEditing: !!st.expEditing, expShow: !st.expEditing, startEditExp: () => this.startEditExp(), commitExp: () => this.commitExp(),
+      onExpKey: e => { if (e.key === 'Enter') this.commitExp(); if (e.key === 'Escape') this.setState({ expEditing: false }); } };
   }
 }
 </script>
