@@ -166,13 +166,22 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- STORE -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">SHOPPING MALL // REDEEM</div><div onClick="{{ openNewReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建奖励</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">SHOPPING MALL // REDEEM</div><div onClick="{{ startReorderRewards }}" title="长按拖动排序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建奖励</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <sc-for list="{{ rewards }}" as="r" hint-placeholder-count="4">
           <div style="background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05) 42%,rgba(255,255,255,0.02)) border-box;border:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 28px rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;position:relative;">
             <div onClick="{{ r.onDel }}" style="cursor:pointer;position:absolute;top:6px;right:8px;z-index:2;color:rgba(230,233,240,0.55);font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,0.8);" style-hover="color:#f87171;">×</div>
             <div style="position:relative;height:104px;">
-              <x-import component-from-global-scope="image-slot" from="./image-slot.js" id="{{ r.imgId }}" shape="rect" radius="0" placeholder="{{ r.imgHint }}" hint-size="100%,104px" style="position:absolute;inset:0;"></x-import>
+              <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ r.onPickImg }}" title="点击更换照片" style="cursor:pointer;position:absolute;inset:0;background-image:url({{ r.img }});background-size:cover;background-position:center;"></div>
+                <div onClick="{{ r.onClearImg }}" title="移除照片" style="cursor:pointer;position:absolute;bottom:6px;right:8px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:10px;color:#e6e9f0;background:rgba(10,11,16,0.6);border-radius:6px;padding:2px 7px;" style-hover="color:#f87171;">移除</div>
+              </sc-if>
+              <sc-if value="{{ r.noImg }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ r.onPickImg }}" title="点击上传照片" style="cursor:pointer;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#0d0f14;color:#535a6a;" style-hover="color:#8b93a4;">
+                  <div style="font-size:20px;line-height:1;">▦</div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;">点击上传照片</div>
+                </div>
+              </sc-if>
             </div>
             <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
               <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
@@ -196,7 +205,7 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ startReorderMilestones }}" title="长按拖动排序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div></div>
       <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="1">
         <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:12px;display:flex;flex-direction:column;gap:8px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div style="display:flex;align-items:center;gap:10px;">
@@ -372,36 +381,62 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ isFund }}" hint-placeholder-val="{{ false }}">
   <div style="position:relative;z-index:1;max-width:900px;margin:0 auto;padding:18px 24px 0;">
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">基金决策收盘台 // FUND</div><div onClick="{{ openNewFund }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建标的</div></div>
-      <div style="font-size:11.5px;color:#8b93a4;line-height:1.6;">每日录入收盘价，卡片颜色提醒当日涨跌状态（大涨/上涨/持平/下跌/大跌）。写回 Notion 需后台支持，暂未开启。</div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">基金决策收盘台 // FUND</div><div onClick="{{ openFundSettings }}" title="阈值·标的管理·Notion 写回" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 12px;" style-hover="border-color:{{ accent }};">⚙ 设置</div><div onClick="{{ writeNotion }}" title="一键写回 Notion（需先在设置里配好）" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 12px;" style-hover="border-color:{{ accent }};">↻ 写回 Notion</div><div onClick="{{ openNewFund }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建标的</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">今日信号</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="display:flex;align-items:center;gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:#ef4444;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#eef1f7;">{{ fundSummary.buy }}</span><span style="font-size:10px;color:#8b93a4;">买</span></div>
+            <div style="display:flex;align-items:center;gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:#22c55e;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#eef1f7;">{{ fundSummary.profit }}</span><span style="font-size:10px;color:#8b93a4;">盈</span></div>
+            <div style="display:flex;align-items:center;gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:#3b82f6;"></div><span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#eef1f7;">{{ fundSummary.watch }}</span><span style="font-size:10px;color:#8b93a4;">观</span></div>
+          </div>
+        </div>
+        <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">平均浮盈</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ fundSummary.avgColor }};">{{ fundSummary.avgStr }}</div>
+        </div>
+        <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">数据更新于</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#c8cedb;">{{ fundSummary.latest }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#697084;">{{ fundSummary.count }} 只标的</div>
+        </div>
+      </div>
       <sc-if value="{{ fundEmpty }}" hint-placeholder-val="{{ false }}">
         <div style="text-align:center;padding:26px 0;color:#535a6a;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">· 还没有标的，点右上「+ 新建标的」添加 ·</div>
       </sc-if>
       <div style="display:grid;grid-template-columns:{{ gridCols }};gap:12px;">
         <sc-for list="{{ funds }}" as="f" hint-placeholder-count="0">
-          <div style="border:1.5px solid {{ f.cardBorder }};border-radius:14px;background:{{ f.cardBg }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 30px rgba(0,0,0,0.4);padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
+          <div style="border:1.5px solid {{ f.cardBorder }};border-radius:14px;background:{{ f.cardBg }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 30px rgba(0,0,0,0.4);padding:14px 16px;display:flex;flex-direction:column;gap:12px;">
             <div style="display:flex;align-items:center;gap:10px;">
-              <div style="flex:1;min-width:0;font-size:16px;font-weight:700;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ f.name }}</div>
+              <div style="width:9px;height:9px;border-radius:50%;flex-shrink:0;background:{{ f.dotColor }};box-shadow:0 0 10px {{ f.dotColor }};"></div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:16px;font-weight:700;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ f.name }}</div>
+                <sc-if value="{{ f.hasCode }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;">{{ f.code }}</div></sc-if>
+              </div>
               <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.5px;color:{{ f.statColor }};border:1px solid {{ f.cardBorder }};border-radius:99px;padding:3px 12px;white-space:nowrap;">{{ f.statLabel }}</div>
-              <div onClick="{{ f.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;" style-hover="color:#f87171;">×</div>
+              <div onClick="{{ f.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;flex-shrink:0;" style-hover="color:#f87171;">×</div>
             </div>
-            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;line-height:1;color:#eef1f7;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ f.priceStr }}</div>
-              <sc-if value="{{ f.hasDayChg }}" hint-placeholder-val="{{ false }}">
-                <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:{{ f.statColor }};">{{ f.dayChgStr }}</div>
-              </sc-if>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;letter-spacing:1px;margin-bottom:2px;">当日收盘价</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;line-height:1;color:#eef1f7;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ f.priceStr }}</div>
+              </div>
+              <div style="display:flex;gap:16px;">
+                <div style="text-align:right;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">偏差率</div><div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ f.devColor }};">{{ f.devStr }}</div></div>
+                <div style="text-align:right;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">浮盈</div><div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:{{ f.fltColor }};">{{ f.fltStr }}</div></div>
+              </div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">最新 {{ f.lastDate }}</div>
-              <sc-if value="{{ f.hasCost }}" hint-placeholder-val="{{ false }}">
-                <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">成本 {{ f.costStr }}</div>
-              </sc-if>
-              <sc-if value="{{ f.hasTotChg }}" hint-placeholder-val="{{ false }}">
-                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:{{ f.totChgColor }};">{{ f.totLabel }} {{ f.totChgStr }}</div>
-              </sc-if>
+            <div style="display:flex;gap:3px;">
+              <sc-for list="{{ f.segs }}" as="sg" hint-placeholder-count="9">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;">
+                  <div style="width:100%;height:6px;border-radius:3px;background:{{ sg.bg }};opacity:{{ sg.op }};"></div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#697084;">{{ sg.label }}</div>
+                </div>
+              </sc-for>
             </div>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input id="fc-{{ f.id }}" type="number" placeholder="今日收盘价" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#697084;flex:1;">{{ f.trigStr }} · 最新 {{ f.lastDate }}</div>
+              <input id="fc-{{ f.id }}" type="number" placeholder="录入收盘价" style="width:110px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
               <div onClick="{{ f.onLog }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:8px 14px;white-space:nowrap;" style-hover="filter:brightness(1.12);">录入</div>
             </div>
           </div>
@@ -580,17 +615,76 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+  <!-- FUND SETTINGS MODAL -->
+  <sc-if value="{{ fundSettingsOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeFundSettings }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.7);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:460px;max-width:100%;max-height:86vh;overflow-y:auto;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:2px;color:#eef1f7;font-weight:700;">设置 // SETTINGS</div>
+          <div style="font-size:11px;color:#8b93a4;margin-top:2px;">阈值 · Notion 写回</div>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:#aeb6c6;">抄底档(触发价 = 基准价 × 系数)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <label style="font-size:10.5px;color:#697084;">抄底A<input id="cfg-dipA" type="number" step="0.01" defaultValue="{{ cfg.dipA }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10.5px;color:#697084;">抄底B<input id="cfg-dipB" type="number" step="0.01" defaultValue="{{ cfg.dipB }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10.5px;color:#697084;">抄底C<input id="cfg-dipC" type="number" step="0.01" defaultValue="{{ cfg.dipC }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:#aeb6c6;">止盈档(触发价 = 成本价 × 系数)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <label style="font-size:10.5px;color:#697084;">止盈A<input id="cfg-tpA" type="number" step="0.01" defaultValue="{{ cfg.tpA }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10.5px;color:#697084;">止盈B<input id="cfg-tpB" type="number" step="0.01" defaultValue="{{ cfg.tpB }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10.5px;color:#697084;">止盈C<input id="cfg-tpC" type="number" step="0.01" defaultValue="{{ cfg.tpC }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10.5px;color:#697084;">止盈D<input id="cfg-tpD" type="number" step="0.01" defaultValue="{{ cfg.tpD }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10.5px;color:#697084;">止盈E<input id="cfg-tpE" type="number" step="0.01" defaultValue="{{ cfg.tpE }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10.5px;color:#697084;">止盈F<input id="cfg-tpF" type="number" step="0.01" defaultValue="{{ cfg.tpF }}" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;"></label>
+        </div>
+        <div style="height:1px;background:#1e222b;"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:#aeb6c6;">NOTION 写回</div>
+        <label style="display:block;font-size:10.5px;color:#697084;">Integration Token
+          <input id="nx-token" defaultValue="{{ notion.token }}" placeholder="ntn_xxx" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:12px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <label style="display:block;font-size:10.5px;color:#697084;">Database ID(粘贴 ID 或整条 Notion 网址)
+          <input id="nx-db" defaultValue="{{ notion.dbId }}" placeholder="留空则由 Worker 自动找" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:12px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <label style="display:block;font-size:10.5px;color:#697084;">写回地址(Cloudflare Worker 网址)
+          <input id="nx-worker" defaultValue="{{ notion.worker }}" placeholder="https://xxx.workers.dev" style="display:block;width:100%;box-sizing:border-box;margin-top:3px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:12px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="font-size:10.5px;color:#697084;line-height:1.6;">浏览器无法直接调 Notion(CORS)。云端 Cloudflare Worker(常年在线、免费)把网址填这里;Token 填上面,数据库 ID 可留空(Worker 会自动找)。</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div onClick="{{ testNotion }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#c8cedb;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:8px 14px;" style-hover="border-color:{{ accent }};">↻ 测试连接</div>
+          <sc-if value="{{ notionShowMsg }}" hint-placeholder-val="{{ false }}">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ notionMsgColor }};flex:1;">{{ notionMsg }}</div>
+          </sc-if>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
+          <div onClick="{{ closeFundSettings }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">关闭</div>
+          <div onClick="{{ saveFundSettings }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">应用</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- NEW FUND MODAL -->
   <sc-if value="{{ newFundOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建标的 // NEW FUND</div>
-        <label style="display:block;font-size:11px;color:#697084;">标的名称
-          <input id="nf-name" placeholder="例如:纳指ETF / 中概互联" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
-        </label>
-        <label style="display:block;font-size:11px;color:#697084;">成本价(可选,用于盈亏计算)
-          <input id="nf-cost" type="number" placeholder="如 1.2340" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        </label>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1.4;font-size:11px;color:#697084;">标的名称
+            <input id="nf-name" placeholder="如 卫星ETF" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+          </label>
+          <label style="flex:1;font-size:11px;color:#697084;">代码
+            <input id="nf-code" placeholder="159206" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;font-size:11px;color:#697084;">成本价(算浮盈/止盈)
+            <input id="nf-cost" type="number" placeholder="1.7217" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+          <label style="flex:1;font-size:11px;color:#697084;">基准价(算抄底/偏差)
+            <input id="nf-base" type="number" placeholder="1.979" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+        </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addFund }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加标的</div>
@@ -658,7 +752,7 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ reorderOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeReorder }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">任务排序 // REORDER</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">{{ reorderTitle }}</div>
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在某一条上<b style="color:#c3c9d6;">长按并上下拖动</b>即可调整顺序,松手完成。顺序会实时保存。</div>
         <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding:2px;">
           <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
@@ -691,7 +785,9 @@ class Component extends DCLogic {
       s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
       if (!s.sets) s.sets = [];
-      if (!s.funds) s.funds = [];
+      if (!s.funds) s.funds = this.defaultFunds();
+      if (!s.fundCfg) s.fundCfg = this.defaultFundCfg();
+      if (!s.notion) s.notion = { token: '', dbId: '', worker: '' };
       if (!s.countdowns) s.countdowns = this.defaultCountdowns();
       if (!s.tab) s.tab = 'lists';
       if (!s.pomoPreset) s.pomoPreset = '25';
@@ -719,17 +815,26 @@ class Component extends DCLogic {
       ],
       milestones: [{ id: 1, name: '科一通过 · 刷满 300 题', cur: 0, target: 300, step: 10, bonus: 300, claimed: false }],
       sets: [],
-      funds: [],
+      funds: this.defaultFunds(),
+      fundCfg: this.defaultFundCfg(),
+      notion: { token: '', dbId: '', worker: '' },
       ledger: [],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
     };
   }
+  defaultFundCfg() { return { dipA: 0.92, dipB: 0.89, dipC: 0.85, tpA: 1.10, tpB: 1.15, tpC: 1.20, tpD: 1.50, tpE: 1.60, tpF: 1.75 }; }
+  defaultFunds() {
+    return [
+      { id: 301, name: '卫星ETF', code: '159206', cost: 1.7217, base: 1.979, prices: [] },
+      { id: 302, name: '石油ETF鹏华', code: '159697', cost: 1.3400, base: 1.410, prices: [] },
+    ];
+  }
   defaultCountdowns() {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
     return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -744,9 +849,10 @@ class Component extends DCLogic {
   closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false, newRewardOpen: false, newMilestoneOpen: false, newFundOpen: false }); }
   addFund() {
     const name = this.v('nf-name'); if (!name) return;
-    const cost = parseFloat(this.v('nf-cost'));
-    this.save({ funds: [...(this.state.funds || []), { id: this.state.nextId, name, cost: isNaN(cost) ? null : cost, prices: [] }], nextId: this.state.nextId + 1, newFundOpen: false });
-    this.clear(['nf-name', 'nf-cost']);
+    const code = this.v('nf-code');
+    const cost = parseFloat(this.v('nf-cost')), base = parseFloat(this.v('nf-base'));
+    this.save({ funds: [...(this.state.funds || []), { id: this.state.nextId, name, code, cost: isNaN(cost) ? null : cost, base: isNaN(base) ? null : base, prices: [] }], nextId: this.state.nextId + 1, newFundOpen: false });
+    this.clear(['nf-name', 'nf-code', 'nf-cost', 'nf-base']);
   }
   delFund(id) { this.save({ funds: (this.state.funds || []).filter(f => f.id !== id) }); }
   logClose(id) {
@@ -762,6 +868,45 @@ class Component extends DCLogic {
     }) });
     el.value = '';
   }
+  openFundSettings() { this.setState({ fundSettingsOpen: true, notionMsg: '' }); }
+  closeFundSettings() { this.setState({ fundSettingsOpen: false }); }
+  saveFundSettings() {
+    const cfg = { ...this.state.fundCfg };
+    ['dipA','dipB','dipC','tpA','tpB','tpC','tpD','tpE','tpF'].forEach(k => { const v = parseFloat(this.v('cfg-' + k)); if (!isNaN(v)) cfg[k] = v; });
+    const notion = { token: this.v('nx-token'), dbId: this.v('nx-db'), worker: this.v('nx-worker') };
+    this.save({ fundCfg: cfg, notion, fundSettingsOpen: false, notionMsg: '' });
+  }
+  fundSignal(f, cfg) {
+    const ps = (f.prices || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
+    const last = ps[ps.length - 1] || null, price = last ? last.price : null;
+    const base = f.base, cost = f.cost;
+    let type = 'watch', label = '观望', trig = null, band = -1;
+    if (price != null) {
+      if (base != null) {
+        const dA = base * cfg.dipA, dB = base * cfg.dipB, dC = base * cfg.dipC;
+        if (price <= dC) { type = 'buy'; label = '抄底C破格'; trig = dC; band = 2; }
+        else if (price <= dB) { type = 'buy'; label = '抄底B破格'; trig = dB; band = 1; }
+        else if (price <= dA) { type = 'buy'; label = '抄底A触及'; trig = dA; band = 0; }
+      }
+      if (type === 'watch' && cost != null) {
+        const tps = [['F', cfg.tpF, 8], ['E', cfg.tpE, 7], ['D', cfg.tpD, 6], ['C', cfg.tpC, 5], ['B', cfg.tpB, 4], ['A', cfg.tpA, 3]];
+        for (const [g, k, bi] of tps) { if (price >= cost * k) { type = 'profit'; label = '止盈' + g + '达标'; trig = cost * k; band = bi; break; } }
+      }
+    }
+    return { price, base, cost, type, label, trig, band, dateStr: last ? last.date : '未录入' };
+  }
+  writeNotion(test) {
+    const { token, dbId, worker } = this.state.notion || {};
+    if (!worker) { this.setState({ notionMsg: '请先在设置里填写「写回地址(Worker URL)」', notionMsgColor: '#f87171' }); return; }
+    if (!token) { this.setState({ notionMsg: '请先填写 Integration Token', notionMsgColor: '#f87171' }); return; }
+    this.setState({ notionBusy: true, notionMsg: test ? '正在测试连接…' : '正在写回 Notion…', notionMsgColor: '#8b93a4' });
+    const cfg = this.state.fundCfg;
+    const rows = test ? [] : this.state.funds.map(f => { const s = this.fundSignal(f, cfg); return { name: f.name, code: f.code || '', close: s.price, base: f.base, cost: f.cost, signal: s.label, date: s.dateStr }; });
+    fetch(worker, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: test ? 'test' : 'write', token, databaseId: dbId, rows }) })
+      .then(r => r.json().catch(() => ({ ok: r.ok })))
+      .then(d => { const ok = d && (d.ok !== false); this.setState({ notionBusy: false, notionMsg: ok ? (test ? '✓ 连接成功,可以写回了' : '✓ 已写回 ' + rows.length + ' 条到 Notion') : ('✗ ' + (d.error || d.message || '失败,请检查 Token / 数据库共享')), notionMsgColor: ok ? '#4ade80' : '#f87171' }); })
+      .catch(e => this.setState({ notionBusy: false, notionMsg: '✗ 连接失败:' + e.message + '(检查 Worker 网址是否可访问)', notionMsgColor: '#f87171' }));
+  }
   startEditExp() { this.setState({ expEditing: true }); }
   commitExp() {
     const el = document.getElementById('exp-edit'); if (!el) { this.setState({ expEditing: false }); return; }
@@ -771,8 +916,30 @@ class Component extends DCLogic {
   }
   toggleSet(id) { this.save({ sets: this.state.sets.map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
   delSet(id) { this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
-  startReorder() { this.setState({ reorderOpen: true, dragId: null }); }
+  startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null }); }
   closeReorder() { clearTimeout(this._roTimer); this.setState({ reorderOpen: false, dragId: null }); }
+  pickRewardImage(id) {
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+    inp.onchange = () => { const f = inp.files && inp.files[0]; if (f) this.readRewardImage(id, f); };
+    inp.click();
+  }
+  readRewardImage(id, file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const cap = 520, sc = Math.min(1, cap / Math.max(img.width, img.height));
+        const w = Math.max(1, Math.round(img.width * sc)), h = Math.max(1, Math.round(img.height * sc));
+        const c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        let data; try { data = c.toDataURL('image/webp', 0.8); } catch (e) { data = c.toDataURL('image/jpeg', 0.8); }
+        this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: data } : r) });
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  clearRewardImage(id) { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: '' } : r) }); }
   roDown(id, e) {
     this._roStart = { y: e.clientY, moved: false };
     clearTimeout(this._roTimer);
@@ -792,12 +959,13 @@ class Component extends DCLogic {
     for (const el of items) { const r = el.getBoundingClientRect(); if (y >= r.top && y <= r.bottom) { targetId = el.getAttribute('data-ro-id'); break; } }
     if (targetId == null) { const f = items[0].getBoundingClientRect(), l = items[items.length - 1].getBoundingClientRect(); if (y < f.top) targetId = items[0].getAttribute('data-ro-id'); else if (y > l.bottom) targetId = items[items.length - 1].getAttribute('data-ro-id'); }
     if (targetId == null) return;
-    const arr = [...this.state.tasks];
+    const kind = this.state.reorderKind || 'tasks';
+    const arr = [...this.state[kind]];
     const fi = arr.findIndex(t => String(t.id) === String(this.state.dragId));
     const ti = arr.findIndex(t => String(t.id) === String(targetId));
     if (fi < 0 || ti < 0 || fi === ti) return;
     const [mv] = arr.splice(fi, 1); arr.splice(ti, 0, mv);
-    this.save({ tasks: arr });
+    this.save({ [kind]: arr });
   }
   roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
   armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
@@ -1075,20 +1243,27 @@ class Component extends DCLogic {
       });
       ungrouped.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: false }));
     }
-    const reorderRows = st.tasks.map(dec).map(t => ({ id: t.id, roId: String(t.id), name: t.name,
-      setName: (setsArr.find(s => s.id === t.setId) || {}).name || '',
-      hasSet: t.setId != null && !!setsArr.find(s => s.id === t.setId),
+    const roKind = st.reorderKind || 'tasks';
+    const roSrc = roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: r.cost + ' EXP' }))
+      : roKind === 'milestones' ? st.milestones.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
+      : st.tasks.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
+    const reorderRows = roSrc.map(t => ({ id: t.id, roId: String(t.id), name: t.name,
+      setName: t.sub, hasSet: !!t.sub,
       dragging: String(st.dragId) === String(t.id),
       dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36',
       dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
       dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
       onDown: e => this.roDown(t.id, e) }));
+    const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id; return { ...r,
       canAfford: st.exp >= r.cost && !rp, cannot: st.exp < r.cost && !rp, pending: rp,
-      costStr: r.cost + ' EXP', imgId: 'rw-' + r.id, imgHint: '拖入「' + r.name + '」的照片',
+      costStr: r.cost + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '',
+      imgStyle: r.img ? ('background-image:url(' + r.img + ');background-size:cover;background-position:center;') : '',
       onRedeem: e => { e.stopPropagation(); this.redeem(r.id); },
       onDel: e => { e.stopPropagation(); this.delReward(r.id); },
       onUndo: e => { e.stopPropagation(); this.undo(); },
+      onPickImg: e => { e.stopPropagation(); this.pickRewardImage(r.id); },
+      onClearImg: e => { e.stopPropagation(); this.clearRewardImage(r.id); },
       onEdit: () => this.openEdit('reward', r.id) }; });
     const milestones = st.milestones.map(m => {
       const pct = Math.min(100, Math.round(m.cur / m.target * 100));
@@ -1146,8 +1321,8 @@ class Component extends DCLogic {
       toggleWar: () => this.save({ warMode: !st.warMode }),
       tasks: st.warMode ? coreAll : all, taskRows, setOptions, coreDone, coreTotal: coreAll.length,
       addSet: () => this.addSet(),
-      reorderOpen: !!st.reorderOpen, reorderRows,
-      startReorder: () => this.startReorder(), closeReorder: () => this.closeReorder(),
+      reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
+      startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
       rewards, milestones, ledger, showLedger: this.props.showLedger ?? true,
       earned, spent, todayEarned: '+' + todayEarned,
@@ -1161,31 +1336,43 @@ class Component extends DCLogic {
       newRewardOpen: !!st.newRewardOpen, newMilestoneOpen: !!st.newMilestoneOpen, newFundOpen: !!st.newFundOpen,
       openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewFund: () => this.openNewFund(),
       addFund: () => this.addFund(),
-      funds: (st.funds || []).map(f => {
-        const ps = (f.prices || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
-        const last = ps[ps.length - 1] || null, prev = ps[ps.length - 2] || null;
-        const price = last ? last.price : null;
-        const dayChg = (last && prev) ? (last.price - prev.price) / prev.price * 100 : null;
-        const totChg = (price != null && f.cost) ? (price - f.cost) / f.cost * 100 : null;
-        let statLabel, statColor, cardBg, cardBorder;
-        if (price == null) { statLabel = '待录入'; statColor = '#8b93a4'; cardBg = 'linear-gradient(180deg,#15171f,#101218)'; cardBorder = '#262b36'; }
-        else if (dayChg == null) { statLabel = '首日记录'; statColor = '#c8cedb'; cardBg = 'linear-gradient(180deg,#15171f,#101218)'; cardBorder = '#3a4150'; }
-        else if (dayChg >= 3) { statLabel = '大涨 ▲▲'; statColor = '#22c55e'; cardBg = 'linear-gradient(180deg,rgba(34,197,94,0.22),rgba(34,197,94,0.05))'; cardBorder = 'rgba(34,197,94,0.55)'; }
-        else if (dayChg > 0) { statLabel = '上涨 ▲'; statColor = '#4ade80'; cardBg = 'linear-gradient(180deg,rgba(34,197,94,0.12),rgba(34,197,94,0.02))'; cardBorder = 'rgba(34,197,94,0.35)'; }
-        else if (dayChg === 0) { statLabel = '持平 —'; statColor = '#c8cedb'; cardBg = 'linear-gradient(180deg,#181b24,#111318)'; cardBorder = '#3a4150'; }
-        else if (dayChg > -3) { statLabel = '下跌 ▼'; statColor = '#f87171'; cardBg = 'linear-gradient(180deg,rgba(248,113,113,0.12),rgba(248,113,113,0.02))'; cardBorder = 'rgba(248,113,113,0.35)'; }
-        else { statLabel = '大跌 ▼▼'; statColor = '#ef4444'; cardBg = 'linear-gradient(180deg,rgba(239,68,68,0.22),rgba(239,68,68,0.05))'; cardBorder = 'rgba(239,68,68,0.55)'; }
-        const fmtPct = v => (v > 0 ? '+' : '') + v.toFixed(2) + '%';
-        return { id: f.id, name: f.name, priceStr: price == null ? '—' : price.toFixed(4),
-          hasCost: f.cost != null, costStr: f.cost != null ? f.cost.toFixed(4) : '',
-          lastDate: last ? last.date : '尚无记录', statLabel, statColor, cardBg, cardBorder,
-          hasDayChg: dayChg != null, dayChgStr: dayChg != null ? fmtPct(dayChg) : '',
-          hasTotChg: totChg != null, totChgStr: totChg != null ? fmtPct(totChg) : '',
-          totChgColor: totChg == null ? '#8b93a4' : (totChg >= 0 ? '#4ade80' : '#f87171'),
-          totLabel: totChg == null ? '' : (totChg >= 0 ? '盈利' : '亏损'),
-          onLog: () => this.logClose(f.id), onDel: () => this.delFund(f.id) };
-      }),
+      fundSettingsOpen: !!st.fundSettingsOpen, openFundSettings: () => this.openFundSettings(), closeFundSettings: () => this.closeFundSettings(), saveFundSettings: () => this.saveFundSettings(),
+      cfg: st.fundCfg, notion: st.notion || { token: '', dbId: '', worker: '' },
+      notionMsg: st.notionMsg || '', notionMsgColor: st.notionMsgColor || '#8b93a4', notionShowMsg: !!st.notionMsg,
+      writeNotion: () => this.writeNotion(false), testNotion: () => this.writeNotion(true),
+      funds: (() => {
+        const cfg = st.fundCfg, TYPE = { buy: { c: '#f87171', bg: 'linear-gradient(180deg,rgba(248,113,113,0.16),rgba(248,113,113,0.03))', bd: 'rgba(248,113,113,0.5)', dot: '#ef4444' }, profit: { c: '#4ade80', bg: 'linear-gradient(180deg,rgba(34,197,94,0.16),rgba(34,197,94,0.03))', bd: 'rgba(34,197,94,0.5)', dot: '#22c55e' }, watch: { c: '#60a5fa', bg: 'linear-gradient(180deg,rgba(96,165,250,0.12),rgba(96,165,250,0.02))', bd: 'rgba(96,165,250,0.4)', dot: '#3b82f6' } };
+        return (st.funds || []).map(f => {
+          const sg = this.fundSignal(f, cfg), t = TYPE[sg.type];
+          const price = sg.price;
+          const dev = (price != null && f.base) ? (price - f.base) / f.base * 100 : null;
+          const flt = (price != null && f.cost) ? (price - f.cost) / f.cost * 100 : null;
+          const fmtP = v => (v > 0 ? '+' : '') + v.toFixed(2) + '%';
+          const segs = ['dipA','dipB','dipC','tpA','tpB','tpC','tpD','tpE','tpF'].map((key, i) => {
+            const isDip = i < 3, on = sg.band === i;
+            const base = isDip ? '#f87171' : '#4ade80';
+            return { key, label: isDip ? '抄' + 'ABC'[i] : '盈' + 'ABCDEF'[i - 3],
+              bg: on ? base : (isDip ? 'rgba(248,113,113,0.18)' : 'rgba(74,222,128,0.16)'),
+              op: on ? '1' : '0.5' };
+          });
+          return { id: f.id, name: f.name, code: f.code || '', hasCode: !!f.code,
+            priceStr: price == null ? '—' : price.toFixed(3),
+            statLabel: sg.label, statColor: t.c, cardBg: t.bg, cardBorder: t.bd, dotColor: t.dot,
+            trigStr: sg.trig != null ? '触发 ' + sg.trig.toFixed(3) : '待录入',
+            hasDev: dev != null, devStr: dev != null ? fmtP(dev) : '—', devColor: dev == null ? '#8b93a4' : (dev >= 0 ? '#4ade80' : '#f87171'),
+            hasFlt: flt != null, fltStr: flt != null ? fmtP(flt) : '—', fltColor: flt == null ? '#8b93a4' : (flt >= 0 ? '#4ade80' : '#f87171'),
+            lastDate: sg.dateStr, segs,
+            onLog: () => this.logClose(f.id), onDel: () => this.delFund(f.id) };
+        });
+      })(),
       fundEmpty: (st.funds || []).length === 0,
+      fundSummary: (() => {
+        const cfg = st.fundCfg; let buy = 0, profit = 0, watch = 0, latest = '', fltSum = 0, fltN = 0;
+        (st.funds || []).forEach(f => { const s = this.fundSignal(f, cfg); if (s.type === 'buy') buy++; else if (s.type === 'profit') profit++; else watch++; if (s.dateStr > latest && s.dateStr !== '未录入') latest = s.dateStr; if (s.price != null && f.cost) { fltSum += (s.price - f.cost) / f.cost * 100; fltN++; } });
+        const avg = fltN ? fltSum / fltN : null;
+        return { buy, profit, watch, count: (st.funds || []).length, latest: latest || '未录入',
+          avgStr: avg == null ? '—' : ((avg > 0 ? '+' : '') + avg.toFixed(2) + '%'), avgColor: avg == null ? '#c8cedb' : (avg >= 0 ? '#4ade80' : '#f87171') };
+      })(),
       pomoTime: mm + ':' + ss, pomoRingBg: `conic-gradient(${accent} ${pPct}%, #232833 0)`,
       pomoRunning: !!st.pomoRunning, pomoIdle: !st.pomoRunning,
       pomoStateLabel: st.pomoRunning ? '专注中…' : (pRem <= 0 ? '完成 ✦' : (pRem < pTotal ? '已暂停' : '准备开始')),
