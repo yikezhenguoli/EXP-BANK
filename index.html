@@ -173,7 +173,8 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ r.onDel }}" style="cursor:pointer;position:absolute;top:6px;right:8px;z-index:2;color:rgba(230,233,240,0.55);font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,0.8);" style-hover="color:#f87171;">×</div>
             <div style="position:relative;height:104px;">
               <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ false }}">
-                <div onClick="{{ r.onPickImg }}" title="点击更换照片" style="cursor:pointer;position:absolute;inset:0;background-image:url({{ r.img }});background-size:cover;background-position:center;"></div>
+                <div onPointerDown="{{ r.onImgDown }}" title="上下拖动可调整照片显示位置" style="cursor:grab;touch-action:none;position:absolute;inset:0;background-image:url({{ r.img }});background-size:cover;background-position:center {{ r.imgPos }};"></div>
+                <div onClick="{{ r.onPickImg }}" title="更换照片" style="cursor:pointer;position:absolute;bottom:6px;right:60px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:10px;color:#e6e9f0;background:rgba(10,11,16,0.6);border-radius:6px;padding:2px 7px;" style-hover="color:#4ade80;">更换</div>
                 <div onClick="{{ r.onClearImg }}" title="移除照片" style="cursor:pointer;position:absolute;bottom:6px;right:8px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:10px;color:#e6e9f0;background:rgba(10,11,16,0.6);border-radius:6px;padding:2px 7px;" style-hover="color:#f87171;">移除</div>
               </sc-if>
               <sc-if value="{{ r.noImg }}" hint-placeholder-val="{{ true }}">
@@ -545,7 +546,7 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeBackup }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:420px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">数据备份 // BACKUP</div>
-        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">数据默认只存在当前浏览器,不跨设备同步。要搬到别的手机/浏览器:在原设备<b style="color:#c3c9d6;">复制</b>下面这串备份码,在新设备打开本页 → 备份 → 粘贴 → <b style="color:#c3c9d6;">导入并覆盖</b>。</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">下面这串<b style="color:#c3c9d6;">短备份码</b>不含图片,适合复制到微信/备忘录搬家。<b style="color:#c3c9d6;">奖励照片</b>不进短码——要连图片一起搬,请用<b style="color:#c3c9d6;">「存为文件」</b>导出完整备份,在新设备粘贴文件内容导入。</div>
         <textarea id="bk-text" readonly value="{{ backupCode }}" style="width:100%;box-sizing:border-box;height:96px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#c3c9d6;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;"></textarea>
         <div style="display:flex;gap:8px;">
           <div onClick="{{ copyBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">{{ copyLabel }}</div>
@@ -1030,7 +1031,33 @@ class Component extends DCLogic {
   closeEdit() { this.setState({ editing: null }); }
   openBackup() { this.setState({ backupOpen: true, backupMsg: '', copyLabel: '复制备份码' }); }
   closeBackup() { this.setState({ backupOpen: false, backupMsg: '' }); }
-  makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
+  makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; const lite = { ...data, rewards: (data.rewards || []).map(r => { const { img, ...rest } = r; return rest; }) }; return btoa(unescape(encodeURIComponent(JSON.stringify(lite)))); }
+  makeFullBackup() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
+  setRewardPos(id, pos) { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, imgPos: Math.max(0, Math.min(100, pos)) } : r) }); }
+  rewardImgDown(id, e) {
+    e.stopPropagation();
+    const pt = e.touches ? e.touches[0] : e;
+    const startY = pt.clientY;
+    const r = this.state.rewards.find(x => x.id === id);
+    const startPos = (r && r.imgPos != null) ? r.imgPos : 50;
+    const target = e.currentTarget, h = target.offsetHeight || 104;
+    let moved = false, pending = startPos;
+    const move = ev => {
+      const p = ev.touches ? ev.touches[0] : ev;
+      const dy = p.clientY - startY;
+      if (Math.abs(dy) > 3) moved = true;
+      pending = Math.max(0, Math.min(100, startPos + (dy / h) * 100));
+      target.style.backgroundPosition = 'center ' + pending + '%';
+      if (ev.cancelable) ev.preventDefault();
+    };
+    const up = () => {
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', up);
+      if (moved) this.setRewardPos(id, pending);
+    };
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', up);
+  }
   copyBackup() {
     const code = this.makeBackupCode();
     const done = () => this.setState({ copyLabel: '✓ 已复制' });
@@ -1039,7 +1066,7 @@ class Component extends DCLogic {
   }
   selectBackup() { const el = document.getElementById('bk-text'); if (el) { el.focus(); el.select(); try { document.execCommand('copy'); this.setState({ copyLabel: '✓ 已复制' }); } catch (_) {} } }
   downloadBackup() {
-    const code = this.makeBackupCode();
+    const code = this.makeFullBackup();
     const blob = new Blob([code], { type: 'text/plain' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
     a.download = 'exp-bank-backup-' + this.todayKey() + '.txt'; a.click();
@@ -1257,13 +1284,13 @@ class Component extends DCLogic {
     const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id; return { ...r,
       canAfford: st.exp >= r.cost && !rp, cannot: st.exp < r.cost && !rp, pending: rp,
-      costStr: r.cost + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '',
-      imgStyle: r.img ? ('background-image:url(' + r.img + ');background-size:cover;background-position:center;') : '',
+      costStr: r.cost + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '', imgPos: (r.imgPos != null ? r.imgPos : 50) + '%',
       onRedeem: e => { e.stopPropagation(); this.redeem(r.id); },
       onDel: e => { e.stopPropagation(); this.delReward(r.id); },
       onUndo: e => { e.stopPropagation(); this.undo(); },
       onPickImg: e => { e.stopPropagation(); this.pickRewardImage(r.id); },
       onClearImg: e => { e.stopPropagation(); this.clearRewardImage(r.id); },
+      onImgDown: e => this.rewardImgDown(r.id, e),
       onEdit: () => this.openEdit('reward', r.id) }; });
     const milestones = st.milestones.map(m => {
       const pct = Math.min(100, Math.round(m.cur / m.target * 100));
