@@ -125,13 +125,13 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </sc-if>
         <sc-if value="{{ t.isTask }}" hint-placeholder-val="{{ true }}">
-        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
-          <div onClick="{{ t.onToggleCore }}" title="设为核心微习惯(战时模式)" style="cursor:pointer;font-size:13px;color:{{ t.starColor }};width:16px;text-align:center;">★</div>
+        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+          <div onClick="{{ t.onToggleCore }}" title="设为核心微习惯(战时模式)" style="cursor:pointer;font-size:13px;color:{{ t.starColor }};width:16px;flex-shrink:0;text-align:center;">★</div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
-            <div style="width:3px;align-self:stretch;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
+            <div style="width:3px;align-self:stretch;flex-shrink:0;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
           </sc-if>
-          <div style="flex:1;min-width:96px;">
-            <div style="font-size:15px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;">{{ t.name }}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:15px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ t.name }}</div>
             <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:1px;">{{ t.cycleLabel }}</div>
           </div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
@@ -148,7 +148,7 @@ input[type="date"]{color-scheme:dark;}
               <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;width:30px;">{{ t.pctStr }}</span>
             </div>
           </sc-if>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};">{{ t.expStr }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0;color:{{ accent }};">{{ t.expStr }}</div>
           <sc-if value="{{ t.pending }}" hint-placeholder-val="{{ false }}">
             <div onClick="{{ t.onUndo }}" title="已完成 · 点一下可撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">✓ 已完成</div>
           </sc-if>
@@ -166,7 +166,7 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- STORE -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">SHOPPING MALL // REDEEM</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">SHOPPING MALL // REDEEM</div><div onClick="{{ openNewReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建奖励</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <sc-for list="{{ rewards }}" as="r" hint-placeholder-count="4">
           <div style="background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05) 42%,rgba(255,255,255,0.02)) border-box;border:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 28px rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;position:relative;">
@@ -192,16 +192,11 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </sc-for>
       </div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <input id="nr-name" placeholder="新奖励名" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
-        <input id="nr-cost" placeholder="价格" type="number" style="width:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <div onClick="{{ addReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:#4ade80;">+ 添加</div>
-      </div>
     </div>
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">里程碑 // MILESTONE</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div></div>
       <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="1">
         <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:12px;display:flex;flex-direction:column;gap:8px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div style="display:flex;align-items:center;gap:10px;">
@@ -233,14 +228,6 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </div>
       </sc-for>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-        <input id="nm-name" placeholder="大目标名" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
-        <input id="nm-target" placeholder="总量" type="number" style="width:56px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <input id="nm-step" placeholder="步长" type="number" style="width:52px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <input id="nm-bonus" placeholder="奖励EXP" type="number" style="width:72px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        <input id="nm-deadline" type="date" title="截止日期(可选)" style="width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 8px;color:#aeb6c6;font-size:12px;font-family:'JetBrains Mono',monospace;">
-        <div onClick="{{ addMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:#4ade80;">+ 添加</div>
-      </div>
     </div>
 
     <!-- LEDGER -->
@@ -381,23 +368,71 @@ input[type="date"]{color-scheme:dark;}
   </div>
   </sc-if>
 
+  <!-- FUND BOARD TAB -->
+  <sc-if value="{{ isFund }}" hint-placeholder-val="{{ false }}">
+  <div style="position:relative;z-index:1;max-width:900px;margin:0 auto;padding:18px 24px 0;">
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">基金决策收盘台 // FUND</div><div onClick="{{ openNewFund }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建标的</div></div>
+      <div style="font-size:11.5px;color:#8b93a4;line-height:1.6;">每日录入收盘价，卡片颜色提醒当日涨跌状态（大涨/上涨/持平/下跌/大跌）。写回 Notion 需后台支持，暂未开启。</div>
+      <sc-if value="{{ fundEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:26px 0;color:#535a6a;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">· 还没有标的，点右上「+ 新建标的」添加 ·</div>
+      </sc-if>
+      <div style="display:grid;grid-template-columns:{{ gridCols }};gap:12px;">
+        <sc-for list="{{ funds }}" as="f" hint-placeholder-count="0">
+          <div style="border:1.5px solid {{ f.cardBorder }};border-radius:14px;background:{{ f.cardBg }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 30px rgba(0,0,0,0.4);padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="flex:1;min-width:0;font-size:16px;font-weight:700;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ f.name }}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:0.5px;color:{{ f.statColor }};border:1px solid {{ f.cardBorder }};border-radius:99px;padding:3px 12px;white-space:nowrap;">{{ f.statLabel }}</div>
+              <div onClick="{{ f.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;" style-hover="color:#f87171;">×</div>
+            </div>
+            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;line-height:1;color:#eef1f7;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ f.priceStr }}</div>
+              <sc-if value="{{ f.hasDayChg }}" hint-placeholder-val="{{ false }}">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:{{ f.statColor }};">{{ f.dayChgStr }}</div>
+              </sc-if>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">最新 {{ f.lastDate }}</div>
+              <sc-if value="{{ f.hasCost }}" hint-placeholder-val="{{ false }}">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">成本 {{ f.costStr }}</div>
+              </sc-if>
+              <sc-if value="{{ f.hasTotChg }}" hint-placeholder-val="{{ false }}">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:{{ f.totChgColor }};">{{ f.totLabel }} {{ f.totChgStr }}</div>
+              </sc-if>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input id="fc-{{ f.id }}" type="number" placeholder="今日收盘价" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              <div onClick="{{ f.onLog }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:8px 14px;white-space:nowrap;" style-hover="filter:brightness(1.12);">录入</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
   <!-- BOTTOM NAV -->
   <div style="position:fixed;left:0;right:0;bottom:0;z-index:40;background:linear-gradient(180deg,rgba(14,16,22,0.80),rgba(9,10,14,0.94));backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,0.08);box-shadow:0 -8px 30px rgba(0,0,0,0.4);">
-    <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;">
+    <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;">
       <div onClick="{{ goLists }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navListsColor }};">
         <sc-if value="{{ navListsActive }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
         <div style="font-size:18px;line-height:1;">▤</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;">Lists</div>
       </div>
-      <div onClick="{{ goPomo }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navPomoColor }};">
-        <sc-if value="{{ navPomoActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
-        <div style="font-size:18px;line-height:1;">◷</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;">番茄专注</div>
+      <div onClick="{{ goFund }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navFundColor }};">
+        <sc-if value="{{ navFundActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
+        <div style="font-size:18px;line-height:1;">◉</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">收盘台</div>
       </div>
       <div onClick="{{ goCountdown }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navCountdownColor }};">
         <sc-if value="{{ navCountdownActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
         <div style="font-size:18px;line-height:1;">⧗</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;">未来倒计时</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">未来倒计时</div>
+      </div>
+      <div onClick="{{ goPomo }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navPomoColor }};">
+        <sc-if value="{{ navPomoActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
+        <div style="font-size:18px;line-height:1;">◷</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">番茄专注</div>
       </div>
     </div>
   </div>
@@ -495,6 +530,75 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+  <!-- NEW REWARD MODAL -->
+  <sc-if value="{{ newRewardOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建奖励 // NEW REWARD</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">建好后卡片上可拖入照片。图片直接拖到卡片图上即可更换。</div>
+        <label style="display:block;font-size:11px;color:#697084;">奖励名称
+          <input id="nr-name" placeholder="例如:燕麦拿铁" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">兑换价格(EXP)
+          <input id="nr-cost" type="number" placeholder="200" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加奖励</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- NEW MILESTONE MODAL -->
+  <sc-if value="{{ newMilestoneOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:360px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建里程碑 // NEW MILESTONE</div>
+        <label style="display:block;font-size:11px;color:#697084;">大目标名称
+          <input id="nm-name" placeholder="例如:科一通过 · 刷满 300 题" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1;font-size:11px;color:#697084;">总量
+            <input id="nm-target" type="number" placeholder="300" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+          <label style="flex:1;font-size:11px;color:#697084;">每次步长
+            <input id="nm-step" type="number" placeholder="10" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+          <label style="flex:1;font-size:11px;color:#697084;">达成奖励
+            <input id="nm-bonus" type="number" placeholder="300" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+        </div>
+        <label style="display:block;font-size:11px;color:#697084;">截止日期(可留空)
+          <input id="nm-deadline" type="date" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:12px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建里程碑</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- NEW FUND MODAL -->
+  <sc-if value="{{ newFundOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建标的 // NEW FUND</div>
+        <label style="display:block;font-size:11px;color:#697084;">标的名称
+          <input id="nf-name" placeholder="例如:纳指ETF / 中概互联" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">成本价(可选,用于盈亏计算)
+          <input id="nf-cost" type="number" placeholder="如 1.2340" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addFund }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加标的</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- NEW TASK MODAL -->
   <sc-if value="{{ newTaskOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
@@ -587,6 +691,7 @@ class Component extends DCLogic {
       s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
       if (!s.sets) s.sets = [];
+      if (!s.funds) s.funds = [];
       if (!s.countdowns) s.countdowns = this.defaultCountdowns();
       if (!s.tab) s.tab = 'lists';
       if (!s.pomoPreset) s.pomoPreset = '25';
@@ -614,6 +719,7 @@ class Component extends DCLogic {
       ],
       milestones: [{ id: 1, name: '科一通过 · 刷满 300 题', cur: 0, target: 300, step: 10, bonus: 300, claimed: false }],
       sets: [],
+      funds: [],
       ledger: [],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
@@ -623,7 +729,7 @@ class Component extends DCLogic {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
     return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, dragId, vw, newTaskOpen, newSetOpen, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -632,7 +738,30 @@ class Component extends DCLogic {
   }
   openNewTask() { this.setState({ newTaskOpen: true }); }
   openNewSet() { this.setState({ newSetOpen: true }); }
-  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false }); }
+  openNewReward() { this.setState({ newRewardOpen: true }); }
+  openNewMilestone() { this.setState({ newMilestoneOpen: true }); }
+  openNewFund() { this.setState({ newFundOpen: true }); }
+  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false, newRewardOpen: false, newMilestoneOpen: false, newFundOpen: false }); }
+  addFund() {
+    const name = this.v('nf-name'); if (!name) return;
+    const cost = parseFloat(this.v('nf-cost'));
+    this.save({ funds: [...(this.state.funds || []), { id: this.state.nextId, name, cost: isNaN(cost) ? null : cost, prices: [] }], nextId: this.state.nextId + 1, newFundOpen: false });
+    this.clear(['nf-name', 'nf-cost']);
+  }
+  delFund(id) { this.save({ funds: (this.state.funds || []).filter(f => f.id !== id) }); }
+  logClose(id) {
+    const el = document.getElementById('fc-' + id); if (!el) return;
+    const price = parseFloat(el.value); if (isNaN(price)) return;
+    const today = this.todayKey();
+    this.save({ funds: this.state.funds.map(f => {
+      if (f.id !== id) return f;
+      const prices = (f.prices || []).filter(p => p.date !== today);
+      prices.push({ date: today, price });
+      prices.sort((a, b) => a.date < b.date ? -1 : 1);
+      return { ...f, prices };
+    }) });
+    el.value = '';
+  }
   startEditExp() { this.setState({ expEditing: true }); }
   commitExp() {
     const el = document.getElementById('exp-edit'); if (!el) { this.setState({ expEditing: false }); return; }
@@ -828,7 +957,7 @@ class Component extends DCLogic {
   addReward() {
     const name = this.v('nr-name'); if (!name) return;
     const cost = parseInt(this.v('nr-cost')) || 100;
-    this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost }], nextId: this.state.nextId + 1 });
+    this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost }], nextId: this.state.nextId + 1, newRewardOpen: false });
     this.clear(['nr-name', 'nr-cost']);
   }
   addMilestone() {
@@ -837,7 +966,7 @@ class Component extends DCLogic {
     const step = parseInt(this.v('nm-step')) || 1;
     const bonus = parseInt(this.v('nm-bonus')) || 100;
     const deadline = this.v('nm-deadline') || '';
-    this.save({ milestones: [...this.state.milestones, { id: this.state.nextId, name, cur: 0, target, step, bonus, deadline, claimed: false }], nextId: this.state.nextId + 1 });
+    this.save({ milestones: [...this.state.milestones, { id: this.state.nextId, name, cur: 0, target, step, bonus, deadline, claimed: false }], nextId: this.state.nextId + 1, newMilestoneOpen: false });
     this.clear(['nm-name', 'nm-target', 'nm-step', 'nm-bonus', 'nm-deadline']);
   }
   msPlus(id) {
@@ -911,7 +1040,7 @@ class Component extends DCLogic {
       return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: !doneNow && !tp, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
         isFormed, hasStreak: liveStreak > 0 && !isFormed, streakLabel: '连 ' + liveStreak + ' 天', formedLabel: '已成势 · ' + liveStreak + ' 连',
         cycleLabel: k ? `${cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
-        hasRing: !!k, pctStr: pct + '%',
+        hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
         starColor: t.core ? '#fbbf24' : '#2b3040',
         onDone: e => { e.stopPropagation(); this.complete(t.id); },
@@ -1025,10 +1154,38 @@ class Component extends DCLogic {
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad: tier.btnGrad, tierScene: tier.scene, heroBg: tier.heroBg, heroSheen: tier.heroSheen,
       cardTop: tier.cardTop, cardBot: tier.cardBot, rowTop: tier.rowTop, rowBot: tier.rowBot,
       gridCols: resp.gridCols, pomoCols: resp.pomoCols, heroH: resp.heroH, titleSize: resp.titleSize, balSize: resp.balSize,
-      isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown',
-      goLists: () => this.setTab('lists'), goPomo: () => this.setTab('pomo'), goCountdown: () => this.setTab('countdown'),
-      navListsActive: tabNow === 'lists', navPomoActive: tabNow === 'pomo', navCountdownActive: tabNow === 'countdown',
-      navListsColor: tabNow === 'lists' ? accent : '#7c8494', navPomoColor: tabNow === 'pomo' ? accent : '#7c8494', navCountdownColor: tabNow === 'countdown' ? accent : '#7c8494',
+      isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown', isFund: tabNow === 'fund',
+      goLists: () => this.setTab('lists'), goPomo: () => this.setTab('pomo'), goCountdown: () => this.setTab('countdown'), goFund: () => this.setTab('fund'),
+      navListsActive: tabNow === 'lists', navPomoActive: tabNow === 'pomo', navCountdownActive: tabNow === 'countdown', navFundActive: tabNow === 'fund',
+      navListsColor: tabNow === 'lists' ? accent : '#7c8494', navPomoColor: tabNow === 'pomo' ? accent : '#7c8494', navCountdownColor: tabNow === 'countdown' ? accent : '#7c8494', navFundColor: tabNow === 'fund' ? accent : '#7c8494',
+      newRewardOpen: !!st.newRewardOpen, newMilestoneOpen: !!st.newMilestoneOpen, newFundOpen: !!st.newFundOpen,
+      openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewFund: () => this.openNewFund(),
+      addFund: () => this.addFund(),
+      funds: (st.funds || []).map(f => {
+        const ps = (f.prices || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
+        const last = ps[ps.length - 1] || null, prev = ps[ps.length - 2] || null;
+        const price = last ? last.price : null;
+        const dayChg = (last && prev) ? (last.price - prev.price) / prev.price * 100 : null;
+        const totChg = (price != null && f.cost) ? (price - f.cost) / f.cost * 100 : null;
+        let statLabel, statColor, cardBg, cardBorder;
+        if (price == null) { statLabel = '待录入'; statColor = '#8b93a4'; cardBg = 'linear-gradient(180deg,#15171f,#101218)'; cardBorder = '#262b36'; }
+        else if (dayChg == null) { statLabel = '首日记录'; statColor = '#c8cedb'; cardBg = 'linear-gradient(180deg,#15171f,#101218)'; cardBorder = '#3a4150'; }
+        else if (dayChg >= 3) { statLabel = '大涨 ▲▲'; statColor = '#22c55e'; cardBg = 'linear-gradient(180deg,rgba(34,197,94,0.22),rgba(34,197,94,0.05))'; cardBorder = 'rgba(34,197,94,0.55)'; }
+        else if (dayChg > 0) { statLabel = '上涨 ▲'; statColor = '#4ade80'; cardBg = 'linear-gradient(180deg,rgba(34,197,94,0.12),rgba(34,197,94,0.02))'; cardBorder = 'rgba(34,197,94,0.35)'; }
+        else if (dayChg === 0) { statLabel = '持平 —'; statColor = '#c8cedb'; cardBg = 'linear-gradient(180deg,#181b24,#111318)'; cardBorder = '#3a4150'; }
+        else if (dayChg > -3) { statLabel = '下跌 ▼'; statColor = '#f87171'; cardBg = 'linear-gradient(180deg,rgba(248,113,113,0.12),rgba(248,113,113,0.02))'; cardBorder = 'rgba(248,113,113,0.35)'; }
+        else { statLabel = '大跌 ▼▼'; statColor = '#ef4444'; cardBg = 'linear-gradient(180deg,rgba(239,68,68,0.22),rgba(239,68,68,0.05))'; cardBorder = 'rgba(239,68,68,0.55)'; }
+        const fmtPct = v => (v > 0 ? '+' : '') + v.toFixed(2) + '%';
+        return { id: f.id, name: f.name, priceStr: price == null ? '—' : price.toFixed(4),
+          hasCost: f.cost != null, costStr: f.cost != null ? f.cost.toFixed(4) : '',
+          lastDate: last ? last.date : '尚无记录', statLabel, statColor, cardBg, cardBorder,
+          hasDayChg: dayChg != null, dayChgStr: dayChg != null ? fmtPct(dayChg) : '',
+          hasTotChg: totChg != null, totChgStr: totChg != null ? fmtPct(totChg) : '',
+          totChgColor: totChg == null ? '#8b93a4' : (totChg >= 0 ? '#4ade80' : '#f87171'),
+          totLabel: totChg == null ? '' : (totChg >= 0 ? '盈利' : '亏损'),
+          onLog: () => this.logClose(f.id), onDel: () => this.delFund(f.id) };
+      }),
+      fundEmpty: (st.funds || []).length === 0,
       pomoTime: mm + ':' + ss, pomoRingBg: `conic-gradient(${accent} ${pPct}%, #232833 0)`,
       pomoRunning: !!st.pomoRunning, pomoIdle: !st.pomoRunning,
       pomoStateLabel: st.pomoRunning ? '专注中…' : (pRem <= 0 ? '完成 ✦' : (pRem < pTotal ? '已暂停' : '准备开始')),
