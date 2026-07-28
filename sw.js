@@ -1,5 +1,5 @@
 // EXP BANK service worker — offline-first cache
-const CACHE = 'exp-bank-v7';
+const CACHE = 'exp-bank-v8';
 const ASSETS = [
   './',
   './index.html',
@@ -24,22 +24,29 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Cache-first for our own assets, network fallback; navigations fall back to index.html offline.
+// Network-first for HTML/JS (so updates apply automatically); cache fallback offline.
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  e.respondWith(
-    caches.match(req).then((hit) => {
-      if (hit) return hit;
-      return fetch(req)
+  const isDoc = req.mode === 'navigate' || /\.(html|js|json)$/.test(new URL(req.url).pathname);
+  if (isDoc) {
+    e.respondWith(
+      fetch(req)
         .then((res) => {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
           return res;
         })
-        .catch(() => {
-          if (req.mode === 'navigate') return caches.match('./index.html');
-        });
-    })
+        .catch(() => caches.match(req).then((hit) => hit || caches.match('./index.html')))
+    );
+    return;
+  }
+  // Cache-first for images/other static assets.
+  e.respondWith(
+    caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+      const copy = res.clone();
+      caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+      return res;
+    }))
   );
 });
