@@ -373,10 +373,10 @@ input[type="date"]{color-scheme:dark;}
 
   <!-- FUND BOARD TAB -->
   <sc-if value="{{ isFund }}" hint-placeholder-val="{{ false }}">
-  <div style="position:relative;z-index:1;max-width:900px;margin:0 auto;padding:18px 24px 0;">
-    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+  <div style="position:relative;z-index:1;max-width:900px;margin:0 auto;padding:18px 14px 0;">
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:{{ fundPad }};display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">基金决策收盘台 // FUND</div><div onClick="{{ openFundSettings }}" title="阈值·标的管理·Notion 写回" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 12px;" style-hover="border-color:{{ accent }};">⚙ 设置</div><div onClick="{{ writeNotion }}" title="一键写回 Notion（需先在设置里配好）" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">↻ 写回 Notion</div><div onClick="{{ openNewFund }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建标的</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div style="display:grid;grid-template-columns:{{ fundSumCols }};gap:10px;">
         <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">今日信号</div>
           <div style="display:flex;align-items:center;gap:10px;">
@@ -400,7 +400,7 @@ input[type="date"]{color-scheme:dark;}
       </sc-if>
       <div style="display:grid;grid-template-columns:{{ gridCols }};gap:12px;">
         <sc-for list="{{ funds }}" as="f" hint-placeholder-count="0">
-          <div style="border:1.5px solid {{ f.cardBorder }};border-radius:14px;background:{{ f.cardBg }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 30px rgba(0,0,0,0.4);padding:14px 16px;display:flex;flex-direction:column;gap:12px;">
+          <div style="border:1.5px solid {{ f.cardBorder }};border-radius:14px;background:{{ f.cardBg }};box-shadow:{{ fundCardSh }};padding:14px 16px;display:flex;flex-direction:column;gap:12px;">
             <div style="display:flex;align-items:center;gap:10px;">
               <div style="width:9px;height:9px;border-radius:50%;flex-shrink:0;background:{{ f.dotColor }};box-shadow:0 0 10px {{ f.dotColor }};"></div>
               <div onClick="{{ f.onEdit }}" title="点击编辑标的" style="cursor:pointer;flex:1;min-width:0;">
@@ -564,9 +564,23 @@ input[type="date"]{color-scheme:dark;}
           <div onClick="{{ copyBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">复制短码(发微信)</div>
           <div onClick="{{ copyFullBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#c3c9d6;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:9px 0;" style-hover="border-color:{{ accent }};">复制完整码(含图)</div>
         </div>
+        <div onClick="{{ exportDocx }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">⬇ 生成 Word(.docx)文件保存</div>
         <div style="height:1px;background:#1e222b;margin:2px 0;"></div>
-        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在新设备粘贴备份码到下框,点导入(会<b style="color:#f87171;">覆盖</b>当前数据):</div>
-        <textarea id="bk-import" placeholder="在此粘贴备份码…" style="width:100%;box-sizing:border-box;height:80px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;"></textarea>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">恢复数据(会<b style="color:#f87171;">覆盖</b>当前):粘贴备份码,或上传之前导出的 Word 文件——</div>
+        <div style="display:flex;gap:10px;">
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">① 粘贴备份码</div>
+            <textarea id="bk-import" placeholder="在此粘贴备份码…" style="width:100%;box-sizing:border-box;height:96px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;"></textarea>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">② 上传 Word 文件</div>
+            <div onClick="{{ pickDocx }}" style="cursor:pointer;height:96px;box-sizing:border-box;background:#0d0f14;border:1px dashed #2f3542;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#697084;" style-hover="border-color:{{ accent }};color:#c3c9d6;">
+              <div style="font-size:22px;line-height:1;">⬆</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;">点击选 .docx</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#535a6a;">自动识别其中备份码</div>
+            </div>
+          </div>
+        </div>
         <sc-if value="{{ backupMsg }}" hint-placeholder-val="{{ false }}">
           <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:{{ backupMsgColor }};">{{ backupMsg }}</div>
         </sc-if>
@@ -1157,6 +1171,63 @@ class Component extends DCLogic {
     else this.setState({ backupFull: true }, () => this.selectBackup());
   }
   toggleFullView() { this.setState({ backupFull: !this.state.backupFull, copyLabel: '复制备份码' }); }
+  _crc32(bytes) {
+    let c, crc = 0xFFFFFFFF;
+    if (!this._crcT) { this._crcT = []; for (let n = 0; n < 256; n++) { c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); this._crcT[n] = c >>> 0; } }
+    for (let i = 0; i < bytes.length; i++) crc = this._crcT[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+  _zip(files) {
+    const enc = new TextEncoder(); const parts = []; const central = []; let offset = 0;
+    const u16 = n => [n & 255, (n >>> 8) & 255]; const u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+    files.forEach(f => {
+      const nameB = enc.encode(f.name); const data = enc.encode(f.content); const crc = this._crc32(data);
+      const lh = [].concat(u32(0x04034b50), u16(20), u16(0), u16(0), u16(0), u16(0), u32(crc), u32(data.length), u32(data.length), u16(nameB.length), u16(0));
+      parts.push(new Uint8Array(lh), nameB, data);
+      const ch = [].concat(u32(0x02014b50), u16(20), u16(20), u16(0), u16(0), u16(0), u16(0), u32(crc), u32(data.length), u32(data.length), u16(nameB.length), u16(0), u16(0), u16(0), u16(0), u32(0), u32(offset));
+      central.push(new Uint8Array(ch), nameB);
+      offset += lh.length + nameB.length + data.length;
+    });
+    let cSize = 0; central.forEach(p => cSize += p.length);
+    const end = new Uint8Array([].concat(u32(0x06054b50), u16(0), u16(0), u16(files.length), u16(files.length), u32(cSize), u32(offset), u16(0)));
+    const blobParts = parts.concat(central); blobParts.push(end);
+    return new Blob(blobParts, { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  }
+  exportDocx() {
+    const code = this.makeFullBackup();
+    const xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t xml:space="preserve">EXP BANK 完整备份码(勿改动下面这行,导入时会自动识别):</w:t></w:r></w:p><w:p><w:r><w:t xml:space="preserve">' + code + '</w:t></w:r></w:p></w:body></w:document>';
+    const ct = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
+    const rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+    const blob = this._zip([{ name: '[Content_Types].xml', content: ct }, { name: '_rels/.rels', content: rels }, { name: 'word/document.xml', content: xml }]);
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'EXP-BANK-备份-' + this.todayKey() + '.docx'; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    this.setState({ backupMsg: '✓ 已生成 docx,可用 WPS 打开保存', backupMsgColor: '#4ade80' });
+  }
+  importDocxFile(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const buf = new Uint8Array(reader.result); const dec = new TextDecoder('utf-8');
+        const whole = dec.decode(buf);
+        const idx = whole.indexOf('word/document.xml');
+        let xml = whole;
+        // 尝试从 document.xml 的 <w:t> 里提取;若被压缩则退回全文正则
+        const texts = [...whole.matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/g)].map(m => m[1]).join('');
+        const cand = texts || whole;
+        const m = cand.match(/[A-Za-z0-9+/=]{80,}/);
+        if (!m) { this.setState({ backupMsg: '未能从 docx 里识别到备份码,请确认是本 App 导出的文件', backupMsgColor: '#f87171' }); return; }
+        const el = document.getElementById('bk-import'); if (el) el.value = m[0];
+        this.setState({ backupMsg: '✓ 已从 docx 读到备份码,点「导入并覆盖」应用', backupMsgColor: '#4ade80' });
+      } catch (e) { this.setState({ backupMsg: '读取 docx 失败:' + e.message, backupMsgColor: '#f87171' }); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  pickDocx() {
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.docx,.doc,.txt';
+    inp.onchange = () => { const f = inp.files && inp.files[0]; if (f) this.importDocxFile(f); };
+    inp.click();
+  }
   importBackup() {
     const el = document.getElementById('bk-import'); const raw = el ? el.value.trim() : '';
     if (!raw) { this.setState({ backupMsg: '请先粘贴备份码', backupMsgColor: '#f87171' }); return; }
@@ -1315,7 +1386,9 @@ class Component extends DCLogic {
     const vw = st.vw || (typeof window !== 'undefined' ? window.innerWidth : 1200);
     const mob = vw < 720;
     const resp = { gridCols: mob ? '1fr' : '1.05fr 1fr', pomoCols: mob ? '1fr' : '1.15fr 1fr',
-      heroH: mob ? 'auto' : '264px', titleSize: mob ? '26px' : '38px', balSize: mob ? '40px' : '54px' };
+      heroH: mob ? 'auto' : '264px', titleSize: mob ? '26px' : '38px', balSize: mob ? '40px' : '54px',
+      fundSumCols: mob ? '1fr 1fr' : '1fr 1fr 1fr', fundCardSh: mob ? 'inset 0 1px 0 rgba(255,255,255,0.06)' : 'inset 0 1px 0 rgba(255,255,255,0.06),0 12px 30px rgba(0,0,0,0.4)',
+      fundPad: mob ? '12px' : '16px' };
     const cyc = { daily: '每日', weekly: '每周', monthly: '每月', once: '单次', free: '不限次' };
     const dec = t => {
       const k = this.key(t.cycle), times = t.times || 1;
@@ -1453,6 +1526,7 @@ class Component extends DCLogic {
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad: tier.btnGrad, tierScene: tier.scene, heroBg: tier.heroBg, heroSheen: tier.heroSheen,
       cardTop: tier.cardTop, cardBot: tier.cardBot, rowTop: tier.rowTop, rowBot: tier.rowBot,
       gridCols: resp.gridCols, pomoCols: resp.pomoCols, heroH: resp.heroH, titleSize: resp.titleSize, balSize: resp.balSize,
+      fundSumCols: resp.fundSumCols, fundCardSh: resp.fundCardSh, fundPad: resp.fundPad,
       isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown', isFund: tabNow === 'fund',
       goLists: () => this.setTab('lists'), goPomo: () => this.setTab('pomo'), goCountdown: () => this.setTab('countdown'), goFund: () => this.setTab('fund'),
       navListsActive: tabNow === 'lists', navPomoActive: tabNow === 'pomo', navCountdownActive: tabNow === 'countdown', navFundActive: tabNow === 'fund',
@@ -1557,6 +1631,7 @@ class Component extends DCLogic {
       copyLabel: st.copyLabel || '复制备份码', backupMsg: st.backupMsg || '', backupMsgColor: st.backupMsgColor || '#8b93a4',
       openBackup: () => this.openBackup(), closeBackup: () => this.closeBackup(),
       copyBackup: () => this.copyBackup(), copyFullBackup: () => this.copyFullBackup(), toggleFullView: () => this.toggleFullView(), importBackup: () => this.importBackup(),
+      exportDocx: () => this.exportDocx(), pickDocx: () => this.pickDocx(),
       backupFull: !!st.backupFull,
       backupHint: st.backupFull ? '当前是完整码(含奖励图片),很长——用「复制完整码」直接复制,粘到备忘录/文件保存。' : '这串短码不含图片,适合发微信/备忘录。要连图片一起搬,点下方「复制完整码(含图)」。',
       selDateISO: sel, todayISO: todayK, selDateLabel: this.labelFromISO(sel),
