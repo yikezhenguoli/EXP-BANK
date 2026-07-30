@@ -1,5 +1,5 @@
 // EXP BANK service worker — offline-first cache
-const CACHE = 'exp-bank-v13';
+const CACHE = 'exp-bank-v15';
 const ASSETS = [
   './',
   './index.html',

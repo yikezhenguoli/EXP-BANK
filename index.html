@@ -226,7 +226,7 @@ input[type="date"]{color-scheme:dark;}
               <div onClick="{{ m.onUndo }}" title="点一下可撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:5px 14px;" style-hover="filter:brightness(1.15);">{{ m.pendingLabel }}</div>
             </sc-if>
             <sc-if value="{{ m.showProgress }}" hint-placeholder-val="{{ true }}">
-              <div onClick="{{ m.onPlus }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#e6e9f0;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:5px 12px;" style-hover="border-color:#4ade80;">推进 {{ m.stepStr }}</div>
+              <div onClick="{{ m.onPlus }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:5px 12px;" style-hover="filter:brightness(1.12);">推进 {{ m.stepStr }}</div>
               <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#697084;">还差 {{ m.remain }}</div>
             </sc-if>
             <sc-if value="{{ m.showReady }}" hint-placeholder-val="{{ false }}">
@@ -957,17 +957,24 @@ class Component extends DCLogic {
   }
   readRewardImage(id, file) {
     const reader = new FileReader();
+    reader.onerror = () => alert('读取图片失败,请换一张试试');
     reader.onload = () => {
+      const raw = reader.result;
       const img = new Image();
+      img.onerror = () => { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: raw } : r) }); };
       img.onload = () => {
-        const cap = 520, sc = Math.min(1, cap / Math.max(img.width, img.height));
-        const w = Math.max(1, Math.round(img.width * sc)), h = Math.max(1, Math.round(img.height * sc));
-        const c = document.createElement('canvas'); c.width = w; c.height = h;
-        c.getContext('2d').drawImage(img, 0, 0, w, h);
-        let data; try { data = c.toDataURL('image/webp', 0.8); } catch (e) { data = c.toDataURL('image/jpeg', 0.8); }
+        let data = raw;
+        try {
+          const cap = 640, sc = Math.min(1, cap / Math.max(img.width, img.height));
+          const w = Math.max(1, Math.round(img.width * sc)), h = Math.max(1, Math.round(img.height * sc));
+          const c = document.createElement('canvas'); c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          const out = c.toDataURL('image/jpeg', 0.82);
+          if (out && out.length > 100) data = out;
+        } catch (e) { data = raw; }
         this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: data } : r) });
       };
-      img.src = reader.result;
+      img.src = raw;
     };
     reader.readAsDataURL(file);
   }
@@ -1282,7 +1289,7 @@ class Component extends DCLogic {
         stop: e => e.stopPropagation(), isHeader: false, isTask: true };
     };
     const all = st.tasks.map(dec);
-    const coreAll = all.filter(t => t.core).slice(0, quota);
+    const coreAll = all.filter(t => t.core);
     const coreDone = coreAll.filter(t => t.doneNow).length;
     const setsArr = st.sets || [];
     const setOptions = setsArr.map(s => ({ idStr: String(s.id), name: s.name }));
@@ -1408,17 +1415,27 @@ class Component extends DCLogic {
       funds: (() => {
         const cfg = st.fundCfg, TYPE = { buy: { c: '#f87171', bg: 'linear-gradient(180deg,rgba(248,113,113,0.16),rgba(248,113,113,0.03))', bd: 'rgba(248,113,113,0.5)', dot: '#ef4444' }, profit: { c: '#4ade80', bg: 'linear-gradient(180deg,rgba(34,197,94,0.16),rgba(34,197,94,0.03))', bd: 'rgba(34,197,94,0.5)', dot: '#22c55e' }, watch: { c: '#60a5fa', bg: 'linear-gradient(180deg,rgba(96,165,250,0.12),rgba(96,165,250,0.02))', bd: 'rgba(96,165,250,0.4)', dot: '#3b82f6' } };
         return (st.funds || []).map(f => {
-          const sg = this.fundSignal(f, cfg), t = TYPE[sg.type];
+          const sg = this.fundSignal(f, cfg);
+          let t = TYPE[sg.type];
+          if (sg.type === 'buy') {
+            const dip = [
+              { c: '#fbbf24', bg: 'linear-gradient(180deg,rgba(251,191,36,0.18),rgba(251,191,36,0.03))', bd: 'rgba(251,191,36,0.55)', dot: '#fbbf24' },
+              { c: '#fb923c', bg: 'linear-gradient(180deg,rgba(251,146,60,0.18),rgba(251,146,60,0.03))', bd: 'rgba(251,146,60,0.55)', dot: '#fb923c' },
+              { c: '#f87171', bg: 'linear-gradient(180deg,rgba(248,113,113,0.18),rgba(248,113,113,0.03))', bd: 'rgba(248,113,113,0.55)', dot: '#ef4444' },
+            ];
+            t = dip[sg.band] || t;
+          }
           const price = sg.price;
           const dev = (price != null && f.base) ? (price - f.base) / f.base * 100 : null;
           const flt = (price != null && f.cost) ? (price - f.cost) / f.cost * 100 : null;
           const fmtP = v => (v > 0 ? '+' : '') + v.toFixed(2) + '%';
           const segs = ['dipA','dipB','dipC','tpA','tpB','tpC','tpD','tpE','tpF'].map((key, i) => {
             const isDip = i < 3, on = sg.band === i;
-            const base = isDip ? '#f87171' : '#4ade80';
+            const dipC = ['#fbbf24', '#fb923c', '#f87171'];
+            const base = isDip ? dipC[i] : '#4ade80';
+            const off = isDip ? ['rgba(251,191,36,0.18)','rgba(251,146,60,0.18)','rgba(248,113,113,0.18)'][i] : 'rgba(74,222,128,0.16)';
             return { key, label: isDip ? '抄' + 'ABC'[i] : '盈' + 'ABCDEF'[i - 3],
-              bg: on ? base : (isDip ? 'rgba(248,113,113,0.18)' : 'rgba(74,222,128,0.16)'),
-              op: on ? '1' : '0.5' };
+              bg: on ? base : off, op: on ? '1' : '0.5' };
           });
           return { id: f.id, name: f.name, code: f.code || '',
             priceStr: price == null ? '—' : price.toFixed(3),
