@@ -173,9 +173,7 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ r.onDel }}" style="cursor:pointer;position:absolute;top:6px;right:8px;z-index:2;color:rgba(230,233,240,0.55);font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,0.8);" style-hover="color:#f87171;">×</div>
             <div style="position:relative;height:104px;">
               <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ false }}">
-                <div onPointerDown="{{ r.onImgDown }}" title="上下拖动可调整照片显示位置" style="{{ r.imgBgStyle }}"></div>
-                <div onClick="{{ r.onPickImg }}" title="更换照片" style="cursor:pointer;position:absolute;bottom:6px;right:60px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:10px;color:#e6e9f0;background:rgba(10,11,16,0.6);border-radius:6px;padding:2px 7px;" style-hover="color:#4ade80;">更换</div>
-                <div onClick="{{ r.onClearImg }}" title="移除照片" style="cursor:pointer;position:absolute;bottom:6px;right:8px;z-index:2;font-family:'JetBrains Mono',monospace;font-size:10px;color:#e6e9f0;background:rgba(10,11,16,0.6);border-radius:6px;padding:2px 7px;" style-hover="color:#f87171;">移除</div>
+                <div onClick="{{ r.onAskImg }}" title="点击调整照片" style="{{ r.imgBgStyle }}"></div>
               </sc-if>
               <sc-if value="{{ r.noImg }}" hint-placeholder-val="{{ true }}">
                 <div onClick="{{ r.onPickImg }}" title="点击上传照片" style="cursor:pointer;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#0d0f14;color:#535a6a;" style-hover="color:#8b93a4;">
@@ -185,8 +183,8 @@ input[type="date"]{color-scheme:dark;}
               </sc-if>
             </div>
             <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-                <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;min-width:0;flex:1 1 auto;">{{ r.name }}</div>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</div>
                 <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};">{{ r.costStr }}</div>
               </div>
               <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ false }}">
@@ -560,11 +558,11 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeBackup }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:420px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">数据备份 // BACKUP</div>
-        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">下面这串<b style="color:#c3c9d6;">短备份码</b>不含图片,适合复制到微信/备忘录搬家。<b style="color:#c3c9d6;">奖励照片</b>不进短码——要连图片一起搬,请用<b style="color:#c3c9d6;">「存为文件」</b>导出完整备份,在新设备粘贴文件内容导入。</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">{{ backupHint }}</div>
         <textarea id="bk-text" readonly value="{{ backupCode }}" style="width:100%;box-sizing:border-box;height:96px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#c3c9d6;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;"></textarea>
         <div style="display:flex;gap:8px;">
-          <div onClick="{{ copyBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">{{ copyLabel }}</div>
-          <div onClick="{{ downloadBackup }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#c3c9d6;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:9px 14px;" style-hover="border-color:{{ accent }};">存为文件</div>
+          <div onClick="{{ copyBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">复制短码(发微信)</div>
+          <div onClick="{{ copyFullBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#c3c9d6;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:9px 0;" style-hover="border-color:{{ accent }};">复制完整码(含图)</div>
         </div>
         <div style="height:1px;background:#1e222b;margin:2px 0;"></div>
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在新设备粘贴备份码到下框,点导入(会<b style="color:#f87171;">覆盖</b>当前数据):</div>
@@ -743,6 +741,26 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+  <!-- IMAGE EDIT MODAL -->
+  <sc-if value="{{ imgEditOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeImgEdit }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.7);backdrop-filter:blur(4px);z-index:55;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">调整照片 · {{ imgEditName }}</div>
+        <div style="position:relative;height:180px;border-radius:12px;overflow:hidden;border:1px solid #262b36;">
+          <div onPointerDown="{{ imgEditDown }}" title="上下拖动调整显示区域" style="{{ imgEditStyle }}"></div>
+        </div>
+        <div style="font-size:11px;color:#697084;text-align:center;">在上图里上下拖动,调整照片显示区域</div>
+        <div style="display:flex;gap:8px;">
+          <div onClick="{{ imgEditReplace }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">更换照片</div>
+          <div onClick="{{ imgEditRemove }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#f87171;border:1px solid #3a2226;background:#1a1214;border-radius:8px;padding:9px 0;" style-hover="border-color:#f87171;">移除照片</div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;">
+          <div onClick="{{ closeImgEdit }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 18px;" style-hover="color:#e6e9f0;">完成</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- NEW TASK MODAL -->
   <sc-if value="{{ newTaskOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
@@ -884,7 +902,7 @@ class Component extends DCLogic {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
     return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -1005,7 +1023,9 @@ class Component extends DCLogic {
     };
     reader.readAsDataURL(file);
   }
-  clearRewardImage(id) { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: '' } : r) }); }
+  clearRewardImage(id) { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: '' } : r), imgEditId: null }); }
+  askRewardImage(id) { this.setState({ imgEditId: id }); }
+  closeImgEdit() { this.setState({ imgEditId: null }); }
   roDown(id, e) {
     this._roStart = { y: e.clientY, moved: false };
     clearTimeout(this._roTimer);
@@ -1130,13 +1150,13 @@ class Component extends DCLogic {
     else this.selectBackup();
   }
   selectBackup() { const el = document.getElementById('bk-text'); if (el) { el.focus(); el.select(); try { document.execCommand('copy'); this.setState({ copyLabel: '✓ 已复制' }); } catch (_) {} } }
-  downloadBackup() {
+  copyFullBackup() {
     const code = this.makeFullBackup();
-    const blob = new Blob([code], { type: 'text/plain' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = 'exp-bank-backup-' + this.todayKey() + '.txt'; a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    const done = () => this.setState({ backupFull: true, backupMsg: '✓ 完整码(含图)已复制,粘到备忘录/文件里保存', backupMsgColor: '#4ade80' });
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done).catch(() => { this.setState({ backupFull: true }, () => this.selectBackup()); });
+    else this.setState({ backupFull: true }, () => this.selectBackup());
   }
+  toggleFullView() { this.setState({ backupFull: !this.state.backupFull, copyLabel: '复制备份码' }); }
   importBackup() {
     const el = document.getElementById('bk-import'); const raw = el ? el.value.trim() : '';
     if (!raw) { this.setState({ backupMsg: '请先粘贴备份码', backupMsgColor: '#f87171' }); return; }
@@ -1366,7 +1386,9 @@ class Component extends DCLogic {
       onPickImg: e => { e.stopPropagation(); this.pickRewardImage(r.id); },
       onClearImg: e => { e.stopPropagation(); this.clearRewardImage(r.id); },
       onImgDown: e => this.rewardImgDown(r.id, e),
+      onAskImg: e => { e.stopPropagation(); this.askRewardImage(r.id); },
       onEdit: () => this.openEdit('reward', r.id) }; });
+    const imgEditItem = st.imgEditId != null ? st.rewards.find(r => r.id === st.imgEditId) : null;
     const milestones = st.milestones.map(m => {
       const pct = Math.min(100, Math.round(m.cur / m.target * 100));
       const dl = m.deadline || '';
@@ -1502,6 +1524,13 @@ class Component extends DCLogic {
       setCafe: () => this.setNoisePreset('咖啡馆'), setRain: () => this.setNoisePreset('雨天'), setSnow: () => this.setNoisePreset('雪天'), setCustomNoise: () => this.setNoisePreset('custom'),
       onNoiseFile: e => this.onNoiseFile(e),
       countdowns, addCountdown: () => this.addCountdown(), newCountdownOpen: !!st.newCountdownOpen, openNewCountdown: () => this.openNewCountdown(),
+      imgEditOpen: !!imgEditItem,
+      imgEditName: imgEditItem ? imgEditItem.name : '',
+      imgEditStyle: imgEditItem ? { position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'none', backgroundImage: 'url("' + imgEditItem.img + '")', backgroundSize: 'cover', backgroundPosition: 'center ' + (imgEditItem.imgPos != null ? imgEditItem.imgPos : 50) + '%' } : {},
+      imgEditDown: e => { if (imgEditItem) this.rewardImgDown(imgEditItem.id, e); },
+      imgEditReplace: () => { if (imgEditItem) this.pickRewardImage(imgEditItem.id); },
+      imgEditRemove: () => { if (imgEditItem) this.clearRewardImage(imgEditItem.id); },
+      closeImgEdit: () => this.closeImgEdit(),
       tierHint: `银星 < ${goldAt} EXP ≤ 金星 < ${diamondAt} EXP ≤ 钻星`,
       editOpen, editAsk: editOpen && !ed.confirmed, editFormOn: editOpen && ed.confirmed,
       editIsTask: editOpen && ed.confirmed && ed.type === 'task',
@@ -1524,10 +1553,12 @@ class Component extends DCLogic {
       editBonus: editItem ? (editItem.bonus ?? '') : '', editDeadline: editItem ? (editItem.deadline || '') : '',
       closeEdit: () => this.closeEdit(), confirmEdit: () => this.confirmEdit(),
       saveEdit: () => this.saveEdit(), stopClick: e => e.stopPropagation(),
-      backupOpen: !!st.backupOpen, backupCode: st.backupOpen ? this.makeBackupCode() : '',
+      backupOpen: !!st.backupOpen, backupCode: st.backupOpen ? (st.backupFull ? this.makeFullBackup() : this.makeBackupCode()) : '',
       copyLabel: st.copyLabel || '复制备份码', backupMsg: st.backupMsg || '', backupMsgColor: st.backupMsgColor || '#8b93a4',
       openBackup: () => this.openBackup(), closeBackup: () => this.closeBackup(),
-      copyBackup: () => this.copyBackup(), downloadBackup: () => this.downloadBackup(), importBackup: () => this.importBackup(),
+      copyBackup: () => this.copyBackup(), copyFullBackup: () => this.copyFullBackup(), toggleFullView: () => this.toggleFullView(), importBackup: () => this.importBackup(),
+      backupFull: !!st.backupFull,
+      backupHint: st.backupFull ? '当前是完整码(含奖励图片),很长——用「复制完整码」直接复制,粘到备忘录/文件保存。' : '这串短码不含图片,适合发微信/备忘录。要连图片一起搬,点下方「复制完整码(含图)」。',
       selDateISO: sel, todayISO: todayK, selDateLabel: this.labelFromISO(sel),
       selDateRel: sel === todayK ? '今天' : (sel === this.shiftDay(todayK, -1) ? '昨天' : ''),
       selDateRelShow: sel === todayK || sel === this.shiftDay(todayK, -1),
