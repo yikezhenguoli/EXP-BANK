@@ -349,9 +349,9 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ isCountdown }}" hint-placeholder-val="{{ false }}">
   <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;padding:18px 24px 0;">
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">未来倒计时 // COUNTDOWN</div></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">未来倒计时 // COUNTDOWN</div><div onClick="{{ openNewCountdown }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建倒计时</div></div>
       <sc-for list="{{ countdowns }}" as="cd" hint-placeholder-count="2">
-        <div style="display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);">
+        <div onClick="{{ cd.onEdit }}" title="点击编辑" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }};">
           <div style="flex:1;min-width:0;">
             <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ cd.name }}</div>
             <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;margin-top:3px;">截止 {{ cd.dueStr }} · 以午夜 00:00 为界</div>
@@ -369,11 +369,6 @@ input[type="date"]{color-scheme:dark;}
           <div onClick="{{ cd.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;padding-left:4px;" style-hover="color:#f87171;">×</div>
         </div>
       </sc-for>
-      <div style="display:flex;gap:8px;align-items:center;margin-top:4px;flex-wrap:wrap;">
-        <input id="nc-name" placeholder="事件名(如:六级考试)" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
-        <input id="nc-date" type="date" title="目标日期" style="width:150px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:12.5px;font-family:'JetBrains Mono',monospace;">
-        <div onClick="{{ addCountdown }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:8px 14px;" style-hover="border-color:{{ accent }};">+ 添加</div>
-      </div>
     </div>
   </div>
   </sc-if>
@@ -544,6 +539,11 @@ input[type="date"]{color-scheme:dark;}
             </div>
             <label style="display:block;font-size:11px;color:#697084;">截止日期(可留空)
               <input id="ed-deadline" type="date" defaultValue="{{ editDeadline }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 8px;color:#aeb6c6;font-size:12px;font-family:'JetBrains Mono',monospace;">
+            </label>
+          </sc-if>
+          <sc-if value="{{ editIsCountdown }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">目标日期
+              <input id="ed-date" type="date" defaultValue="{{ editDate }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
             </label>
           </sc-if>
           <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
@@ -724,6 +724,25 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+  <!-- NEW COUNTDOWN MODAL -->
+  <sc-if value="{{ newCountdownOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建倒计时 // COUNTDOWN</div>
+        <label style="display:block;font-size:11px;color:#697084;">事件名称
+          <input id="nc-name" placeholder="如:六级考试 / 科目二" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">目标日期
+          <input id="nc-date" type="date" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addCountdown }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加倒计时</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- NEW TASK MODAL -->
   <sc-if value="{{ newTaskOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
@@ -865,7 +884,7 @@ class Component extends DCLogic {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
     return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -875,9 +894,10 @@ class Component extends DCLogic {
   openNewTask() { this.setState({ newTaskOpen: true }); }
   openNewSet() { this.setState({ newSetOpen: true }); }
   openNewReward() { this.setState({ newRewardOpen: true }); }
+  openNewCountdown() { this.setState({ newCountdownOpen: true }); }
   openNewMilestone() { this.setState({ newMilestoneOpen: true }); }
   openNewFund() { this.setState({ newFundOpen: true }); }
-  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false, newRewardOpen: false, newMilestoneOpen: false, newFundOpen: false }); }
+  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false, newRewardOpen: false, newMilestoneOpen: false, newFundOpen: false, newCountdownOpen: false }); }
   addFund() {
     const name = this.v('nf-name'); if (!name) return;
     const code = this.v('nf-code');
@@ -961,18 +981,25 @@ class Component extends DCLogic {
     reader.onload = () => {
       const raw = reader.result;
       const img = new Image();
-      img.onerror = () => { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: raw } : r) }); };
+      img.onerror = () => alert('此浏览器无法解码这张图片(可能是 HEIC 格式)。请在相册里把它「存为 JPG / 分享为照片」后再上传。');
       img.onload = () => {
-        let data = raw;
+        if (!img.naturalWidth) { alert('这张图片无法解码(可能是 HEIC 格式)。请把它转成 JPG 再上传。'); return; }
+        let data = '';
         try {
-          const cap = 640, sc = Math.min(1, cap / Math.max(img.width, img.height));
-          const w = Math.max(1, Math.round(img.width * sc)), h = Math.max(1, Math.round(img.height * sc));
+          const cap = 560, sc = Math.min(1, cap / Math.max(img.naturalWidth, img.naturalHeight));
+          const w = Math.max(1, Math.round(img.naturalWidth * sc)), h = Math.max(1, Math.round(img.naturalHeight * sc));
           const c = document.createElement('canvas'); c.width = w; c.height = h;
           c.getContext('2d').drawImage(img, 0, 0, w, h);
-          const out = c.toDataURL('image/jpeg', 0.82);
-          if (out && out.length > 100) data = out;
-        } catch (e) { data = raw; }
-        this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: data } : r) });
+          const out = c.toDataURL('image/jpeg', 0.8);
+          if (out && out.length > 100 && out.indexOf('data:image/jpeg') === 0) data = out;
+        } catch (e) { data = ''; }
+        if (!data) { alert('图片压缩失败,当前浏览器不支持。建议用手机相册分享成 JPG 后再试。'); return; }
+        try {
+          const next = this.state.rewards.map(r => r.id === id ? { ...r, img: data } : r);
+          const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...probe } = this.state;
+          localStorage.setItem('exp-bank-v1', JSON.stringify({ ...probe, rewards: next }));
+          this.setState({ rewards: next });
+        } catch (e) { alert('保存失败:手机本地存储空间已满。请先在「时间轴/账本」清理,或给奖励换用更小的图片。'); }
       };
       img.src = raw;
     };
@@ -1026,7 +1053,7 @@ class Component extends DCLogic {
   }
   componentWillUnmount() { clearInterval(this._intTimer); clearTimeout(this._pt); clearInterval(this._pomoTimer); this.stopNoiseNodes(); if (this._onResize) window.removeEventListener('resize', this._onResize); }
   setTab(t) { this.setState({ tab: t }); }
-  addCountdown() { const name = this.v('nc-name'), date = this.v('nc-date'); if (!name || !date) return; this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date }], nextId: this.state.nextId + 1 }); this.clear(['nc-name', 'nc-date']); }
+  addCountdown() { const name = this.v('nc-name'), date = this.v('nc-date'); if (!name || !date) return; this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date }], nextId: this.state.nextId + 1, newCountdownOpen: false }); this.clear(['nc-name', 'nc-date']); }
   delCountdown(id) { this.save({ countdowns: this.state.countdowns.filter(c => c.id !== id) }); }
   pomoBase() { const p = this.state.pomoPreset || '25'; return (p === 'custom' ? (this.state.pomoCustomMin || 30) : parseInt(p)) * 60; }
   pomoStart() { const st = this.state; if (st.pomoRunning) return; const rem = (st.pomoRemaining != null && st.pomoRemaining > 0) ? st.pomoRemaining : this.pomoBase(); const total = st.pomoTotal || this.pomoBase(); this.setState({ pomoRunning: true, pomoEndTs: Date.now() + rem * 1000, pomoRemaining: rem, pomoTotal: total }, () => this.pomoTick()); }
@@ -1134,6 +1161,9 @@ class Component extends DCLogic {
     } else if (ed.type === 'reward') {
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)) } : x) });
+    } else if (ed.type === 'countdown') {
+      this.save({ editing: null, countdowns: this.state.countdowns.map(x => x.id === ed.id ? { ...x,
+        name: name || x.name, date: this.v('ed-date') || x.date } : x) });
     } else if (ed.type === 'fund') {
       const fnum = (id, fb) => { const n = parseFloat(this.v(id)); return isNaN(n) ? fb : n; };
       this.save({ editing: null, funds: this.state.funds.map(x => x.id === ed.id ? { ...x,
@@ -1382,11 +1412,11 @@ class Component extends DCLogic {
       return { ...c, key: c.id, days, isToday: days === 0, showNum: days !== 0,
         prefix: days < 0 ? '已过' : '还剩', numText: Math.abs(days), numColor: days < 0 ? '#f87171' : accent,
         dueStr: `${y}年${String(m).padStart(2, '0')}月${String(dd).padStart(2, '0')}日`,
-        onDel: e => { e.stopPropagation(); this.delCountdown(c.id); } };
+        onDel: e => { e.stopPropagation(); this.delCountdown(c.id); }, onEdit: () => this.openEdit('countdown', c.id) };
     }).sort((a, b) => ((a.days < 0) - (b.days < 0)) || a.days - b.days);
     const tabNow = st.tab || 'lists';
     const ed = st.editing || null;
-    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones, set: st.sets, fund: st.funds };
+    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones, set: st.sets, fund: st.funds, countdown: st.countdowns };
     const editItem = ed ? (lists[ed.type] || []).find(x => x.id === ed.id) : null;
     const editOpen = !!editItem;
     return { accent, exp: st.exp, warMode: st.warMode, warOff: !st.warMode,
@@ -1471,16 +1501,18 @@ class Component extends DCLogic {
       toggleNoise: () => this.toggleNoise(), onVol: e => this.setNoiseVol(e.target.value),
       setCafe: () => this.setNoisePreset('咖啡馆'), setRain: () => this.setNoisePreset('雨天'), setSnow: () => this.setNoisePreset('雪天'), setCustomNoise: () => this.setNoisePreset('custom'),
       onNoiseFile: e => this.onNoiseFile(e),
-      countdowns, addCountdown: () => this.addCountdown(),
+      countdowns, addCountdown: () => this.addCountdown(), newCountdownOpen: !!st.newCountdownOpen, openNewCountdown: () => this.openNewCountdown(),
       tierHint: `银星 < ${goldAt} EXP ≤ 金星 < ${diamondAt} EXP ≤ 钻星`,
       editOpen, editAsk: editOpen && !ed.confirmed, editFormOn: editOpen && ed.confirmed,
       editIsTask: editOpen && ed.confirmed && ed.type === 'task',
       editIsReward: editOpen && ed.confirmed && ed.type === 'reward',
       editIsFund: editOpen && ed.confirmed && ed.type === 'fund',
+      editIsCountdown: editOpen && ed.confirmed && ed.type === 'countdown',
+      editDate: editItem ? (editItem.date ?? '') : '',
       editIsMilestone: editOpen && ed.confirmed && ed.type === 'milestone',
       editIsSet: editOpen && ed.confirmed && ed.type === 'set',
       editItemName: editItem ? editItem.name : '',
-      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集', fund: '标的' }[ed.type]) : '',
+      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集', fund: '标的', countdown: '倒计时' }[ed.type]) : '',
       notionResultOpen: !!st.notionResultOpen, notionResultOk: st.notionResultOk, notionResultMsg: st.notionResultMsg || '', notionResultBusy: st.notionResultOk == null && !!st.notionResultOpen, notionResultColor: st.notionResultOk == null ? '#8b93a4' : (st.notionResultOk ? '#4ade80' : '#f87171'), closeNotionResult: () => this.closeNotionResult(),
       editSetId: editItem ? String(editItem.setId ?? '') : '',
       editName: editItem ? editItem.name : '',
