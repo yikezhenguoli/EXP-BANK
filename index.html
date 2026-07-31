@@ -564,7 +564,7 @@ input[type="date"]{color-scheme:dark;}
           <div onClick="{{ copyBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">复制短码(发微信)</div>
           <div onClick="{{ copyFullBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#c3c9d6;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:9px 0;" style-hover="border-color:{{ accent }};">复制完整码(含图)</div>
         </div>
-        <div onClick="{{ exportDocx }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">⬇ 生成 Word(.docx)文件保存</div>
+        <div onClick="{{ exportDocx }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">⬇ 生成 .txt 文件保存(含图)</div>
         <div style="height:1px;background:#1e222b;margin:2px 0;"></div>
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">恢复数据(会<b style="color:#f87171;">覆盖</b>当前):粘贴备份码,或上传之前导出的 Word 文件——</div>
         <div style="display:flex;gap:10px;">
@@ -573,10 +573,10 @@ input[type="date"]{color-scheme:dark;}
             <textarea id="bk-import" placeholder="在此粘贴备份码…" style="width:100%;box-sizing:border-box;height:96px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;"></textarea>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">② 上传 Word 文件</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">② 上传备份文件(长码专用)</div>
             <div onClick="{{ pickDocx }}" style="cursor:pointer;height:96px;box-sizing:border-box;background:#0d0f14;border:1px dashed #2f3542;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#697084;" style-hover="border-color:{{ accent }};color:#c3c9d6;">
               <div style="font-size:22px;line-height:1;">⬆</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;">点击选 .docx</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;">点击选 .txt 文件</div>
               <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#535a6a;">自动识别其中备份码</div>
             </div>
           </div>
@@ -1195,44 +1195,46 @@ class Component extends DCLogic {
   }
   exportDocx() {
     const code = this.makeFullBackup();
-    const xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:r><w:t xml:space="preserve">EXP BANK 完整备份码(勿改动下面这行,导入时会自动识别):</w:t></w:r></w:p><w:p><w:r><w:t xml:space="preserve">' + code + '</w:t></w:r></w:p></w:body></w:document>';
-    const ct = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
-    const rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
-    const blob = this._zip([{ name: '[Content_Types].xml', content: ct }, { name: '_rels/.rels', content: rels }, { name: 'word/document.xml', content: xml }]);
+    const text = 'EXP BANK 完整备份码\r\n生成于 ' + this.todayKey() + '\r\n\r\n导入方法:在 App 的「备份」里点右侧「上传文件」选中本文件即可自动识别;或手动全选下面这段复制粘贴到「粘贴备份码」框。\r\n\r\n======== 备份码开始 ========\r\n' + code + '\r\n======== 备份码结束 ========\r\n';
+    const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = 'EXP-BANK-备份-' + this.todayKey() + '.docx'; a.click();
+    a.download = 'EXP-BANK-备份-' + this.todayKey() + '.txt'; a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-    this.setState({ backupMsg: '✓ 已生成 docx,可用 WPS 打开保存', backupMsgColor: '#4ade80' });
+    this.setState({ backupMsg: '✓ 已生成 .txt 文件,任意文本/WPS 都能打开', backupMsgColor: '#4ade80' });
   }
   importDocxFile(file) {
+    const name = (file.name || '').toLowerCase();
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const buf = new Uint8Array(reader.result); const dec = new TextDecoder('utf-8');
-        const whole = dec.decode(buf);
-        const idx = whole.indexOf('word/document.xml');
-        let xml = whole;
-        // 尝试从 document.xml 的 <w:t> 里提取;若被压缩则退回全文正则
-        const texts = [...whole.matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/g)].map(m => m[1]).join('');
-        const cand = texts || whole;
-        const m = cand.match(/[A-Za-z0-9+/=]{80,}/);
-        if (!m) { this.setState({ backupMsg: '未能从 docx 里识别到备份码,请确认是本 App 导出的文件', backupMsgColor: '#f87171' }); return; }
+        let cand = '';
+        if (name.endsWith('.txt')) {
+          cand = (typeof reader.result === 'string') ? reader.result : new TextDecoder('utf-8').decode(new Uint8Array(reader.result));
+        } else {
+          const whole = new TextDecoder('utf-8').decode(new Uint8Array(reader.result));
+          const texts = [...whole.matchAll(/<w:t[^>]*>([^<]*)<\/w:t>/g)].map(m => m[1]).join('');
+          cand = texts || whole;
+        }
+        cand = cand.replace(/\s+/g, '');
+        const m = cand.match(/[A-Za-z0-9+/=]{60,}/);
+        if (!m) { this.setState({ backupMsg: '未能从文件里识别到备份码,请确认是本 App 导出的文件', backupMsgColor: '#f87171' }); return; }
         const el = document.getElementById('bk-import'); if (el) el.value = m[0];
-        this.setState({ backupMsg: '✓ 已从 docx 读到备份码,点「导入并覆盖」应用', backupMsgColor: '#4ade80' });
-      } catch (e) { this.setState({ backupMsg: '读取 docx 失败:' + e.message, backupMsgColor: '#f87171' }); }
+        this.setState({ backupMsg: '✓ 已从文件读到备份码,点下方「导入并覆盖」应用', backupMsgColor: '#4ade80' });
+      } catch (e) { this.setState({ backupMsg: '读取文件失败:' + e.message, backupMsgColor: '#f87171' }); }
     };
-    reader.readAsArrayBuffer(file);
+    if (name.endsWith('.txt')) reader.readAsText(file); else reader.readAsArrayBuffer(file);
   }
   pickDocx() {
-    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.docx,.doc,.txt';
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.txt,.docx,.doc';
     inp.onchange = () => { const f = inp.files && inp.files[0]; if (f) this.importDocxFile(f); };
     inp.click();
   }
   importBackup() {
     const el = document.getElementById('bk-import'); const raw = el ? el.value.trim() : '';
     if (!raw) { this.setState({ backupMsg: '请先粘贴备份码', backupMsgColor: '#f87171' }); return; }
+    const clean = raw.replace(/\s+/g, '');
     let data;
-    try { data = JSON.parse(decodeURIComponent(escape(atob(raw)))); }
+    try { data = JSON.parse(decodeURIComponent(escape(atob(clean)))); }
     catch (e) { try { data = JSON.parse(raw); } catch (e2) { this.setState({ backupMsg: '备份码无法识别,请检查是否复制完整', backupMsgColor: '#f87171' }); return; } }
     if (!data || !Array.isArray(data.tasks)) { this.setState({ backupMsg: '备份码内容无效', backupMsgColor: '#f87171' }); return; }
     this.setState({ ...data, editing: null, pending: null, backupMsg: '✓ 导入成功,数据已恢复', backupMsgColor: '#4ade80' }, () => localStorage.setItem('exp-bank-v1', JSON.stringify(data)));
