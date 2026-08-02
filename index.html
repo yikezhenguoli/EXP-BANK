@@ -46,6 +46,12 @@ input[type="date"]{color-scheme:dark;}
           <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ titleSize }};line-height:1;letter-spacing:4px;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.18)) drop-shadow(0 4px 14px rgba(0,0,0,0.7));">EXP BANK</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;letter-spacing:2px;">自律积分银行 / v0.1</div>
         </div>
+        <div style="display:flex;align-items:center;gap:8px;pointer-events:auto;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:6px 13px;backdrop-filter:blur(6px);">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#e6e9f0;">{{ di.full }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ di.wd }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#697084;">{{ di.clock }}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:{{ di.badgeColor }};border-left:1px solid rgba(255,255,255,0.14);padding-left:8px;">{{ di.badge }}</span>
+        </div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;pointer-events:auto;">
         <div onClick="{{ openBackup }}" title="导出/导入备份码 · 跨设备搬运数据" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">⤓ 备份</span>
@@ -162,8 +168,11 @@ input[type="date"]{color-scheme:dark;}
           <sc-if value="{{ t.showDoneLabel }}" hint-placeholder-val="{{ false }}">
             <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px solid #262b36;border-radius:8px;padding:6px 12px;">✓ 已完成</div>
           </sc-if>
+          <sc-if value="{{ t.showAbandonUndo }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ t.onUnabandon }}" title="已放弃 · 点一下撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #7f1d1d;background:#2a1416;border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">⚠ 已放弃 · 撤销</div>
+          </sc-if>
           <sc-if value="{{ t.showAbandonLabel }}" hint-placeholder-val="{{ false }}">
-            <div onClick="{{ t.onUnabandon }}" title="已放弃 · 点一下可撤销" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #7f1d1d;background:#2a1416;border-radius:8px;padding:6px 12px;">⚠ 已放弃</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a5a5a;border:1px solid #4a2626;border-radius:8px;padding:6px 12px;">⚠ 已放弃</div>
           </sc-if>
           <div onClick="{{ t.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;padding:0 2px;" style-hover="color:#f87171;">×</div>
         </div>
@@ -1155,6 +1164,7 @@ class Component extends DCLogic {
     clearTimeout(this._pt);
     const rm = arr => arr.filter(e => e.ts !== p.ledgerTs);
     if (p.kind === 'complete') this.save({ tasks: this.state.tasks.map(x => x.id === p.id ? { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, ...(p.streakChanged ? { streak: p.prevStreak, lastDone: p.prevLastDone } : {}) } : x), exp: this.state.exp - p.exp, ledger: rm(this.state.ledger), pending: null });
+    else if (p.kind === 'abandon') this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const a = { ...(x.abandoned || {}) }; delete a[p.k]; return { ...x, abandoned: a }; }), pending: null });
     else if (p.kind === 'redeem') this.save({ exp: this.state.exp + p.cost, ledger: rm(this.state.ledger), pending: null });
     else if (p.kind === 'msPlus') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
     else if (p.kind === 'msClaim') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.state.exp - p.bonus, ledger: rm(this.state.ledger), pending: null });
@@ -1163,11 +1173,12 @@ class Component extends DCLogic {
     this.pruneOnce();
     this.applyInterest();
     this._intTimer = setInterval(() => { this.pruneOnce(); this.applyInterest(); }, 300000);
+    this._clockTimer = setInterval(() => this.forceUpdate(), 30000);
     this._onResize = () => { clearTimeout(this._rt); this._rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 150); };
     window.addEventListener('resize', this._onResize);
     if (this.state.vw == null) this.setState({ vw: window.innerWidth });
   }
-  componentWillUnmount() { clearInterval(this._intTimer); clearTimeout(this._pt); clearInterval(this._pomoTimer); this.stopNoiseNodes(); if (this._onResize) window.removeEventListener('resize', this._onResize); }
+  componentWillUnmount() { clearInterval(this._intTimer); clearInterval(this._clockTimer); clearTimeout(this._pt); clearInterval(this._pomoTimer); this.stopNoiseNodes(); if (this._onResize) window.removeEventListener('resize', this._onResize); }
   setTab(t) { this.setState({ tab: t }); }
   addCountdown() { const name = this.v('nc-name'), date = this.v('nc-date'); if (!name || !date) return; this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date }], nextId: this.state.nextId + 1, newCountdownOpen: false }); this.clear(['nc-name', 'nc-date']); }
   delCountdown(id) { this.save({ countdowns: this.state.countdowns.filter(c => c.id !== id) }); }
@@ -1391,10 +1402,11 @@ class Component extends DCLogic {
   toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
   abandon(id) {
     const t = this.state.tasks.find(x => x.id === id), k = this.key(t.cycle); if (!k) return;
-    const cur = t.abandoned && t.abandoned[k];
-    const abandoned = { ...(t.abandoned || {}) };
-    if (cur) delete abandoned[k]; else abandoned[k] = true;
-    this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, abandoned } : x) });
+    if (t.abandoned && t.abandoned[k]) return;
+    const key = 'task:' + id;
+    const abandoned = { ...(t.abandoned || {}), [k]: true };
+    this.armTimer(key);
+    this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, abandoned } : x), pending: { key, kind: 'abandon', id, k } });
   }
   delTask(id) { this.save({ tasks: this.state.tasks.filter(x => x.id !== id) }); }
   delReward(id) { this.save({ rewards: this.state.rewards.filter(x => x.id !== id) }); }
@@ -1441,6 +1453,43 @@ class Component extends DCLogic {
   sameDay(ts) { const a = new Date(ts), b = new Date(); return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
   dateKey(ts) { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; }
   todayKey() { return this.dateKey(Date.now()); }
+  holidayTable() {
+    return [
+      { name: '元旦', s: '2025-01-01', e: '2025-01-01' },
+      { name: '春节', s: '2025-01-28', e: '2025-02-04' },
+      { name: '清明', s: '2025-04-04', e: '2025-04-06' },
+      { name: '劳动节', s: '2025-05-01', e: '2025-05-05' },
+      { name: '端午', s: '2025-05-31', e: '2025-06-02' },
+      { name: '国庆中秋', s: '2025-10-01', e: '2025-10-08' },
+      { name: '元旦', s: '2026-01-01', e: '2026-01-03' },
+      { name: '春节', s: '2026-02-16', e: '2026-02-22' },
+      { name: '清明', s: '2026-04-04', e: '2026-04-06' },
+      { name: '劳动节', s: '2026-05-01', e: '2026-05-05' },
+      { name: '端午', s: '2026-06-19', e: '2026-06-21' },
+      { name: '中秋', s: '2026-09-25', e: '2026-09-27' },
+      { name: '国庆', s: '2026-10-01', e: '2026-10-07' },
+      { name: '元旦', s: '2027-01-01', e: '2027-01-03' },
+      { name: '春节', s: '2027-02-06', e: '2027-02-12' },
+      { name: '清明', s: '2027-04-05', e: '2027-04-05' },
+      { name: '劳动节', s: '2027-05-01', e: '2027-05-05' },
+      { name: '端午', s: '2027-06-09', e: '2027-06-11' },
+      { name: '中秋', s: '2027-09-15', e: '2027-09-17' },
+      { name: '国庆', s: '2027-10-01', e: '2027-10-07' },
+    ];
+  }
+  dateInfo() {
+    const now = new Date(), p = n => String(n).padStart(2, '0');
+    const iso = this.todayKey();
+    const y = now.getFullYear(), mo = now.getMonth() + 1, d = now.getDate();
+    const wd = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][now.getDay()];
+    const hol = this.holidayTable().find(h => iso >= h.s && iso <= h.e);
+    const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+    let badge = '', badgeColor = '#8b93a4', rest = false;
+    if (hol) { badge = hol.name + '假期'; badgeColor = '#f87171'; rest = true; }
+    else if (isWeekend) { badge = '周末'; badgeColor = '#4ade80'; rest = true; }
+    else { badge = '工作日'; badgeColor = '#8b93a4'; }
+    return { full: `${y}年${p(mo)}月${p(d)}日`, wd, badge, badgeColor, rest, clock: p(now.getHours()) + ':' + p(now.getMinutes()) };
+  }
   shiftDay(iso, delta) { const [y, m, dd] = iso.split('-').map(Number); const d = new Date(y, m - 1, dd); d.setDate(d.getDate() + delta); return this.dateKey(d); }
   labelFromISO(iso) { const [y, m, dd] = iso.split('-').map(Number); const d = new Date(y, m - 1, dd); const wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()]; return `${m}月${dd}日 · ${wd}`; }
   onDropTask(targetId) {
@@ -1493,14 +1542,16 @@ class Component extends DCLogic {
       const cnt = k ? Math.min(times, t.done[k] || 0) : 0;
       const doneNow = k ? cnt >= times : false;
       const pct = k ? Math.round(cnt / times * 100) : 0;
-      const tp = !!pend && pend.key === 'task:' + t.id;
+      const pk = (!!pend && pend.key === 'task:' + t.id) ? pend.kind : null;
+      const tp = pk === 'complete';
       const _td = this.todayKey(), _yd = this.shiftDay(_td, -1);
       const liveStreak = (t.lastDone === _td || t.lastDone === _yd) ? (t.streak || 0) : 0;
       const isFormed = liveStreak >= 7 && t.cycle !== 'once';
       const abandonedNow = k ? !!(t.abandoned && t.abandoned[k]) : false;
-      const showActions = !doneNow && !abandonedNow && !tp;
+      const abandonPending = pk === 'abandon';
+      const showActions = !doneNow && !abandonedNow && !tp && !abandonPending;
       return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
-        abandonedNow, showAbandonLabel: abandonedNow && !tp,
+        abandonedNow, abandonPending, showAbandonUndo: abandonPending, showAbandonLabel: abandonedNow && !abandonPending,
         isFormed, hasStreak: liveStreak > 0 && !isFormed && t.cycle !== 'once', streakLabel: '连 ' + liveStreak + ' 天', formedLabel: 'MOMENTUM · ' + liveStreak + ' 连',
         cycleLabel: k ? `${cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
         hasRing: !!k && !mob, pctStr: pct + '%',
@@ -1508,7 +1559,7 @@ class Component extends DCLogic {
         starColor: t.core ? '#fbbf24' : '#2b3040',
         onDone: e => { e.stopPropagation(); this.complete(t.id); },
         onAbandon: e => { e.stopPropagation(); this.abandon(t.id); },
-        onUnabandon: e => { e.stopPropagation(); this.abandon(t.id); },
+        onUnabandon: e => { e.stopPropagation(); this.undo(); },
         onDel: e => { e.stopPropagation(); this.delTask(t.id); },
         onToggleCore: e => { e.stopPropagation(); this.toggleCore(t.id); },
         onEdit: () => this.openEdit('task', t.id), onUndo: e => { e.stopPropagation(); this.undo(); },
@@ -1676,6 +1727,7 @@ class Component extends DCLogic {
       cardTop: tier.cardTop, cardBot: tier.cardBot, rowTop: tier.rowTop, rowBot: tier.rowBot,
       gridCols: resp.gridCols, pomoCols: resp.pomoCols, heroH: resp.heroH, titleSize: resp.titleSize, balSize: resp.balSize,
       fundSumCols: resp.fundSumCols, fundCardSh: resp.fundCardSh, fundPad: resp.fundPad,
+      di: this.dateInfo(),
       isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown', isFund: tabNow === 'fund',
       goLists: () => this.setTab('lists'), goPomo: () => this.setTab('pomo'), goCountdown: () => this.setTab('countdown'), goFund: () => this.setTab('fund'),
       navListsActive: tabNow === 'lists', navPomoActive: tabNow === 'pomo', navCountdownActive: tabNow === 'countdown', navFundActive: tabNow === 'fund',
