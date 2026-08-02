@@ -852,18 +852,24 @@ input[type="date"]{color-scheme:dark;}
         </sc-if>
         <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px;">
           <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
-            <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" style="touch-action:none;user-select:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:14px 14px;border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
-              <sc-if value="{{ roShowCheck }}" hint-placeholder-val="{{ false }}">
-                <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:22px;height:22px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:13px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
-              </sc-if>
-              <div style="font-size:18px;color:#7c8494;line-height:1;">≡</div>
-              <div style="flex:1;min-width:0;">
-                <div style="font-size:14px;font-weight:700;color:#eef1f7;">{{ row.name }}</div>
-                <sc-if value="{{ row.hasSet }}" hint-placeholder-val="{{ false }}">
-                  <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:0.5px;">▤ {{ row.setName }}</div>
-                </sc-if>
+            <sc-if value="{{ row.isSetHeader }}" hint-placeholder-val="{{ false }}">
+              <div data-ro-set="{{ row.roSet }}" onClick="{{ row.onToggleSet }}" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:9px;background:linear-gradient(180deg,#1a1e28,#12151d);border:1px solid #2a3040;">
+                <div style="font-size:13px;color:{{ accent }};width:14px;">{{ row.chev }}</div>
+                <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;">▤ {{ row.name }}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;">{{ row.count }}</div>
               </div>
-            </div>
+            </sc-if>
+            <sc-if value="{{ row.isRow }}" hint-placeholder-val="{{ true }}">
+              <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" style="touch-action:pan-y;user-select:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:14px 14px;margin-left:{{ row.indent }};border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+                <sc-if value="{{ roShowCheck }}" hint-placeholder-val="{{ false }}">
+                  <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:22px;height:22px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:13px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
+                </sc-if>
+                <div style="font-size:18px;color:#7c8494;line-height:1;">≡</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="font-size:14px;font-weight:700;color:#eef1f7;">{{ row.name }}</div>
+                </div>
+              </div>
+            </sc-if>
           </sc-for>
         </div>
         <sc-if value="{{ roSelectMode }}" hint-placeholder-val="{{ false }}">
@@ -872,6 +878,7 @@ input[type="date"]{color-scheme:dark;}
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
               <select id="batch-set-pick" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 8px;color:#aeb6c6;font-size:12.5px;">
                 <option value="">选已有任务集…</option>
+                <option value="__none">↑ 移出任务集(不归任何集)</option>
                 <sc-for list="{{ batchSetOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.id }}">{{ o.name }}</option></sc-for>
               </select>
               <input id="batch-set-name" placeholder="或填新任务集名" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12.5px;font-family:inherit;">
@@ -1044,10 +1051,11 @@ class Component extends DCLogic {
     const nm = this.v('batch-set-name');
     const chosen = document.getElementById('batch-set-pick');
     if (nm) { setId = this.state.nextId; sets = [...sets, { id: setId, name: nm, collapsed: false }]; }
+    else if (chosen && chosen.value === '__none') { setId = null; }
     else if (chosen && chosen.value) { setId = parseInt(chosen.value); }
     else { this.setState({ batchMsg: '请先选一个任务集,或填新任务集名' }); return; }
     const tasks = this.state.tasks.map(t => sel.includes(t.id) ? { ...t, setId } : t);
-    this.save({ tasks, sets, nextId: nm ? this.state.nextId + 1 : this.state.nextId, batchSel: [], batchMsg: '✓ 已归入任务集' });
+    this.save({ tasks, sets, nextId: nm ? this.state.nextId + 1 : this.state.nextId, batchSel: [], batchMsg: setId == null ? '✓ 已移出任务集' : '✓ 已归入任务集' });
     const el = document.getElementById('batch-set-name'); if (el) el.value = '';
   }
   closeReorder() { clearTimeout(this._roTimer); this.setState({ reorderOpen: false, dragId: null }); }
@@ -1097,26 +1105,41 @@ class Component extends DCLogic {
     this._roUp = () => this.roUp();
     window.addEventListener('pointermove', this._roMove);
     window.addEventListener('pointerup', this._roUp);
+    window.addEventListener('pointercancel', this._roUp);
   }
   roMove(e) {
     if (this.state.dragId == null) { if (Math.abs(e.clientY - this._roStart.y) > 8) clearTimeout(this._roTimer); return; }
     e.preventDefault();
-    const items = [...document.querySelectorAll('[data-ro-id]')];
+    const kind = this.state.reorderKind || 'tasks';
+    const items = [...document.querySelectorAll('[data-ro-id],[data-ro-set]')];
     if (!items.length) return;
     const y = e.clientY;
-    let targetId = null;
-    for (const el of items) { const r = el.getBoundingClientRect(); if (y >= r.top && y <= r.bottom) { targetId = el.getAttribute('data-ro-id'); break; } }
-    if (targetId == null) { const f = items[0].getBoundingClientRect(), l = items[items.length - 1].getBoundingClientRect(); if (y < f.top) targetId = items[0].getAttribute('data-ro-id'); else if (y > l.bottom) targetId = items[items.length - 1].getAttribute('data-ro-id'); }
-    if (targetId == null) return;
-    const kind = this.state.reorderKind || 'tasks';
+    let targetEl = null;
+    for (const el of items) { const r = el.getBoundingClientRect(); if (y >= r.top && y <= r.bottom) { targetEl = el; break; } }
+    if (!targetEl) { const f = items[0].getBoundingClientRect(), l = items[items.length - 1].getBoundingClientRect(); if (y < f.top) targetEl = items[0]; else if (y > l.bottom) targetEl = items[items.length - 1]; }
+    if (!targetEl) return;
     const arr = [...this.state[kind]];
     const fi = arr.findIndex(t => String(t.id) === String(this.state.dragId));
-    const ti = arr.findIndex(t => String(t.id) === String(targetId));
-    if (fi < 0 || ti < 0 || fi === ti) return;
-    const [mv] = arr.splice(fi, 1); arr.splice(ti, 0, mv);
+    if (fi < 0) return;
+    const [mv] = arr.splice(fi, 1);
+    const setAttr = targetEl.getAttribute('data-ro-set');
+    if (kind === 'tasks' && setAttr != null) {
+      const sid = setAttr === 'none' ? null : parseInt(setAttr);
+      mv.setId = sid;
+      let ins = arr.findIndex(t => (t.setId ?? null) === sid);
+      if (ins < 0) ins = arr.length;
+      arr.splice(ins, 0, mv);
+    } else {
+      const targetId = targetEl.getAttribute('data-ro-id');
+      const tt = arr.find(t => String(t.id) === String(targetId));
+      if (!tt) { arr.splice(fi, 0, mv); return; }
+      if (kind === 'tasks') mv.setId = tt.setId ?? null;
+      const ti = arr.findIndex(t => String(t.id) === String(targetId));
+      arr.splice(ti, 0, mv);
+    }
     this.save({ [kind]: arr });
   }
-  roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
+  roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
   armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
   undo() {
     const p = this.state.pending; if (!p) return;
@@ -1250,17 +1273,13 @@ class Component extends DCLogic {
   }
   exportDocx() {
     const code = this.makeFullBackup();
-    const text = 'EXP BANK 完整备份码\r\n生成于 ' + this.todayKey() + '\r\n\r\n导入方法:在 App 的「备份」里点右侧「上传文件」选中本文件即可自动识别;或手动全选下面这段复制粘贴到「粘贴备份码」框。\r\n\r\n======== 备份码开始 ========\r\n' + code + '\r\n======== 备份码结束 ========\r\n';
+    const text = 'EXP BANK 备份码(导入时整段复制或直接上传本文件):\r\n' + code;
     const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    let downloaded = false;
-    try { const a = document.createElement('a'); a.href = url; a.download = 'EXP-BANK-备份-' + this.todayKey() + '.txt'; document.body.appendChild(a); a.click(); a.remove(); downloaded = true; } catch (e) {}
-    let win = null;
-    try { win = window.open(url, '_blank'); } catch (e) {}
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
-    if (win) this.setState({ backupMsg: '✓ 已在新页面打开备份文本——用浏览器菜单「保存/分享」即可,或长按全选复制', backupMsgColor: '#4ade80' });
-    else if (downloaded) this.setState({ backupMsg: '✓ 已触发下载。华为浏览器若无提示,请改用上方「复制完整码(含图)」直接复制保存', backupMsgColor: '#4ade80' });
-    else this.setState({ backupMsg: '此浏览器不支持下载,请用「复制完整码(含图)」直接复制保存', backupMsgColor: '#f87171' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'EXP-BANK-备份-' + this.todayKey() + '.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    this.setState({ backupMsg: '✓ 已触发下载 .txt，保存后可在右侧上传导入', backupMsgColor: '#4ade80' });
   }
   importDocxFile(file) {
     const name = (file.name || '').toLowerCase();
@@ -1505,17 +1524,42 @@ class Component extends DCLogic {
       : roKind === 'milestones' ? st.milestones.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
       : roKind === 'funds' ? st.funds.map(f => ({ id: f.id, name: f.name, sub: f.code || '' }))
       : st.tasks.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
-    const reorderRows = roSrc.map(t => ({ id: t.id, roId: String(t.id), name: t.name,
-      setName: t.sub, hasSet: !!t.sub,
+    const accGreen = this.props.accent ?? '#4ade80';
+    const mkTaskRow = t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name,
+      setName: '', hasSet: false, inGroup: t.setId != null, indent: t.setId != null ? '16px' : '0px',
       batchOn: (st.batchSel || []).includes(t.id), onToggleBatch: () => this.toggleBatch(t.id),
-      batchBorder: (st.batchSel || []).includes(t.id) ? (this.props.accent ?? '#4ade80') : '#2f3542',
-      batchBg: (st.batchSel || []).includes(t.id) ? (this.props.accent ?? '#4ade80') : 'transparent',
+      batchBorder: (st.batchSel || []).includes(t.id) ? accGreen : '#2f3542',
+      batchBg: (st.batchSel || []).includes(t.id) ? accGreen : 'transparent',
       batchTick: (st.batchSel || []).includes(t.id) ? '✓' : '',
       dragging: String(st.dragId) === String(t.id),
       dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36',
-      dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
+      dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : (t.setId != null ? '#0b1017' : '#0d0f14'),
       dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
-      onDown: e => this.roDown(t.id, e) }));
+      onDown: e => this.roDown(t.id, e) });
+    let reorderRows;
+    if (roKind === 'tasks') {
+      const decd = st.tasks.map(dec);
+      const rows = [];
+      setsArr.forEach(s => {
+        const its = decd.filter(t => t.setId === s.id);
+        rows.push({ isSetHeader: true, isRow: false, roSet: String(s.id), name: s.name, count: its.length + ' 项',
+          collapsed: !!s.collapsed, chev: s.collapsed ? '▸' : '▾', onToggleSet: () => this.toggleSet(s.id) });
+        if (!s.collapsed) its.forEach(t => rows.push(mkTaskRow(t)));
+      });
+      const ungrouped = decd.filter(t => t.setId == null);
+      if (setsArr.length) rows.push({ isSetHeader: true, isRow: false, roSet: 'none', name: '未分组', count: ungrouped.length + ' 项', collapsed: false, chev: '', onToggleSet: () => {} });
+      ungrouped.forEach(t => rows.push(mkTaskRow(t)));
+      reorderRows = rows;
+    } else {
+      reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name,
+        setName: t.sub, hasSet: !!t.sub, inGroup: false, indent: '0px',
+        batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '',
+        dragging: String(st.dragId) === String(t.id),
+        dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36',
+        dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
+        dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
+        onDown: e => this.roDown(t.id, e) }));
+    }
     const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id; return { ...r,
       canAfford: st.exp >= r.cost && !rp, cannot: st.exp < r.cost && !rp, pending: rp,
