@@ -30,6 +30,9 @@ input[type="date"]{color-scheme:dark;}
 </helmet>
 <div style="min-height:100vh;background:radial-gradient(1100px 480px at 75% -8%,rgba(139,92,246,0.10),transparent 62%),radial-gradient(900px 420px at 8% 4%,rgba(96,165,250,0.07),transparent 60%),radial-gradient(1400px 700px at 50% 115%,rgba(139,92,246,0.05),transparent 65%),linear-gradient(180deg,#0d0e14 0%,#0a0b10 55%,#0b0c12 100%);color:#e6e9f0;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;padding-bottom:96px;">
   <div style="position:fixed;inset:0;pointer-events:none;z-index:0;background:{{ tierScene }};"></div>
+  <sc-if value="{{ momentumShow }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;max-width:92%;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),0 12px 32px rgba(0,0,0,0.5);border-radius:99px;padding:11px 22px;text-align:center;">✦ {{ momentumMsg }}</div>
+  </sc-if>
 
   <!-- HERO -->
   <div style="position:relative;z-index:1;height:{{ heroH }};min-height:{{ heroH }};overflow:hidden;border-bottom:1px solid #1e222b;">
@@ -110,7 +113,7 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ openNewTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(0,0,0,0.3);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务</div>
         <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 14px;" style-hover="border-color:#4ade80;">+ 新建任务集</div>
         <div style="flex:1;"></div>
-        <div onClick="{{ startReorder }}" title="打开排序面板，长按拖动" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">⇅ 排序</div>
+        <div onClick="{{ startReorder }}" title="批量编辑:排序 + 归入任务集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
       </sc-if>
       <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="4">
@@ -135,7 +138,7 @@ input[type="date"]{color-scheme:dark;}
             <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:1px;">{{ t.cycleLabel }}</div>
           </div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
-            <div title="连续打卡满 7 天 · 已成势" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.55),0 2px 8px rgba(0,0,0,0.4);border-radius:99px;padding:3px 10px;white-space:nowrap;">✦ {{ t.formedLabel }}</div>
+            <div title="连续打卡满 7 天 · MOMENTUM 已成势,继续保持!" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.55),0 2px 8px rgba(0,0,0,0.4);border-radius:99px;padding:3px 10px;white-space:nowrap;">✦ {{ t.formedLabel }}</div>
           </sc-if>
           <sc-if value="{{ t.hasStreak }}" hint-placeholder-val="{{ true }}">
             <div title="连续打卡天数 · 昨天没完成会归零" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:{{ accent }};border:1px solid {{ tierBorder }};border-radius:99px;padding:3px 10px;white-space:nowrap;">▲ {{ t.streakLabel }}</div>
@@ -838,7 +841,10 @@ input[type="date"]{color-scheme:dark;}
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在某一条上<b style="color:#c3c9d6;">长按并上下拖动</b>即可调整顺序,松手完成。顺序会实时保存。</div>
         <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding:2px;">
           <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
-            <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" style="touch-action:none;user-select:none;cursor:grab;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+            <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" style="touch-action:none;user-select:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+              <sc-if value="{{ reorderIsTasks }}" hint-placeholder-val="{{ true }}">
+                <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:20px;height:20px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:12px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
+              </sc-if>
               <div style="font-size:16px;color:#5a6172;line-height:1;">⠿</div>
               <div style="flex:1;min-width:0;">
                 <div style="font-size:14px;font-weight:700;color:#eef1f7;">{{ row.name }}</div>
@@ -849,6 +855,22 @@ input[type="date"]{color-scheme:dark;}
             </div>
           </sc-for>
         </div>
+        <sc-if value="{{ reorderIsTasks }}" hint-placeholder-val="{{ true }}">
+          <div style="border-top:1px solid #1e222b;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
+            <div style="font-size:12px;color:#8b93a4;">勾选任务后,归入一个任务集(选已有,或填新名):</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <select id="batch-set-pick" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 8px;color:#aeb6c6;font-size:12.5px;">
+                <option value="">选已有任务集…</option>
+                <sc-for list="{{ batchSetOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.id }}">{{ o.name }}</option></sc-for>
+              </select>
+              <input id="batch-set-name" placeholder="或填新任务集名" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12.5px;font-family:inherit;">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div onClick="{{ groupBatch }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 16px;" style-hover="filter:brightness(1.12);">归入任务集 ({{ batchCount }})</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ accent }};">{{ batchMsg }}</div>
+            </div>
+          </div>
+        </sc-if>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeReorder }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">完成</div>
         </div>
@@ -916,7 +938,7 @@ class Component extends DCLogic {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
     return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, batchSel, batchMsg, momentumMsg, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -990,7 +1012,7 @@ class Component extends DCLogic {
     fetch(worker, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: test ? 'test' : 'write', token, databaseId: dbId, rows }) })
       .then(r => r.json().catch(() => ({ ok: r.ok })))
       .then(d => { const ok = d && (d.ok !== false); this.setState({ notionBusy: false, notionResultOk: ok, notionResultMsg: ok ? (test ? '✓ 连接成功！现在可以写回了。' : '✓ 写回成功！已把 ' + rows.length + ' 只标的的当日数据推送到 Notion。') : ('✗ ' + (d.error || d.message || '失败，请检查 Token / 数据库共享')) }); })
-      .catch(e => this.setState({ notionBusy: false, notionResultOk: false, notionResultMsg: '✗ 连不上 Worker(' + e.message + ')。它试图访问的网址是:\n' + worker + '\n\n排查:①把这个网址复制到手机浏览器打开,能看到 “POST only / 只接受 POST” 才算正常(白屏或报 DNS 错就是网址错或 Worker 被删);②确认 App 在联网状态;③网址不能有多余空格或中文标点;④若你重建过 Worker,网址会变,记得回设置里更新。' }));
+      .catch(e => this.setState({ notionBusy: false, notionResultOk: false, notionResultMsg: '✗ 连不上 Worker(' + e.message + ')。它试图访问的网址是:\n' + worker + '\n\n最常见原因:国内网络对 *.workers.dev 时常屏蔽/不稳定 → 建议在 Cloudflare 给 Worker 绑一个自有域名(自定义域),用那个域名代替 workers.dev。\n\n其它排查:①把上面网址复制到手机浏览器打开,看到 “只接受 POST / POST only” 才算 Worker 正常(白屏/DNS 错=网址错或被墙);②确认已联网;③网址不能有空格或中文标点;④重建过 Worker 网址会变,记得回设置更新。' }));
   }
   closeNotionResult() { this.setState({ notionResultOpen: false }); }
   startEditExp() { this.setState({ expEditing: true }); }
@@ -1002,7 +1024,20 @@ class Component extends DCLogic {
   }
   toggleSet(id) { this.save({ sets: this.state.sets.map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
   delSet(id) { this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
-  startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null }); }
+  startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null, batchSel: [] }); }
+  toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
+  groupBatch() {
+    const sel = this.state.batchSel || []; if (!sel.length) return;
+    let setId, sets = this.state.sets;
+    const nm = this.v('batch-set-name');
+    const chosen = document.getElementById('batch-set-pick');
+    if (nm) { setId = this.state.nextId; sets = [...sets, { id: setId, name: nm, collapsed: false }]; }
+    else if (chosen && chosen.value) { setId = parseInt(chosen.value); }
+    else { this.setState({ batchMsg: '请先选一个任务集,或填新任务集名' }); return; }
+    const tasks = this.state.tasks.map(t => sel.includes(t.id) ? { ...t, setId } : t);
+    this.save({ tasks, sets, nextId: nm ? this.state.nextId + 1 : this.state.nextId, batchSel: [], batchMsg: '✓ 已归入任务集' });
+    const el = document.getElementById('batch-set-name'); if (el) el.value = '';
+  }
   closeReorder() { clearTimeout(this._roTimer); this.setState({ reorderOpen: false, dragId: null }); }
   pickRewardImage(id) {
     const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
@@ -1081,8 +1116,9 @@ class Component extends DCLogic {
     else if (p.kind === 'msClaim') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.state.exp - p.bonus, ledger: rm(this.state.ledger), pending: null });
   }
   componentDidMount() {
+    this.pruneOnce();
     this.applyInterest();
-    this._intTimer = setInterval(() => this.applyInterest(), 300000);
+    this._intTimer = setInterval(() => { this.pruneOnce(); this.applyInterest(); }, 300000);
     this._onResize = () => { clearTimeout(this._rt); this._rt = setTimeout(() => this.setState({ vw: window.innerWidth }), 150); };
     window.addEventListener('resize', this._onResize);
     if (this.state.vw == null) this.setState({ vw: window.innerWidth });
@@ -1108,6 +1144,11 @@ class Component extends DCLogic {
   onNoiseFile(e) { const file = e.target.files && e.target.files[0]; if (!file) return; const url = URL.createObjectURL(file); this.stopNoiseNodes(); const el = new Audio(url); el.loop = true; el.volume = this.state.noiseVol ?? 0.5; el.play(); this.ensureAudio().mediaEl = el; this.setState({ noisePreset: 'custom', noiseOn: true, noiseFileName: file.name }); }
   setNoiseVol(v) { const vol = parseFloat(v); this.setState({ noiseVol: vol }); if (this._au) { if (this._au.gain) this._au.gain.gain.value = vol; if (this._au.mediaEl) this._au.mediaEl.volume = vol; } }
   sevenAM(t) { const d = new Date(t); d.setHours(7, 0, 0, 0); return d.getTime(); }
+  pruneOnce() {
+    const today = this.todayKey();
+    const keep = this.state.tasks.filter(t => !(t.cycle === 'once' && (t.done && t.done['once']) && t.lastDone && t.lastDone < today));
+    if (keep.length !== this.state.tasks.length) this.save({ tasks: keep });
+  }
   applyInterest() {
     const rate = (this.props.interestRate ?? 5) / 100;
     const st = this.state, now = Date.now();
@@ -1199,10 +1240,15 @@ class Component extends DCLogic {
     const code = this.makeFullBackup();
     const text = 'EXP BANK 完整备份码\r\n生成于 ' + this.todayKey() + '\r\n\r\n导入方法:在 App 的「备份」里点右侧「上传文件」选中本文件即可自动识别;或手动全选下面这段复制粘贴到「粘贴备份码」框。\r\n\r\n======== 备份码开始 ========\r\n' + code + '\r\n======== 备份码结束 ========\r\n';
     const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = 'EXP-BANK-备份-' + this.todayKey() + '.txt'; a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-    this.setState({ backupMsg: '✓ 已生成 .txt 文件,任意文本/WPS 都能打开', backupMsgColor: '#4ade80' });
+    const url = URL.createObjectURL(blob);
+    let downloaded = false;
+    try { const a = document.createElement('a'); a.href = url; a.download = 'EXP-BANK-备份-' + this.todayKey() + '.txt'; document.body.appendChild(a); a.click(); a.remove(); downloaded = true; } catch (e) {}
+    let win = null;
+    try { win = window.open(url, '_blank'); } catch (e) {}
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    if (win) this.setState({ backupMsg: '✓ 已在新页面打开备份文本——用浏览器菜单「保存/分享」即可,或长按全选复制', backupMsgColor: '#4ade80' });
+    else if (downloaded) this.setState({ backupMsg: '✓ 已触发下载。华为浏览器若无提示,请改用上方「复制完整码(含图)」直接复制保存', backupMsgColor: '#4ade80' });
+    else this.setState({ backupMsg: '此浏览器不支持下载,请用「复制完整码(含图)」直接复制保存', backupMsgColor: '#f87171' });
   }
   importDocxFile(file) {
     const name = (file.name || '').toLowerCase();
@@ -1292,6 +1338,7 @@ class Component extends DCLogic {
     const newLastDone = streakChanged ? today : prevLastDone;
     const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, streak: newStreak, lastDone: newLastDone } : x);
     this.armTimer(key);
+    if (streakChanged && newStreak === 7) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 天,MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
     this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevLastDone } });
   }
   redeem(id) {
@@ -1404,7 +1451,7 @@ class Component extends DCLogic {
       const liveStreak = (t.lastDone === _td || t.lastDone === _yd) ? (t.streak || 0) : 0;
       const isFormed = liveStreak >= 7;
       return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: !doneNow && !tp, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
-        isFormed, hasStreak: liveStreak > 0 && !isFormed, streakLabel: '连 ' + liveStreak + ' 天', formedLabel: '已成势 · ' + liveStreak + ' 连',
+        isFormed, hasStreak: liveStreak > 0 && !isFormed, streakLabel: '连 ' + liveStreak + ' 天', formedLabel: 'MOMENTUM · ' + liveStreak + ' 连',
         cycleLabel: k ? `${cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
         hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
@@ -1448,6 +1495,10 @@ class Component extends DCLogic {
       : st.tasks.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
     const reorderRows = roSrc.map(t => ({ id: t.id, roId: String(t.id), name: t.name,
       setName: t.sub, hasSet: !!t.sub,
+      batchOn: (st.batchSel || []).includes(t.id), onToggleBatch: () => this.toggleBatch(t.id),
+      batchBorder: (st.batchSel || []).includes(t.id) ? (this.props.accent ?? '#4ade80') : '#2f3542',
+      batchBg: (st.batchSel || []).includes(t.id) ? (this.props.accent ?? '#4ade80') : 'transparent',
+      batchTick: (st.batchSel || []).includes(t.id) ? '✓' : '',
       dragging: String(st.dragId) === String(t.id),
       dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36',
       dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
@@ -1523,7 +1574,12 @@ class Component extends DCLogic {
       toggleWar: () => this.save({ warMode: !st.warMode }),
       tasks: st.warMode ? coreAll : all, taskRows, setOptions, coreDone, coreTotal: coreAll.length,
       addSet: () => this.addSet(),
+      momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
+      reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
+      batchCount: (st.batchSel || []).length, batchHasSel: (st.batchSel || []).length > 0,
+      batchSetOptions: setsArr.map(s => ({ id: s.id, name: s.name })),
+      batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
       startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderFunds: () => this.startReorder('funds'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
       rewards, milestones, ledger, showLedger: this.props.showLedger ?? true,
