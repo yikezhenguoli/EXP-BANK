@@ -111,7 +111,7 @@ input[type="date"]{color-scheme:dark;}
       <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px;">
         <div onClick="{{ openNewTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(0,0,0,0.3);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务</div>
-        <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};border:1px solid #2a2f3a;border-radius:8px;padding:7px 14px;" style-hover="border-color:#4ade80;">+ 新建任务集</div>
+        <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务集</div>
         <div style="flex:1;"></div>
         <div onClick="{{ startReorder }}" title="批量编辑:排序 + 归入任务集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
@@ -838,14 +838,25 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeReorder }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">{{ reorderTitle }}</div>
-        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在某一条上<b style="color:#c3c9d6;">长按并上下拖动</b>即可调整顺序,松手完成。顺序会实时保存。</div>
-        <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding:2px;">
+        <sc-if value="{{ reorderIsTasks }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;gap:8px;">
+            <div onClick="{{ setRoDrag }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roDragTextColor }};background:{{ roDragBg }};border:1px solid {{ roDragBorder }};box-shadow:{{ roDragShadow }};">拖拽排序</div>
+            <div onClick="{{ setRoSelect }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roSelTextColor }};background:{{ roSelBg }};border:1px solid {{ roSelBorder }};box-shadow:{{ roSelShadow }};">勾选归集</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ roDragMode }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在任意一条任务上<b style="color:#c3c9d6;">长按并上下拖动</b>整条即可调整顺序,松手完成,实时保存。</div>
+        </sc-if>
+        <sc-if value="{{ roSelectMode }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">勾选多条任务,在下方<b style="color:#c3c9d6;">归入一个任务集</b>。</div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px;">
           <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
-            <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" style="touch-action:none;user-select:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
-              <sc-if value="{{ reorderIsTasks }}" hint-placeholder-val="{{ true }}">
-                <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:20px;height:20px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:12px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
+            <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" style="touch-action:none;user-select:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:14px 14px;border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+              <sc-if value="{{ roShowCheck }}" hint-placeholder-val="{{ false }}">
+                <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:22px;height:22px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:13px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
               </sc-if>
-              <div style="font-size:16px;color:#5a6172;line-height:1;">⠿</div>
+              <div style="font-size:18px;color:#7c8494;line-height:1;">≡</div>
               <div style="flex:1;min-width:0;">
                 <div style="font-size:14px;font-weight:700;color:#eef1f7;">{{ row.name }}</div>
                 <sc-if value="{{ row.hasSet }}" hint-placeholder-val="{{ false }}">
@@ -855,7 +866,7 @@ input[type="date"]{color-scheme:dark;}
             </div>
           </sc-for>
         </div>
-        <sc-if value="{{ reorderIsTasks }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ roSelectMode }}" hint-placeholder-val="{{ false }}">
           <div style="border-top:1px solid #1e222b;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
             <div style="font-size:12px;color:#8b93a4;">勾选任务后,归入一个任务集(选已有,或填新名):</div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
@@ -938,7 +949,7 @@ class Component extends DCLogic {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
     return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, batchSel, batchMsg, momentumMsg, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -1024,7 +1035,8 @@ class Component extends DCLogic {
   }
   toggleSet(id) { this.save({ sets: this.state.sets.map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
   delSet(id) { this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
-  startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null, batchSel: [] }); }
+  startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null, batchSel: [], roMode: 'drag' }); }
+  setRoMode(m) { this.setState({ roMode: m }); }
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
   groupBatch() {
     const sel = this.state.batchSel || []; if (!sel.length) return;
@@ -1577,6 +1589,17 @@ class Component extends DCLogic {
       momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
       reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
+      roMode: st.roMode || 'drag', roDragMode: (st.roMode || 'drag') === 'drag', roSelectMode: (st.roMode || 'drag') === 'select',
+      setRoDrag: () => this.setRoMode('drag'), setRoSelect: () => this.setRoMode('select'),
+      roDragBg: (st.roMode || 'drag') === 'drag' ? (tier.btnGrad) : '#161a22',
+      roDragBorder: (st.roMode || 'drag') === 'drag' ? 'transparent' : '#2f3542',
+      roDragTextColor: (st.roMode || 'drag') === 'drag' ? '#14151c' : '#c3c9d6',
+      roDragShadow: (st.roMode || 'drag') === 'drag' ? 'inset 0 1px 0 rgba(255,255,255,0.6)' : 'none',
+      roSelBg: (st.roMode || 'drag') === 'select' ? (tier.btnGrad) : '#161a22',
+      roSelBorder: (st.roMode || 'drag') === 'select' ? 'transparent' : '#2f3542',
+      roSelTextColor: (st.roMode || 'drag') === 'select' ? '#14151c' : '#c3c9d6',
+      roSelShadow: (st.roMode || 'drag') === 'select' ? 'inset 0 1px 0 rgba(255,255,255,0.6)' : 'none',
+      roShowCheck: (st.reorderKind || 'tasks') === 'tasks' && (st.roMode || 'drag') === 'select',
       batchCount: (st.batchSel || []).length, batchHasSel: (st.batchSel || []).length > 0,
       batchSetOptions: setsArr.map(s => ({ id: s.id, name: s.name })),
       batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
