@@ -157,9 +157,13 @@ input[type="date"]{color-scheme:dark;}
           </sc-if>
           <sc-if value="{{ t.showDone }}" hint-placeholder-val="{{ true }}">
             <div onClick="{{ t.onDone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">完成</div>
+            <div onClick="{{ t.onAbandon }}" title="放弃本次 · 不加 EXP" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #5a2a2a;background:#1c1214;border-radius:8px;padding:6px 12px;" style-hover="border-color:#f87171;background:#251518;">放弃</div>
           </sc-if>
           <sc-if value="{{ t.showDoneLabel }}" hint-placeholder-val="{{ false }}">
             <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px solid #262b36;border-radius:8px;padding:6px 12px;">✓ 已完成</div>
+          </sc-if>
+          <sc-if value="{{ t.showAbandonLabel }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ t.onUnabandon }}" title="已放弃 · 点一下可撤销" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #7f1d1d;background:#2a1416;border-radius:8px;padding:6px 12px;">⚠ 已放弃</div>
           </sc-if>
           <div onClick="{{ t.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;padding:0 2px;" style-hover="color:#f87171;">×</div>
         </div>
@@ -860,7 +864,7 @@ input[type="date"]{color-scheme:dark;}
               </div>
             </sc-if>
             <sc-if value="{{ row.isRow }}" hint-placeholder-val="{{ true }}">
-              <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" style="touch-action:pan-y;user-select:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:14px 14px;margin-left:{{ row.indent }};border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+              <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" onContextMenu="{{ stopClick }}" style="touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;user-drag:none;-webkit-user-drag:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:14px 14px;margin-left:{{ row.indent }};border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
                 <sc-if value="{{ roShowCheck }}" hint-placeholder-val="{{ false }}">
                   <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:22px;height:22px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:13px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
                 </sc-if>
@@ -1098,12 +1102,17 @@ class Component extends DCLogic {
   askRewardImage(id) { this.setState({ imgEditId: id }); }
   closeImgEdit() { this.setState({ imgEditId: null }); }
   roDown(id, e) {
-    this._roStart = { y: e.clientY, moved: false };
+    this._roStart = { y: e.clientY, moved: false, id };
+    this._roPointer = e.pointerId; this._roTarget = e.currentTarget;
     clearTimeout(this._roTimer);
-    this._roTimer = setTimeout(() => { this.setState({ dragId: id }); if (navigator.vibrate) navigator.vibrate(15); }, 280);
+    this._roTimer = setTimeout(() => {
+      this.setState({ dragId: id });
+      if (this._roTarget && this._roTarget.setPointerCapture) { try { this._roTarget.setPointerCapture(this._roPointer); } catch (_) {} }
+      if (navigator.vibrate) navigator.vibrate(15);
+    }, 180);
     this._roMove = ev => this.roMove(ev);
     this._roUp = () => this.roUp();
-    window.addEventListener('pointermove', this._roMove);
+    window.addEventListener('pointermove', this._roMove, { passive: false });
     window.addEventListener('pointerup', this._roUp);
     window.addEventListener('pointercancel', this._roUp);
   }
@@ -1380,6 +1389,13 @@ class Component extends DCLogic {
     this.save({ exp: this.state.exp - r.cost, ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts } });
   }
   toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
+  abandon(id) {
+    const t = this.state.tasks.find(x => x.id === id), k = this.key(t.cycle); if (!k) return;
+    const cur = t.abandoned && t.abandoned[k];
+    const abandoned = { ...(t.abandoned || {}) };
+    if (cur) delete abandoned[k]; else abandoned[k] = true;
+    this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, abandoned } : x) });
+  }
   delTask(id) { this.save({ tasks: this.state.tasks.filter(x => x.id !== id) }); }
   delReward(id) { this.save({ rewards: this.state.rewards.filter(x => x.id !== id) }); }
   delMilestone(id) { this.save({ milestones: this.state.milestones.filter(x => x.id !== id) }); }
@@ -1480,14 +1496,19 @@ class Component extends DCLogic {
       const tp = !!pend && pend.key === 'task:' + t.id;
       const _td = this.todayKey(), _yd = this.shiftDay(_td, -1);
       const liveStreak = (t.lastDone === _td || t.lastDone === _yd) ? (t.streak || 0) : 0;
-      const isFormed = liveStreak >= 7;
-      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: !doneNow && !tp, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
-        isFormed, hasStreak: liveStreak > 0 && !isFormed, streakLabel: '连 ' + liveStreak + ' 天', formedLabel: 'MOMENTUM · ' + liveStreak + ' 连',
+      const isFormed = liveStreak >= 7 && t.cycle !== 'once';
+      const abandonedNow = k ? !!(t.abandoned && t.abandoned[k]) : false;
+      const showActions = !doneNow && !abandonedNow && !tp;
+      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
+        abandonedNow, showAbandonLabel: abandonedNow && !tp,
+        isFormed, hasStreak: liveStreak > 0 && !isFormed && t.cycle !== 'once', streakLabel: '连 ' + liveStreak + ' 天', formedLabel: 'MOMENTUM · ' + liveStreak + ' 连',
         cycleLabel: k ? `${cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
         hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
         starColor: t.core ? '#fbbf24' : '#2b3040',
         onDone: e => { e.stopPropagation(); this.complete(t.id); },
+        onAbandon: e => { e.stopPropagation(); this.abandon(t.id); },
+        onUnabandon: e => { e.stopPropagation(); this.abandon(t.id); },
         onDel: e => { e.stopPropagation(); this.delTask(t.id); },
         onToggleCore: e => { e.stopPropagation(); this.toggleCore(t.id); },
         onEdit: () => this.openEdit('task', t.id), onUndo: e => { e.stopPropagation(); this.undo(); },
