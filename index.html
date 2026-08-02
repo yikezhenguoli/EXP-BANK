@@ -375,7 +375,7 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ isFund }}" hint-placeholder-val="{{ false }}">
   <div style="position:relative;z-index:1;max-width:900px;margin:0 auto;padding:18px 14px 0;">
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:{{ fundPad }};display:flex;flex-direction:column;gap:12px;">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">基金决策收盘台 // FUND</div><div onClick="{{ openFundSettings }}" title="阈值·标的管理·Notion 写回" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 12px;" style-hover="border-color:{{ accent }};">⚙ 设置</div><div onClick="{{ writeNotion }}" title="一键写回 Notion（需先在设置里配好）" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">↻ 写回 Notion</div><div onClick="{{ openNewFund }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建标的</div></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">基金决策收盘台 // FUND</div><div onClick="{{ startReorderFunds }}" title="长按拖动排序标的" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openFundSettings }}" title="阈值·标的管理·Notion 写回" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 12px;" style-hover="border-color:{{ accent }};">⚙ 设置</div><div onClick="{{ writeNotion }}" title="一键写回 Notion（需先在设置里配好）" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">↻ 写回 Notion</div><div onClick="{{ openNewFund }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建标的</div></div>
       <div style="display:grid;grid-template-columns:{{ fundSumCols }};gap:10px;">
         <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">今日信号</div>
@@ -979,8 +979,10 @@ class Component extends DCLogic {
     return { price, base, cost, type, label, trig, band, dateStr: last ? last.date : '未录入' };
   }
   writeNotion(test) {
-    const { token, dbId, worker } = this.state.notion || {};
+    const worker = ((this.state.notion || {}).worker || '').trim().replace(/\s+/g, '');
+    const { token, dbId } = this.state.notion || {};
     if (!worker) { this.setState({ notionResultOpen: true, notionResultOk: false, notionResultMsg: '还没填「写回地址(Worker 网址)」。请先在 ⚙ 设置里填好 Cloudflare Worker 网址。' }); return; }
+    if (!/^https?:\/\//i.test(worker)) { this.setState({ notionResultOpen: true, notionResultOk: false, notionResultMsg: 'Worker 网址格式不对,必须以 https:// 开头。当前填的是:' + worker }); return; }
     if (!token) { this.setState({ notionResultOpen: true, notionResultOk: false, notionResultMsg: '还没填 Integration Token。请先在 ⚙ 设置里填好。' }); return; }
     this.setState({ notionBusy: true, notionResultOpen: true, notionResultOk: null, notionResultMsg: test ? '正在测试连接…' : '正在写回 Notion…' });
     const cfg = this.state.fundCfg;
@@ -988,7 +990,7 @@ class Component extends DCLogic {
     fetch(worker, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: test ? 'test' : 'write', token, databaseId: dbId, rows }) })
       .then(r => r.json().catch(() => ({ ok: r.ok })))
       .then(d => { const ok = d && (d.ok !== false); this.setState({ notionBusy: false, notionResultOk: ok, notionResultMsg: ok ? (test ? '✓ 连接成功！现在可以写回了。' : '✓ 写回成功！已把 ' + rows.length + ' 只标的的当日数据推送到 Notion。') : ('✗ ' + (d.error || d.message || '失败，请检查 Token / 数据库共享')) }); })
-      .catch(e => this.setState({ notionBusy: false, notionResultOk: false, notionResultMsg: '✗ 连接失败：' + e.message + '。请检查 Worker 网址是否可访问。' }));
+      .catch(e => this.setState({ notionBusy: false, notionResultOk: false, notionResultMsg: '✗ 连不上 Worker(' + e.message + ')。它试图访问的网址是:\n' + worker + '\n\n排查:①把这个网址复制到手机浏览器打开,能看到 “POST only / 只接受 POST” 才算正常(白屏或报 DNS 错就是网址错或 Worker 被删);②确认 App 在联网状态;③网址不能有多余空格或中文标点;④若你重建过 Worker,网址会变,记得回设置里更新。' }));
   }
   closeNotionResult() { this.setState({ notionResultOpen: false }); }
   startEditExp() { this.setState({ expEditing: true }); }
@@ -1442,6 +1444,7 @@ class Component extends DCLogic {
     const roKind = st.reorderKind || 'tasks';
     const roSrc = roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: r.cost + ' EXP' }))
       : roKind === 'milestones' ? st.milestones.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
+      : roKind === 'funds' ? st.funds.map(f => ({ id: f.id, name: f.name, sub: f.code || '' }))
       : st.tasks.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
     const reorderRows = roSrc.map(t => ({ id: t.id, roId: String(t.id), name: t.name,
       setName: t.sub, hasSet: !!t.sub,
@@ -1450,7 +1453,7 @@ class Component extends DCLogic {
       dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
       dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
       onDown: e => this.roDown(t.id, e) }));
-    const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : '任务排序 // REORDER';
+    const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id; return { ...r,
       canAfford: st.exp >= r.cost && !rp, cannot: st.exp < r.cost && !rp, pending: rp,
       costStr: r.cost + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '', imgPos: (r.imgPos != null ? r.imgPos : 50) + '%',
@@ -1521,7 +1524,7 @@ class Component extends DCLogic {
       tasks: st.warMode ? coreAll : all, taskRows, setOptions, coreDone, coreTotal: coreAll.length,
       addSet: () => this.addSet(),
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
-      startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), closeReorder: () => this.closeReorder(),
+      startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderFunds: () => this.startReorder('funds'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
       rewards, milestones, ledger, showLedger: this.props.showLedger ?? true,
       earned, spent, todayEarned: '+' + todayEarned,
