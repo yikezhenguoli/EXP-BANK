@@ -53,6 +53,9 @@ input[type="date"]{color-scheme:dark;}
           <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:{{ di.badgeColor }};border-left:1px solid rgba(255,255,255,0.14);padding-left:8px;">{{ di.badge }}</span>
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;pointer-events:auto;">
+        <div onClick="{{ openTierCfg }}" title="调节金星/钻星门槛 · 每日利率" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">⚙ 参数</span>
+        </div>
         <div onClick="{{ openBackup }}" title="导出/导入备份码 · 跨设备搬运数据" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">⤓ 备份</span>
         </div>
@@ -169,10 +172,10 @@ input[type="date"]{color-scheme:dark;}
             <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px solid #262b36;border-radius:8px;padding:6px 12px;">✓ 已完成</div>
           </sc-if>
           <sc-if value="{{ t.showAbandonUndo }}" hint-placeholder-val="{{ false }}">
-            <div onClick="{{ t.onUnabandon }}" title="已放弃 · 点一下撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #7f1d1d;background:#2a1416;border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">⚠ 已放弃 · 撤销</div>
+            <div onClick="{{ t.onUnabandon }}" title="已放弃 · 点一下撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #7f1d1d;background:#2a1416;border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">✕ 已放弃 · 撤销</div>
           </sc-if>
           <sc-if value="{{ t.showAbandonLabel }}" hint-placeholder-val="{{ false }}">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a5a5a;border:1px solid #4a2626;border-radius:8px;padding:6px 12px;">⚠ 已放弃</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a5a5a;border:1px solid #4a2626;border-radius:8px;padding:6px 12px;">✕ 已放弃</div>
           </sc-if>
           <div onClick="{{ t.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;padding:0 2px;" style-hover="color:#f87171;">×</div>
         </div>
@@ -201,7 +204,12 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
               <div style="display:flex;flex-direction:column;gap:3px;">
                 <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};">{{ r.costStr }}</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};">{{ r.costStr }}</div>
+                  <sc-if value="{{ r.hasCapHint }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;border:1px solid #262b36;border-radius:99px;padding:1px 7px;">{{ r.capHint }}</div>
+                  </sc-if>
+                </div>
               </div>
               <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ false }}">
                 <div onClick="{{ r.onUndo }}" title="已兑换 · 点一下可撤销(几秒后自动确认)" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 0;" style-hover="filter:brightness(1.15);">✓ 已兑换</div>
@@ -211,6 +219,9 @@ input[type="date"]{color-scheme:dark;}
               </sc-if>
               <sc-if value="{{ r.cannot }}" hint-placeholder-val="{{ false }}">
                 <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px dashed #262b36;border-radius:8px;padding:6px 0;">余额不足</div>
+              </sc-if>
+              <sc-if value="{{ r.capped }}" hint-placeholder-val="{{ false }}">
+                <div title="已达兑换频次上限" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#8a5a5a;border:1px solid #4a2626;background:#1a1315;border-radius:8px;padding:6px 0;">✓ {{ r.capLabel }}</div>
               </sc-if>
             </div>
           </div>
@@ -261,6 +272,7 @@ input[type="date"]{color-scheme:dark;}
           <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">时间轴 // TIMELINE</div>
           <div style="flex:1;"></div>
+          <div onClick="{{ toggleLedgerView }}" title="切换 EXP 记录 / 兑换记录" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),0 2px 8px rgba(0,0,0,0.4);border-radius:8px;padding:5px 11px;" style-hover="filter:brightness(1.12);">⇄ {{ ledgerViewLabel }}</div>
           <input type="date" value="{{ selDateISO }}" max="{{ todayISO }}" onChange="{{ onPickDate }}" title="跳转到某一天" style="background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:5px 8px;color:#aeb6c6;font-size:11.5px;font-family:'JetBrains Mono',monospace;">
         </div>
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
@@ -289,7 +301,7 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </div>
         <sc-if value="{{ dayEmpty }}" hint-placeholder-val="{{ false }}">
-          <div style="text-align:center;padding:22px 0;color:#535a6a;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">· 这一天还没有记录 ·</div>
+          <div style="text-align:center;padding:22px 0;color:#535a6a;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">{{ ledgerEmptyText }}</div>
         </sc-if>
         <sc-for list="{{ dayLedger }}" as="e" hint-placeholder-count="0">
           <div style="display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px solid #14171e;">
@@ -307,7 +319,7 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ isPomo }}" hint-placeholder-val="{{ false }}">
   <div style="position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:18px 24px 0;display:grid;grid-template-columns:{{ pomoCols }};gap:16px;align-items:start;">
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:16px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">番茄专注 // FOCUS</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">番茗专注 // FOCUS</div></div>
       <div style="display:flex;justify-content:center;gap:8px;">
         <div onClick="{{ setP25 }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ p25.color }};background:{{ p25.bg }};border:1px solid {{ p25.border }};border-radius:8px;padding:7px 16px;">25 min</div>
         <div onClick="{{ setP45 }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ p45.color }};background:{{ p45.bg }};border:1px solid {{ p45.border }};border-radius:8px;padding:7px 16px;">45 min</div>
@@ -478,7 +490,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ goPomo }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navPomoColor }};">
         <sc-if value="{{ navPomoActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
         <div style="font-size:18px;line-height:1;">◷</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">番茄专注</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">番茗专注</div>
       </div>
     </div>
   </div>
@@ -525,6 +537,19 @@ input[type="date"]{color-scheme:dark;}
             <label style="display:block;font-size:11px;color:#697084;">价格(EXP)
               <input id="ed-cost" type="number" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
             </label>
+            <div style="display:flex;gap:8px;">
+              <label style="flex:1.4;font-size:11px;color:#697084;">兑换频次上限
+                <select id="ed-capcycle" defaultValue="{{ editCapCycle }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
+                  <option value="none">不限次数</option>
+                  <option value="daily">每日</option>
+                  <option value="weekly">每周(7天)</option>
+                  <option value="monthly">每月(30天)</option>
+                </select>
+              </label>
+              <label style="flex:1;font-size:11px;color:#697084;">周期内次数
+                <input id="ed-captimes" type="number" min="1" defaultValue="{{ editCapTimes }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              </label>
+            </div>
           </sc-if>
           <sc-if value="{{ editIsFund }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">股票代码
@@ -565,6 +590,29 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ saveEdit }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 16px;" style-hover="filter:brightness(1.12);">保存</div>
           </div>
         </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- TIER CONFIG MODAL -->
+  <sc-if value="{{ tierCfgOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeTierCfg }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">参数设置 // CONFIG</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">达到门槛即升级星级;每日利率作用于超过 24h 未兑换的余额。</div>
+        <label style="display:block;font-size:11px;color:#697084;">金星门槛(EXP)
+          <input id="tc-gold" type="number" defaultValue="{{ cfgGoldVal }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">钻星门槛(EXP)
+          <input id="tc-diamond" type="number" defaultValue="{{ cfgDiamondVal }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">每日利率(%)
+          <input id="tc-rate" type="number" step="0.5" defaultValue="{{ cfgRateVal }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeTierCfg }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ saveTierCfg }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">保存</div>
+        </div>
       </div>
     </div>
   </sc-if>
@@ -910,7 +958,7 @@ input[type="date"]{color-scheme:dark;}
   </sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:200,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:400,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -936,19 +984,19 @@ class Component extends DCLogic {
     return {
       exp: 0, warMode: false, nextId: 100,
       tasks: [
-        { id: 1, name: '字帖练习', exp: 20, cycle: 'daily', times: 1, core: true, done: {} },
-        { id: 2, name: '科一刷题 · 50题/组', exp: 50, cycle: 'daily', times: 2, core: true, done: {} },
-        { id: 3, name: '当日复盘', exp: 50, cycle: 'daily', times: 1, core: true, done: {} },
-        { id: 4, name: '跑步课', exp: 50, cycle: 'weekly', times: 2, core: false, done: {} },
-        { id: 5, name: '早起(7:30 前)', exp: 10, cycle: 'daily', times: 1, core: false, done: {} },
+        { id: 1, name: '临帖·笔墨定心', exp: 20, cycle: 'daily', times: 1, core: true, done: {} },
+        { id: 2, name: '题海·五十精进', exp: 50, cycle: 'daily', times: 2, core: true, done: {} },
+        { id: 3, name: '内省·今日复盘', exp: 50, cycle: 'daily', times: 1, core: true, done: {} },
+        { id: 4, name: '疾风·晨跑淬炼', exp: 50, cycle: 'weekly', times: 2, core: false, done: {} },
+        { id: 5, name: '破晓·七点半前起', exp: 10, cycle: 'daily', times: 1, core: false, done: {} },
       ],
       rewards: [
-        { id: 1, name: '燕麦拿铁', cost: 200 },
-        { id: 2, name: '一顿好饭', cost: 400 },
-        { id: 3, name: '休闲券 · 2h', cost: 100 },
-        { id: 4, name: '电影之夜', cost: 300 },
+        { id: 1, name: '燕麦拿铁 · 醒神一杯', cost: 200 },
+        { id: 2, name: '珍馐一顿 · 犒赏味蕾', cost: 400 },
+        { id: 3, name: '浮生半日闲 · 2h', cost: 100 },
+        { id: 4, name: '光影之夜 · 观影特权', cost: 300 },
       ],
-      milestones: [{ id: 1, name: '科一通过 · 刷满 300 题', cur: 0, target: 300, step: 10, bonus: 300, claimed: false }],
+      milestones: [{ id: 1, name: '登科·科一通关 · 刷满 300 题', cur: 0, target: 300, step: 10, bonus: 300, claimed: false }],
       sets: [],
       funds: this.defaultFunds(),
       fundCfg: this.defaultFundCfg(),
@@ -967,9 +1015,9 @@ class Component extends DCLogic {
   }
   defaultCountdowns() {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
-    return [{ id: 201, name: '科目一考试', date: iso(100) }, { id: 202, name: '期末考试', date: iso(45) }];
+    return [{ id: 201, name: '登科之约 · 科目一', date: iso(100) }, { id: 202, name: '决战期末 · 学期终考', date: iso(45) }];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -1163,9 +1211,9 @@ class Component extends DCLogic {
     const p = this.state.pending; if (!p) return;
     clearTimeout(this._pt);
     const rm = arr => arr.filter(e => e.ts !== p.ledgerTs);
-    if (p.kind === 'complete') this.save({ tasks: this.state.tasks.map(x => x.id === p.id ? { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, ...(p.streakChanged ? { streak: p.prevStreak, lastDone: p.prevLastDone } : {}) } : x), exp: this.state.exp - p.exp, ledger: rm(this.state.ledger), pending: null });
+    if (p.kind === 'complete') this.save({ tasks: this.state.tasks.map(x => x.id === p.id ? { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) } : x), exp: this.state.exp - p.exp, ledger: rm(this.state.ledger), pending: null });
     else if (p.kind === 'abandon') this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const a = { ...(x.abandoned || {}) }; delete a[p.k]; return { ...x, abandoned: a }; }), pending: null });
-    else if (p.kind === 'redeem') this.save({ exp: this.state.exp + p.cost, ledger: rm(this.state.ledger), pending: null });
+    else if (p.kind === 'redeem') this.save({ exp: this.state.exp + p.cost, rewards: this.state.rewards.map(x => x.id === p.id ? { ...x, redeems: (x.redeems || []).filter(t => t !== p.rts) } : x), ledger: rm(this.state.ledger), pending: null });
     else if (p.kind === 'msPlus') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
     else if (p.kind === 'msClaim') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.state.exp - p.bonus, ledger: rm(this.state.ledger), pending: null });
   }
@@ -1205,7 +1253,7 @@ class Component extends DCLogic {
     if (keep.length !== this.state.tasks.length) this.save({ tasks: keep });
   }
   applyInterest() {
-    const rate = (this.props.interestRate ?? 5) / 100;
+    const rate = (this.state.cfgRate ?? this.props.interestRate ?? 5) / 100;
     const st = this.state, now = Date.now();
     if (!st.lastInterest) {
       let b = this.sevenAM(now); if (b > now) b -= 864e5;
@@ -1227,6 +1275,17 @@ class Component extends DCLogic {
   confirmEdit() { this.setState({ editing: { ...this.state.editing, confirmed: true } }); }
   closeEdit() { this.setState({ editing: null }); }
   openBackup() { this.setState({ backupOpen: true, backupMsg: '', copyLabel: '复制备份码' }); }
+  openTierCfg() { this.setState({ tierCfgOpen: true }); }
+  closeTierCfg() { this.setState({ tierCfgOpen: false }); }
+  saveTierCfg() {
+    const g = parseInt(this.v('tc-gold')), d = parseInt(this.v('tc-diamond')), r = parseFloat(this.v('tc-rate'));
+    const patch = { tierCfgOpen: false };
+    if (!isNaN(g)) patch.cfgGold = Math.max(1, g);
+    if (!isNaN(d)) patch.cfgDiamond = Math.max(1, d);
+    if (!isNaN(r)) patch.cfgRate = Math.max(0, r);
+    this.save(patch);
+  }
+  toggleLedgerView() { this.setState({ ledgerView: (this.state.ledgerView === 'redeem') ? 'all' : 'redeem' }); }
   closeBackup() { this.setState({ backupOpen: false, backupMsg: '' }); }
   makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; const lite = { ...data, rewards: (data.rewards || []).map(r => { const { img, ...rest } = r; return rest; }) }; return btoa(unescape(encodeURIComponent(JSON.stringify(lite)))); }
   makeFullBackup() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
@@ -1351,8 +1410,10 @@ class Component extends DCLogic {
         name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
         setId, cycle: document.getElementById('ed-cycle').value } : x) });
     } else if (ed.type === 'reward') {
+      const cc = document.getElementById('ed-capcycle');
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)) } : x) });
+        name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)),
+        capCycle: cc ? cc.value : (x.capCycle || 'none'), capTimes: Math.max(1, num('ed-captimes', x.capTimes || 1)) } : x) });
     } else if (ed.type === 'countdown') {
       this.save({ editing: null, countdowns: this.state.countdowns.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, date: this.v('ed-date') || x.date } : x) });
@@ -1368,13 +1429,22 @@ class Component extends DCLogic {
         bonus: num('ed-bonus', x.bonus), deadline: this.v('ed-deadline') || '' } : x) });
     }
   }
-  key(c) {
-    const d = new Date(), p = n => String(n).padStart(2, '0');
+  keyFor(c, d) {
+    const p = n => String(n).padStart(2, '0');
     if (c === 'daily') return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
     if (c === 'weekly') { const t = new Date(d); t.setHours(0,0,0,0); t.setDate(t.getDate() + 3 - ((t.getDay() + 6) % 7)); const w1 = new Date(t.getFullYear(), 0, 4); const wn = 1 + Math.round(((t - w1) / 864e5 - 3 + ((w1.getDay() + 6) % 7)) / 7); return t.getFullYear() + '-W' + wn; }
     if (c === 'monthly') return `${d.getFullYear()}-M${d.getMonth() + 1}`;
     if (c === 'once') return 'once';
     return null;
+  }
+  key(c) { return this.keyFor(c, new Date()); }
+  prevKey(c) {
+    const d = new Date();
+    if (c === 'daily') d.setDate(d.getDate() - 1);
+    else if (c === 'weekly') d.setDate(d.getDate() - 7);
+    else if (c === 'monthly') d.setMonth(d.getMonth() - 1);
+    else return null;
+    return this.keyFor(c, d);
   }
   log(name, delta) { return [{ ts: Date.now(), name, delta }, ...this.state.ledger].slice(0, 200); }
   complete(id) {
@@ -1382,22 +1452,25 @@ class Component extends DCLogic {
     const cnt = k ? (t.done[k] || 0) : 0;
     if (k && cnt >= (t.times || 1)) return;
     const ts = Date.now(), key = 'task:' + id;
-    const today = this.todayKey(), yest = this.shiftDay(today, -1);
-    const prevStreak = t.streak || 0, prevLastDone = t.lastDone || '';
-    const streakChanged = prevLastDone !== today;
-    const newStreak = streakChanged ? ((prevLastDone === yest ? prevStreak : 0) + 1) : prevStreak;
-    const newLastDone = streakChanged ? today : prevLastDone;
-    const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, streak: newStreak, lastDone: newLastDone } : x);
+    const curK = k, prevK = this.prevKey(t.cycle);
+    const prevStreak = t.streak || 0, prevPeriod = (t.lastPeriod != null ? t.lastPeriod : t.lastDone) || '';
+    const streakChanged = prevPeriod !== curK;
+    const newStreak = streakChanged ? ((prevPeriod === prevK ? prevStreak : 0) + 1) : prevStreak;
+    const newLastPeriod = streakChanged ? curK : prevPeriod;
+    const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, streak: newStreak, lastPeriod: newLastPeriod, lastDone: this.todayKey() } : x);
     this.armTimer(key);
-    if (streakChanged && newStreak === 7) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 天,MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
-    this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevLastDone } });
+    const unit = { daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '';
+    if (streakChanged && newStreak === 7 && unit) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 ' + unit + ',MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
+    this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '' } });
   }
   redeem(id) {
     const r = this.state.rewards.find(x => x.id === id);
     if (this.state.exp < r.cost) return;
+    const win = { daily: 1, weekly: 7, monthly: 30 }[r.capCycle];
+    if (win) { const now = Date.now(); const recent = (r.redeems || []).filter(t => now - t < win * 864e5); if (recent.length >= (r.capTimes || 1)) return; }
     const ts = Date.now(), key = 'reward:' + id;
     this.armTimer(key);
-    this.save({ exp: this.state.exp - r.cost, ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts } });
+    this.save({ exp: this.state.exp - r.cost, rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-50) } : x), ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, rts: ts } });
   }
   toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
   abandon(id) {
@@ -1502,7 +1575,7 @@ class Component extends DCLogic {
     this.save({ tasks: arr });
   }
   renderVals() {
-    const goldAt = this.props.goldAt ?? 200, diamondAt = this.props.diamondAt ?? 400;
+    const goldAt = this.state.cfgGold ?? this.props.goldAt ?? 200, diamondAt = this.state.cfgDiamond ?? this.props.diamondAt ?? 400;
     const tier = this.state.exp >= diamondAt
       ? { name: 'DIAMOND · 钻星', icon: '◆', accent: '#c9a4f5', border: '#7c66a8', glow: 'rgba(150,90,230,0.16)',
           cardTop: '#241b34', cardBot: '#160f22', rowTop: '#1f1730', rowBot: '#140d1e',
@@ -1544,15 +1617,17 @@ class Component extends DCLogic {
       const pct = k ? Math.round(cnt / times * 100) : 0;
       const pk = (!!pend && pend.key === 'task:' + t.id) ? pend.kind : null;
       const tp = pk === 'complete';
-      const _td = this.todayKey(), _yd = this.shiftDay(_td, -1);
-      const liveStreak = (t.lastDone === _td || t.lastDone === _yd) ? (t.streak || 0) : 0;
-      const isFormed = liveStreak >= 7 && t.cycle !== 'once';
+      const _curK = k, _prevK = this.prevKey(t.cycle);
+      const _lp = t.lastPeriod != null ? t.lastPeriod : t.lastDone;
+      const _unit = { daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '';
+      const liveStreak = (_lp === _curK || _lp === _prevK) ? (t.streak || 0) : 0;
+      const isFormed = liveStreak >= 7 && !!_unit;
       const abandonedNow = k ? !!(t.abandoned && t.abandoned[k]) : false;
       const abandonPending = pk === 'abandon';
       const showActions = !doneNow && !abandonedNow && !tp && !abandonPending;
       return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
         abandonedNow, abandonPending, showAbandonUndo: abandonPending, showAbandonLabel: abandonedNow && !abandonPending,
-        isFormed, hasStreak: liveStreak > 0 && !isFormed && t.cycle !== 'once', streakLabel: '连 ' + liveStreak + ' 天', formedLabel: 'MOMENTUM · ' + liveStreak + ' 连',
+        isFormed, hasStreak: liveStreak > 0 && !isFormed && !!_unit, streakLabel: '连 ' + liveStreak + ' ' + _unit, formedLabel: 'MOMENTUM · ' + liveStreak + ' 连' + _unit,
         cycleLabel: k ? `${cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
         hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
@@ -1633,8 +1708,17 @@ class Component extends DCLogic {
         onDown: e => this.roDown(t.id, e) }));
     }
     const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : '任务排序 // REORDER';
-    const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id; return { ...r,
-      canAfford: st.exp >= r.cost && !rp, cannot: st.exp < r.cost && !rp, pending: rp,
+    const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
+      const win = { daily: 1, weekly: 7, monthly: 30 }[r.capCycle];
+      const capUnit = { daily: '天', weekly: '周', monthly: '月' }[r.capCycle] || '';
+      let capped = false, capDaysLeft = 0, capLabel = '';
+      if (win) { const now = Date.now(); const recent = (r.redeems || []).filter(t => now - t < win * 864e5).sort((a, b) => a - b);
+        if (recent.length >= (r.capTimes || 1)) { capped = true; capDaysLeft = Math.max(1, Math.ceil((recent[0] + win * 864e5 - now) / 864e5)); capLabel = '已兑换 · ' + capDaysLeft + ' 天后可兑'; }
+      }
+      const capHint = win ? ('每' + capUnit + (r.capTimes || 1) + '次') : '';
+      return { ...r,
+      canAfford: st.exp >= r.cost && !rp && !capped, cannot: st.exp < r.cost && !rp && !capped, pending: rp,
+      capped: capped && !rp, capLabel, hasCapHint: !!capHint, capHint,
       costStr: r.cost + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '', imgPos: (r.imgPos != null ? r.imgPos : 50) + '%',
       imgBgStyle: r.img ? { position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'none', backgroundImage: 'url("' + r.img + '")', backgroundSize: 'cover', backgroundPosition: 'center ' + (r.imgPos != null ? r.imgPos : 50) + '%' } : {},
       onRedeem: e => { e.stopPropagation(); this.redeem(r.id); },
@@ -1671,7 +1755,8 @@ class Component extends DCLogic {
     const todayK = this.todayKey();
     const sel = st.selectedDate || todayK;
     const hm = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return p(d.getHours()) + ':' + p(d.getMinutes()); };
-    const dayLedger = st.ledger.filter(e => this.dateKey(e.ts) === sel).sort((a, b) => b.ts - a.ts)
+    const lv = st.ledgerView === 'redeem' ? 'redeem' : 'all';
+    const dayLedger = st.ledger.filter(e => this.dateKey(e.ts) === sel && (lv === 'all' || e.delta < 0)).sort((a, b) => b.ts - a.ts)
       .map((e, i) => ({ key: e.ts + '-' + i, time: hm(e.ts), name: e.name, deltaStr: (e.delta > 0 ? '+' : '') + e.delta, deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
     const dayEarned = st.ledger.filter(e => this.dateKey(e.ts) === sel && e.delta > 0).reduce((a, e) => a + e.delta, 0);
     const daySpent = -st.ledger.filter(e => this.dateKey(e.ts) === sel && e.delta < 0).reduce((a, e) => a + e.delta, 0);
@@ -1823,6 +1908,7 @@ class Component extends DCLogic {
       editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '',
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
       editCost: editItem ? (editItem.cost ?? '') : '',
+      editCapCycle: editItem ? (editItem.capCycle || 'none') : 'none', editCapTimes: editItem ? (editItem.capTimes || 1) : 1,
       editCode: editItem ? (editItem.code ?? '') : '', editBase: editItem ? (editItem.base ?? '') : '',
       editTarget: editItem ? (editItem.target ?? '') : '', editStep: editItem ? (editItem.step ?? '') : '',
       editBonus: editItem ? (editItem.bonus ?? '') : '', editDeadline: editItem ? (editItem.deadline || '') : '',
@@ -1840,6 +1926,11 @@ class Component extends DCLogic {
       selDateRelShow: sel === todayK || sel === this.shiftDay(todayK, -1),
       nextColor: canNext ? '#c3c9d6' : '#3a404d', nextHover: canNext ? accent : '#262b36',
       dayLedger, dayEmpty: dayLedger.length === 0,
+      ledgerViewRedeem: lv === 'redeem', ledgerViewLabel: lv === 'redeem' ? '兑换记录' : 'EXP 记录',
+      ledgerEmptyText: lv === 'redeem' ? '· 这一天没有兑换记录 ·' : '· 这一天还没有记录 ·',
+      toggleLedgerView: () => this.toggleLedgerView(),
+      tierCfgOpen: !!st.tierCfgOpen, openTierCfg: () => this.openTierCfg(), closeTierCfg: () => this.closeTierCfg(), saveTierCfg: () => this.saveTierCfg(),
+      cfgGoldVal: goldAt, cfgDiamondVal: diamondAt, cfgRateVal: this.state.cfgRate ?? this.props.interestRate ?? 5,
       dayEarnedStr: '+' + dayEarned, daySpentStr: '-' + daySpent,
       dayNetStr: (dayNet >= 0 ? '+' : '') + dayNet, dayNetColor: dayNet >= 0 ? '#4ade80' : '#f87171',
       onPrevDay: () => this.setState({ selectedDate: this.shiftDay(sel, -1) }),
