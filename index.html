@@ -231,35 +231,28 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ startReorderMilestones }}" title="长按拖动排序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ startReorderMilestones }}" title="排序里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div></div>
       <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="1">
-        <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:12px;display:flex;flex-direction:column;gap:8px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="flex:1;font-size:15px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;">{{ m.name }}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8b93a4;">{{ m.cur }}/{{ m.target }}</div>
-            <sc-if value="{{ m.hasDeadline }}" hint-placeholder-val="{{ false }}">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ m.deadlineColor }};">⏳ {{ m.deadlineLabel }}</div>
-            </sc-if>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ accent }};">达成 {{ m.bonusStr }} EXP</div>
-            <div onClick="{{ m.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+        <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:14px;display:flex;flex-direction:column;gap:12px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <div style="flex:1;min-width:0;font-size:16px;line-height:1.45;font-weight:700;letter-spacing:0.2px;color:#eef1f7;word-break:break-word;">{{ m.name }}</div>
+            <div onClick="{{ m.onDel }}" title="删除里程碑" style="cursor:pointer;color:#3d4353;font-size:16px;line-height:1;padding:3px 1px;flex-shrink:0;" style-hover="color:#f87171;">×</div>
           </div>
-          <div style="height:6px;border-radius:99px;background:#1e222b;overflow:hidden;">
-            <div style="height:100%;width:{{ m.barW }};background:{{ accent }};border-radius:99px;transition:width 0.3s;"></div>
+          <div style="display:grid;grid-template-columns:{{ milestoneStatsCols }};gap:8px;">
+            <div style="border:1px solid #202530;border-radius:9px;background:rgba(10,12,17,0.32);padding:8px 10px;min-width:0;">
+              <div style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#697084;margin-bottom:4px;"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.9 6.9A5.2 5.2 0 1 1 8.9 2.95"/><circle cx="11.75" cy="3.15" r="0.85" fill="currentColor" stroke="none"/></svg>DUE</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;line-height:1.4;color:{{ m.deadlineColor }};overflow-wrap:anywhere;">{{ m.deadlineLabel }}</div>
+            </div>
+            <div style="border:1px solid #202530;border-radius:9px;background:rgba(10,12,17,0.32);padding:8px 10px;min-width:0;"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#697084;margin-bottom:4px;">PROGRESS</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#c8cedb;">{{ m.progressStr }}</div></div>
+            <div style="border:1px solid #202530;border-radius:9px;background:rgba(10,12,17,0.32);padding:8px 10px;min-width:0;"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#697084;margin-bottom:4px;">STEP</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#c8cedb;">{{ m.stepStr }}</div></div>
+            <div style="border:1px solid #202530;border-radius:9px;background:rgba(10,12,17,0.32);padding:8px 10px;min-width:0;"><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#697084;margin-bottom:4px;">REWARD</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};">{{ m.rewardStr }}</div></div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <sc-if value="{{ m.pending }}" hint-placeholder-val="{{ false }}">
-              <div onClick="{{ m.onUndo }}" title="点一下可撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:5px 14px;" style-hover="filter:brightness(1.15);">{{ m.pendingLabel }}</div>
-            </sc-if>
-            <sc-if value="{{ m.showProgress }}" hint-placeholder-val="{{ true }}">
-              <div onClick="{{ m.onPlus }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:5px 12px;" style-hover="filter:brightness(1.12);">推进 {{ m.stepStr }}</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#697084;">还差 {{ m.remain }}</div>
-            </sc-if>
-            <sc-if value="{{ m.showReady }}" hint-placeholder-val="{{ false }}">
-              <div onClick="{{ m.onClaim }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:5px 14px;">✦ 领取 {{ m.bonusStr }} EXP</div>
-            </sc-if>
-            <sc-if value="{{ m.showClaimed }}" hint-placeholder-val="{{ false }}">
-              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4ade80;">✓ 已达成并入账</div>
-            </sc-if>
+          <div style="height:6px;border-radius:99px;background:#1e222b;overflow:hidden;"><div style="height:100%;width:{{ m.barW }};background:{{ accent }};border-radius:99px;transition:width 0.3s;"></div></div>
+          <div style="display:flex;align-items:center;gap:8px;min-height:30px;">
+            <sc-if value="{{ m.pending }}" hint-placeholder-val="{{ false }}"><div onClick="{{ m.onUndo }}" title="点一下可撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 14px;" style-hover="filter:brightness(1.15);">{{ m.pendingLabel }}</div></sc-if>
+            <sc-if value="{{ m.showProgress }}" hint-placeholder-val="{{ true }}"><div onClick="{{ m.onPlus }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">推进 {{ m.stepStr }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#697084;">剩余 {{ m.remain }}</div></sc-if>
+            <sc-if value="{{ m.showReady }}" hint-placeholder-val="{{ false }}"><div onClick="{{ m.onClaim }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 14px;">✦ 领取 {{ m.bonusStr }} EXP</div></sc-if>
+            <sc-if value="{{ m.showClaimed }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4ade80;">✓ 已达成并入账</div></sc-if>
           </div>
         </div>
       </sc-for>
@@ -319,7 +312,7 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ isPomo }}" hint-placeholder-val="{{ false }}">
   <div style="position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:18px 24px 0;display:grid;grid-template-columns:{{ pomoCols }};gap:16px;align-items:start;">
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:16px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">番茗专注 // FOCUS</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">番茄专注 // FOCUS</div></div>
       <div style="display:flex;justify-content:center;gap:8px;">
         <div onClick="{{ setP25 }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ p25.color }};background:{{ p25.bg }};border:1px solid {{ p25.border }};border-radius:8px;padding:7px 16px;">25 min</div>
         <div onClick="{{ setP45 }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ p45.color }};background:{{ p45.bg }};border:1px solid {{ p45.border }};border-radius:8px;padding:7px 16px;">45 min</div>
@@ -490,7 +483,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ goPomo }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navPomoColor }};">
         <sc-if value="{{ navPomoActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
         <div style="font-size:18px;line-height:1;">◷</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">番茗专注</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">番茄专注</div>
       </div>
     </div>
   </div>
@@ -899,6 +892,12 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeReorder }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">{{ reorderTitle }}</div>
+        <sc-if value="{{ reorderIsMilestones }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;border:1px solid #202530;background:#0d0f14;border-radius:9px;padding:9px 10px;">
+            <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">当前: {{ milestoneSortLabel }}</div>
+            <div onClick="{{ restoreMilestoneSort }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2f3542;border-radius:7px;padding:5px 9px;" style-hover="border-color:{{ accent }};">按截止日期排序</div>
+          </div>
+        </sc-if>
         <sc-if value="{{ reorderIsTasks }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;gap:8px;">
             <div onClick="{{ setRoDrag }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roDragTextColor }};background:{{ roDragBg }};border:1px solid {{ roDragBorder }};box-shadow:{{ roDragShadow }};">拖拽排序</div>
@@ -977,6 +976,7 @@ class Component extends DCLogic {
       if (s.pomoCustomMin == null) s.pomoCustomMin = 30;
       if (!s.noisePreset) s.noisePreset = '咖啡馆';
       if (s.noiseVol == null) s.noiseVol = 0.5;
+      if (!s.milestoneSortMode) s.milestoneSortMode = 'deadline';
       this.state = s;
     } else this.state = this.defaults();
   }
@@ -1004,6 +1004,7 @@ class Component extends DCLogic {
       ledger: [],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
+      milestoneSortMode: 'deadline',
     };
   }
   defaultFundCfg() { return { dipA: 0.92, dipB: 0.89, dipC: 0.85, tpA: 1.10, tpB: 1.15, tpC: 1.20, tpD: 1.50, tpE: 1.60, tpF: 1.75 }; }
@@ -1103,6 +1104,15 @@ class Component extends DCLogic {
   }
   toggleSet(id) { this.save({ sets: this.state.sets.map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
   delSet(id) { this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
+  sortMilestonesByDeadline(list) {
+    return [...(list || [])].sort((a, b) => {
+      const ad = a.deadline || '', bd = b.deadline || '';
+      if (!!ad !== !!bd) return ad ? -1 : 1;
+      if (ad && bd && ad !== bd) return ad < bd ? -1 : 1;
+      return 0;
+    });
+  }
+  restoreMilestoneSort() { this.save({ milestoneSortMode: 'deadline' }); }
   startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null, batchSel: [], roMode: 'drag' }); }
   setRoMode(m) { this.setState({ roMode: m }); }
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
@@ -1184,7 +1194,9 @@ class Component extends DCLogic {
     for (const el of items) { const r = el.getBoundingClientRect(); if (y >= r.top && y <= r.bottom) { targetEl = el; break; } }
     if (!targetEl) { const f = items[0].getBoundingClientRect(), l = items[items.length - 1].getBoundingClientRect(); if (y < f.top) targetEl = items[0]; else if (y > l.bottom) targetEl = items[items.length - 1]; }
     if (!targetEl) return;
-    const arr = [...this.state[kind]];
+    const arr = (kind === 'milestones' && (this.state.milestoneSortMode || 'deadline') === 'deadline')
+      ? this.sortMilestonesByDeadline(this.state.milestones)
+      : [...this.state[kind]];
     const fi = arr.findIndex(t => String(t.id) === String(this.state.dragId));
     if (fi < 0) return;
     const [mv] = arr.splice(fi, 1);
@@ -1203,7 +1215,9 @@ class Component extends DCLogic {
       const ti = arr.findIndex(t => String(t.id) === String(targetId));
       arr.splice(ti, 0, mv);
     }
-    this.save({ [kind]: arr });
+    const patch = { [kind]: arr };
+    if (kind === 'milestones') patch.milestoneSortMode = 'manual';
+    this.save(patch);
   }
   roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
   armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
@@ -1608,7 +1622,7 @@ class Component extends DCLogic {
     const resp = { gridCols: mob ? '1fr' : '1.05fr 1fr', pomoCols: mob ? '1fr' : '1.15fr 1fr',
       heroH: mob ? 'auto' : '264px', titleSize: mob ? '26px' : '38px', balSize: mob ? '40px' : '54px',
       fundSumCols: mob ? '1fr 1fr' : '1fr 1fr 1fr', fundCardSh: mob ? 'inset 0 1px 0 rgba(255,255,255,0.06)' : 'inset 0 1px 0 rgba(255,255,255,0.06),0 12px 30px rgba(0,0,0,0.4)',
-      fundPad: mob ? '12px' : '16px' };
+      fundPad: mob ? '12px' : '16px', milestoneStatsCols: mob ? '1fr 1fr' : '1.35fr 1fr 1fr 1fr' };
     const cyc = { daily: '每日', weekly: '每周', monthly: '每月', once: '单次', free: '不限次' };
     const dec = t => {
       const k = this.key(t.cycle), times = t.times || 1;
@@ -1666,9 +1680,10 @@ class Component extends DCLogic {
       });
       ungrouped.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: false }));
     }
+    const milestoneBase = (st.milestoneSortMode || 'deadline') === 'manual' ? st.milestones : this.sortMilestonesByDeadline(st.milestones);
     const roKind = st.reorderKind || 'tasks';
     const roSrc = roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: r.cost + ' EXP' }))
-      : roKind === 'milestones' ? st.milestones.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
+      : roKind === 'milestones' ? milestoneBase.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
       : roKind === 'funds' ? st.funds.map(f => ({ id: f.id, name: f.name, sub: f.code || '' }))
       : st.tasks.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
     const accGreen = this.props.accent ?? '#4ade80';
@@ -1730,7 +1745,7 @@ class Component extends DCLogic {
       onAskImg: e => { e.stopPropagation(); this.askRewardImage(r.id); },
       onEdit: () => this.openEdit('reward', r.id) }; });
     const imgEditItem = st.imgEditId != null ? st.rewards.find(r => r.id === st.imgEditId) : null;
-    const milestones = st.milestones.map(m => {
+    const milestones = milestoneBase.map(m => {
       const pct = Math.min(100, Math.round(m.cur / m.target * 100));
       const dl = m.deadline || '';
       const daysLeft = dl ? Math.ceil((new Date(dl + 'T23:59:59') - Date.now()) / 864e5) : null;
@@ -1739,8 +1754,9 @@ class Component extends DCLogic {
         pending: mp, pendingLabel: m.claimed ? '✓ 已领取' : '✓ 已推进', showProgress: !m.claimed && m.cur < m.target && !mp, showReady: !m.claimed && m.cur >= m.target && !mp, showClaimed: m.claimed && !mp,
         stepStr: '+' + m.step, bonusStr: '+' + m.bonus,
         hasDeadline: !!dl,
-        deadlineLabel: dl ? (daysLeft < 0 ? dl + ' 已截止' : dl + ' · 剩 ' + daysLeft + ' 天') : '',
-        deadlineColor: daysLeft !== null && daysLeft <= 3 ? '#f87171' : '#697084',
+        deadlineLabel: dl ? (daysLeft < 0 ? dl + ' · 已截止' : dl + ' · 剩 ' + daysLeft + ' 天') : '未设置',
+        deadlineColor: daysLeft !== null && daysLeft <= 3 ? '#f87171' : '#8b93a4',
+        progressStr: m.cur + ' / ' + m.target, rewardStr: '+' + m.bonus + ' EXP',
         onPlus: e => { e.stopPropagation(); this.msPlus(m.id); },
         onClaim: e => { e.stopPropagation(); this.msClaim(m.id); },
         onDel: e => { e.stopPropagation(); this.delMilestone(m.id); },
@@ -1790,6 +1806,8 @@ class Component extends DCLogic {
       momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
       reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
+      reorderIsMilestones: (st.reorderKind || 'tasks') === 'milestones', milestoneSortLabel: (st.milestoneSortMode || 'deadline') === 'manual' ? '手动排序' : '截止日期优先',
+      restoreMilestoneSort: () => this.restoreMilestoneSort(),
       roMode: st.roMode || 'drag', roDragMode: (st.roMode || 'drag') === 'drag', roSelectMode: (st.roMode || 'drag') === 'select',
       setRoDrag: () => this.setRoMode('drag'), setRoSelect: () => this.setRoMode('select'),
       roDragBg: (st.roMode || 'drag') === 'drag' ? (tier.btnGrad) : '#161a22',
@@ -1811,7 +1829,7 @@ class Component extends DCLogic {
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad: tier.btnGrad, tierScene: tier.scene, heroBg: tier.heroBg, heroSheen: tier.heroSheen,
       cardTop: tier.cardTop, cardBot: tier.cardBot, rowTop: tier.rowTop, rowBot: tier.rowBot,
       gridCols: resp.gridCols, pomoCols: resp.pomoCols, heroH: resp.heroH, titleSize: resp.titleSize, balSize: resp.balSize,
-      fundSumCols: resp.fundSumCols, fundCardSh: resp.fundCardSh, fundPad: resp.fundPad,
+      fundSumCols: resp.fundSumCols, fundCardSh: resp.fundCardSh, fundPad: resp.fundPad, milestoneStatsCols: resp.milestoneStatsCols,
       di: this.dateInfo(),
       isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown', isFund: tabNow === 'fund',
       goLists: () => this.setTab('lists'), goPomo: () => this.setTab('pomo'), goCountdown: () => this.setTab('countdown'), goFund: () => this.setTab('fund'),
