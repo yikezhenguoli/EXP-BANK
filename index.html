@@ -40,10 +40,10 @@ input[type="date"]{color-scheme:dark;}
     <div style="position:absolute;inset:0;background:{{ heroSheen }};mix-blend-mode:screen;opacity:0.55;pointer-events:none;"></div>
     <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent);pointer-events:none;"></div>
     <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,11,16,0.12) 0%,rgba(10,11,16,0.55) 68%,rgba(10,11,16,0.92) 100%);pointer-events:none;"></div>
-    <div style="position:relative;max-width:1160px;margin:0 auto;padding:22px 24px;height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;gap:18px;pointer-events:none;">
+    <div style="position:relative;max-width:1160px;margin:0 auto;padding:{{ heroPad }};height:100%;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;gap:18px;pointer-events:none;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
         <div style="display:flex;align-items:baseline;gap:14px;">
-          <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ titleSize }};line-height:1;letter-spacing:4px;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.18)) drop-shadow(0 4px 14px rgba(0,0,0,0.7));">EXP BANK</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ titleSize }};line-height:1.05;letter-spacing:{{ titleLS }};white-space:nowrap;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.18)) drop-shadow(0 4px 14px rgba(0,0,0,0.7));">EXP BANK</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;letter-spacing:2px;">自律积分银行 / {{ appVersion }}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;pointer-events:auto;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:6px 13px;backdrop-filter:blur(6px);">
@@ -58,6 +58,9 @@ input[type="date"]{color-scheme:dark;}
         </div>
         <div onClick="{{ openBackup }}" title="导出/导入备份码 · 跨设备搬运数据" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">⤓ 备份</span>
+        </div>
+        <div onClick="{{ cycleUiMode }}" title="切换界面布局:自动 / 手机 / 平板 / 电脑" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">▢ {{ uiModeLabel }}</span>
         </div>
         <div onClick="{{ checkUpdate }}" title="拉取最新版本 · 不会影响你已有的数据" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">↻ 更新</span>
@@ -110,7 +113,7 @@ input[type="date"]{color-scheme:dark;}
 
   <!-- MAIN GRID (LISTS TAB) -->
   <sc-if value="{{ isLists }}" hint-placeholder-val="{{ true }}">
-  <div style="position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:18px 24px 0;display:grid;grid-template-columns:{{ gridCols }};gap:16px;align-items:start;">
+  <div style="position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:{{ mainPad }};display:grid;grid-template-columns:{{ gridCols }};gap:16px;align-items:start;">
 
     <!-- TASKS -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;">
@@ -140,14 +143,14 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </sc-if>
         <sc-if value="{{ t.isTask }}" hint-placeholder-val="{{ true }}">
-        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;flex-wrap:{{ rowWrap }};justify-content:{{ rowJustify }};align-items:center;gap:8px;padding:{{ rowPad }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div onClick="{{ t.onToggleCore }}" title="设为核心微习惯(战时模式)" style="cursor:pointer;font-size:13px;color:{{ t.starColor }};width:16px;flex-shrink:0;text-align:center;">★</div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div style="width:3px;align-self:stretch;flex-shrink:0;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
           </sc-if>
-          <div style="flex:1;min-width:0;">
-            <div style="font-size:15px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ t.name }}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:1px;">{{ t.cycleLabel }}</div>
+          <div style="flex:1;min-width:{{ taskNameMin }};">
+            <div style="font-size:{{ taskNameSize }};font-weight:700;letter-spacing:0.2px;line-height:1.35;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:{{ taskNameWrap }};">{{ t.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:1px;margin-top:2px;">{{ t.cycleLabel }}</div>
           </div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div title="连续打卡满 7 天 · MOMENTUM 已成势,继续保持!" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.55),0 2px 8px rgba(0,0,0,0.4);border-radius:99px;padding:3px 10px;white-space:nowrap;">✦ {{ t.formedLabel }}</div>
@@ -165,22 +168,22 @@ input[type="date"]{color-scheme:dark;}
           </sc-if>
           <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;flex-shrink:0;color:{{ accent }};">{{ t.expStr }}</div>
           <sc-if value="{{ t.pending }}" hint-placeholder-val="{{ false }}">
-            <div onClick="{{ t.onUndo }}" title="已完成 · 点一下可撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">✓ 已完成</div>
+            <div onClick="{{ t.onUndo }}" title="已完成 · 点一下可撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:{{ actSize }};font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:9px;padding:{{ actPad }};" style-hover="filter:brightness(1.15);">✓ 已完成</div>
           </sc-if>
           <sc-if value="{{ t.showDone }}" hint-placeholder-val="{{ true }}">
-            <div onClick="{{ t.onDone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">完成</div>
-            <div onClick="{{ t.onAbandon }}" title="放弃本次 · 不加 EXP" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #5a2a2a;background:#1c1214;border-radius:8px;padding:6px 12px;" style-hover="border-color:#f87171;background:#251518;">放弃</div>
+            <div onClick="{{ t.onDone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:{{ actSize }};font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:9px;padding:{{ actPad }};" style-hover="filter:brightness(1.15);">完成</div>
+            <div onClick="{{ t.onAbandon }}" title="放弃本次 · 不加 EXP" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:{{ actSize }};font-weight:700;color:#f87171;border:1px solid #5a2a2a;background:#1c1214;border-radius:9px;padding:{{ actPad }};" style-hover="border-color:#f87171;background:#251518;">放弃</div>
           </sc-if>
           <sc-if value="{{ t.showDoneLabel }}" hint-placeholder-val="{{ false }}">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px solid #262b36;border-radius:8px;padding:6px 12px;">✓ 已完成</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:{{ actSize }};color:#535a6a;border:1px solid #262b36;border-radius:9px;padding:{{ actPad }};">✓ 已完成</div>
           </sc-if>
           <sc-if value="{{ t.showAbandonUndo }}" hint-placeholder-val="{{ false }}">
-            <div onClick="{{ t.onUnabandon }}" title="已放弃 · 点一下撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #7f1d1d;background:#2a1416;border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.15);">✕ 已放弃 · 撤销</div>
+            <div onClick="{{ t.onUnabandon }}" title="已放弃 · 点一下撤销(几秒后自动确认)" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:{{ actSize }};font-weight:700;color:#f87171;border:1px solid #7f1d1d;background:#2a1416;border-radius:9px;padding:{{ actPad }};" style-hover="filter:brightness(1.15);">✕ 已放弃 · 撤销</div>
           </sc-if>
           <sc-if value="{{ t.showAbandonLabel }}" hint-placeholder-val="{{ false }}">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a5a5a;border:1px solid #4a2626;border-radius:8px;padding:6px 12px;">✕ 已放弃</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:{{ actSize }};color:#8a5a5a;border:1px solid #4a2626;border-radius:9px;padding:{{ actPad }};">✕ 已放弃</div>
           </sc-if>
-          <div onClick="{{ t.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;padding:0 2px;" style-hover="color:#f87171;">×</div>
+          <div onClick="{{ t.onDel }}" style="cursor:pointer;color:#3d4353;font-size:17px;padding:0 4px;" style-hover="color:#f87171;">×</div>
         </div>
         </sc-if>
       </sc-for>
@@ -369,7 +372,7 @@ input[type="date"]{color-scheme:dark;}
 
   <!-- COUNTDOWN TAB -->
   <sc-if value="{{ isCountdown }}" hint-placeholder-val="{{ false }}">
-  <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;padding:18px 24px 0;">
+  <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;padding:{{ mainPad }};">
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">未来倒计时 // COUNTDOWN</div><div onClick="{{ openNewCountdown }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建倒计时</div></div>
       <sc-for list="{{ countdowns }}" as="cd" hint-placeholder-count="2">
@@ -468,7 +471,7 @@ input[type="date"]{color-scheme:dark;}
 
   <!-- OPEX TAB -->
   <sc-if value="{{ isOpex }}" hint-placeholder-val="{{ false }}">
-  <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;padding:18px 14px 0;display:flex;flex-direction:column;gap:14px;">
+  <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;padding:{{ mainPad }};display:flex;flex-direction:column;gap:14px;">
 
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
@@ -564,28 +567,28 @@ input[type="date"]{color-scheme:dark;}
     <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;">
       <div onClick="{{ goLists }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navListsColor }};">
         <sc-if value="{{ navListsActive }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
-        <div style="font-size:18px;line-height:1;">▤</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;">Lists</div>
+        <div style="font-size:{{ navIconSize }};line-height:1;">▤</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:{{ navLabelSize }};letter-spacing:1px;">Lists</div>
       </div>
       <div onClick="{{ goFund }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navFundColor }};">
         <sc-if value="{{ navFundActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
-        <div style="font-size:18px;line-height:1;">◉</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">收盘台</div>
+        <div style="font-size:{{ navIconSize }};line-height:1;">◉</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:{{ navLabelSize }};letter-spacing:0.5px;">收盘台</div>
       </div>
       <div onClick="{{ goOpex }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navOpexColor }};">
         <sc-if value="{{ navOpexActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
-        <div style="font-size:18px;line-height:1;">◈</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">开销</div>
+        <div style="font-size:{{ navIconSize }};line-height:1;">◈</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:{{ navLabelSize }};letter-spacing:0.5px;">开销</div>
       </div>
       <div onClick="{{ goCountdown }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navCountdownColor }};">
         <sc-if value="{{ navCountdownActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
-        <div style="font-size:18px;line-height:1;">⧗</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">未来倒计时</div>
+        <div style="font-size:{{ navIconSize }};line-height:1;">⧗</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:{{ navLabelSize }};letter-spacing:0.5px;">{{ navLabelCd }}</div>
       </div>
       <div onClick="{{ goPomo }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navPomoColor }};">
         <sc-if value="{{ navPomoActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
-        <div style="font-size:18px;line-height:1;">◷</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">番茄专注</div>
+        <div style="font-size:{{ navIconSize }};line-height:1;">◷</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:{{ navLabelSize }};letter-spacing:0.5px;">{{ navLabelPomo }}</div>
       </div>
     </div>
   </div>
@@ -1137,7 +1140,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.0.0';
+const APP_VERSION = 'v1.0.1';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1161,6 +1164,7 @@ class Component extends DCLogic {
       if (!Array.isArray(s.stash)) s.stash = [];
       if (!s.opexCurrency) s.opexCurrency = '\u00a5';
       if (!s.opexLastLogDay) s.opexLastLogDay = '';
+      if (!s.uiMode) s.uiMode = 'auto';
       if (s.welcomed == null) s.welcomed = true;
       if (s.appVersion !== APP_VERSION) {
         s.prevVersion = s.appVersion || 'v0.x';
@@ -1174,7 +1178,7 @@ class Component extends DCLogic {
   defaults() {
     return {
       exp: 0, warMode: false, nextId: 500,
-      appVersion: APP_VERSION, welcomed: false,
+      appVersion: APP_VERSION, welcomed: false, uiMode: 'auto',
       sets: [
         { id: 11, name: '日常 · 每天的小事', collapsed: false },
         { id: 12, name: '不做会后悔清单', collapsed: false },
@@ -1726,6 +1730,7 @@ class Component extends DCLogic {
       Promise.all([cacheClear, swUpdate]).then(go).catch(go);
     } catch (e) { go(); }
   }
+  cycleUiMode() { const list = ['auto', 'phone', 'tablet', 'desktop']; const i = list.indexOf(this.state.uiMode || 'auto'); this.save({ uiMode: list[(i + 1) % list.length] }); }
   cycleCurrency() { const list = ['\u00a5', 'RM', '$', 'NT$', '\u20ac']; const i = list.indexOf(this.state.opexCurrency || '\u00a5'); this.save({ opexCurrency: list[(i + 1) % list.length] }); }
   addOpex() {
     const amount = parseFloat(this.v('no-amount'));
@@ -1895,9 +1900,23 @@ class Component extends DCLogic {
     const st = this.state;
     const pend = st.pending;
     const vw = st.vw || (typeof window !== 'undefined' ? window.innerWidth : 1200);
-    const mob = vw < 720;
-    const resp = { gridCols: mob ? '1fr' : '1.05fr 1fr', pomoCols: mob ? '1fr' : '1.15fr 1fr',
-      heroH: mob ? 'auto' : '264px', titleSize: mob ? '26px' : '38px', balSize: mob ? '40px' : '54px',
+    const uiMode = st.uiMode || 'auto';
+    const evw = uiMode === 'phone' ? 390 : uiMode === 'tablet' ? 900 : uiMode === 'desktop' ? 1400 : vw;
+    const mob = evw < 720;
+    const wide = evw >= 1100;
+    const resp = { gridCols: mob ? '1fr' : (wide ? '1.05fr 1fr' : '1fr'), pomoCols: mob ? '1fr' : '1.15fr 1fr',
+      heroH: mob ? 'auto' : '264px', titleSize: mob ? '30px' : (wide ? '38px' : '34px'), balSize: mob ? '48px' : '54px',
+      titleLS: mob ? '2px' : '4px', heroPad: mob ? '16px 16px 18px' : '22px 24px',
+      mainPad: mob ? '14px 12px 0' : '18px 24px 0',
+      cardPad: mob ? '13px' : '16px',
+      rowWrap: mob ? 'wrap' : 'nowrap', rowJustify: mob ? 'flex-end' : 'flex-start',
+      rowPad: mob ? '12px 12px' : '10px 12px',
+      taskNameMin: mob ? 'calc(100% - 44px)' : '0', taskNameSize: mob ? '16.5px' : '15px',
+      taskNameWrap: mob ? 'normal' : 'nowrap',
+      actPad: mob ? '9px 15px' : '6px 12px', actSize: mob ? '13px' : '12px',
+      navIconSize: mob ? '20px' : '18px', navLabelSize: mob ? '9.5px' : '10px',
+      navLabelCd: mob ? '\u5012\u8ba1\u65f6' : '\u672a\u6765\u5012\u8ba1\u65f6',
+      navLabelPomo: mob ? '\u4e13\u6ce8' : '\u756a\u8304\u4e13\u6ce8',
       fundSumCols: mob ? '1fr 1fr' : '1fr 1fr 1fr', fundCardSh: mob ? 'inset 0 1px 0 rgba(255,255,255,0.06)' : 'inset 0 1px 0 rgba(255,255,255,0.06),0 12px 30px rgba(0,0,0,0.4)',
       fundPad: mob ? '12px' : '16px', milestoneStatsCols: mob ? '1fr 1fr' : '1.35fr 1fr 1fr 1fr' };
     const cyc = { daily: '每日', weekly: '每周', monthly: '每月', once: '单次', free: '不限次' };
@@ -2148,6 +2167,14 @@ class Component extends DCLogic {
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad: tier.btnGrad, tierScene: tier.scene, heroBg: tier.heroBg, heroSheen: tier.heroSheen,
       cardTop: tier.cardTop, cardBot: tier.cardBot, rowTop: tier.rowTop, rowBot: tier.rowBot,
       gridCols: resp.gridCols, pomoCols: resp.pomoCols, heroH: resp.heroH, titleSize: resp.titleSize, balSize: resp.balSize,
+      titleLS: resp.titleLS, heroPad: resp.heroPad, mainPad: resp.mainPad, cardPad: resp.cardPad,
+      rowWrap: resp.rowWrap, rowJustify: resp.rowJustify, rowPad: resp.rowPad,
+      taskNameMin: resp.taskNameMin, taskNameSize: resp.taskNameSize, taskNameWrap: resp.taskNameWrap,
+      actPad: resp.actPad, actSize: resp.actSize,
+      navIconSize: resp.navIconSize, navLabelSize: resp.navLabelSize,
+      navLabelCd: resp.navLabelCd, navLabelPomo: resp.navLabelPomo,
+      uiModeLabel: { auto: '\u81ea\u52a8', phone: '\u624b\u673a', tablet: '\u5e73\u677f', desktop: '\u7535\u8111' }[uiMode] || '\u81ea\u52a8',
+      cycleUiMode: () => this.cycleUiMode(),
       fundSumCols: resp.fundSumCols, fundCardSh: resp.fundCardSh, fundPad: resp.fundPad, milestoneStatsCols: resp.milestoneStatsCols,
       di: this.dateInfo(),
       isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown', isFund: tabNow === 'fund', isOpex: tabNow === 'opex',
