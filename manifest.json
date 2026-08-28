@@ -1,7 +1,7 @@
 {
   "name": "EXP BANK · 自律积分银行",
   "short_name": "EXP BANK",
-  "description": "把自律变成可存取、可增值的 EXP 积分银行:挣分、兑换、里程碑、番茄专注、未来倒计时。",
+  "description": "把自律变成可存取、可增值的 EXP 积分银行:挣分、兑换、里程碑、番茄专注、未来倒计时、开销记录。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

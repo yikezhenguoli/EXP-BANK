@@ -44,7 +44,7 @@ input[type="date"]{color-scheme:dark;}
       <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
         <div style="display:flex;align-items:baseline;gap:14px;">
           <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ titleSize }};line-height:1;letter-spacing:4px;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.18)) drop-shadow(0 4px 14px rgba(0,0,0,0.7));">EXP BANK</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;letter-spacing:2px;">自律积分银行 / v0.1</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;letter-spacing:2px;">自律积分银行 / {{ appVersion }}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;pointer-events:auto;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:6px 13px;backdrop-filter:blur(6px);">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#e6e9f0;">{{ di.full }}</span>
@@ -58,6 +58,9 @@ input[type="date"]{color-scheme:dark;}
         </div>
         <div onClick="{{ openBackup }}" title="导出/导入备份码 · 跨设备搬运数据" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">⤓ 备份</span>
+        </div>
+        <div onClick="{{ checkUpdate }}" title="拉取最新版本 · 不会影响你已有的数据" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">↻ 更新</span>
         </div>
         <div onClick="{{ toggleWar }}" style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">WAR MODE</span>
@@ -462,9 +465,103 @@ input[type="date"]{color-scheme:dark;}
   </div>
   </sc-if>
 
+
+  <!-- OPEX TAB -->
+  <sc-if value="{{ isOpex }}" hint-placeholder-val="{{ false }}">
+  <div style="position:relative;z-index:1;max-width:760px;margin:0 auto;padding:18px 14px 0;display:flex;flex-direction:column;gap:14px;">
+
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">开销记录 // OPEX</div>
+        <div onClick="{{ cycleCurrency }}" title="切换货币符号" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 11px;" style-hover="border-color:{{ accent }};">{{ opexCurrency }}</div>
+        <div onClick="{{ openNewOpex }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 记一笔</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">今日</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:#eef1f7;">{{ opexToday }}</div>
+        </div>
+        <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">本月</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};">{{ opexMonth }}</div>
+        </div>
+        <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">本月日均</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:#c8cedb;">{{ opexAvg }}</div>
+        </div>
+      </div>
+
+      <sc-if value="{{ opexHasData }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:7px;border-top:1px solid #1a1e26;padding-top:12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#697084;">本月分类占比</div>
+          <sc-for list="{{ opexCats }}" as="c" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:9px;">
+              <div style="width:52px;font-size:11.5px;color:#aeb6c6;flex-shrink:0;">{{ c.name }}</div>
+              <div style="flex:1;height:8px;border-radius:4px;background:#161a22;overflow:hidden;">
+                <div style="height:100%;width:{{ c.pct }};border-radius:4px;background:{{ c.color }};"></div>
+              </div>
+              <div style="width:74px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#c8cedb;flex-shrink:0;">{{ c.amount }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ opexEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:24px 0;color:#535a6a;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">· 还没有记账，点右上「+ 记一笔」·</div>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <sc-for list="{{ opexRows }}" as="o" hint-placeholder-count="0">
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ o.color }};border:1px solid #262b36;border-radius:99px;padding:3px 9px;flex-shrink:0;">{{ o.cat }}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13.5px;color:#e6e9f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ o.note }}</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#697084;margin-top:2px;">{{ o.dateStr }}</div>
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#eef1f7;white-space:nowrap;">{{ o.amount }}</div>
+            <div onClick="{{ o.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;flex-shrink:0;" style-hover="color:#f87171;">×</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">存钱罐 // STASH</div>
+        <div onClick="{{ openNewStash }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新目标</div>
+      </div>
+      <sc-if value="{{ stashEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="text-align:center;padding:20px 0;color:#535a6a;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">· 还没有存钱目标 ·</div>
+      </sc-if>
+      <sc-for list="{{ stashRows }}" as="s" hint-placeholder-count="1">
+        <div style="display:flex;flex-direction:column;gap:9px;padding:13px 14px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="flex:1;min-width:0;font-size:15px;font-weight:700;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ s.name }}</div>
+            <sc-if value="{{ s.reached }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#4ade80;">✦ 已达成</div></sc-if>
+            <div onClick="{{ s.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+          </div>
+          <div style="height:10px;border-radius:5px;background:#161a22;overflow:hidden;">
+            <div style="height:100%;width:{{ s.pct }};border-radius:5px;background:{{ tierGrad }};"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ s.savedStr }} / {{ s.targetStr }} · {{ s.pct }}</div>
+            <input id="stash-{{ s.id }}" type="number" placeholder="存入金额" style="width:96px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            <div onClick="{{ s.onSave }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:7px 13px;white-space:nowrap;" style-hover="filter:brightness(1.12);">存入</div>
+          </div>
+        </div>
+      </sc-for>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.7;color:#535a6a;">存钱罐只记录数字，不连接任何银行账户。每天第一笔记账 +5 EXP，存钱目标达成 +100 EXP。</div>
+    </div>
+
+  </div>
+  </sc-if>
+
   <!-- BOTTOM NAV -->
   <div style="position:fixed;left:0;right:0;bottom:0;z-index:40;background:linear-gradient(180deg,rgba(14,16,22,0.80),rgba(9,10,14,0.94));backdrop-filter:blur(14px);border-top:1px solid rgba(255,255,255,0.08);box-shadow:0 -8px 30px rgba(0,0,0,0.4);">
-    <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;">
+    <div style="max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;">
       <div onClick="{{ goLists }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navListsColor }};">
         <sc-if value="{{ navListsActive }}" hint-placeholder-val="{{ true }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
         <div style="font-size:18px;line-height:1;">▤</div>
@@ -474,6 +571,11 @@ input[type="date"]{color-scheme:dark;}
         <sc-if value="{{ navFundActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
         <div style="font-size:18px;line-height:1;">◉</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">收盘台</div>
+      </div>
+      <div onClick="{{ goOpex }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navOpexColor }};">
+        <sc-if value="{{ navOpexActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
+        <div style="font-size:18px;line-height:1;">◈</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.5px;">开销</div>
       </div>
       <div onClick="{{ goCountdown }}" style="cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 0 13px;color:{{ navCountdownColor }};">
         <sc-if value="{{ navCountdownActive }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:34px;height:3px;border-radius:0 0 3px 3px;background:{{ tierGrad }};"></div></sc-if>
@@ -812,6 +914,83 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+
+  <!-- NEW OPEX MODAL -->
+  <sc-if value="{{ newOpexOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">记一笔 // OPEX</div>
+        <label style="display:block;font-size:11px;color:#697084;">金额（{{ opexCurrency }}）
+          <input id="no-amount" type="number" step="0.01" placeholder="如:28.5" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:15px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">分类
+          <select id="no-cat" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:13px;">
+            <option value="吃饭">吃饭</option><option value="交通">交通</option><option value="购物">购物</option><option value="人情">人情</option><option value="娱乐">娱乐</option><option value="其他">其他</option>
+          </select>
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">备注
+          <input id="no-note" placeholder="如:和朋友的早餐" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">日期
+          <input id="no-date" type="date" defaultValue="{{ todayISO }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addOpex }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">记下</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- NEW STASH MODAL -->
+  <sc-if value="{{ newStashOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建存钱目标 // STASH</div>
+        <label style="display:block;font-size:11px;color:#697084;">目标名称
+          <input id="ns2-name" placeholder="如:存 2000 去一个陌生的城市" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">目标金额（{{ opexCurrency }}）
+          <input id="ns2-target" type="number" placeholder="2000" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:15px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addStash }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- UPDATE NOTICE -->
+  <sc-if value="{{ updateNoteOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeUpdateNote }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.72);backdrop-filter:blur(5px);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
+        <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。你的 EXP、任务、里程碑、账本全部原样保留 —— 更新只替换程序，不会动你的数据。</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
+        <div style="display:flex;justify-content:flex-end;">
+          <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- WELCOME -->
+  <sc-if value="{{ welcomeOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;background:rgba(6,7,10,0.78);backdrop-filter:blur(6px);z-index:70;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:352px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:13px;box-shadow:0 28px 70px rgba(0,0,0,0.75);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:{{ accent }};">WELCOME · TESTER #001</div>
+        <div style="font-size:19px;font-weight:700;color:#eef1f7;line-height:1.4;">这是为你准备的 EXP BANK</div>
+        <div style="font-size:13px;color:#aeb6c6;line-height:1.8;">里面的任务、里程碑、奖励都只是一个起点 —— 全部可以改名、改分值、删掉重写。它不是要求你自律的软件，是一个记录你做过什么的地方。</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;line-height:1.8;">· 完成任务 → 得 EXP<br>· EXP 攒够 → 去 SHOPPING MALL 换奖励<br>· 数据只存在你自己的手机里，不上传任何服务器<br>· 右上角「⤓ 备份」可以导出备份码，换手机不丢</div>
+        <div style="display:flex;justify-content:flex-end;">
+          <div onClick="{{ closeWelcome }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:9px 22px;" style-hover="filter:brightness(1.12);">开始</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- IMAGE EDIT MODAL -->
   <sc-if value="{{ imgEditOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeImgEdit }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.7);backdrop-filter:blur(4px);z-index:55;display:flex;align-items:center;justify-content:center;padding:16px;">
@@ -958,6 +1137,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
+const APP_VERSION = 'v1.0.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -977,48 +1157,84 @@ class Component extends DCLogic {
       if (!s.noisePreset) s.noisePreset = '咖啡馆';
       if (s.noiseVol == null) s.noiseVol = 0.5;
       if (!s.milestoneSortMode) s.milestoneSortMode = 'deadline';
+      if (!Array.isArray(s.opex)) s.opex = [];
+      if (!Array.isArray(s.stash)) s.stash = [];
+      if (!s.opexCurrency) s.opexCurrency = '\u00a5';
+      if (!s.opexLastLogDay) s.opexLastLogDay = '';
+      if (s.welcomed == null) s.welcomed = true;
+      if (s.appVersion !== APP_VERSION) {
+        s.prevVersion = s.appVersion || 'v0.x';
+        s.appVersion = APP_VERSION;
+        try { const { updateNoteOpen, ...persist } = s; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); } catch (e) {}
+        s.updateNoteOpen = true;
+      }
       this.state = s;
     } else this.state = this.defaults();
   }
   defaults() {
     return {
-      exp: 0, warMode: false, nextId: 100,
+      exp: 0, warMode: false, nextId: 500,
+      appVersion: APP_VERSION, welcomed: false,
+      sets: [
+        { id: 11, name: '日常 · 每天的小事', collapsed: false },
+        { id: 12, name: '不做会后悔清单', collapsed: false },
+      ],
       tasks: [
-        { id: 1, name: '临帖·笔墨定心', exp: 20, cycle: 'daily', times: 1, core: true, done: {} },
-        { id: 2, name: '题海·五十精进', exp: 50, cycle: 'daily', times: 2, core: true, done: {} },
-        { id: 3, name: '内省·今日复盘', exp: 50, cycle: 'daily', times: 1, core: true, done: {} },
-        { id: 4, name: '疾风·晨跑淬炼', exp: 50, cycle: 'weekly', times: 2, core: false, done: {} },
-        { id: 5, name: '破晓·七点半前起', exp: 10, cycle: 'daily', times: 1, core: false, done: {} },
+        { id: 1, name: '下班时按下「打烊」开关', exp: 10, cycle: 'daily', times: 1, core: true, setId: 11, done: {} },
+        { id: 2, name: '下班后 20 分钟完全属于自己', exp: 10, cycle: 'daily', times: 1, core: true, setId: 11, done: {} },
+        { id: 3, name: '睡前把手机放远一点', exp: 10, cycle: 'daily', times: 1, core: true, setId: 11, done: {} },
+        { id: 4, name: '喝满 6 杯水', exp: 2, cycle: 'daily', times: 6, core: false, setId: 11, done: {} },
+        { id: 5, name: '拍一张「苦中作乐」的照片', exp: 5, cycle: 'daily', times: 1, core: false, setId: 11, done: {} },
+        { id: 6, name: '通勤路上听完一首新歌', exp: 5, cycle: 'daily', times: 1, core: false, setId: 11, done: {} },
+        { id: 7, name: '认真吃一顿只有自己的饭', exp: 30, cycle: 'weekly', times: 1, core: false, setId: 11, done: {} },
+        { id: 8, name: '收拾一个小角落', exp: 20, cycle: 'weekly', times: 1, core: false, setId: 11, done: {} },
+        { id: 9, name: '存下 2000，去一个没去过的城市', exp: 200, cycle: 'once', times: 1, core: false, setId: 12, done: {} },
+        { id: 10, name: '和朋友来一场说走就走的旅行', exp: 150, cycle: 'once', times: 1, core: false, setId: 12, done: {} },
+        { id: 13, name: '存一笔「随时可以走」的自由基金', exp: 120, cycle: 'once', times: 1, core: false, setId: 12, done: {} },
+        { id: 14, name: '限定时间读完一本书，并写下当时的感觉', exp: 80, cycle: 'once', times: 1, core: false, setId: 12, done: {} },
+        { id: 15, name: '把「要不要升学」写成一页利弊清单（只写，不决定）', exp: 60, cycle: 'once', times: 1, core: false, setId: 12, done: {} },
+        { id: 16, name: '一个人去看一场电影', exp: 50, cycle: 'once', times: 1, core: false, setId: 12, done: {} },
       ],
       rewards: [
-        { id: 1, name: '燕麦拿铁 · 醒神一杯', cost: 200 },
-        { id: 2, name: '珍馐一顿 · 犒赏味蕾', cost: 400 },
-        { id: 3, name: '浮生半日闲 · 2h', cost: 100 },
-        { id: 4, name: '光影之夜 · 观影特权', cost: 300 },
+        { id: 21, name: '一个纯粹发呆的下午 · 不许有罪恶感', cost: 100 },
+        { id: 22, name: '一杯想喝很久的饮料', cost: 300 },
+        { id: 23, name: '一次说走就走的短途', cost: 500 },
+        { id: 24, name: '人鱼汉顿 / 卡皮巴拉周边一件', cost: 800 },
+        { id: 25, name: '一张独自旅行的机票', cost: 1500 },
       ],
-      milestones: [{ id: 1, name: '登科·科一通关 · 刷满 300 题', cur: 0, target: 300, step: 10, bonus: 300, claimed: false }],
-      sets: [],
-      funds: this.defaultFunds(),
+      milestones: [
+        { id: 31, name: '职场第二年 · 打卡 100 天', cur: 0, target: 100, step: 1, bonus: 500, deadline: '', claimed: false },
+        { id: 32, name: '自由基金 · 每存 100 记一格', cur: 0, target: 60, step: 1, bonus: 400, deadline: '', claimed: false },
+        { id: 33, name: '读完 6 本书 · 每本写一段感觉', cur: 0, target: 6, step: 1, bonus: 300, deadline: '', claimed: false },
+        { id: 34, name: 'EXP BANK 首位测评师 · 提 10 条改进', cur: 0, target: 10, step: 1, bonus: 400, deadline: '', claimed: false },
+        { id: 35, name: '100 天没被「高回报帖子」带走', cur: 0, target: 100, step: 1, bonus: 500, deadline: '', claimed: false },
+      ],
+      funds: [],
       fundCfg: this.defaultFundCfg(),
       notion: { token: '', dbId: '', worker: '' },
       ledger: [],
+      opex: [], opexCurrency: '\u00a5', opexLastLogDay: '',
+      stash: [
+        { id: 41, name: '存 2000 · 去一个陌生的城市', target: 2000, saved: 0, claimed: false },
+        { id: 42, name: '自由基金 · 随时可以走', target: 6000, saved: 0, claimed: false },
+      ],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
       milestoneSortMode: 'deadline',
     };
   }
   defaultFundCfg() { return { dipA: 0.92, dipB: 0.89, dipC: 0.85, tpA: 1.10, tpB: 1.15, tpC: 1.20, tpD: 1.50, tpE: 1.60, tpF: 1.75 }; }
-  defaultFunds() {
-    return [
-      { id: 301, name: '卫星ETF', code: '159206', cost: 1.7217, base: 1.979, prices: [] },
-      { id: 302, name: '石油ETF鹏华', code: '159697', cost: 1.3400, base: 1.410, prices: [] },
-    ];
-  }
+  defaultFunds() { return []; }
   defaultCountdowns() {
     const iso = n => { const x = new Date(); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() + n); const p = v => String(v).padStart(2, '0'); return `${x.getFullYear()}-${p(x.getMonth() + 1)}-${p(x.getDate())}`; };
-    return [{ id: 201, name: '登科之约 · 科目一', date: iso(100) }, { id: 202, name: '决战期末 · 学期终考', date: iso(45) }];
+    const nextSat = (() => { const x = new Date(); const d = (6 - x.getDay() + 7) % 7 || 7; return iso(d); })();
+    return [
+      { id: 201, name: '下一个双休', date: nextSat },
+      { id: 202, name: '下一次一个人的旅行', date: iso(90) },
+      { id: 203, name: '2026 年结束', date: '2026-12-31' },
+    ];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -1031,7 +1247,7 @@ class Component extends DCLogic {
   openNewCountdown() { this.setState({ newCountdownOpen: true }); }
   openNewMilestone() { this.setState({ newMilestoneOpen: true }); }
   openNewFund() { this.setState({ newFundOpen: true }); }
-  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false, newRewardOpen: false, newMilestoneOpen: false, newFundOpen: false, newCountdownOpen: false }); }
+  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false, newRewardOpen: false, newMilestoneOpen: false, newFundOpen: false, newCountdownOpen: false, newOpexOpen: false, newStashOpen: false }); }
   addFund() {
     const name = this.v('nf-name'); if (!name) return;
     const code = this.v('nf-code');
@@ -1498,6 +1714,67 @@ class Component extends DCLogic {
   delTask(id) { this.save({ tasks: this.state.tasks.filter(x => x.id !== id) }); }
   delReward(id) { this.save({ rewards: this.state.rewards.filter(x => x.id !== id) }); }
   delMilestone(id) { this.save({ milestones: this.state.milestones.filter(x => x.id !== id) }); }
+  openNewOpex() { this.setState({ newOpexOpen: true }); }
+  openNewStash() { this.setState({ newStashOpen: true }); }
+  closeWelcome() { this.save({ welcomed: true }); }
+  closeUpdateNote() { this.setState({ updateNoteOpen: false }); }
+  checkUpdate() {
+    const go = () => location.reload();
+    try {
+      const cacheClear = (window.caches && caches.keys) ? caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k)))) : Promise.resolve();
+      const swUpdate = ('serviceWorker' in navigator) ? navigator.serviceWorker.getRegistrations().then(rs => Promise.all(rs.map(r => r.update().catch(() => {})))) : Promise.resolve();
+      Promise.all([cacheClear, swUpdate]).then(go).catch(go);
+    } catch (e) { go(); }
+  }
+  cycleCurrency() { const list = ['\u00a5', 'RM', '$', 'NT$', '\u20ac']; const i = list.indexOf(this.state.opexCurrency || '\u00a5'); this.save({ opexCurrency: list[(i + 1) % list.length] }); }
+  addOpex() {
+    const amount = parseFloat(this.v('no-amount'));
+    if (isNaN(amount) || amount <= 0) return;
+    const catEl = document.getElementById('no-cat');
+    const cat = catEl ? catEl.value : '\u5176\u4ed6';
+    const note = this.v('no-note') || cat;
+    const date = this.v('no-date') || this.todayKey();
+    const entry = { id: this.state.nextId, date, amount: Math.round(amount * 100) / 100, cat, note, ts: Date.now() };
+    const today = this.todayKey();
+    const patch = { opex: [entry, ...(this.state.opex || [])].slice(0, 800), nextId: this.state.nextId + 1, newOpexOpen: false };
+    if (this.state.opexLastLogDay !== today) {
+      patch.opexLastLogDay = today;
+      patch.exp = this.state.exp + 5;
+      patch.ledger = [{ ts: Date.now(), name: '\u8bb0\u8d26\u6253\u5361 \u00b7 OPEX', delta: 5 }, ...this.state.ledger].slice(0, 200);
+      patch.momentumMsg = '\u4eca\u5929\u7684\u7b2c\u4e00\u7b14\u5df2\u8bb0\u4e0b \u00b7 +5 EXP';
+      setTimeout(() => this.setState({ momentumMsg: '' }), 2600);
+    }
+    this.save(patch);
+    this.clear(['no-amount', 'no-note']);
+  }
+  delOpex(id) { this.save({ opex: (this.state.opex || []).filter(o => o.id !== id) }); }
+  addStash() {
+    const name = this.v('ns2-name'); if (!name) return;
+    const target = parseFloat(this.v('ns2-target')); if (isNaN(target) || target <= 0) return;
+    this.save({ stash: [...(this.state.stash || []), { id: this.state.nextId, name, target, saved: 0, claimed: false }], nextId: this.state.nextId + 1, newStashOpen: false });
+    this.clear(['ns2-name', 'ns2-target']);
+  }
+  delStash(id) { this.save({ stash: (this.state.stash || []).filter(s => s.id !== id) }); }
+  stashDeposit(id) {
+    const el = document.getElementById('stash-' + id); if (!el) return;
+    const add = parseFloat(el.value); if (isNaN(add) || add === 0) return;
+    let bonus = 0, name = '';
+    const stash = (this.state.stash || []).map(s => {
+      if (s.id !== id) return s;
+      const saved = Math.max(0, Math.round((s.saved + add) * 100) / 100);
+      if (!s.claimed && saved >= s.target) { bonus = 100; name = s.name; return { ...s, saved, claimed: true }; }
+      return { ...s, saved };
+    });
+    const patch = { stash };
+    if (bonus) {
+      patch.exp = this.state.exp + bonus;
+      patch.ledger = [{ ts: Date.now(), name: '\u5b58\u94b1\u7f50\u8fbe\u6210 \u00b7 ' + name, delta: bonus }, ...this.state.ledger].slice(0, 200);
+      patch.momentumMsg = '\u5b58\u94b1\u76ee\u6807\u8fbe\u6210 \u00b7 +100 EXP';
+      setTimeout(() => this.setState({ momentumMsg: '' }), 3000);
+    }
+    this.save(patch);
+    el.value = '';
+  }
   v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
   clear(ids) { ids.forEach(i => { const el = document.getElementById(i); if (el) el.value = ''; }); }
   addTask() {
@@ -1794,6 +2071,48 @@ class Component extends DCLogic {
         dueStr: `${y}年${String(m).padStart(2, '0')}月${String(dd).padStart(2, '0')}日`,
         onDel: e => { e.stopPropagation(); this.delCountdown(c.id); }, onEdit: () => this.openEdit('countdown', c.id) };
     }).sort((a, b) => ((a.days < 0) - (b.days < 0)) || a.days - b.days);
+    const opexProps = (() => {
+      const cur = st.opexCurrency || '\u00a5';
+      const list = (st.opex || []).slice().sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts || 0) - (a.ts || 0)));
+      const now = new Date();
+      const mk = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      const todayK = this.todayKey();
+      const money = n => cur + (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      const monthList = list.filter(o => (o.date || '').slice(0, 7) === mk);
+      const monthSum = monthList.reduce((a, o) => a + o.amount, 0);
+      const todaySum = list.filter(o => o.date === todayK).reduce((a, o) => a + o.amount, 0);
+      const dayCount = Math.max(1, now.getDate());
+      const palette = { '\u5403\u996d': '#f59e0b', '\u4ea4\u901a': '#60a5fa', '\u8d2d\u7269': '#a78bfa', '\u4eba\u60c5': '#f472b6', '\u5a31\u4e50': '#34d399', '\u5176\u4ed6': '#94a3b8' };
+      const byCat = {};
+      monthList.forEach(o => { byCat[o.cat] = (byCat[o.cat] || 0) + o.amount; });
+      const cats = Object.keys(byCat).sort((a, b) => byCat[b] - byCat[a]).map(k => ({
+        key: k, name: k, amount: money(byCat[k]),
+        pct: (monthSum ? Math.round(byCat[k] / monthSum * 100) : 0) + '%',
+        color: palette[k] || '#94a3b8',
+      }));
+      const rows = list.slice(0, 60).map(o => ({
+        key: o.id, cat: o.cat, note: o.note, amount: money(o.amount),
+        color: palette[o.cat] || '#94a3b8',
+        dateStr: (o.date || '').replace(/^\d{4}-/, '').replace('-', '/'),
+        onDel: () => this.delOpex(o.id),
+      }));
+      const stashRows = (st.stash || []).map(s => {
+        const pct = s.target > 0 ? Math.min(100, Math.round(s.saved / s.target * 100)) : 0;
+        return { key: s.id, id: s.id, name: s.name, pct: pct + '%', reached: s.saved >= s.target,
+          savedStr: money(s.saved), targetStr: money(s.target),
+          onSave: () => this.stashDeposit(s.id), onDel: () => this.delStash(s.id) };
+      });
+      return {
+        opexCurrency: cur, cycleCurrency: () => this.cycleCurrency(),
+        opexToday: money(todaySum), opexMonth: money(monthSum), opexAvg: money(monthSum / dayCount),
+        opexCats: cats, opexRows: rows, opexEmpty: list.length === 0, opexHasData: monthList.length > 0,
+        stashRows, stashEmpty: (st.stash || []).length === 0,
+        newOpexOpen: !!st.newOpexOpen, newStashOpen: !!st.newStashOpen,
+        openNewOpex: () => this.openNewOpex(), openNewStash: () => this.openNewStash(),
+        addOpex: () => this.addOpex(), addStash: () => this.addStash(),
+        todayISO: todayK,
+      };
+    })();
     const tabNow = st.tab || 'lists';
     const ed = st.editing || null;
     const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones, set: st.sets, fund: st.funds, countdown: st.countdowns };
@@ -1831,10 +2150,14 @@ class Component extends DCLogic {
       gridCols: resp.gridCols, pomoCols: resp.pomoCols, heroH: resp.heroH, titleSize: resp.titleSize, balSize: resp.balSize,
       fundSumCols: resp.fundSumCols, fundCardSh: resp.fundCardSh, fundPad: resp.fundPad, milestoneStatsCols: resp.milestoneStatsCols,
       di: this.dateInfo(),
-      isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown', isFund: tabNow === 'fund',
-      goLists: () => this.setTab('lists'), goPomo: () => this.setTab('pomo'), goCountdown: () => this.setTab('countdown'), goFund: () => this.setTab('fund'),
-      navListsActive: tabNow === 'lists', navPomoActive: tabNow === 'pomo', navCountdownActive: tabNow === 'countdown', navFundActive: tabNow === 'fund',
-      navListsColor: tabNow === 'lists' ? accent : '#7c8494', navPomoColor: tabNow === 'pomo' ? accent : '#7c8494', navCountdownColor: tabNow === 'countdown' ? accent : '#7c8494', navFundColor: tabNow === 'fund' ? accent : '#7c8494',
+      isLists: tabNow === 'lists', isPomo: tabNow === 'pomo', isCountdown: tabNow === 'countdown', isFund: tabNow === 'fund', isOpex: tabNow === 'opex',
+      goLists: () => this.setTab('lists'), goPomo: () => this.setTab('pomo'), goCountdown: () => this.setTab('countdown'), goFund: () => this.setTab('fund'), goOpex: () => this.setTab('opex'),
+      navListsActive: tabNow === 'lists', navPomoActive: tabNow === 'pomo', navCountdownActive: tabNow === 'countdown', navFundActive: tabNow === 'fund', navOpexActive: tabNow === 'opex',
+      navListsColor: tabNow === 'lists' ? accent : '#7c8494', navPomoColor: tabNow === 'pomo' ? accent : '#7c8494', navCountdownColor: tabNow === 'countdown' ? accent : '#7c8494', navFundColor: tabNow === 'fund' ? accent : '#7c8494', navOpexColor: tabNow === 'opex' ? accent : '#7c8494',
+      appVersion: APP_VERSION, prevVersion: st.prevVersion || 'v0.x',
+      updateNoteOpen: !!st.updateNoteOpen, closeUpdateNote: () => this.closeUpdateNote(), checkUpdate: () => this.checkUpdate(),
+      welcomeOpen: st.welcomed === false, closeWelcome: () => this.closeWelcome(),
+      ...opexProps,
       newRewardOpen: !!st.newRewardOpen, newMilestoneOpen: !!st.newMilestoneOpen, newFundOpen: !!st.newFundOpen,
       openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewFund: () => this.openNewFund(),
       addFund: () => this.addFund(),
