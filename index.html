@@ -127,6 +127,7 @@ input[type="date"]{color-scheme:dark;}
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px;">
         <div onClick="{{ openNewTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(0,0,0,0.3);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务</div>
         <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务集</div>
+        <div onClick="{{ openGallery }}" title="查看任务与里程碑留下的心得和照片" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};color:#eef1f7;">▦ 集锦</div>
         <div style="flex:1;"></div>
         <div onClick="{{ startReorder }}" title="批量编辑:排序 + 归入任务集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
@@ -239,7 +240,7 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ startReorderMilestones }}" title="排序里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">▦ 集锦</div><div onClick="{{ startReorderMilestones }}" title="排序里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div></div>
       <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="1">
         <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:14px;display:flex;flex-direction:column;gap:12px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div style="display:flex;align-items:flex-start;gap:12px;">
@@ -728,9 +729,9 @@ input[type="date"]{color-scheme:dark;}
         <textarea id="bk-text" readonly value="{{ backupCode }}" style="width:100%;box-sizing:border-box;height:96px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#c3c9d6;font-size:11px;font-family:'JetBrains Mono',monospace;resize:none;"></textarea>
         <div style="display:flex;gap:8px;">
           <div onClick="{{ copyBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">复制短码(发微信)</div>
-          <div onClick="{{ copyFullBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#c3c9d6;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:9px 0;" style-hover="border-color:{{ accent }};">复制完整码(含图)</div>
+          <div onClick="{{ copyFullBackup }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#c3c9d6;border:1px solid #2f3542;background:#161a22;border-radius:8px;padding:9px 0;" style-hover="border-color:{{ accent }};">复制完整码(含集锦图)</div>
         </div>
-        <div onClick="{{ exportDocx }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">⬇ 生成 .txt 文件保存(含图)</div>
+        <div onClick="{{ exportDocx }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:9px 0;" style-hover="filter:brightness(1.12);">⬇ 生成完整 .txt 备份(含集锦图)</div>
         <div style="height:1px;background:#1e222b;margin:2px 0;"></div>
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">恢复数据(会<b style="color:#f87171;">覆盖</b>当前):粘贴备份码,或上传之前导出的 Word 文件——</div>
         <div style="display:flex;gap:10px;">
@@ -1003,6 +1004,56 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+  <!-- REFLECTION MODAL -->
+  <sc-if value="{{ reflectionOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ skipReflection }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.72);backdrop-filter:blur(5px);z-index:72;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:390px;max-width:100%;background:linear-gradient(180deg,#14171e,#0f1117);border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:13px;box-shadow:0 28px 72px rgba(0,0,0,0.72);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:2px;color:{{ accent }};">完成 · 留下这一刻 // REFLECTION</div>
+        <div style="font-size:17px;font-weight:700;color:#eef1f7;line-height:1.5;">{{ reflectionTargetName }}</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.7;">EXP 已经正常入账。这里完全可选：记两句话，或留一张照片给未来的自己。</div>
+        <textarea id="rf-text" placeholder="今天做这件事时，我发现……" style="width:100%;box-sizing:border-box;min-height:104px;background:#0d0f14;border:1px solid #262b36;border-radius:10px;padding:11px 12px;color:#e6e9f0;font-size:13px;line-height:1.65;font-family:inherit;resize:vertical;"></textarea>
+        <div onClick="{{ pickReflectionImage }}" style="cursor:pointer;border:1px dashed #343b49;background:#0d0f14;border-radius:10px;min-height:64px;display:flex;align-items:center;justify-content:center;color:#8b93a4;overflow:hidden;" style-hover="border-color:{{ accent }};color:#c8cedb;">
+          <sc-if value="{{ reflectionHasImage }}" hint-placeholder-val="{{ false }}"><img src="{{ reflectionPreview }}" alt="集锦照片预览" style="width:100%;max-height:190px;object-fit:cover;display:block;"></sc-if>
+          <sc-if value="{{ reflectionNoImage }}" hint-placeholder-val="{{ true }}"><div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;">＋ 添加照片</div></sc-if>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ skipReflection }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 15px;" style-hover="color:#e6e9f0;">跳过</div>
+          <div onClick="{{ saveReflection }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">保存到集锦</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- GROWTH GALLERY MODAL -->
+  <sc-if value="{{ galleryOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeGallery }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.76);backdrop-filter:blur(6px);z-index:71;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:680px;max-width:100%;max-height:86vh;background:linear-gradient(180deg,#14171e,#0e1016);border:1px solid #2a2f3a;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 28px 76px rgba(0,0,0,0.76);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:3px;height:15px;border-radius:2px;background:{{ tierGrad }};"></div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">成长集锦 // GROWTH ARCHIVE</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;">{{ galleryCount }} 条</div>
+          <div onClick="{{ closeGallery }}" style="cursor:pointer;color:#8b93a4;font-size:20px;line-height:1;">×</div>
+        </div>
+        <div style="font-size:11.5px;color:#697084;line-height:1.7;">任务与里程碑完成时留下的文字和照片。照片保存在本机 IndexedDB，完整备份会一起打包。</div>
+        <div style="overflow:auto;display:flex;flex-direction:column;gap:10px;padding-right:2px;">
+          <sc-if value="{{ galleryEmpty }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;padding:36px 0;color:#535a6a;font-family:'JetBrains Mono',monospace;font-size:12px;">· 还没有集锦记录 ·</div></sc-if>
+          <sc-for list="{{ galleryEntries }}" as="g" hint-placeholder-count="0">
+            <div style="border:1px solid #222833;background:linear-gradient(180deg,#12151c,#0d0f14);border-radius:12px;padding:13px;display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:1px;color:{{ g.kindColor }};border:1px solid {{ g.kindColor }};border-radius:99px;padding:2px 7px;">{{ g.kindLabel }}</div>
+                <div style="font-size:13.5px;font-weight:700;color:#eef1f7;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ g.targetName }}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#697084;white-space:nowrap;">{{ g.timeStr }}</div>
+                <div onClick="{{ g.onDel }}" title="删除这条集锦" style="cursor:pointer;color:#3d4353;font-size:16px;" style-hover="color:#f87171;">×</div>
+              </div>
+              <sc-if value="{{ g.hasText }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;color:#b5bcc9;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere;">{{ g.text }}</div></sc-if>
+              <sc-if value="{{ g.hasImage }}" hint-placeholder-val="{{ false }}"><div style="border-radius:10px;overflow:hidden;border:1px solid #242a35;background:#0a0c11;"><img src="{{ g.imgUrl }}" alt="成长集锦照片" style="width:100%;max-height:360px;object-fit:cover;display:block;"></div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- IMAGE EDIT MODAL -->
   <sc-if value="{{ imgEditOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeImgEdit }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.7);backdrop-filter:blur(4px);z-index:55;display:flex;align-items:center;justify-content:center;padding:16px;">
@@ -1185,6 +1236,7 @@ class Component extends DCLogic {
       if (s.noiseVol == null) s.noiseVol = 0.5;
       if (!s.milestoneSortMode) s.milestoneSortMode = 'deadline';
       if (!s.taskSortMode) s.taskSortMode = 'priority';
+      if (!Array.isArray(s.galleryEntries)) s.galleryEntries = [];
       if (!Array.isArray(s.opex)) s.opex = [];
       if (!Array.isArray(s.stash)) s.stash = [];
       if (!s.opexCurrency) s.opexCurrency = '\u00a5';
@@ -1249,7 +1301,7 @@ class Component extends DCLogic {
       ],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
-      milestoneSortMode: 'deadline', taskSortMode: 'priority',
+      milestoneSortMode: 'deadline', taskSortMode: 'priority', galleryEntries: [],
     };
   }
   defaultFundCfg() { return { dipA: 0.92, dipB: 0.89, dipC: 0.85, tpA: 1.10, tpB: 1.15, tpC: 1.20, tpD: 1.50, tpE: 1.60, tpF: 1.75 }; }
@@ -1263,7 +1315,7 @@ class Component extends DCLogic {
       { id: 203, name: '2026 年结束', date: '2026-12-31' },
     ];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -1482,6 +1534,97 @@ class Component extends DCLogic {
     else if (p.kind === 'msPlus') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
     else if (p.kind === 'msClaim') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.state.exp - p.bonus, ledger: rm(this.state.ledger), pending: null });
   }
+  galleryDB() {
+    if (this._galleryDB) return this._galleryDB;
+    this._galleryDB = new Promise((resolve, reject) => {
+      const req = indexedDB.open('exp-bank-gallery-v1', 1);
+      req.onupgradeneeded = () => { const db = req.result; if (!db.objectStoreNames.contains('images')) db.createObjectStore('images'); };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error || new Error('IndexedDB 打开失败'));
+    });
+    return this._galleryDB;
+  }
+  async galleryPut(id, blob) { const db = await this.galleryDB(); return new Promise((resolve, reject) => { const tx = db.transaction('images', 'readwrite'); tx.objectStore('images').put(blob, id); tx.oncomplete = () => resolve(true); tx.onerror = () => reject(tx.error); }); }
+  async galleryGet(id) { const db = await this.galleryDB(); return new Promise((resolve, reject) => { const tx = db.transaction('images', 'readonly'); const q = tx.objectStore('images').get(id); q.onsuccess = () => resolve(q.result || null); q.onerror = () => reject(q.error); }); }
+  async galleryDeleteImage(id) { try { const db = await this.galleryDB(); await new Promise((resolve, reject) => { const tx = db.transaction('images', 'readwrite'); tx.objectStore('images').delete(id); tx.oncomplete = () => resolve(true); tx.onerror = () => reject(tx.error); }); } catch (_) {} }
+  async galleryClearImages() { try { const db = await this.galleryDB(); await new Promise((resolve, reject) => { const tx = db.transaction('images', 'readwrite'); tx.objectStore('images').clear(); tx.oncomplete = () => resolve(true); tx.onerror = () => reject(tx.error); }); } catch (_) {} }
+  blobToDataURL(blob) { return new Promise((resolve, reject) => { const r = new FileReader(); r.onload = () => resolve(r.result); r.onerror = () => reject(r.error); r.readAsDataURL(blob); }); }
+  dataURLToBlob(data) { const parts = data.split(','), mime = ((parts[0] || '').match(/data:([^;]+)/) || [,'image/jpeg'])[1]; const bin = atob(parts[1] || ''); const arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i); return new Blob([arr], { type: mime }); }
+  compressGalleryImage(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader(); r.onerror = () => reject(r.error); r.onload = () => {
+        const img = new Image(); img.onerror = () => reject(new Error('图片无法解码')); img.onload = () => {
+          try {
+            const cap = 1280, sc = Math.min(1, cap / Math.max(img.naturalWidth, img.naturalHeight));
+            const w = Math.max(1, Math.round(img.naturalWidth * sc)), h = Math.max(1, Math.round(img.naturalHeight * sc));
+            const c = document.createElement('canvas'); c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h);
+            c.toBlob(b => b ? resolve(b) : reject(new Error('图片压缩失败')), 'image/jpeg', 0.78);
+          } catch (e) { reject(e); }
+        };
+        img.src = r.result;
+      };
+      r.readAsDataURL(file);
+    });
+  }
+  pickReflectionImage() {
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+    inp.onchange = async () => {
+      const f = inp.files && inp.files[0]; if (!f) return;
+      try {
+        const blob = await this.compressGalleryImage(f);
+        if (this.state.reflectionPreview) try { URL.revokeObjectURL(this.state.reflectionPreview); } catch (_) {}
+        this.setState({ reflectionBlob: blob, reflectionPreview: URL.createObjectURL(blob) });
+      } catch (e) { alert('图片处理失败：' + e.message); }
+    };
+    inp.click();
+  }
+  skipReflection() {
+    if (this.state.reflectionPreview) try { URL.revokeObjectURL(this.state.reflectionPreview); } catch (_) {}
+    this.setState({ reflectionOpen: false, reflectionTarget: null, reflectionBlob: null, reflectionPreview: '' });
+  }
+  async saveReflection() {
+    const target = this.state.reflectionTarget; if (!target) return;
+    const text = this.v('rf-text'); const blob = this.state.reflectionBlob || null;
+    if (!text && !blob) { this.skipReflection(); return; }
+    const id = 'g-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+    if (blob) { try { await this.galleryPut(id, blob); } catch (e) { alert('照片保存失败，但文字仍会保存：' + e.message); } }
+    const entry = { id, kind: target.kind, targetId: target.id, targetName: target.name, ts: target.ts || Date.now(), text, hasImage: !!blob };
+    const preview = this.state.reflectionPreview;
+    this.save({ galleryEntries: [entry, ...(this.state.galleryEntries || [])].slice(0, 500), reflectionOpen: false, reflectionTarget: null, reflectionBlob: null, reflectionPreview: '' });
+    if (preview) try { URL.revokeObjectURL(preview); } catch (_) {}
+  }
+  async openGallery() {
+    this.setState({ galleryOpen: true, galleryImageUrls: {} });
+    const urls = {};
+    for (const e of (this.state.galleryEntries || [])) {
+      if (!e.hasImage) continue;
+      try { const b = await this.galleryGet(e.id); if (b) urls[e.id] = URL.createObjectURL(b); } catch (_) {}
+    }
+    if (this.state.galleryOpen) this.setState({ galleryImageUrls: urls }); else Object.values(urls).forEach(u => { try { URL.revokeObjectURL(u); } catch (_) {} });
+  }
+  closeGallery() {
+    Object.values(this.state.galleryImageUrls || {}).forEach(u => { try { URL.revokeObjectURL(u); } catch (_) {} });
+    this.setState({ galleryOpen: false, galleryImageUrls: {} });
+  }
+  async delGalleryEntry(id) {
+    await this.galleryDeleteImage(id);
+    const url = (this.state.galleryImageUrls || {})[id]; if (url) try { URL.revokeObjectURL(url); } catch (_) {}
+    const urls = { ...(this.state.galleryImageUrls || {}) }; delete urls[id];
+    this.save({ galleryEntries: (this.state.galleryEntries || []).filter(g => g.id !== id), galleryImageUrls: urls });
+  }
+  async makeFullBackupAsync() {
+    const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, backupFullCode, ...data } = this.state;
+    const galleryImages = {};
+    for (const e of (data.galleryEntries || [])) if (e.hasImage) {
+      try { const b = await this.galleryGet(e.id); if (b) galleryImages[e.id] = await this.blobToDataURL(b); } catch (_) {}
+    }
+    return btoa(unescape(encodeURIComponent(JSON.stringify({ ...data, galleryImages }))));
+  }
+  async restoreGalleryImages(images) {
+    if (!images || typeof images !== 'object') return;
+    await this.galleryClearImages();
+    for (const [id, data] of Object.entries(images)) { try { if (data) await this.galleryPut(id, this.dataURLToBlob(data)); } catch (_) {} }
+  }
   componentDidMount() {
     this.pruneOnce();
     this.applyInterest();
@@ -1586,11 +1729,14 @@ class Component extends DCLogic {
     else this.selectBackup();
   }
   selectBackup() { const el = document.getElementById('bk-text'); if (el) { el.focus(); el.select(); try { document.execCommand('copy'); this.setState({ copyLabel: '✓ 已复制' }); } catch (_) {} } }
-  copyFullBackup() {
-    const code = this.makeFullBackup();
-    const done = () => this.setState({ backupFull: true, backupMsg: '✓ 完整码(含图)已复制,粘到备忘录/文件里保存', backupMsgColor: '#4ade80' });
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done).catch(() => { this.setState({ backupFull: true }, () => this.selectBackup()); });
-    else this.setState({ backupFull: true }, () => this.selectBackup());
+  async copyFullBackup() {
+    this.setState({ backupMsg: '正在打包集锦照片…', backupMsgColor: '#8b93a4' });
+    try {
+      const code = await this.makeFullBackupAsync();
+      const done = () => this.setState({ backupFull: true, backupFullCode: code, backupMsg: '✓ 完整码（含集锦照片）已复制', backupMsgColor: '#4ade80' });
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done).catch(() => { this.setState({ backupFull: true, backupFullCode: code }, () => this.selectBackup()); });
+      else this.setState({ backupFull: true, backupFullCode: code }, () => this.selectBackup());
+    } catch (e) { this.setState({ backupMsg: '完整备份生成失败：' + e.message, backupMsgColor: '#f87171' }); }
   }
   toggleFullView() { this.setState({ backupFull: !this.state.backupFull, copyLabel: '复制备份码' }); }
   _crc32(bytes) {
@@ -1615,15 +1761,16 @@ class Component extends DCLogic {
     const blobParts = parts.concat(central); blobParts.push(end);
     return new Blob(blobParts, { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
   }
-  exportDocx() {
-    const code = this.makeFullBackup();
-    const text = 'EXP BANK 备份码(导入时整段复制或直接上传本文件):\r\n' + code;
-    const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = 'EXP-BANK-备份-' + this.todayKey() + '.txt';
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-    this.setState({ backupMsg: '✓ 已触发下载 .txt，保存后可在右侧上传导入', backupMsgColor: '#4ade80' });
+  async exportDocx() {
+    this.setState({ backupMsg: '正在打包完整备份…', backupMsgColor: '#8b93a4' });
+    try {
+      const code = await this.makeFullBackupAsync();
+      const text = 'EXP BANK 备份码（含集锦照片，导入时整段复制或直接上传本文件）:\r\n' + code;
+      const blob = new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'EXP-BANK-备份-' + this.todayKey() + '.txt';
+      document.body.appendChild(a); a.click(); const u = a.href; a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+      this.setState({ backupFull: true, backupFullCode: code, backupMsg: '✓ 已生成完整 .txt 备份（含集锦照片）', backupMsgColor: '#4ade80' });
+    } catch (e) { this.setState({ backupMsg: '备份文件生成失败：' + e.message, backupMsgColor: '#f87171' }); }
   }
   importDocxFile(file) {
     const name = (file.name || '').toLowerCase();
@@ -1660,7 +1807,11 @@ class Component extends DCLogic {
     try { data = JSON.parse(decodeURIComponent(escape(atob(clean)))); }
     catch (e) { try { data = JSON.parse(raw); } catch (e2) { this.setState({ backupMsg: '备份码无法识别,请检查是否复制完整', backupMsgColor: '#f87171' }); return; } }
     if (!data || !Array.isArray(data.tasks)) { this.setState({ backupMsg: '备份码内容无效', backupMsgColor: '#f87171' }); return; }
-    this.setState({ ...data, editing: null, pending: null, backupMsg: '✓ 导入成功,数据已恢复', backupMsgColor: '#4ade80' }, () => localStorage.setItem('exp-bank-v1', JSON.stringify(data)));
+    const galleryImages = data.galleryImages || null; delete data.galleryImages;
+    this.setState({ ...data, editing: null, pending: null, backupMsg: '✓ 导入成功,数据已恢复', backupMsgColor: '#4ade80' }, () => {
+      localStorage.setItem('exp-bank-v1', JSON.stringify(data));
+      if (galleryImages) this.restoreGalleryImages(galleryImages).then(() => this.setState({ backupMsg: '✓ 导入成功，集锦照片也已恢复', backupMsgColor: '#4ade80' }));
+    });
   }
   saveEdit() {
     const ed = this.state.editing; if (!ed) return;
@@ -1725,7 +1876,7 @@ class Component extends DCLogic {
     this.armTimer(key);
     const unit = { daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '';
     if (streakChanged && newStreak === 7 && unit) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 ' + unit + ',MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
-    this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '' } });
+    this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '' }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
   redeem(id) {
     const r = this.state.rewards.find(x => x.id === id);
@@ -1849,7 +2000,7 @@ class Component extends DCLogic {
     const m = this.state.milestones.find(x => x.id === id);
     if (!m || m.claimed || m.cur < m.target) return;
     const ts = Date.now(), key = 'ms:' + id; this.armTimer(key);
-    this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, claimed: true } : x), exp: this.state.exp + m.bonus, ledger: [{ ts, name: '里程碑达成 · ' + m.name, delta: m.bonus }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'msClaim', id, bonus: m.bonus, ledgerTs: ts } });
+    this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, claimed: true } : x), exp: this.state.exp + m.bonus, ledger: [{ ts, name: '里程碑达成 · ' + m.name, delta: m.bonus }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'msClaim', id, bonus: m.bonus, ledgerTs: ts }, reflectionOpen: true, reflectionTarget: { kind: 'milestone', id, name: m.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
   sameDay(ts) { const a = new Date(ts), b = new Date(); return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
   dateKey(ts) { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; }
@@ -2090,6 +2241,12 @@ class Component extends DCLogic {
         onEdit: () => this.openEdit('milestone', m.id), onUndo: e => { e.stopPropagation(); this.undo(); } };
     });
     const fmt = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+    const galleryEntries = (st.galleryEntries || []).slice().sort((a, b) => b.ts - a.ts).map(g => {
+      const imgUrl = (st.galleryImageUrls || {})[g.id] || '';
+      return { ...g, targetName: g.targetName || '已删除项目', timeStr: fmt(g.ts), hasText: !!(g.text || '').trim(),
+        hasImage: !!imgUrl, imgUrl, kindLabel: g.kind === 'milestone' ? 'MILESTONE' : 'TASK', kindColor: g.kind === 'milestone' ? '#e6c46a' : '#60a5fa',
+        onDel: e => { e.stopPropagation(); this.delGalleryEntry(g.id); } };
+    });
     const ledger = st.ledger.slice(0, 30).map((e, i) => ({ ...e, key: e.ts + '-' + i, time: fmt(e.ts),
       deltaStr: (e.delta > 0 ? '+' : '') + e.delta, deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
     const earned = st.ledger.filter(e => e.delta > 0).reduce((a, e) => a + e.delta, 0);
@@ -2198,6 +2355,9 @@ class Component extends DCLogic {
       startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderFunds: () => this.startReorder('funds'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
       rewards, milestones, ledger, showLedger: this.props.showLedger ?? true,
+      reflectionOpen: !!st.reflectionOpen, reflectionTargetName: st.reflectionTarget ? st.reflectionTarget.name : '', reflectionHasImage: !!st.reflectionPreview, reflectionNoImage: !st.reflectionPreview, reflectionPreview: st.reflectionPreview || '',
+      pickReflectionImage: () => this.pickReflectionImage(), skipReflection: () => this.skipReflection(), saveReflection: () => this.saveReflection(),
+      galleryOpen: !!st.galleryOpen, galleryEntries, galleryEmpty: galleryEntries.length === 0, galleryCount: galleryEntries.length, openGallery: () => this.openGallery(), closeGallery: () => this.closeGallery(),
       earned, spent, todayEarned: '+' + todayEarned,
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad: tier.btnGrad, tierScene: tier.scene, heroBg: tier.heroBg, heroSheen: tier.heroSheen,
       cardTop: tier.cardTop, cardBot: tier.cardBot, rowTop: tier.rowTop, rowBot: tier.rowBot,
@@ -2318,7 +2478,7 @@ class Component extends DCLogic {
       editBonus: editItem ? (editItem.bonus ?? '') : '', editDeadline: editItem ? (editItem.deadline || '') : '',
       closeEdit: () => this.closeEdit(), confirmEdit: () => this.confirmEdit(),
       saveEdit: () => this.saveEdit(), stopClick: e => e.stopPropagation(),
-      backupOpen: !!st.backupOpen, backupCode: st.backupOpen ? (st.backupFull ? this.makeFullBackup() : this.makeBackupCode()) : '',
+      backupOpen: !!st.backupOpen, backupCode: st.backupOpen ? ((st.backupFull && st.backupFullCode) ? st.backupFullCode : this.makeBackupCode()) : '',
       copyLabel: st.copyLabel || '复制备份码', backupMsg: st.backupMsg || '', backupMsgColor: st.backupMsgColor || '#8b93a4',
       openBackup: () => this.openBackup(), closeBackup: () => this.closeBackup(),
       copyBackup: () => this.copyBackup(), copyFullBackup: () => this.copyFullBackup(), toggleFullView: () => this.toggleFullView(), importBackup: () => this.importBackup(),
