@@ -1587,8 +1587,9 @@ class Component extends DCLogic {
     const text = this.v('rf-text'); const blob = this.state.reflectionBlob || null;
     if (!text && !blob) { this.skipReflection(); return; }
     const id = 'g-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7);
-    if (blob) { try { await this.galleryPut(id, blob); } catch (e) { alert('照片保存失败，但文字仍会保存：' + e.message); } }
-    const entry = { id, kind: target.kind, targetId: target.id, targetName: target.name, ts: target.ts || Date.now(), text, hasImage: !!blob };
+    let imageSaved = false;
+    if (blob) { try { await this.galleryPut(id, blob); imageSaved = true; } catch (e) { alert('照片保存失败，但文字仍会保存：' + e.message); } }
+    const entry = { id, kind: target.kind, targetId: target.id, targetName: target.name, ts: target.ts || Date.now(), text, hasImage: imageSaved };
     const preview = this.state.reflectionPreview;
     this.save({ galleryEntries: [entry, ...(this.state.galleryEntries || [])].slice(0, 500), reflectionOpen: false, reflectionTarget: null, reflectionBlob: null, reflectionPreview: '' });
     if (preview) try { URL.revokeObjectURL(preview); } catch (_) {}
@@ -1695,7 +1696,7 @@ class Component extends DCLogic {
   }
   toggleLedgerView() { this.setState({ ledgerView: (this.state.ledgerView === 'redeem') ? 'all' : 'redeem' }); }
   closeBackup() { this.setState({ backupOpen: false, backupMsg: '' }); }
-  makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; const lite = { ...data, rewards: (data.rewards || []).map(r => { const { img, ...rest } = r; return rest; }) }; return btoa(unescape(encodeURIComponent(JSON.stringify(lite)))); }
+  makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, backupFullCode, ...data } = this.state; const lite = { ...data, rewards: (data.rewards || []).map(r => { const { img, ...rest } = r; return rest; }) }; return btoa(unescape(encodeURIComponent(JSON.stringify(lite)))); }
   makeFullBackup() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
   setRewardPos(id, pos) { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, imgPos: Math.max(0, Math.min(100, pos)) } : r) }); }
   rewardImgDown(id, e) {
