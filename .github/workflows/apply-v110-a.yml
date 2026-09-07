@@ -1,0 +1,47 @@
+name: Apply EXP BANK v1.1 Task Intelligence
+
+on:
+  push:
+    branches:
+      - feature/growth-gallery-v1-1
+    paths:
+      - '.github/workflows/apply-v110-a.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/growth-gallery-v1-1
+      - name: Apply patch A
+        run: |
+          python3 tools/patch_v110_a.py
+          sed -i "s/exp-bank-v1.0.1/exp-bank-v1.1.0/" sw.js
+          python3 - <<'PY'
+          from pathlib import Path
+          s = Path('index.html').read_text(encoding='utf-8')
+          checks = [
+            "const APP_VERSION = 'v1.1.0';",
+            "taskSortMode: 'priority'",
+            "紧急且重要",
+            "每日 1 次（固定）",
+            "id=\"nc-time\"",
+            "editPriority",
+          ]
+          missing = [x for x in checks if x not in s]
+          if missing:
+            raise SystemExit('Missing checks: ' + repr(missing))
+          if "const CACHE = 'exp-bank-v1.1.0';" not in Path('sw.js').read_text(encoding='utf-8'):
+            raise SystemExit('service worker cache not bumped')
+          print('Static checks passed')
+          PY
+          rm -f tools/patch_v110_a.py .github/workflows/apply-v110-a.yml
+          git config user.name "EXP BANK Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html sw.js tools/patch_v110_a.py .github/workflows/apply-v110-a.yml
+          git commit -m "feat: add task priority notes countdown precision and daily rewards"
+          git push origin feature/growth-gallery-v1-1
