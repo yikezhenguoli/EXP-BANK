@@ -135,7 +135,7 @@ input[type="date"]{color-scheme:dark;}
         <sc-if value="{{ t.isHeader }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ t.onToggle }}" title="点击折叠/展开任务集" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
             <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};width:14px;text-align:center;line-height:1;">{{ t.chevron }}</div>
-            <div style="font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;">▤ {{ t.name }}</div>
+            <div onClick="{{ t.onEditSet }}" title="点击编辑任务集名称" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ t.name }}</div>
             <div style="flex:1;"></div>
             <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ t.countLabel }}</div>
             <div onClick="{{ t.onEditSet }}" title="重命名任务集" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
@@ -148,8 +148,10 @@ input[type="date"]{color-scheme:dark;}
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div style="width:3px;align-self:stretch;flex-shrink:0;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
           </sc-if>
-          <div style="flex:1;min-width:{{ taskNameMin }};">
-            <div style="font-size:{{ taskNameSize }};font-weight:700;letter-spacing:0.2px;line-height:1.35;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:{{ taskNameWrap }};">{{ t.name }}</div>
+          <div style="flex:1;min-width:{{ taskNameMin }};position:relative;">
+            <div style="font-size:{{ taskNameSize }};font-weight:700;letter-spacing:0.2px;line-height:1.35;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:{{ taskNameWrap }};padding-right:96px;">{{ t.name }}</div>
+            <div style="position:absolute;top:0;right:0;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:0.2px;color:{{ t.priorityColor }};background:{{ t.priorityBg }};border:1px solid {{ t.priorityColor }};border-radius:99px;padding:2px 7px;white-space:nowrap;opacity:0.92;">{{ t.priorityLabel }}</div>
+            <sc-if value="{{ t.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#8b93a4;line-height:1.45;margin-top:4px;white-space:normal;overflow-wrap:anywhere;">{{ t.noteText }}</div></sc-if>
             <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:1px;margin-top:2px;">{{ t.cycleLabel }}</div>
           </div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
@@ -209,7 +211,7 @@ input[type="date"]{color-scheme:dark;}
             </div>
             <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
               <div style="display:flex;flex-direction:column;gap:3px;">
-                <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.name }}</div>
+                <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;min-height:61px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere;">{{ r.name }}</div>
                 <div style="display:flex;align-items:center;gap:8px;">
                   <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};">{{ r.costStr }}</div>
                   <sc-if value="{{ r.hasCapHint }}" hint-placeholder-val="{{ false }}">
@@ -379,7 +381,7 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ cd.onEdit }}" title="点击编辑" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }};">
           <div style="flex:1;min-width:0;">
             <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ cd.name }}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;margin-top:3px;">截止 {{ cd.dueStr }} · 以午夜 00:00 为界</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;margin-top:3px;">截止 {{ cd.dueStr }}</div>
           </div>
           <sc-if value="{{ cd.isToday }}" hint-placeholder-val="{{ false }}">
             <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#fbbf24;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));">就在今天</div>
@@ -390,6 +392,7 @@ input[type="date"]{color-scheme:dark;}
               <span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;line-height:1;color:{{ cd.numColor }};filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ cd.numText }}</span>
               <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#c3c9d6;">天</span>
             </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;white-space:nowrap;">{{ cd.remainDetail }}</div>
           </sc-if>
           <div onClick="{{ cd.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;padding-left:4px;" style-hover="color:#f87171;">×</div>
         </div>
@@ -630,24 +633,20 @@ input[type="date"]{color-scheme:dark;}
                 <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
               </select>
             </label>
+            <label style="display:block;font-size:11px;color:#697084;">优先级
+              <select id="ed-priority" defaultValue="{{ editPriority }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
+                <option value="p1">紧急且重要</option><option value="p2">紧急不重要</option><option value="p3">不紧急重要</option><option value="p4">不重要不紧急</option>
+              </select>
+            </label>
+            <label style="display:block;font-size:11px;color:#697084;">备注(可留空)
+              <textarea id="ed-note" defaultValue="{{ editNote }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
+            </label>
           </sc-if>
           <sc-if value="{{ editIsReward }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">价格(EXP)
               <input id="ed-cost" type="number" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
             </label>
-            <div style="display:flex;gap:8px;">
-              <label style="flex:1.4;font-size:11px;color:#697084;">兑换频次上限
-                <select id="ed-capcycle" defaultValue="{{ editCapCycle }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
-                  <option value="none">不限次数</option>
-                  <option value="daily">每日</option>
-                  <option value="weekly">每周(7天)</option>
-                  <option value="monthly">每月(30天)</option>
-                </select>
-              </label>
-              <label style="flex:1;font-size:11px;color:#697084;">周期内次数
-                <input id="ed-captimes" type="number" min="1" defaultValue="{{ editCapTimes }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-              </label>
-            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;border:1px solid #262b36;background:#0d0f14;border-radius:8px;padding:8px 10px;">兑换限制 · 每日 1 次（固定）</div>
           </sc-if>
           <sc-if value="{{ editIsFund }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">股票代码
@@ -679,9 +678,14 @@ input[type="date"]{color-scheme:dark;}
             </label>
           </sc-if>
           <sc-if value="{{ editIsCountdown }}" hint-placeholder-val="{{ false }}">
-            <label style="display:block;font-size:11px;color:#697084;">目标日期
-              <input id="ed-date" type="date" defaultValue="{{ editDate }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
-            </label>
+            <div style="display:flex;gap:8px;">
+              <label style="flex:1.25;font-size:11px;color:#697084;">目标日期
+                <input id="ed-date" type="date" defaultValue="{{ editDate }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              </label>
+              <label style="flex:1;font-size:11px;color:#697084;">时间
+                <input id="ed-time" type="time" step="60" defaultValue="{{ editTime }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              </label>
+            </div>
           </sc-if>
           <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
             <div onClick="{{ closeEdit }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:7px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -906,9 +910,14 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">事件名称
           <input id="nc-name" placeholder="如:六级考试 / 科目二" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
-        <label style="display:block;font-size:11px;color:#697084;">目标日期
-          <input id="nc-date" type="date" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        </label>
+        <div style="display:flex;gap:8px;">
+          <label style="flex:1.25;font-size:11px;color:#697084;">目标日期
+            <input id="nc-date" type="date" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+          <label style="flex:1;font-size:11px;color:#697084;">时间
+            <input id="nc-time" type="time" value="00:00" step="60" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          </label>
+        </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addCountdown }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加倒计时</div>
@@ -1043,6 +1052,14 @@ input[type="date"]{color-scheme:dark;}
             </select>
           </label>
         </div>
+        <label style="display:block;font-size:11px;color:#697084;">优先级
+          <select id="nt-priority" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 8px;color:#aeb6c6;font-size:12px;">
+            <option value="p1">紧急且重要</option><option value="p2">紧急不重要</option><option value="p3">不紧急重要</option><option value="p4" selected>不重要不紧急</option>
+          </select>
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">备注(可留空)
+          <textarea id="nt-note" placeholder="补充上下文、标准或提醒…" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
+        </label>
         <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#8b93a4;cursor:pointer;"><input id="nt-core" type="checkbox" style="accent-color:#4ade80;">设为核心微习惯(战时模式显示)</label>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1081,6 +1098,10 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </sc-if>
         <sc-if value="{{ reorderIsTasks }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:8px;border:1px solid #202530;background:#0d0f14;border-radius:9px;padding:9px 10px;">
+            <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">当前: {{ taskSortLabel }}</div>
+            <div onClick="{{ restoreTaskSort }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2f3542;border-radius:7px;padding:5px 9px;" style-hover="border-color:{{ accent }};">按优先级排序</div>
+          </div>
           <div style="display:flex;gap:8px;">
             <div onClick="{{ setRoDrag }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roDragTextColor }};background:{{ roDragBg }};border:1px solid {{ roDragBorder }};box-shadow:{{ roDragShadow }};">拖拽排序</div>
             <div onClick="{{ setRoSelect }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roSelTextColor }};background:{{ roSelBg }};border:1px solid {{ roSelBorder }};box-shadow:{{ roSelShadow }};">勾选归集</div>
@@ -1140,7 +1161,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.0.1';
+const APP_VERSION = 'v1.1.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1148,7 +1169,10 @@ class Component extends DCLogic {
     try { s = JSON.parse(localStorage.getItem('exp-bank-v1')); } catch (e) {}
     if (s && s.tasks) {
       s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
+        priority: t.priority || 'p4', note: t.note || '',
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
+      s.rewards = (s.rewards || []).map(r => ({ ...r, capCycle: 'daily', capTimes: 1 }));
+      s.countdowns = (s.countdowns || []).map(c => ({ ...c, time: c.time || '00:00' }));
       if (!s.sets) s.sets = [];
       if (!s.funds) s.funds = this.defaultFunds();
       if (!s.fundCfg) s.fundCfg = this.defaultFundCfg();
@@ -1160,6 +1184,7 @@ class Component extends DCLogic {
       if (!s.noisePreset) s.noisePreset = '咖啡馆';
       if (s.noiseVol == null) s.noiseVol = 0.5;
       if (!s.milestoneSortMode) s.milestoneSortMode = 'deadline';
+      if (!s.taskSortMode) s.taskSortMode = 'priority';
       if (!Array.isArray(s.opex)) s.opex = [];
       if (!Array.isArray(s.stash)) s.stash = [];
       if (!s.opexCurrency) s.opexCurrency = '\u00a5';
@@ -1224,7 +1249,7 @@ class Component extends DCLogic {
       ],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
-      milestoneSortMode: 'deadline',
+      milestoneSortMode: 'deadline', taskSortMode: 'priority',
     };
   }
   defaultFundCfg() { return { dipA: 0.92, dipB: 0.89, dipC: 0.85, tpA: 1.10, tpB: 1.15, tpC: 1.20, tpD: 1.50, tpE: 1.60, tpF: 1.75 }; }
@@ -1333,6 +1358,9 @@ class Component extends DCLogic {
     });
   }
   restoreMilestoneSort() { this.save({ milestoneSortMode: 'deadline' }); }
+  priorityRank(p) { return ({ p1: 1, p2: 2, p3: 3, p4: 4 })[p] || 4; }
+  sortTasksByPriority(list) { return [...(list || [])].sort((a, b) => this.priorityRank(a.priority) - this.priorityRank(b.priority)); }
+  restoreTaskSort() { this.save({ taskSortMode: 'priority' }); }
   startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null, batchSel: [], roMode: 'drag' }); }
   setRoMode(m) { this.setState({ roMode: m }); }
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
@@ -1416,7 +1444,9 @@ class Component extends DCLogic {
     if (!targetEl) return;
     const arr = (kind === 'milestones' && (this.state.milestoneSortMode || 'deadline') === 'deadline')
       ? this.sortMilestonesByDeadline(this.state.milestones)
-      : [...this.state[kind]];
+      : (kind === 'tasks' && (this.state.taskSortMode || 'priority') === 'priority')
+        ? this.sortTasksByPriority(this.state.tasks)
+        : [...this.state[kind]];
     const fi = arr.findIndex(t => String(t.id) === String(this.state.dragId));
     if (fi < 0) return;
     const [mv] = arr.splice(fi, 1);
@@ -1437,6 +1467,7 @@ class Component extends DCLogic {
     }
     const patch = { [kind]: arr };
     if (kind === 'milestones') patch.milestoneSortMode = 'manual';
+    if (kind === 'tasks') patch.taskSortMode = 'manual';
     this.save(patch);
   }
   roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
@@ -1462,7 +1493,7 @@ class Component extends DCLogic {
   }
   componentWillUnmount() { clearInterval(this._intTimer); clearInterval(this._clockTimer); clearTimeout(this._pt); clearInterval(this._pomoTimer); this.stopNoiseNodes(); if (this._onResize) window.removeEventListener('resize', this._onResize); }
   setTab(t) { this.setState({ tab: t }); }
-  addCountdown() { const name = this.v('nc-name'), date = this.v('nc-date'); if (!name || !date) return; this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date }], nextId: this.state.nextId + 1, newCountdownOpen: false }); this.clear(['nc-name', 'nc-date']); }
+  addCountdown() { const name = this.v('nc-name'), date = this.v('nc-date'), time = this.v('nc-time') || '00:00'; if (!name || !date) return; this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date, time }], nextId: this.state.nextId + 1, newCountdownOpen: false }); this.clear(['nc-name', 'nc-date']); const te = document.getElementById('nc-time'); if (te) te.value = '00:00'; }
   delCountdown(id) { this.save({ countdowns: this.state.countdowns.filter(c => c.id !== id) }); }
   pomoBase() { const p = this.state.pomoPreset || '25'; return (p === 'custom' ? (this.state.pomoCustomMin || 30) : parseInt(p)) * 60; }
   pomoStart() { const st = this.state; if (st.pomoRunning) return; const rem = (st.pomoRemaining != null && st.pomoRemaining > 0) ? st.pomoRemaining : this.pomoBase(); const total = st.pomoTotal || this.pomoBase(); this.setState({ pomoRunning: true, pomoEndTs: Date.now() + rem * 1000, pomoRemaining: rem, pomoTotal: total }, () => this.pomoTick()); }
@@ -1642,15 +1673,14 @@ class Component extends DCLogic {
       const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
       this.save({ editing: null, tasks: this.state.tasks.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
-        setId, cycle: document.getElementById('ed-cycle').value } : x) });
+        setId, cycle: document.getElementById('ed-cycle').value,
+        priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', note: this.v('ed-note') } : x) });
     } else if (ed.type === 'reward') {
-      const cc = document.getElementById('ed-capcycle');
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)),
-        capCycle: cc ? cc.value : (x.capCycle || 'none'), capTimes: Math.max(1, num('ed-captimes', x.capTimes || 1)) } : x) });
+        name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)), capCycle: 'daily', capTimes: 1 } : x) });
     } else if (ed.type === 'countdown') {
       this.save({ editing: null, countdowns: this.state.countdowns.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, date: this.v('ed-date') || x.date } : x) });
+        name: name || x.name, date: this.v('ed-date') || x.date, time: this.v('ed-time') || x.time || '00:00' } : x) });
     } else if (ed.type === 'fund') {
       const fnum = (id, fb) => { const n = parseFloat(this.v(id)); return isNaN(n) ? fb : n; };
       this.save({ editing: null, funds: this.state.funds.map(x => x.id === ed.id ? { ...x,
@@ -1700,8 +1730,7 @@ class Component extends DCLogic {
   redeem(id) {
     const r = this.state.rewards.find(x => x.id === id);
     if (this.state.exp < r.cost) return;
-    const win = { daily: 1, weekly: 7, monthly: 30 }[r.capCycle];
-    if (win) { const now = Date.now(); const recent = (r.redeems || []).filter(t => now - t < win * 864e5); if (recent.length >= (r.capTimes || 1)) return; }
+    if ((r.redeems || []).some(t => this.sameDay(t))) return;
     const ts = Date.now(), key = 'reward:' + id;
     this.armTimer(key);
     this.save({ exp: this.state.exp - r.cost, rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-50) } : x), ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, rts: ts } });
@@ -1788,15 +1817,18 @@ class Component extends DCLogic {
     const cycle = document.getElementById('nt-cycle').value;
     const times = Math.max(1, parseInt(this.v('nt-times')) || 1);
     const core = document.getElementById('nt-core').checked;
+    const priorityEl = document.getElementById('nt-priority');
+    const priority = priorityEl ? priorityEl.value : 'p4';
+    const note = this.v('nt-note');
     const setSel = document.getElementById('nt-set');
     const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
-    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, core, setId, done: {} }], nextId: this.state.nextId + 1, newTaskOpen: false });
-    this.clear(['nt-name', 'nt-exp', 'nt-times']); const cb = document.getElementById('nt-core'); if (cb) cb.checked = false; if (setSel) setSel.value = '';
+    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, core, setId, priority, note, done: {} }], nextId: this.state.nextId + 1, newTaskOpen: false });
+    this.clear(['nt-name', 'nt-exp', 'nt-times', 'nt-note']); const cb = document.getElementById('nt-core'); if (cb) cb.checked = false; if (setSel) setSel.value = '';
   }
   addReward() {
     const name = this.v('nr-name'); if (!name) return;
     const cost = parseInt(this.v('nr-cost')) || 100;
-    this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost }], nextId: this.state.nextId + 1, newRewardOpen: false });
+    this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost, capCycle: 'daily', capTimes: 1, redeems: [] }], nextId: this.state.nextId + 1, newRewardOpen: false });
     this.clear(['nr-name', 'nr-cost']);
   }
   addMilestone() {
@@ -1868,7 +1900,7 @@ class Component extends DCLogic {
     const fi = arr.findIndex(t => t.id === from), ti = arr.findIndex(t => t.id === targetId);
     if (fi < 0 || ti < 0) return;
     const [mv] = arr.splice(fi, 1); arr.splice(ti, 0, mv);
-    this.save({ tasks: arr });
+    this.save({ tasks: arr, taskSortMode: 'manual' });
   }
   renderVals() {
     const goldAt = this.state.cfgGold ?? this.props.goldAt ?? 200, diamondAt = this.state.cfgDiamond ?? this.props.diamondAt ?? 400;
@@ -1935,7 +1967,9 @@ class Component extends DCLogic {
       const abandonedNow = k ? !!(t.abandoned && t.abandoned[k]) : false;
       const abandonPending = pk === 'abandon';
       const showActions = !doneNow && !abandonedNow && !tp && !abandonPending;
+      const pmeta = ({ p1: { label: '紧急且重要', color: '#f87171', bg: 'rgba(248,113,113,0.10)' }, p2: { label: '紧急不重要', color: '#fb923c', bg: 'rgba(251,146,60,0.10)' }, p3: { label: '不紧急重要', color: '#fbbf24', bg: 'rgba(251,191,36,0.10)' }, p4: { label: '不重要不紧急', color: '#60a5fa', bg: 'rgba(96,165,250,0.10)' } })[t.priority || 'p4'];
       return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
+        hasNote: !!(t.note || '').trim(), noteText: t.note || '', priorityLabel: pmeta.label, priorityColor: pmeta.color, priorityBg: pmeta.bg,
         abandonedNow, abandonPending, showAbandonUndo: abandonPending, showAbandonLabel: abandonedNow && !abandonPending,
         isFormed, hasStreak: liveStreak > 0 && !isFormed && !!_unit, streakLabel: '连 ' + liveStreak + ' ' + _unit, formedLabel: 'MOMENTUM · ' + liveStreak + ' 连' + _unit,
         cycleLabel: k ? `${cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
@@ -1950,7 +1984,8 @@ class Component extends DCLogic {
         onEdit: () => this.openEdit('task', t.id), onUndo: e => { e.stopPropagation(); this.undo(); },
         stop: e => e.stopPropagation(), isHeader: false, isTask: true };
     };
-    const all = st.tasks.map(dec);
+    const taskBase = (st.taskSortMode || 'priority') === 'manual' ? st.tasks : this.sortTasksByPriority(st.tasks);
+    const all = taskBase.map(dec);
     const coreAll = all.filter(t => t.core);
     const coreDone = coreAll.filter(t => t.doneNow).length;
     const setsArr = st.sets || [];
@@ -1981,7 +2016,7 @@ class Component extends DCLogic {
     const roSrc = roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: r.cost + ' EXP' }))
       : roKind === 'milestones' ? milestoneBase.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
       : roKind === 'funds' ? st.funds.map(f => ({ id: f.id, name: f.name, sub: f.code || '' }))
-      : st.tasks.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
+      : taskBase.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
     const accGreen = this.props.accent ?? '#4ade80';
     const mkTaskRow = t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name,
       setName: '', hasSet: false, inGroup: t.setId != null, indent: t.setId != null ? '16px' : '0px',
@@ -1996,7 +2031,7 @@ class Component extends DCLogic {
       onDown: e => this.roDown(t.id, e) });
     let reorderRows;
     if (roKind === 'tasks') {
-      const decd = st.tasks.map(dec);
+      const decd = taskBase.map(dec);
       const rows = [];
       setsArr.forEach(s => {
         const its = decd.filter(t => t.setId === s.id);
@@ -2020,13 +2055,9 @@ class Component extends DCLogic {
     }
     const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
-      const win = { daily: 1, weekly: 7, monthly: 30 }[r.capCycle];
-      const capUnit = { daily: '天', weekly: '周', monthly: '月' }[r.capCycle] || '';
-      let capped = false, capDaysLeft = 0, capLabel = '';
-      if (win) { const now = Date.now(); const recent = (r.redeems || []).filter(t => now - t < win * 864e5).sort((a, b) => a - b);
-        if (recent.length >= (r.capTimes || 1)) { capped = true; capDaysLeft = Math.max(1, Math.ceil((recent[0] + win * 864e5 - now) / 864e5)); capLabel = '已兑换 · ' + capDaysLeft + ' 天后可兑'; }
-      }
-      const capHint = win ? ('每' + capUnit + (r.capTimes || 1) + '次') : '';
+      const capped = (r.redeems || []).some(t => this.sameDay(t));
+      const capLabel = '今日已兑换 · 明日可兑';
+      const capHint = '每日 1 次';
       return { ...r,
       canAfford: st.exp >= r.cost && !rp && !capped, cannot: st.exp < r.cost && !rp && !capped, pending: rp,
       capped: capped && !rp, capLabel, hasCapHint: !!capHint, capHint,
@@ -2081,15 +2112,18 @@ class Component extends DCLogic {
     const pRem = (st.pomoRunning && st.pomoEndTs) ? Math.max(0, Math.round((st.pomoEndTs - Date.now()) / 1000)) : (st.pomoRemaining != null ? st.pomoRemaining : pBase);
     const mm = String(Math.floor(pRem / 60)).padStart(2, '0'), ss = String(pRem % 60).padStart(2, '0');
     const pPct = pTotal ? (pRem / pTotal * 100) : 0;
-    const t0 = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); })();
     const countdowns = (st.countdowns || []).map(c => {
       const [y, m, dd] = c.date.split('-').map(Number);
-      const days = Math.round((new Date(y, m - 1, dd).getTime() - t0) / 864e5);
-      return { ...c, key: c.id, days, isToday: days === 0, showNum: days !== 0,
-        prefix: days < 0 ? '已过' : '还剩', numText: Math.abs(days), numColor: days < 0 ? '#f87171' : accent,
-        dueStr: `${y}年${String(m).padStart(2, '0')}月${String(dd).padStart(2, '0')}日`,
+      const [hh, mm2] = (c.time || '00:00').split(':').map(Number);
+      const targetTs = new Date(y, m - 1, dd, hh || 0, mm2 || 0, 0, 0).getTime();
+      const diff = targetTs - Date.now(), abs = Math.abs(diff);
+      const days = Math.floor(abs / 864e5), hours = Math.floor((abs % 864e5) / 36e5), mins = Math.floor((abs % 36e5) / 6e4);
+      return { ...c, key: c.id, targetTs, days, isToday: false, showNum: true,
+        prefix: diff < 0 ? '已过' : '还剩', numText: days, numColor: diff < 0 ? '#f87171' : accent,
+        remainDetail: `${hours}小时 ${mins}分`,
+        dueStr: `${y}年${String(m).padStart(2, '0')}月${String(dd).padStart(2, '0')}日 ${String(hh || 0).padStart(2, '0')}:${String(mm2 || 0).padStart(2, '0')}`,
         onDel: e => { e.stopPropagation(); this.delCountdown(c.id); }, onEdit: () => this.openEdit('countdown', c.id) };
-    }).sort((a, b) => ((a.days < 0) - (b.days < 0)) || a.days - b.days);
+    }).sort((a, b) => a.targetTs - b.targetTs);
     const opexProps = (() => {
       const cur = st.opexCurrency || '\u00a5';
       const list = (st.opex || []).slice().sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts || 0) - (a.ts || 0)));
@@ -2146,6 +2180,7 @@ class Component extends DCLogic {
       reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
       reorderIsMilestones: (st.reorderKind || 'tasks') === 'milestones', milestoneSortLabel: (st.milestoneSortMode || 'deadline') === 'manual' ? '手动排序' : '截止日期优先',
       restoreMilestoneSort: () => this.restoreMilestoneSort(),
+      taskSortLabel: (st.taskSortMode || 'priority') === 'manual' ? '手动排序' : '优先级优先', restoreTaskSort: () => this.restoreTaskSort(),
       roMode: st.roMode || 'drag', roDragMode: (st.roMode || 'drag') === 'drag', roSelectMode: (st.roMode || 'drag') === 'select',
       setRoDrag: () => this.setRoMode('drag'), setRoSelect: () => this.setRoMode('select'),
       roDragBg: (st.roMode || 'drag') === 'drag' ? (tier.btnGrad) : '#161a22',
@@ -2265,7 +2300,7 @@ class Component extends DCLogic {
       editIsReward: editOpen && ed.confirmed && ed.type === 'reward',
       editIsFund: editOpen && ed.confirmed && ed.type === 'fund',
       editIsCountdown: editOpen && ed.confirmed && ed.type === 'countdown',
-      editDate: editItem ? (editItem.date ?? '') : '',
+      editDate: editItem ? (editItem.date ?? '') : '', editTime: editItem ? (editItem.time || '00:00') : '00:00',
       editIsMilestone: editOpen && ed.confirmed && ed.type === 'milestone',
       editIsSet: editOpen && ed.confirmed && ed.type === 'set',
       editItemName: editItem ? editItem.name : '',
@@ -2275,6 +2310,7 @@ class Component extends DCLogic {
       editName: editItem ? editItem.name : '',
       editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '',
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
+      editPriority: editItem ? (editItem.priority || 'p4') : 'p4', editNote: editItem ? (editItem.note || '') : '',
       editCost: editItem ? (editItem.cost ?? '') : '',
       editCapCycle: editItem ? (editItem.capCycle || 'none') : 'none', editCapTimes: editItem ? (editItem.capTimes || 1) : 1,
       editCode: editItem ? (editItem.code ?? '') : '', editBase: editItem ? (editItem.base ?? '') : '',
