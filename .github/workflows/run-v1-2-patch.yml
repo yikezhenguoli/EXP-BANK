@@ -1,0 +1,52 @@
+name: Run EXP BANK v1.2 feature patch
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/run-v1-2-patch.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch-feature:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/quadrant-milestone-sets-v1-2
+          fetch-depth: 0
+
+      - name: Apply patch
+        run: python .github/patch_v12_quadrant_milestone_sets.py
+
+      - name: Validate JavaScript and feature markers
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html = Path('index.html').read_text(encoding='utf-8')
+          marker = '<script type="text/x-dc" data-dc-script'
+          pos = html.find(marker)
+          if pos < 0: raise SystemExit('data-dc script not found')
+          start = html.find('>', pos) + 1
+          end = html.find('</script>', start)
+          Path('/tmp/exp-bank-app.js').write_text(html[start:end], encoding='utf-8')
+          for token in ['v1.2.0','PRIORITY MATRIX','milestoneSets','milestoneRows','newMilestoneSetOpen']:
+              if token not in html: raise SystemExit('missing token: ' + token)
+          print('Feature markers OK')
+          PY
+          node --check /tmp/exp-bank-app.js
+          grep -q "exp-bank-v1.2.0" sw.js
+
+      - name: Commit to feature branch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html sw.js
+          git commit -m 'feat: add priority matrix and milestone sets'
+          git push origin HEAD:feature/quadrant-milestone-sets-v1-2
