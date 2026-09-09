@@ -117,11 +117,10 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- TASKS -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;">
         <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">任务 // EARN</div></div>
-        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;">仅核心微习惯</div>
-        </sc-if>
+        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;">仅核心微习惯</div></sc-if>
+        <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}"><div onClick="{{ openQuadrant }}" title="按紧急度 × 重要度总览全部任务" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;background:rgba(12,14,20,0.35);border-radius:8px;padding:5px 9px;white-space:nowrap;" style-hover="border-color:{{ accent }};color:#eef1f7;">⌗ 四象限</div></sc-if>
       </div>
       <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px;">
@@ -240,8 +239,22 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">▦ 集锦</div><div onClick="{{ startReorderMilestones }}" title="排序里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div></div>
-      <sc-for list="{{ milestones }}" as="m" hint-placeholder-count="1">
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">▦ 集锦</div><div onClick="{{ startReorderMilestones }}" title="排序 / 归类里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div></div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div>
+        <div onClick="{{ openNewMilestoneSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑集</div>
+      </div>
+      <sc-for list="{{ milestoneRows }}" as="m" hint-placeholder-count="1">
+        <sc-if value="{{ m.isHeader }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ m.onToggleSet }}" title="点击折叠/展开里程碑集" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};width:14px;text-align:center;line-height:1;">{{ m.chevron }}</div>
+            <div onClick="{{ m.onEditSet }}" title="点击编辑里程碑集名称" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ m.name }}</div>
+            <div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ m.countLabel }}</div>
+            <div onClick="{{ m.onEditSet }}" title="重命名里程碑集" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
+            <div onClick="{{ m.onDelSet }}" title="删除里程碑集（里程碑保留）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ m.isMilestone }}" hint-placeholder-val="{{ true }}">
         <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:14px;display:flex;flex-direction:column;gap:12px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div style="display:flex;align-items:flex-start;gap:12px;">
             <div style="flex:1;min-width:0;font-size:16px;line-height:1.45;font-weight:700;letter-spacing:0.2px;color:#eef1f7;word-break:break-word;">{{ m.name }}</div>
@@ -264,6 +277,7 @@ input[type="date"]{color-scheme:dark;}
             <sc-if value="{{ m.showClaimed }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4ade80;">✓ 已达成并入账</div></sc-if>
           </div>
         </div>
+        </sc-if>
       </sc-for>
     </div>
 
@@ -597,6 +611,43 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </div>
 
+  <!-- FOUR QUADRANTS MODAL -->
+  <sc-if value="{{ quadrantOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeQuadrant }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.78);backdrop-filter:blur(7px);z-index:70;display:flex;align-items:center;justify-content:center;padding:14px;">
+      <div onClick="{{ stopClick }}" style="width:820px;max-width:100%;max-height:90vh;overflow:auto;background:linear-gradient(180deg,#151820,#0e1016);border:1px solid #2a2f3a;border-radius:18px;padding:16px;box-shadow:0 30px 80px rgba(0,0,0,0.76);">
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;">
+          <div style="width:3px;height:17px;margin-top:2px;border-radius:2px;background:{{ tierGrad }};"></div>
+          <div style="flex:1;"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">四象限 // PRIORITY MATRIX</div><div style="font-size:11px;color:#697084;margin-top:4px;">同一份任务数据的另一种视图 · 横轴越右越重要，纵轴越上越紧急</div></div>
+          <div onClick="{{ closeQuadrant }}" style="cursor:pointer;color:#8b93a4;font-size:21px;line-height:1;">×</div>
+        </div>
+        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.2px;color:#8b93a4;margin-bottom:7px;">紧急 / URGENCY ↑</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(180px,auto) minmax(180px,auto);border:1px solid #2a303c;border-radius:14px;overflow:hidden;background:#0b0d12;">
+          <div style="padding:11px;border-right:1px solid #343945;border-bottom:1px solid #343945;background:linear-gradient(160deg,rgba(251,146,60,0.09),rgba(15,17,23,0.35));">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#fb923c;border:1px solid rgba(251,146,60,0.6);border-radius:99px;padding:2px 7px;">P2</div><div style="font-size:12px;font-weight:700;color:#f3c09b;">紧急 · 不重要</div><div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ quadrantP2Count }}</div></div>
+            <sc-if value="{{ quadrantP2Empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#535a6a;padding:18px 4px;text-align:center;">暂无任务</div></sc-if>
+            <sc-for list="{{ quadrantP2 }}" as="q" hint-placeholder-count="0"><div onClick="{{ q.onEdit }}" style="cursor:pointer;margin-top:6px;border:1px solid rgba(251,146,60,0.28);border-radius:9px;background:rgba(13,15,20,0.7);padding:8px 9px;" style-hover="border-color:#fb923c;"><div style="font-size:12px;font-weight:700;color:#eef1f7;line-height:1.4;">{{ q.name }}</div><sc-if value="{{ q.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#7f8796;margin-top:3px;line-height:1.4;">{{ q.noteText }}</div></sc-if><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;"><span>{{ q.cycleLabel }}</span><span style="color:#fb923c;">{{ q.expStr }}</span></div></div></sc-for>
+          </div>
+          <div style="padding:11px;border-bottom:1px solid #343945;background:linear-gradient(200deg,rgba(248,113,113,0.10),rgba(15,17,23,0.35));">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#f87171;border:1px solid rgba(248,113,113,0.6);border-radius:99px;padding:2px 7px;">P1</div><div style="font-size:12px;font-weight:700;color:#f4aaaa;">紧急 · 重要</div><div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ quadrantP1Count }}</div></div>
+            <sc-if value="{{ quadrantP1Empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#535a6a;padding:18px 4px;text-align:center;">暂无任务</div></sc-if>
+            <sc-for list="{{ quadrantP1 }}" as="q" hint-placeholder-count="0"><div onClick="{{ q.onEdit }}" style="cursor:pointer;margin-top:6px;border:1px solid rgba(248,113,113,0.30);border-radius:9px;background:rgba(13,15,20,0.7);padding:8px 9px;" style-hover="border-color:#f87171;"><div style="font-size:12px;font-weight:700;color:#eef1f7;line-height:1.4;">{{ q.name }}</div><sc-if value="{{ q.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#7f8796;margin-top:3px;line-height:1.4;">{{ q.noteText }}</div></sc-if><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;"><span>{{ q.cycleLabel }}</span><span style="color:#f87171;">{{ q.expStr }}</span></div></div></sc-for>
+          </div>
+          <div style="padding:11px;border-right:1px solid #343945;background:linear-gradient(20deg,rgba(96,165,250,0.08),rgba(15,17,23,0.35));">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#60a5fa;border:1px solid rgba(96,165,250,0.6);border-radius:99px;padding:2px 7px;">P4</div><div style="font-size:12px;font-weight:700;color:#9ac3f5;">不紧急 · 不重要</div><div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ quadrantP4Count }}</div></div>
+            <sc-if value="{{ quadrantP4Empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#535a6a;padding:18px 4px;text-align:center;">暂无任务</div></sc-if>
+            <sc-for list="{{ quadrantP4 }}" as="q" hint-placeholder-count="0"><div onClick="{{ q.onEdit }}" style="cursor:pointer;margin-top:6px;border:1px solid rgba(96,165,250,0.27);border-radius:9px;background:rgba(13,15,20,0.7);padding:8px 9px;" style-hover="border-color:#60a5fa;"><div style="font-size:12px;font-weight:700;color:#eef1f7;line-height:1.4;">{{ q.name }}</div><sc-if value="{{ q.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#7f8796;margin-top:3px;line-height:1.4;">{{ q.noteText }}</div></sc-if><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;"><span>{{ q.cycleLabel }}</span><span style="color:#60a5fa;">{{ q.expStr }}</span></div></div></sc-for>
+          </div>
+          <div style="padding:11px;background:linear-gradient(340deg,rgba(251,191,36,0.08),rgba(15,17,23,0.35));">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#fbbf24;border:1px solid rgba(251,191,36,0.6);border-radius:99px;padding:2px 7px;">P3</div><div style="font-size:12px;font-weight:700;color:#ead48d;">不紧急 · 重要</div><div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ quadrantP3Count }}</div></div>
+            <sc-if value="{{ quadrantP3Empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#535a6a;padding:18px 4px;text-align:center;">暂无任务</div></sc-if>
+            <sc-for list="{{ quadrantP3 }}" as="q" hint-placeholder-count="0"><div onClick="{{ q.onEdit }}" style="cursor:pointer;margin-top:6px;border:1px solid rgba(251,191,36,0.27);border-radius:9px;background:rgba(13,15,20,0.7);padding:8px 9px;" style-hover="border-color:#fbbf24;"><div style="font-size:12px;font-weight:700;color:#eef1f7;line-height:1.4;">{{ q.name }}</div><sc-if value="{{ q.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#7f8796;margin-top:3px;line-height:1.4;">{{ q.noteText }}</div></sc-if><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;"><span>{{ q.cycleLabel }}</span><span style="color:#fbbf24;">{{ q.expStr }}</span></div></div></sc-for>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;"><span>不重要</span><span>重要 / IMPORTANCE →</span></div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- EDIT MODAL -->
   <sc-if value="{{ editOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeEdit }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;">
@@ -676,6 +727,12 @@ input[type="date"]{color-scheme:dark;}
             </div>
             <label style="display:block;font-size:11px;color:#697084;">截止日期(可留空)
               <input id="ed-deadline" type="date" defaultValue="{{ editDeadline }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 8px;color:#aeb6c6;font-size:12px;font-family:'JetBrains Mono',monospace;">
+            </label>
+            <label style="display:block;font-size:11px;color:#697084;">归入里程碑集
+              <select id="ed-ms-set" defaultValue="{{ editSetId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
+                <option value="">无里程碑集</option>
+                <sc-for list="{{ milestoneSetOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
+              </select>
             </label>
           </sc-if>
           <sc-if value="{{ editIsCountdown }}" hint-placeholder-val="{{ false }}">
@@ -801,9 +858,32 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">截止日期(可留空)
           <input id="nm-deadline" type="date" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:12px;font-family:'JetBrains Mono',monospace;">
         </label>
+        <label style="display:block;font-size:11px;color:#697084;">归入里程碑集
+          <select id="nm-ms-set" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;">
+            <option value="">无里程碑集</option>
+            <sc-for list="{{ milestoneSetOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
+          </select>
+        </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建里程碑</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- NEW MILESTONE SET MODAL -->
+  <sc-if value="{{ newMilestoneSetOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建里程碑集 // NEW MILESTONE SET</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.6;">把同一阶段或同一方向的里程碑收进一个可折叠分组。之后可以在排序面板里拖动归类。</div>
+        <label style="display:block;font-size:11px;color:#697084;">里程碑集名称
+          <input id="nms-name" placeholder="例如:考试 / 旅行 / 长期作品" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
+          <div onClick="{{ addMilestoneSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建里程碑集</div>
         </div>
       </div>
     </div>
@@ -1153,16 +1233,18 @@ input[type="date"]{color-scheme:dark;}
             <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">当前: {{ taskSortLabel }}</div>
             <div onClick="{{ restoreTaskSort }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2f3542;border-radius:7px;padding:5px 9px;" style-hover="border-color:{{ accent }};">按优先级排序</div>
           </div>
+        </sc-if>
+        <sc-if value="{{ reorderCanGroup }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;gap:8px;">
             <div onClick="{{ setRoDrag }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roDragTextColor }};background:{{ roDragBg }};border:1px solid {{ roDragBorder }};box-shadow:{{ roDragShadow }};">拖拽排序</div>
             <div onClick="{{ setRoSelect }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roSelTextColor }};background:{{ roSelBg }};border:1px solid {{ roSelBorder }};box-shadow:{{ roSelShadow }};">勾选归集</div>
           </div>
         </sc-if>
         <sc-if value="{{ roDragMode }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在任意一条任务上<b style="color:#c3c9d6;">长按并上下拖动</b>整条即可调整顺序,松手完成,实时保存。</div>
+          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在任意一条{{ reorderItemName }}上<b style="color:#c3c9d6;">长按并上下拖动</b>整条即可调整顺序,松手完成,实时保存。</div>
         </sc-if>
         <sc-if value="{{ roSelectMode }}" hint-placeholder-val="{{ false }}">
-          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">勾选多条任务,在下方<b style="color:#c3c9d6;">归入一个任务集</b>。</div>
+          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">勾选多条{{ reorderItemName }},在下方<b style="color:#c3c9d6;">归入一个{{ reorderSetName }}</b>。</div>
         </sc-if>
         <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px;">
           <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
@@ -1188,17 +1270,17 @@ input[type="date"]{color-scheme:dark;}
         </div>
         <sc-if value="{{ roSelectMode }}" hint-placeholder-val="{{ false }}">
           <div style="border-top:1px solid #1e222b;padding-top:12px;display:flex;flex-direction:column;gap:8px;">
-            <div style="font-size:12px;color:#8b93a4;">勾选任务后,归入一个任务集(选已有,或填新名):</div>
+            <div style="font-size:12px;color:#8b93a4;">勾选{{ reorderItemName }}后,归入一个{{ reorderSetName }}(选已有,或填新名):</div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
               <select id="batch-set-pick" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 8px;color:#aeb6c6;font-size:12.5px;">
-                <option value="">选已有任务集…</option>
-                <option value="__none">↑ 移出任务集(不归任何集)</option>
+                <option value="">选已有{{ reorderSetName }}…</option>
+                <option value="__none">↑ 移出{{ reorderSetName }}(不归任何集)</option>
                 <sc-for list="{{ batchSetOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.id }}">{{ o.name }}</option></sc-for>
               </select>
-              <input id="batch-set-name" placeholder="或填新任务集名" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12.5px;font-family:inherit;">
+              <input id="batch-set-name" placeholder="或填新{{ reorderSetName }}名" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12.5px;font-family:inherit;">
             </div>
             <div style="display:flex;align-items:center;gap:10px;">
-              <div onClick="{{ groupBatch }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 16px;" style-hover="filter:brightness(1.12);">归入任务集 ({{ batchCount }})</div>
+              <div onClick="{{ groupBatch }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 16px;" style-hover="filter:brightness(1.12);">归入{{ reorderSetName }} ({{ batchCount }})</div>
               <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:{{ accent }};">{{ batchMsg }}</div>
             </div>
           </div>
@@ -1212,7 +1294,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.1.0';
+const APP_VERSION = 'v1.2.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1224,7 +1306,9 @@ class Component extends DCLogic {
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
       s.rewards = (s.rewards || []).map(r => ({ ...r, capCycle: 'daily', capTimes: 1 }));
       s.countdowns = (s.countdowns || []).map(c => ({ ...c, time: c.time || '00:00' }));
+      s.milestones = (s.milestones || []).map(m => ({ ...m, setId: m.setId ?? null }));
       if (!s.sets) s.sets = [];
+      if (!Array.isArray(s.milestoneSets)) s.milestoneSets = [];
       if (!s.funds) s.funds = this.defaultFunds();
       if (!s.fundCfg) s.fundCfg = this.defaultFundCfg();
       if (!s.notion) s.notion = { token: '', dbId: '', worker: '' };
@@ -1236,6 +1320,7 @@ class Component extends DCLogic {
       if (s.noiseVol == null) s.noiseVol = 0.5;
       if (!s.milestoneSortMode) s.milestoneSortMode = 'deadline';
       if (!s.taskSortMode) s.taskSortMode = 'priority';
+      if (!s.taskView) s.taskView = 'list';
       if (!Array.isArray(s.galleryEntries)) s.galleryEntries = [];
       if (!Array.isArray(s.opex)) s.opex = [];
       if (!Array.isArray(s.stash)) s.stash = [];
@@ -1301,7 +1386,7 @@ class Component extends DCLogic {
       ],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
-      milestoneSortMode: 'deadline', taskSortMode: 'priority', galleryEntries: [],
+      milestoneSortMode: 'deadline', taskSortMode: 'priority', taskView: 'list', milestoneSets: [], galleryEntries: [],
     };
   }
   defaultFundCfg() { return { dipA: 0.92, dipB: 0.89, dipC: 0.85, tpA: 1.10, tpB: 1.15, tpC: 1.20, tpD: 1.50, tpE: 1.60, tpF: 1.75 }; }
@@ -1315,20 +1400,29 @@ class Component extends DCLogic {
       { id: 203, name: '2026 年结束', date: '2026-12-31' },
     ];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newFundOpen, newCountdownOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
     this.save({ sets: [...(this.state.sets || []), { id: this.state.nextId, name, collapsed: false }], nextId: this.state.nextId + 1, newSetOpen: false });
     if (el) el.value = '';
   }
+  addMilestoneSet() {
+    const el = document.getElementById('nms-name'); const name = el ? el.value.trim() : '';
+    if (!name) return;
+    this.save({ milestoneSets: [...(this.state.milestoneSets || []), { id: this.state.nextId, name, collapsed: false }], nextId: this.state.nextId + 1, newMilestoneSetOpen: false });
+    if (el) el.value = '';
+  }
+  openQuadrant() { this.setState({ quadrantOpen: true }); }
+  closeQuadrant() { this.setState({ quadrantOpen: false }); }
   openNewTask() { this.setState({ newTaskOpen: true }); }
   openNewSet() { this.setState({ newSetOpen: true }); }
   openNewReward() { this.setState({ newRewardOpen: true }); }
   openNewCountdown() { this.setState({ newCountdownOpen: true }); }
   openNewMilestone() { this.setState({ newMilestoneOpen: true }); }
+  openNewMilestoneSet() { this.setState({ newMilestoneSetOpen: true }); }
   openNewFund() { this.setState({ newFundOpen: true }); }
-  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false, newRewardOpen: false, newMilestoneOpen: false, newFundOpen: false, newCountdownOpen: false, newOpexOpen: false, newStashOpen: false }); }
+  closeNew() { this.setState({ newTaskOpen: false, newSetOpen: false, newRewardOpen: false, newMilestoneOpen: false, newMilestoneSetOpen: false, newFundOpen: false, newCountdownOpen: false, newOpexOpen: false, newStashOpen: false }); }
   addFund() {
     const name = this.v('nf-name'); if (!name) return;
     const code = this.v('nf-code');
@@ -1401,6 +1495,8 @@ class Component extends DCLogic {
   }
   toggleSet(id) { this.save({ sets: this.state.sets.map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
   delSet(id) { this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
+  toggleMilestoneSet(id) { this.save({ milestoneSets: (this.state.milestoneSets || []).map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
+  delMilestoneSet(id) { this.save({ milestoneSets: (this.state.milestoneSets || []).filter(s => s.id !== id), milestones: this.state.milestones.map(m => m.setId === id ? { ...m, setId: null } : m) }); }
   sortMilestonesByDeadline(list) {
     return [...(list || [])].sort((a, b) => {
       const ad = a.deadline || '', bd = b.deadline || '';
@@ -1418,15 +1514,18 @@ class Component extends DCLogic {
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
   groupBatch() {
     const sel = this.state.batchSel || []; if (!sel.length) return;
-    let setId, sets = this.state.sets;
+    const isMs = (this.state.reorderKind || 'tasks') === 'milestones';
+    const setsKey = isMs ? 'milestoneSets' : 'sets', itemsKey = isMs ? 'milestones' : 'tasks';
+    let setId, sets = this.state[setsKey] || [];
     const nm = this.v('batch-set-name');
     const chosen = document.getElementById('batch-set-pick');
     if (nm) { setId = this.state.nextId; sets = [...sets, { id: setId, name: nm, collapsed: false }]; }
     else if (chosen && chosen.value === '__none') { setId = null; }
     else if (chosen && chosen.value) { setId = parseInt(chosen.value); }
-    else { this.setState({ batchMsg: '请先选一个任务集,或填新任务集名' }); return; }
-    const tasks = this.state.tasks.map(t => sel.includes(t.id) ? { ...t, setId } : t);
-    this.save({ tasks, sets, nextId: nm ? this.state.nextId + 1 : this.state.nextId, batchSel: [], batchMsg: setId == null ? '✓ 已移出任务集' : '✓ 已归入任务集' });
+    else { this.setState({ batchMsg: '请先选一个' + (isMs ? '里程碑集' : '任务集') + ',或填写新名称' }); return; }
+    const items = (this.state[itemsKey] || []).map(t => sel.includes(t.id) ? { ...t, setId } : t);
+    const patch = { [itemsKey]: items, [setsKey]: sets, nextId: nm ? this.state.nextId + 1 : this.state.nextId, batchSel: [], batchMsg: setId == null ? '✓ 已移出分组' : '✓ 已归入分组' };
+    this.save(patch);
     const el = document.getElementById('batch-set-name'); if (el) el.value = '';
   }
   closeReorder() { clearTimeout(this._roTimer); this.setState({ reorderOpen: false, dragId: null }); }
@@ -1503,7 +1602,7 @@ class Component extends DCLogic {
     if (fi < 0) return;
     const [mv] = arr.splice(fi, 1);
     const setAttr = targetEl.getAttribute('data-ro-set');
-    if (kind === 'tasks' && setAttr != null) {
+    if ((kind === 'tasks' || kind === 'milestones') && setAttr != null) {
       const sid = setAttr === 'none' ? null : parseInt(setAttr);
       mv.setId = sid;
       let ins = arr.findIndex(t => (t.setId ?? null) === sid);
@@ -1513,7 +1612,7 @@ class Component extends DCLogic {
       const targetId = targetEl.getAttribute('data-ro-id');
       const tt = arr.find(t => String(t.id) === String(targetId));
       if (!tt) { arr.splice(fi, 0, mv); return; }
-      if (kind === 'tasks') mv.setId = tt.setId ?? null;
+      if (kind === 'tasks' || kind === 'milestones') mv.setId = tt.setId ?? null;
       const ti = arr.findIndex(t => String(t.id) === String(targetId));
       arr.splice(ti, 0, mv);
     }
@@ -1820,6 +1919,8 @@ class Component extends DCLogic {
     const num = (id, fb) => { const n = parseInt(this.v(id)); return isNaN(n) ? fb : n; };
     if (ed.type === 'set') {
       this.save({ editing: null, sets: this.state.sets.map(x => x.id === ed.id ? { ...x, name: name || x.name } : x) });
+    } else if (ed.type === 'milestoneSet') {
+      this.save({ editing: null, milestoneSets: (this.state.milestoneSets || []).map(x => x.id === ed.id ? { ...x, name: name || x.name } : x) });
     } else if (ed.type === 'task') {
       const setSel = document.getElementById('ed-set');
       const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
@@ -1840,9 +1941,11 @@ class Component extends DCLogic {
         base: this.v('ed-base') === '' ? null : fnum('ed-base', x.base),
         cost: this.v('ed-cost') === '' ? null : fnum('ed-cost', x.cost) } : x) });
     } else {
+      const msSetSel = document.getElementById('ed-ms-set');
+      const setId = msSetSel && msSetSel.value ? parseInt(msSetSel.value) : null;
       this.save({ editing: null, milestones: this.state.milestones.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, target: Math.max(1, num('ed-target', x.target)), step: Math.max(1, num('ed-step', x.step)),
-        bonus: num('ed-bonus', x.bonus), deadline: this.v('ed-deadline') || '' } : x) });
+        bonus: num('ed-bonus', x.bonus), deadline: this.v('ed-deadline') || '', setId } : x) });
     }
   }
   keyFor(c, d) {
@@ -1989,8 +2092,10 @@ class Component extends DCLogic {
     const step = parseInt(this.v('nm-step')) || 1;
     const bonus = parseInt(this.v('nm-bonus')) || 100;
     const deadline = this.v('nm-deadline') || '';
-    this.save({ milestones: [...this.state.milestones, { id: this.state.nextId, name, cur: 0, target, step, bonus, deadline, claimed: false }], nextId: this.state.nextId + 1, newMilestoneOpen: false });
-    this.clear(['nm-name', 'nm-target', 'nm-step', 'nm-bonus', 'nm-deadline']);
+    const setSel = document.getElementById('nm-ms-set');
+    const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
+    this.save({ milestones: [...this.state.milestones, { id: this.state.nextId, name, cur: 0, target, step, bonus, deadline, setId, claimed: false }], nextId: this.state.nextId + 1, newMilestoneOpen: false });
+    this.clear(['nm-name', 'nm-target', 'nm-step', 'nm-bonus', 'nm-deadline']); if (setSel) setSel.value = '';
   }
   msPlus(id) {
     const m = this.state.milestones.find(x => x.id === id); if (!m) return;
@@ -2142,6 +2247,12 @@ class Component extends DCLogic {
     const coreDone = coreAll.filter(t => t.doneNow).length;
     const setsArr = st.sets || [];
     const setOptions = setsArr.map(s => ({ idStr: String(s.id), name: s.name }));
+    const milestoneSetsArr = st.milestoneSets || [];
+    const milestoneSetOptions = milestoneSetsArr.map(s => ({ idStr: String(s.id), name: s.name }));
+    const quadrantP1 = all.filter(t => (t.priority || 'p4') === 'p1');
+    const quadrantP2 = all.filter(t => (t.priority || 'p4') === 'p2');
+    const quadrantP3 = all.filter(t => (t.priority || 'p4') === 'p3');
+    const quadrantP4 = all.filter(t => (t.priority || 'p4') === 'p4');
     let taskRows;
     if (st.warMode) {
       taskRows = coreAll.map(t => ({ ...t, rowKey: 't-' + t.id, inSet: false }));
@@ -2181,6 +2292,12 @@ class Component extends DCLogic {
       dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : (t.setId != null ? '#0b1017' : '#0d0f14'),
       dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
       onDown: e => this.roDown(t.id, e) });
+    const mkMilestoneRoRow = m => ({ isSetHeader: false, isRow: true, id: m.id, roId: String(m.id), name: m.name,
+      setName: '', hasSet: false, inGroup: m.setId != null, indent: m.setId != null ? '16px' : '0px',
+      batchOn: (st.batchSel || []).includes(m.id), onToggleBatch: () => this.toggleBatch(m.id),
+      batchBorder: (st.batchSel || []).includes(m.id) ? accGreen : '#2f3542', batchBg: (st.batchSel || []).includes(m.id) ? accGreen : 'transparent', batchTick: (st.batchSel || []).includes(m.id) ? '✓' : '',
+      dragging: String(st.dragId) === String(m.id), dragBorder: String(st.dragId) === String(m.id) ? accent : '#262b36',
+      dragBg: String(st.dragId) === String(m.id) ? '#1a1f2b' : (m.setId != null ? '#0b1017' : '#0d0f14'), dragShadow: String(st.dragId) === String(m.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(m.id, e) });
     let reorderRows;
     if (roKind === 'tasks') {
       const decd = taskBase.map(dec);
@@ -2194,6 +2311,17 @@ class Component extends DCLogic {
       const ungrouped = decd.filter(t => t.setId == null);
       if (setsArr.length) rows.push({ isSetHeader: true, isRow: false, roSet: 'none', name: '未分组', count: ungrouped.length + ' 项', collapsed: false, chev: '', onToggleSet: () => {} });
       ungrouped.forEach(t => rows.push(mkTaskRow(t)));
+      reorderRows = rows;
+    } else if (roKind === 'milestones') {
+      const rows = [];
+      milestoneSetsArr.forEach(ms => {
+        const its = milestoneBase.filter(m => m.setId === ms.id);
+        rows.push({ isSetHeader: true, isRow: false, roSet: String(ms.id), name: ms.name, count: its.length + ' 项', collapsed: !!ms.collapsed, chev: ms.collapsed ? '▸' : '▾', onToggleSet: () => this.toggleMilestoneSet(ms.id) });
+        if (!ms.collapsed) its.forEach(m => rows.push(mkMilestoneRoRow(m)));
+      });
+      const ungroupedMs = milestoneBase.filter(m => m.setId == null || !milestoneSetsArr.some(ms => ms.id === m.setId));
+      if (milestoneSetsArr.length) rows.push({ isSetHeader: true, isRow: false, roSet: 'none', name: '未分组', count: ungroupedMs.length + ' 项', collapsed: false, chev: '', onToggleSet: () => {} });
+      ungroupedMs.forEach(m => rows.push(mkMilestoneRoRow(m)));
       reorderRows = rows;
     } else {
       reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name,
@@ -2241,6 +2369,14 @@ class Component extends DCLogic {
         onDel: e => { e.stopPropagation(); this.delMilestone(m.id); },
         onEdit: () => this.openEdit('milestone', m.id), onUndo: e => { e.stopPropagation(); this.undo(); } };
     });
+    const milestoneRows = [];
+    milestoneSetsArr.forEach(ms => {
+      const members = milestones.filter(m => m.setId === ms.id);
+      const done = members.filter(m => m.claimed).length;
+      milestoneRows.push({ rowKey: 'ms-set-' + ms.id, isHeader: true, isMilestone: false, id: ms.id, name: ms.name, countLabel: done + '/' + members.length, chevron: ms.collapsed ? '›' : '‹', onToggleSet: e => { e.stopPropagation(); this.toggleMilestoneSet(ms.id); }, onEditSet: e => { e.stopPropagation(); this.openEdit('milestoneSet', ms.id); }, onDelSet: e => { e.stopPropagation(); this.delMilestoneSet(ms.id); } });
+      if (!ms.collapsed) members.forEach(m => milestoneRows.push({ ...m, rowKey: 'ms-' + m.id, isHeader: false, isMilestone: true }));
+    });
+    milestones.filter(m => m.setId == null || !milestoneSetsArr.some(ms => ms.id === m.setId)).forEach(m => milestoneRows.push({ ...m, rowKey: 'ms-' + m.id, isHeader: false, isMilestone: true }));
     const fmt = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
     const galleryEntries = (st.galleryEntries || []).slice().sort((a, b) => b.ts - a.ts).map(g => {
       const imgUrl = (st.galleryImageUrls || {})[g.id] || '';
@@ -2326,13 +2462,15 @@ class Component extends DCLogic {
     })();
     const tabNow = st.tab || 'lists';
     const ed = st.editing || null;
-    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones, set: st.sets, fund: st.funds, countdown: st.countdowns };
+    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones, set: st.sets, milestoneSet: st.milestoneSets || [], fund: st.funds, countdown: st.countdowns };
     const editItem = ed ? (lists[ed.type] || []).find(x => x.id === ed.id) : null;
     const editOpen = !!editItem;
     return { accent, exp: st.exp, warMode: st.warMode, warOff: !st.warMode,
       toggleWar: () => this.save({ warMode: !st.warMode }),
-      tasks: st.warMode ? coreAll : all, taskRows, setOptions, coreDone, coreTotal: coreAll.length,
-      addSet: () => this.addSet(),
+      tasks: st.warMode ? coreAll : all, taskRows, setOptions, milestoneSetOptions, coreDone, coreTotal: coreAll.length,
+      quadrantOpen: !!st.quadrantOpen, openQuadrant: () => this.openQuadrant(), closeQuadrant: () => this.closeQuadrant(),
+      quadrantP1, quadrantP2, quadrantP3, quadrantP4, quadrantP1Count: quadrantP1.length, quadrantP2Count: quadrantP2.length, quadrantP3Count: quadrantP3.length, quadrantP4Count: quadrantP4.length, quadrantP1Empty: quadrantP1.length === 0, quadrantP2Empty: quadrantP2.length === 0, quadrantP3Empty: quadrantP3.length === 0, quadrantP4Empty: quadrantP4.length === 0,
+      addSet: () => this.addSet(), addMilestoneSet: () => this.addMilestoneSet(),
       momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
       reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
@@ -2349,13 +2487,15 @@ class Component extends DCLogic {
       roSelBorder: (st.roMode || 'drag') === 'select' ? 'transparent' : '#2f3542',
       roSelTextColor: (st.roMode || 'drag') === 'select' ? '#14151c' : '#c3c9d6',
       roSelShadow: (st.roMode || 'drag') === 'select' ? 'inset 0 1px 0 rgba(255,255,255,0.6)' : 'none',
-      roShowCheck: (st.reorderKind || 'tasks') === 'tasks' && (st.roMode || 'drag') === 'select',
+      reorderCanGroup: ((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones'),
+      reorderItemName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑' : '任务', reorderSetName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑集' : '任务集',
+      roShowCheck: (((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones') && (st.roMode || 'drag') === 'select'),
       batchCount: (st.batchSel || []).length, batchHasSel: (st.batchSel || []).length > 0,
-      batchSetOptions: setsArr.map(s => ({ id: s.id, name: s.name })),
+      batchSetOptions: ((st.reorderKind || 'tasks') === 'milestones' ? milestoneSetsArr : setsArr).map(s => ({ id: s.id, name: s.name })),
       batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
       startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderFunds: () => this.startReorder('funds'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
-      rewards, milestones, ledger, showLedger: this.props.showLedger ?? true,
+      rewards, milestones, milestoneRows, ledger, showLedger: this.props.showLedger ?? true,
       reflectionOpen: !!st.reflectionOpen, reflectionTargetName: st.reflectionTarget ? st.reflectionTarget.name : '', reflectionHasImage: !!st.reflectionPreview, reflectionNoImage: !st.reflectionPreview, reflectionPreview: st.reflectionPreview || '',
       pickReflectionImage: () => this.pickReflectionImage(), skipReflection: () => this.skipReflection(), saveReflection: () => this.saveReflection(),
       galleryOpen: !!st.galleryOpen, galleryEntries, galleryEmpty: galleryEntries.length === 0, galleryCount: galleryEntries.length, openGallery: () => this.openGallery(), closeGallery: () => this.closeGallery(),
@@ -2381,8 +2521,8 @@ class Component extends DCLogic {
       updateNoteOpen: !!st.updateNoteOpen, closeUpdateNote: () => this.closeUpdateNote(), checkUpdate: () => this.checkUpdate(),
       welcomeOpen: st.welcomed === false, closeWelcome: () => this.closeWelcome(),
       ...opexProps,
-      newRewardOpen: !!st.newRewardOpen, newMilestoneOpen: !!st.newMilestoneOpen, newFundOpen: !!st.newFundOpen,
-      openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewFund: () => this.openNewFund(),
+      newRewardOpen: !!st.newRewardOpen, newMilestoneOpen: !!st.newMilestoneOpen, newMilestoneSetOpen: !!st.newMilestoneSetOpen, newFundOpen: !!st.newFundOpen,
+      openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewMilestoneSet: () => this.openNewMilestoneSet(), openNewFund: () => this.openNewFund(),
       addFund: () => this.addFund(),
       fundSettingsOpen: !!st.fundSettingsOpen, openFundSettings: () => this.openFundSettings(), closeFundSettings: () => this.closeFundSettings(), saveFundSettings: () => this.saveFundSettings(),
       cfg: st.fundCfg, notion: st.notion || { token: '', dbId: '', worker: '' },
@@ -2464,8 +2604,9 @@ class Component extends DCLogic {
       editDate: editItem ? (editItem.date ?? '') : '', editTime: editItem ? (editItem.time || '00:00') : '00:00',
       editIsMilestone: editOpen && ed.confirmed && ed.type === 'milestone',
       editIsSet: editOpen && ed.confirmed && ed.type === 'set',
+      editIsMilestoneSet: editOpen && ed.confirmed && ed.type === 'milestoneSet',
       editItemName: editItem ? editItem.name : '',
-      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集', fund: '标的', countdown: '倒计时' }[ed.type]) : '',
+      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集', milestoneSet: '里程碑集', fund: '标的', countdown: '倒计时' }[ed.type]) : '',
       notionResultOpen: !!st.notionResultOpen, notionResultOk: st.notionResultOk, notionResultMsg: st.notionResultMsg || '', notionResultBusy: st.notionResultOk == null && !!st.notionResultOpen, notionResultColor: st.notionResultOk == null ? '#8b93a4' : (st.notionResultOk ? '#4ade80' : '#f87171'), closeNotionResult: () => this.closeNotionResult(),
       editSetId: editItem ? String(editItem.setId ?? '') : '',
       editName: editItem ? editItem.name : '',
