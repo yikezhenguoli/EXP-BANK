@@ -335,7 +335,11 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ isPomo }}" hint-placeholder-val="{{ false }}">
   <div style="position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:18px 24px 0;display:grid;grid-template-columns:{{ pomoCols }};gap:16px;align-items:start;">
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:16px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">番茄专注 // FOCUS</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">番茄专注 // FOCUS</div><div onClick="{{ openPomoCfg }}" title="设置本轮任务名称与完成奖励" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 11px;" style-hover="border-color:{{ accent }};">⚙ 参数</div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #202530;background:rgba(10,12,17,0.32);border-radius:10px;padding:9px 11px;">
+        <div style="min-width:0;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:1px;color:#697084;">CURRENT TASK</div><div style="font-size:13px;font-weight:700;color:#eef1f7;overflow-wrap:anywhere;">{{ pomoTaskName }}</div></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:{{ accent }};white-space:nowrap;">{{ pomoRewardLabel }}</div>
+      </div>
       <div style="display:flex;justify-content:center;gap:8px;">
         <div onClick="{{ setP25 }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ p25.color }};background:{{ p25.bg }};border:1px solid {{ p25.border }};border-radius:8px;padding:7px 16px;">25 min</div>
         <div onClick="{{ setP45 }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:{{ p45.color }};background:{{ p45.bg }};border:1px solid {{ p45.border }};border-radius:8px;padding:7px 16px;">45 min</div>
@@ -395,7 +399,7 @@ input[type="date"]{color-scheme:dark;}
       <sc-for list="{{ countdowns }}" as="cd" hint-placeholder-count="2">
         <div onClick="{{ cd.onEdit }}" title="点击编辑" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }};">
           <div style="flex:1;min-width:0;">
-            <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ cd.name }}</div>
+            <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;white-space:normal;overflow-wrap:anywhere;word-break:break-word;">{{ cd.name }}</div>
             <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;margin-top:3px;">截止 {{ cd.dueStr }}</div>
           </div>
           <sc-if value="{{ cd.isToday }}" hint-placeholder-val="{{ false }}">
@@ -496,6 +500,7 @@ input[type="date"]{color-scheme:dark;}
         <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">开销记录 // OPEX</div>
         <div onClick="{{ cycleCurrency }}" title="切换货币符号" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 11px;" style-hover="border-color:{{ accent }};">{{ opexCurrency }}</div>
+        <div onClick="{{ startReorderOpex }}" title="长按拖动排序开销记录" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div>
         <div onClick="{{ openNewOpex }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 记一笔</div>
       </div>
 
@@ -535,7 +540,7 @@ input[type="date"]{color-scheme:dark;}
 
       <div style="display:flex;flex-direction:column;gap:6px;">
         <sc-for list="{{ opexRows }}" as="o" hint-placeholder-count="0">
-          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;">
+          <div onClick="{{ o.onEdit }}" title="点击编辑开销记录" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;">
             <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ o.color }};border:1px solid #262b36;border-radius:99px;padding:3px 9px;flex-shrink:0;">{{ o.cat }}</div>
             <div style="flex:1;min-width:0;">
               <div style="font-size:13.5px;color:#e6e9f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ o.note }}</div>
@@ -552,6 +557,7 @@ input[type="date"]{color-scheme:dark;}
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">存钱罐 // STASH</div>
+        <div onClick="{{ startReorderStash }}" title="长按拖动排序存钱目标" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div>
         <div onClick="{{ openNewStash }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新目标</div>
       </div>
       <sc-if value="{{ stashEmpty }}" hint-placeholder-val="{{ false }}">
@@ -562,15 +568,19 @@ input[type="date"]{color-scheme:dark;}
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="flex:1;min-width:0;font-size:15px;font-weight:700;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ s.name }}</div>
             <sc-if value="{{ s.reached }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#4ade80;">✦ 已达成</div></sc-if>
+            <div onClick="{{ s.onEdit }}" title="编辑存钱目标" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
             <div onClick="{{ s.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
           </div>
           <div style="height:10px;border-radius:5px;background:#161a22;overflow:hidden;">
             <div style="height:100%;width:{{ s.pct }};border-radius:5px;background:{{ tierGrad }};"></div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;">
-            <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ s.savedStr }} / {{ s.targetStr }} · {{ s.pct }}</div>
-            <input id="stash-{{ s.id }}" type="number" placeholder="存入金额" style="width:96px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-            <div onClick="{{ s.onSave }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:7px 13px;white-space:nowrap;" style-hover="filter:brightness(1.12);">存入</div>
+          <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;">
+            <div style="flex:1;min-width:150px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ s.savedStr }} / {{ s.targetStr }} · {{ s.pct }}</div>
+            <input id="stash-{{ s.id }}" type="number" min="0" step="0.01" placeholder="金额" style="width:104px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            <div style="display:flex;flex-direction:column;gap:5px;">
+              <div onClick="{{ s.onSave }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 13px;white-space:nowrap;" style-hover="filter:brightness(1.12);">存入</div>
+              <div onClick="{{ s.onWithdraw }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#f0b6b6;border:1px solid #4a2a2e;background:#1b1215;border-radius:8px;padding:5px 13px;white-space:nowrap;" style-hover="border-color:#f87171;color:#fecaca;">支出</div>
+            </div>
           </div>
         </div>
       </sc-for>
@@ -610,6 +620,26 @@ input[type="date"]{color-scheme:dark;}
       </div>
     </div>
   </div>
+
+  <!-- POMODORO CONFIG MODAL -->
+  <sc-if value="{{ pomoCfgOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closePomoCfg }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.72);backdrop-filter:blur(5px);z-index:70;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:360px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:19px;display:flex;flex-direction:column;gap:13px;box-shadow:0 26px 70px rgba(0,0,0,0.72);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">番茄参数 // FOCUS CONFIG</div>
+        <label style="display:block;font-size:11px;color:#697084;">当前计时任务名称
+          <input id="pc-task" defaultValue="{{ pomoTaskName }}" placeholder="例如：计算机二级操作题" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">自然完成后奖励 EXP
+          <input id="pc-exp" type="number" min="0" step="1" defaultValue="{{ pomoRewardExp }}" placeholder="0" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="font-size:11px;color:#697084;line-height:1.7;">只在倒计时自然走到 00:00 时入账；暂停、重置不会获得 EXP。设置为 0 即不奖励。</div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <div onClick="{{ closePomoCfg }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;">取消</div>
+          <div onClick="{{ savePomoCfg }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;">保存</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
 
   <!-- FOUR QUADRANTS MODAL -->
   <sc-if value="{{ quadrantOpen }}" hint-placeholder-val="{{ false }}">
@@ -654,7 +684,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:340px;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <sc-if value="{{ editAsk }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:15px;font-weight:700;">要编辑「{{ editItemName }}」吗?</div>
-          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">可修改名称、分值、循环/截止日期等信息。照片不用进编辑:直接把新图片拖到卡片的图上即可更换。</div>
+          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">{{ editAskHint }}</div>
           <div style="display:flex;gap:8px;justify-content:flex-end;">
             <div onClick="{{ closeEdit }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:7px 14px;" style-hover="color:#e6e9f0;">取消</div>
             <div onClick="{{ confirmEdit }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 16px;" style-hover="filter:brightness(1.12);">编辑</div>
@@ -662,9 +692,11 @@ input[type="date"]{color-scheme:dark;}
         </sc-if>
         <sc-if value="{{ editFormOn }}" hint-placeholder-val="{{ false }}">
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">编辑{{ editTypeName }} // EDIT</div>
-          <label style="display:block;font-size:11px;color:#697084;">名称
-            <input id="ed-name" defaultValue="{{ editName }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
-          </label>
+          <sc-if value="{{ editHasName }}" hint-placeholder-val="{{ true }}">
+            <label style="display:block;font-size:11px;color:#697084;">名称
+              <input id="ed-name" defaultValue="{{ editName }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
+            </label>
+          </sc-if>
           <sc-if value="{{ editIsTask }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:8px;">
               <label style="flex:1;font-size:11px;color:#697084;">EXP 分值
@@ -735,14 +767,41 @@ input[type="date"]{color-scheme:dark;}
               </select>
             </label>
           </sc-if>
+          <sc-if value="{{ editIsOpex }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">金额（{{ opexCurrency }}）
+              <input id="ed-opex-amount" type="number" min="0.01" step="0.01" defaultValue="{{ editOpexAmount }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:14px;font-family:'JetBrains Mono',monospace;">
+            </label>
+            <label style="display:block;font-size:11px;color:#697084;">分类
+              <select id="ed-opex-cat" defaultValue="{{ editOpexCat }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:13px;">
+                <option value="吃饭">吃饭</option><option value="交通">交通</option><option value="购物">购物</option><option value="人情">人情</option><option value="娱乐">娱乐</option><option value="其他">其他</option>
+              </select>
+            </label>
+            <label style="display:block;font-size:11px;color:#697084;">备注
+              <input id="ed-opex-note" defaultValue="{{ editOpexNote }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
+            </label>
+            <label style="display:block;font-size:11px;color:#697084;">日期
+              <input id="ed-opex-date" type="date" defaultValue="{{ editOpexDate }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            </label>
+          </sc-if>
+          <sc-if value="{{ editIsStash }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">目标金额（{{ opexCurrency }}）
+              <input id="ed-stash-target" type="number" min="0.01" step="0.01" defaultValue="{{ editStashTarget }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:14px;font-family:'JetBrains Mono',monospace;">
+            </label>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;border:1px solid #202530;background:#0d0f14;border-radius:8px;padding:8px 10px;">当前已存 {{ editStashSaved }} · 余额请使用卡片上的「存入 / 支出」调整</div>
+          </sc-if>
           <sc-if value="{{ editIsCountdown }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:8px;">
               <label style="flex:1.25;font-size:11px;color:#697084;">目标日期
                 <input id="ed-date" type="date" defaultValue="{{ editDate }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
               </label>
-              <label style="flex:1;font-size:11px;color:#697084;">时间
-                <input id="ed-time" type="time" step="60" defaultValue="{{ editTime }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
-              </label>
+              <div style="flex:1.15;font-size:11px;color:#697084;">时间（24 小时制）
+                <div style="display:flex;align-items:center;gap:5px;margin-top:4px;">
+                  <input id="ed-hour" type="number" min="0" max="23" step="1" defaultValue="{{ editHour }}" inputmode="numeric" aria-label="小时 0 到 23" style="width:48%;box-sizing:border-box;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#e6e9f0;text-align:center;font-size:13px;font-family:'JetBrains Mono',monospace;">
+                  <span style="font-family:'JetBrains Mono',monospace;color:#697084;">:</span>
+                  <input id="ed-minute" type="number" min="0" max="59" step="1" defaultValue="{{ editMinute }}" inputmode="numeric" aria-label="分钟 0 到 59" style="width:48%;box-sizing:border-box;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#e6e9f0;text-align:center;font-size:13px;font-family:'JetBrains Mono',monospace;">
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#535a6a;margin-top:4px;">00 = 零点 · 12 = 中午</div>
+              </div>
             </div>
           </sc-if>
           <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
@@ -995,9 +1054,14 @@ input[type="date"]{color-scheme:dark;}
           <label style="flex:1.25;font-size:11px;color:#697084;">目标日期
             <input id="nc-date" type="date" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
           </label>
-          <label style="flex:1;font-size:11px;color:#697084;">时间
-            <input id="nc-time" type="time" value="00:00" step="60" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
-          </label>
+          <div style="flex:1.15;font-size:11px;color:#697084;">时间（24 小时制）
+            <div style="display:flex;align-items:center;gap:5px;margin-top:4px;">
+              <input id="nc-hour" type="number" min="0" max="23" step="1" value="0" inputmode="numeric" aria-label="小时 0 到 23" style="width:48%;box-sizing:border-box;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#e6e9f0;text-align:center;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              <span style="font-family:'JetBrains Mono',monospace;color:#697084;">:</span>
+              <input id="nc-minute" type="number" min="0" max="59" step="1" value="0" inputmode="numeric" aria-label="分钟 0 到 59" style="width:48%;box-sizing:border-box;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#e6e9f0;text-align:center;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#535a6a;margin-top:4px;">00 = 零点 · 12 = 中午</div>
+          </div>
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1118,7 +1182,7 @@ input[type="date"]{color-scheme:dark;}
         <div style="overflow:auto;display:flex;flex-direction:column;gap:10px;padding-right:2px;">
           <sc-if value="{{ galleryEmpty }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;padding:36px 0;color:#535a6a;font-family:'JetBrains Mono',monospace;font-size:12px;">· 还没有集锦记录 ·</div></sc-if>
           <sc-for list="{{ galleryEntries }}" as="g" hint-placeholder-count="0">
-            <div style="border:1px solid #222833;background:linear-gradient(180deg,#12151c,#0d0f14);border-radius:12px;padding:13px;display:flex;flex-direction:column;gap:9px;">
+            <div onClick="{{ g.onEdit }}" title="点击编辑 / 补录" style="cursor:pointer;border:1px solid #222833;background:linear-gradient(180deg,#12151c,#0d0f14);border-radius:12px;padding:13px;display:flex;flex-direction:column;gap:9px;" style-hover="border-color:{{ accent }};">
               <div style="display:flex;align-items:center;gap:8px;">
                 <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;letter-spacing:1px;color:{{ g.kindColor }};border:1px solid {{ g.kindColor }};border-radius:99px;padding:2px 7px;">{{ g.kindLabel }}</div>
                 <div style="font-size:13.5px;font-weight:700;color:#eef1f7;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ g.targetName }}</div>
@@ -1130,6 +1194,39 @@ input[type="date"]{color-scheme:dark;}
             </div>
           </sc-for>
         </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- GALLERY EDIT MODAL -->
+  <sc-if value="{{ galleryEditOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeGalleryEdit }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.78);backdrop-filter:blur(6px);z-index:74;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;background:linear-gradient(180deg,#14171e,#0f1117);border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:13px;box-shadow:0 28px 72px rgba(0,0,0,0.76);">
+        <sc-if value="{{ galleryEditAsk }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:2px;color:{{ accent }};">成长集锦 // EDIT</div>
+          <div style="font-size:16px;font-weight:700;color:#eef1f7;line-height:1.5;">是否要编辑「{{ galleryEditName }}」这条集锦？</div>
+          <div style="font-size:12px;color:#8b93a4;line-height:1.7;">可以补录或修改文字，也可以补一张照片 / 更换原照片。原任务与完成时间不会被改动。</div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <div onClick="{{ closeGalleryEdit }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;">取消</div>
+            <div onClick="{{ confirmGalleryEdit }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 18px;">编辑</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ galleryEditFormOn }}" hint-placeholder-val="{{ false }}">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:2px;color:{{ accent }};">补录内容 // ARCHIVE EDIT</div>
+          <div style="font-size:15px;font-weight:700;color:#eef1f7;line-height:1.45;">{{ galleryEditName }}</div>
+          <label style="display:block;font-size:11px;color:#697084;">文字记录（可补录 / 修改）
+            <textarea id="ge-text" defaultValue="{{ galleryEditText }}" placeholder="补上当时没来得及写下的内容……" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:112px;background:#0d0f14;border:1px solid #262b36;border-radius:10px;padding:11px 12px;color:#e6e9f0;font-size:13px;line-height:1.65;font-family:inherit;resize:vertical;"></textarea>
+          </label>
+          <sc-if value="{{ galleryEditHasImage }}" hint-placeholder-val="{{ false }}"><div style="border-radius:10px;overflow:hidden;border:1px solid #242a35;background:#0a0c11;"><img src="{{ galleryEditImageUrl }}" alt="集锦照片预览" style="width:100%;max-height:220px;object-fit:cover;display:block;"></div></sc-if>
+          <div style="display:flex;gap:8px;">
+            <div onClick="{{ pickGalleryEditImage }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#c8cedb;border:1px dashed #343b49;background:#0d0f14;border-radius:9px;padding:9px 8px;" style-hover="border-color:{{ accent }};">＋ 补录 / 更换照片</div>
+            <sc-if value="{{ galleryEditHasImage }}" hint-placeholder-val="{{ false }}"><div onClick="{{ removeGalleryEditImage }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#f87171;border:1px solid #3a2226;background:#1a1214;border-radius:9px;padding:9px 12px;">移除照片</div></sc-if>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <div onClick="{{ closeGalleryEdit }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;">取消</div>
+            <div onClick="{{ saveGalleryEdit }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 18px;">保存补录</div>
+          </div>
+        </sc-if>
       </div>
     </div>
   </sc-if>
@@ -1234,6 +1331,12 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ restoreTaskSort }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2f3542;border-radius:7px;padding:5px 9px;" style-hover="border-color:{{ accent }};">按优先级排序</div>
           </div>
         </sc-if>
+        <sc-if value="{{ reorderIsOpex }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;border:1px solid #202530;background:#0d0f14;border-radius:9px;padding:9px 10px;">
+            <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">当前: {{ opexSortLabel }}</div>
+            <div onClick="{{ restoreOpexSort }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2f3542;border-radius:7px;padding:5px 9px;" style-hover="border-color:{{ accent }};">按日期排序</div>
+          </div>
+        </sc-if>
         <sc-if value="{{ reorderCanGroup }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;gap:8px;">
             <div onClick="{{ setRoDrag }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roDragTextColor }};background:{{ roDragBg }};border:1px solid {{ roDragBorder }};box-shadow:{{ roDragShadow }};">拖拽排序</div>
@@ -1294,7 +1397,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.2.0';
+const APP_VERSION = 'v1.3.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1316,6 +1419,8 @@ class Component extends DCLogic {
       if (!s.tab) s.tab = 'lists';
       if (!s.pomoPreset) s.pomoPreset = '25';
       if (s.pomoCustomMin == null) s.pomoCustomMin = 30;
+      if (s.pomoTaskName == null) s.pomoTaskName = '番茄专注';
+      if (s.pomoRewardExp == null) s.pomoRewardExp = 0;
       if (!s.noisePreset) s.noisePreset = '咖啡馆';
       if (s.noiseVol == null) s.noiseVol = 0.5;
       if (!s.milestoneSortMode) s.milestoneSortMode = 'deadline';
@@ -1323,6 +1428,7 @@ class Component extends DCLogic {
       if (!s.taskView) s.taskView = 'list';
       if (!Array.isArray(s.galleryEntries)) s.galleryEntries = [];
       if (!Array.isArray(s.opex)) s.opex = [];
+      if (!s.opexSortMode) s.opexSortMode = 'date';
       if (!Array.isArray(s.stash)) s.stash = [];
       if (!s.opexCurrency) s.opexCurrency = '\u00a5';
       if (!s.opexLastLogDay) s.opexLastLogDay = '';
@@ -1379,13 +1485,13 @@ class Component extends DCLogic {
       fundCfg: this.defaultFundCfg(),
       notion: { token: '', dbId: '', worker: '' },
       ledger: [],
-      opex: [], opexCurrency: '\u00a5', opexLastLogDay: '',
+      opex: [], opexCurrency: '\u00a5', opexLastLogDay: '', opexSortMode: 'date',
       stash: [
         { id: 41, name: '存 2000 · 去一个陌生的城市', target: 2000, saved: 0, claimed: false },
         { id: 42, name: '自由基金 · 随时可以走', target: 6000, saved: 0, claimed: false },
       ],
       tab: 'lists', countdowns: this.defaultCountdowns(),
-      pomoPreset: '25', pomoCustomMin: 30, noisePreset: '咖啡馆', noiseVol: 0.5,
+      pomoPreset: '25', pomoCustomMin: 30, pomoTaskName: '番茄专注', pomoRewardExp: 0, noisePreset: '咖啡馆', noiseVol: 0.5,
       milestoneSortMode: 'deadline', taskSortMode: 'priority', taskView: 'list', milestoneSets: [], galleryEntries: [],
     };
   }
@@ -1400,7 +1506,7 @@ class Component extends DCLogic {
       { id: 203, name: '2026 年结束', date: '2026-12-31' },
     ];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, pomoCfgOpen, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -1509,6 +1615,8 @@ class Component extends DCLogic {
   priorityRank(p) { return ({ p1: 1, p2: 2, p3: 3, p4: 4 })[p] || 4; }
   sortTasksByPriority(list) { return [...(list || [])].sort((a, b) => this.priorityRank(a.priority) - this.priorityRank(b.priority)); }
   restoreTaskSort() { this.save({ taskSortMode: 'priority' }); }
+  sortOpexByDate(list) { return [...(list || [])].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts || 0) - (a.ts || 0))); }
+  restoreOpexSort() { this.save({ opexSortMode: 'date' }); }
   startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null, batchSel: [], roMode: 'drag' }); }
   setRoMode(m) { this.setState({ roMode: m }); }
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
@@ -1597,7 +1705,9 @@ class Component extends DCLogic {
       ? this.sortMilestonesByDeadline(this.state.milestones)
       : (kind === 'tasks' && (this.state.taskSortMode || 'priority') === 'priority')
         ? this.sortTasksByPriority(this.state.tasks)
-        : [...this.state[kind]];
+        : (kind === 'opex' && (this.state.opexSortMode || 'date') === 'date')
+          ? this.sortOpexByDate(this.state.opex)
+          : [...this.state[kind]];
     const fi = arr.findIndex(t => String(t.id) === String(this.state.dragId));
     if (fi < 0) return;
     const [mv] = arr.splice(fi, 1);
@@ -1619,6 +1729,7 @@ class Component extends DCLogic {
     const patch = { [kind]: arr };
     if (kind === 'milestones') patch.milestoneSortMode = 'manual';
     if (kind === 'tasks') patch.taskSortMode = 'manual';
+    if (kind === 'opex') patch.opexSortMode = 'manual';
     this.save(patch);
   }
   roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
@@ -1712,8 +1823,45 @@ class Component extends DCLogic {
     const urls = { ...(this.state.galleryImageUrls || {}) }; delete urls[id];
     this.save({ galleryEntries: (this.state.galleryEntries || []).filter(g => g.id !== id), galleryImageUrls: urls });
   }
+  openGalleryEdit(id) {
+    if (!(this.state.galleryEntries || []).some(g => g.id === id)) return;
+    this.setState({ galleryEdit: { id, confirmed: false }, galleryEditBlob: null, galleryEditPreview: '', galleryEditRemoveImage: false });
+  }
+  confirmGalleryEdit() { if (this.state.galleryEdit) this.setState({ galleryEdit: { ...this.state.galleryEdit, confirmed: true } }); }
+  closeGalleryEdit() {
+    if (this.state.galleryEditPreview) try { URL.revokeObjectURL(this.state.galleryEditPreview); } catch (_) {}
+    this.setState({ galleryEdit: null, galleryEditBlob: null, galleryEditPreview: '', galleryEditRemoveImage: false });
+  }
+  pickGalleryEditImage() {
+    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+    inp.onchange = async () => {
+      const f = inp.files && inp.files[0]; if (!f) return;
+      try {
+        const blob = await this.compressGalleryImage(f);
+        if (this.state.galleryEditPreview) try { URL.revokeObjectURL(this.state.galleryEditPreview); } catch (_) {}
+        this.setState({ galleryEditBlob: blob, galleryEditPreview: URL.createObjectURL(blob), galleryEditRemoveImage: false });
+      } catch (e) { alert('图片处理失败：' + e.message); }
+    };
+    inp.click();
+  }
+  removeGalleryEditImage() {
+    if (this.state.galleryEditPreview) try { URL.revokeObjectURL(this.state.galleryEditPreview); } catch (_) {}
+    this.setState({ galleryEditBlob: null, galleryEditPreview: '', galleryEditRemoveImage: true });
+  }
+  async saveGalleryEdit() {
+    const ed = this.state.galleryEdit; if (!ed) return;
+    const entry = (this.state.galleryEntries || []).find(g => g.id === ed.id); if (!entry) { this.closeGalleryEdit(); return; }
+    const text = this.v('ge-text'); let hasImage = !!entry.hasImage;
+    if (this.state.galleryEditRemoveImage) { await this.galleryDeleteImage(entry.id); hasImage = false; }
+    if (this.state.galleryEditBlob) { try { await this.galleryPut(entry.id, this.state.galleryEditBlob); hasImage = true; } catch (e) { alert('照片保存失败：' + e.message); } }
+    const entries = (this.state.galleryEntries || []).map(g => g.id === entry.id ? { ...g, text, hasImage } : g);
+    const urls = { ...(this.state.galleryImageUrls || {}) }; const old = urls[entry.id]; if (old) try { URL.revokeObjectURL(old); } catch (_) {} delete urls[entry.id];
+    if (hasImage) { try { const b = await this.galleryGet(entry.id); if (b) urls[entry.id] = URL.createObjectURL(b); } catch (_) {} }
+    if (this.state.galleryEditPreview) try { URL.revokeObjectURL(this.state.galleryEditPreview); } catch (_) {}
+    this.save({ galleryEntries: entries, galleryImageUrls: urls, galleryEdit: null, galleryEditBlob: null, galleryEditPreview: '', galleryEditRemoveImage: false });
+  }
   async makeFullBackupAsync() {
-    const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, backupFullCode, ...data } = this.state;
+    const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, pomoCfgOpen, backupFullCode, ...data } = this.state;
     const galleryImages = {};
     for (const e of (data.galleryEntries || [])) if (e.hasImage) {
       try { const b = await this.galleryGet(e.id); if (b) galleryImages[e.id] = await this.blobToDataURL(b); } catch (_) {}
@@ -1736,15 +1884,41 @@ class Component extends DCLogic {
   }
   componentWillUnmount() { clearInterval(this._intTimer); clearInterval(this._clockTimer); clearTimeout(this._pt); clearInterval(this._pomoTimer); this.stopNoiseNodes(); if (this._onResize) window.removeEventListener('resize', this._onResize); }
   setTab(t) { this.setState({ tab: t }); }
-  addCountdown() { const name = this.v('nc-name'), date = this.v('nc-date'), time = this.v('nc-time') || '00:00'; if (!name || !date) return; this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date, time }], nextId: this.state.nextId + 1, newCountdownOpen: false }); this.clear(['nc-name', 'nc-date']); const te = document.getElementById('nc-time'); if (te) te.value = '00:00'; }
+  read24h(hourId, minuteId, fallback) {
+    const hEl = document.getElementById(hourId), mEl = document.getElementById(minuteId);
+    if (!hEl || !mEl) return fallback || '00:00';
+    let h = parseInt(hEl.value), m = parseInt(mEl.value);
+    h = isNaN(h) ? 0 : Math.max(0, Math.min(23, h));
+    m = isNaN(m) ? 0 : Math.max(0, Math.min(59, m));
+    return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+  }
+  addCountdown() {
+    const name = this.v('nc-name'), date = this.v('nc-date'), time = this.read24h('nc-hour', 'nc-minute', '00:00');
+    if (!name || !date) return;
+    this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date, time }], nextId: this.state.nextId + 1, newCountdownOpen: false });
+    this.clear(['nc-name', 'nc-date']); const h = document.getElementById('nc-hour'), m = document.getElementById('nc-minute'); if (h) h.value = '0'; if (m) m.value = '0';
+  }
   delCountdown(id) { this.save({ countdowns: this.state.countdowns.filter(c => c.id !== id) }); }
+  openPomoCfg() { this.setState({ pomoCfgOpen: true }); }
+  closePomoCfg() { this.setState({ pomoCfgOpen: false }); }
+  savePomoCfg() { const task = this.v('pc-task') || '番茄专注'; const n = parseInt(this.v('pc-exp')); const reward = isNaN(n) ? 0 : Math.max(0, n); this.save({ pomoTaskName: task, pomoRewardExp: reward, pomoCfgOpen: false }); }
   pomoBase() { const p = this.state.pomoPreset || '25'; return (p === 'custom' ? (this.state.pomoCustomMin || 30) : parseInt(p)) * 60; }
   pomoStart() { const st = this.state; if (st.pomoRunning) return; const rem = (st.pomoRemaining != null && st.pomoRemaining > 0) ? st.pomoRemaining : this.pomoBase(); const total = st.pomoTotal || this.pomoBase(); this.setState({ pomoRunning: true, pomoEndTs: Date.now() + rem * 1000, pomoRemaining: rem, pomoTotal: total }, () => this.pomoTick()); }
   pomoPause() { const st = this.state; if (!st.pomoRunning) return; const rem = Math.max(0, Math.round((st.pomoEndTs - Date.now()) / 1000)); clearInterval(this._pomoTimer); this.setState({ pomoRunning: false, pomoEndTs: null, pomoRemaining: rem }); }
   pomoReset() { clearInterval(this._pomoTimer); const base = this.pomoBase(); this.setState({ pomoRunning: false, pomoEndTs: null, pomoRemaining: base, pomoTotal: base }); }
   pomoSetPreset(p) { clearInterval(this._pomoTimer); this.setState({ pomoPreset: p, pomoRunning: false, pomoEndTs: null }, () => { const base = this.pomoBase(); this.setState({ pomoRemaining: base, pomoTotal: base }); }); }
   pomoSetCustom(v) { const m = Math.max(1, parseInt(v) || 1); this.setState({ pomoCustomMin: m }, () => { if (this.state.pomoPreset === 'custom' && !this.state.pomoRunning) { const base = m * 60; this.setState({ pomoRemaining: base, pomoTotal: base }); } }); }
-  pomoTick() { clearInterval(this._pomoTimer); this._pomoTimer = setInterval(() => { const s = this.state; if (!s.pomoRunning || !s.pomoEndTs) { clearInterval(this._pomoTimer); return; } if (Date.now() >= s.pomoEndTs) { clearInterval(this._pomoTimer); this.setState({ pomoRunning: false, pomoRemaining: 0, pomoEndTs: null }); this.pomoDing(); } else this.forceUpdate(); }, 500); }
+  pomoTick() { clearInterval(this._pomoTimer); this._pomoTimer = setInterval(() => { const s = this.state; if (!s.pomoRunning || !s.pomoEndTs) { clearInterval(this._pomoTimer); return; } if (Date.now() >= s.pomoEndTs) { clearInterval(this._pomoTimer); this.finishPomo(); } else this.forceUpdate(); }, 500); }
+  finishPomo() {
+    const reward = Math.max(0, parseInt(this.state.pomoRewardExp) || 0);
+    const task = (this.state.pomoTaskName || '番茄专注').trim() || '番茄专注';
+    const patch = { pomoRunning: false, pomoRemaining: 0, pomoEndTs: null };
+    if (reward > 0) {
+      const ts = Date.now(); patch.exp = this.state.exp + reward; patch.ledger = [{ ts, name: '番茄专注 · ' + task, delta: reward }, ...this.state.ledger].slice(0, 200); patch.momentumMsg = '「' + task + '」专注完成 · +' + reward + ' EXP';
+      setTimeout(() => this.setState({ momentumMsg: '' }), 3200);
+    }
+    this.save(patch); this.pomoDing();
+  }
   pomoDing() { try { const a = this.ensureAudio(); if (a.ctx.state === 'suspended') a.ctx.resume(); const o = a.ctx.createOscillator(), g = a.ctx.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.ctx.destination); const t = a.ctx.currentTime; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.3, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9); o.start(t); o.stop(t + 0.95); } catch (_) {} }
   ensureAudio() { if (!this._au) { const C = window.AudioContext || window.webkitAudioContext; const ctx = new C(); const gain = ctx.createGain(); gain.gain.value = this.state.noiseVol ?? 0.5; gain.connect(ctx.destination); this._au = { ctx, gain, node: null, filter: null, mediaEl: null }; } return this._au; }
   makeNoise(ctx) { const len = ctx.sampleRate * 2; const buf = ctx.createBuffer(1, len, ctx.sampleRate); const d = buf.getChannelData(0); let last = 0; for (let i = 0; i < len; i++) { const w = Math.random() * 2 - 1; last = (last + 0.02 * w) / 1.02; d[i] = last * 3.2; } return buf; }
@@ -1795,7 +1969,7 @@ class Component extends DCLogic {
   }
   toggleLedgerView() { this.setState({ ledgerView: (this.state.ledgerView === 'redeem') ? 'all' : 'redeem' }); }
   closeBackup() { this.setState({ backupOpen: false, backupMsg: '' }); }
-  makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, backupFullCode, ...data } = this.state; const lite = { ...data, rewards: (data.rewards || []).map(r => { const { img, ...rest } = r; return rest; }) }; return btoa(unescape(encodeURIComponent(JSON.stringify(lite)))); }
+  makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, pomoCfgOpen, backupFullCode, ...data } = this.state; const lite = { ...data, rewards: (data.rewards || []).map(r => { const { img, ...rest } = r; return rest; }) }; return btoa(unescape(encodeURIComponent(JSON.stringify(lite)))); }
   makeFullBackup() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
   setRewardPos(id, pos) { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, imgPos: Math.max(0, Math.min(100, pos)) } : r) }); }
   rewardImgDown(id, e) {
@@ -1932,15 +2106,25 @@ class Component extends DCLogic {
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)), capCycle: 'daily', capTimes: 1 } : x) });
     } else if (ed.type === 'countdown') {
+      const old = this.state.countdowns.find(x => x.id === ed.id); const time = this.read24h('ed-hour', 'ed-minute', old ? (old.time || '00:00') : '00:00');
       this.save({ editing: null, countdowns: this.state.countdowns.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, date: this.v('ed-date') || x.date, time: this.v('ed-time') || x.time || '00:00' } : x) });
+        name: name || x.name, date: this.v('ed-date') || x.date, time } : x) });
+    } else if (ed.type === 'opex') {
+      const catEl = document.getElementById('ed-opex-cat'); const amount = parseFloat(this.v('ed-opex-amount'));
+      this.save({ editing: null, opex: (this.state.opex || []).map(x => x.id === ed.id ? { ...x,
+        amount: isNaN(amount) || amount <= 0 ? x.amount : Math.round(amount * 100) / 100,
+        cat: catEl ? catEl.value : x.cat, note: this.v('ed-opex-note') || (catEl ? catEl.value : x.cat), date: this.v('ed-opex-date') || x.date } : x) });
+    } else if (ed.type === 'stash') {
+      const target = parseFloat(this.v('ed-stash-target'));
+      this.save({ editing: null, stash: (this.state.stash || []).map(x => x.id === ed.id ? { ...x,
+        name: name || x.name, target: isNaN(target) || target <= 0 ? x.target : Math.round(target * 100) / 100 } : x) });
     } else if (ed.type === 'fund') {
       const fnum = (id, fb) => { const n = parseFloat(this.v(id)); return isNaN(n) ? fb : n; };
       this.save({ editing: null, funds: this.state.funds.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, code: this.v('ed-code'),
         base: this.v('ed-base') === '' ? null : fnum('ed-base', x.base),
         cost: this.v('ed-cost') === '' ? null : fnum('ed-cost', x.cost) } : x) });
-    } else {
+    } else if (ed.type === 'milestone') {
       const msSetSel = document.getElementById('ed-ms-set');
       const setId = msSetSel && msSetSel.value ? parseInt(msSetSel.value) : null;
       this.save({ editing: null, milestones: this.state.milestones.map(x => x.id === ed.id ? { ...x,
@@ -2044,6 +2228,12 @@ class Component extends DCLogic {
     this.clear(['ns2-name', 'ns2-target']);
   }
   delStash(id) { this.save({ stash: (this.state.stash || []).filter(s => s.id !== id) }); }
+  stashWithdraw(id) {
+    const el = document.getElementById('stash-' + id); if (!el) return;
+    const amount = parseFloat(el.value); if (isNaN(amount) || amount <= 0) return;
+    this.save({ stash: (this.state.stash || []).map(s => s.id === id ? { ...s, saved: Math.max(0, Math.round((s.saved - amount) * 100) / 100) } : s) });
+    el.value = '';
+  }
   stashDeposit(id) {
     const el = document.getElementById('stash-' + id); if (!el) return;
     const add = parseFloat(el.value); if (isNaN(add) || add === 0) return;
@@ -2275,10 +2465,14 @@ class Component extends DCLogic {
       ungrouped.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: false }));
     }
     const milestoneBase = (st.milestoneSortMode || 'deadline') === 'manual' ? st.milestones : this.sortMilestonesByDeadline(st.milestones);
+    const opexBase = (st.opexSortMode || 'date') === 'manual' ? (st.opex || []) : this.sortOpexByDate(st.opex || []);
+    const stashBase = st.stash || [];
     const roKind = st.reorderKind || 'tasks';
     const roSrc = roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: r.cost + ' EXP' }))
       : roKind === 'milestones' ? milestoneBase.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
       : roKind === 'funds' ? st.funds.map(f => ({ id: f.id, name: f.name, sub: f.code || '' }))
+      : roKind === 'opex' ? opexBase.map(o => ({ id: o.id, name: o.note || o.cat || '开销记录', sub: (o.date || '') + ' · ' + o.amount }))
+      : roKind === 'stash' ? stashBase.map(x => ({ id: x.id, name: x.name, sub: x.saved + '/' + x.target }))
       : taskBase.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
     const accGreen = this.props.accent ?? '#4ade80';
     const mkTaskRow = t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name,
@@ -2333,7 +2527,7 @@ class Component extends DCLogic {
         dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
         onDown: e => this.roDown(t.id, e) }));
     }
-    const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : '任务排序 // REORDER';
+    const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
       const capped = (r.redeems || []).some(t => this.sameDay(t));
       const capLabel = '今日已兑换 · 明日可兑';
@@ -2382,8 +2576,10 @@ class Component extends DCLogic {
       const imgUrl = (st.galleryImageUrls || {})[g.id] || '';
       return { ...g, targetName: g.targetName || '已删除项目', timeStr: fmt(g.ts), hasText: !!(g.text || '').trim(),
         hasImage: !!imgUrl, imgUrl, kindLabel: g.kind === 'milestone' ? 'MILESTONE' : 'TASK', kindColor: g.kind === 'milestone' ? '#e6c46a' : '#60a5fa',
-        onDel: e => { e.stopPropagation(); this.delGalleryEntry(g.id); } };
+        onEdit: () => this.openGalleryEdit(g.id), onDel: e => { e.stopPropagation(); this.delGalleryEntry(g.id); } };
     });
+    const galleryEditEntry = st.galleryEdit ? (st.galleryEntries || []).find(g => g.id === st.galleryEdit.id) : null;
+    const galleryEditImageUrl = st.galleryEditRemoveImage ? '' : (st.galleryEditPreview || (galleryEditEntry ? ((st.galleryImageUrls || {})[galleryEditEntry.id] || '') : ''));
     const ledger = st.ledger.slice(0, 30).map((e, i) => ({ ...e, key: e.ts + '-' + i, time: fmt(e.ts),
       deltaStr: (e.delta > 0 ? '+' : '') + e.delta, deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
     const earned = st.ledger.filter(e => e.delta > 0).reduce((a, e) => a + e.delta, 0);
@@ -2420,7 +2616,7 @@ class Component extends DCLogic {
     }).sort((a, b) => a.targetTs - b.targetTs);
     const opexProps = (() => {
       const cur = st.opexCurrency || '\u00a5';
-      const list = (st.opex || []).slice().sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts || 0) - (a.ts || 0)));
+      const list = opexBase;
       const now = new Date();
       const mk = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       const todayK = this.todayKey();
@@ -2441,13 +2637,13 @@ class Component extends DCLogic {
         key: o.id, cat: o.cat, note: o.note, amount: money(o.amount),
         color: palette[o.cat] || '#94a3b8',
         dateStr: (o.date || '').replace(/^\d{4}-/, '').replace('-', '/'),
-        onDel: () => this.delOpex(o.id),
+        onEdit: () => this.openEdit('opex', o.id), onDel: e => { if (e && e.stopPropagation) e.stopPropagation(); this.delOpex(o.id); },
       }));
-      const stashRows = (st.stash || []).map(s => {
+      const stashRows = stashBase.map(s => {
         const pct = s.target > 0 ? Math.min(100, Math.round(s.saved / s.target * 100)) : 0;
         return { key: s.id, id: s.id, name: s.name, pct: pct + '%', reached: s.saved >= s.target,
           savedStr: money(s.saved), targetStr: money(s.target),
-          onSave: () => this.stashDeposit(s.id), onDel: () => this.delStash(s.id) };
+          onSave: () => this.stashDeposit(s.id), onWithdraw: () => this.stashWithdraw(s.id), onEdit: () => this.openEdit('stash', s.id), onDel: () => this.delStash(s.id) };
       });
       return {
         opexCurrency: cur, cycleCurrency: () => this.cycleCurrency(),
@@ -2462,7 +2658,7 @@ class Component extends DCLogic {
     })();
     const tabNow = st.tab || 'lists';
     const ed = st.editing || null;
-    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones, set: st.sets, milestoneSet: st.milestoneSets || [], fund: st.funds, countdown: st.countdowns };
+    const lists = { task: st.tasks, reward: st.rewards, milestone: st.milestones, set: st.sets, milestoneSet: st.milestoneSets || [], fund: st.funds, countdown: st.countdowns, opex: st.opex || [], stash: st.stash || [] };
     const editItem = ed ? (lists[ed.type] || []).find(x => x.id === ed.id) : null;
     const editOpen = !!editItem;
     return { accent, exp: st.exp, warMode: st.warMode, warOff: !st.warMode,
@@ -2474,6 +2670,7 @@ class Component extends DCLogic {
       momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
       reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
+      reorderIsOpex: (st.reorderKind || 'tasks') === 'opex', opexSortLabel: (st.opexSortMode || 'date') === 'manual' ? '手动排序' : '日期优先', restoreOpexSort: () => this.restoreOpexSort(),
       reorderIsMilestones: (st.reorderKind || 'tasks') === 'milestones', milestoneSortLabel: (st.milestoneSortMode || 'deadline') === 'manual' ? '手动排序' : '截止日期优先',
       restoreMilestoneSort: () => this.restoreMilestoneSort(),
       taskSortLabel: (st.taskSortMode || 'priority') === 'manual' ? '手动排序' : '优先级优先', restoreTaskSort: () => this.restoreTaskSort(),
@@ -2488,17 +2685,20 @@ class Component extends DCLogic {
       roSelTextColor: (st.roMode || 'drag') === 'select' ? '#14151c' : '#c3c9d6',
       roSelShadow: (st.roMode || 'drag') === 'select' ? 'inset 0 1px 0 rgba(255,255,255,0.6)' : 'none',
       reorderCanGroup: ((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones'),
-      reorderItemName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑' : '任务', reorderSetName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑集' : '任务集',
+      reorderItemName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑' : (st.reorderKind || 'tasks') === 'opex' ? '开销记录' : (st.reorderKind || 'tasks') === 'stash' ? '存钱目标' : '任务', reorderSetName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑集' : '任务集',
       roShowCheck: (((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones') && (st.roMode || 'drag') === 'select'),
       batchCount: (st.batchSel || []).length, batchHasSel: (st.batchSel || []).length > 0,
       batchSetOptions: ((st.reorderKind || 'tasks') === 'milestones' ? milestoneSetsArr : setsArr).map(s => ({ id: s.id, name: s.name })),
       batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
-      startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderFunds: () => this.startReorder('funds'), closeReorder: () => this.closeReorder(),
+      startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderFunds: () => this.startReorder('funds'), startReorderOpex: () => this.startReorder('opex'), startReorderStash: () => this.startReorder('stash'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
       rewards, milestones, milestoneRows, ledger, showLedger: this.props.showLedger ?? true,
       reflectionOpen: !!st.reflectionOpen, reflectionTargetName: st.reflectionTarget ? st.reflectionTarget.name : '', reflectionHasImage: !!st.reflectionPreview, reflectionNoImage: !st.reflectionPreview, reflectionPreview: st.reflectionPreview || '',
       pickReflectionImage: () => this.pickReflectionImage(), skipReflection: () => this.skipReflection(), saveReflection: () => this.saveReflection(),
       galleryOpen: !!st.galleryOpen, galleryEntries, galleryEmpty: galleryEntries.length === 0, galleryCount: galleryEntries.length, openGallery: () => this.openGallery(), closeGallery: () => this.closeGallery(),
+      galleryEditOpen: !!galleryEditEntry, galleryEditAsk: !!galleryEditEntry && !st.galleryEdit.confirmed, galleryEditFormOn: !!galleryEditEntry && !!st.galleryEdit.confirmed,
+      galleryEditName: galleryEditEntry ? (galleryEditEntry.targetName || '已删除项目') : '', galleryEditText: galleryEditEntry ? (galleryEditEntry.text || '') : '', galleryEditImageUrl, galleryEditHasImage: !!galleryEditImageUrl,
+      confirmGalleryEdit: () => this.confirmGalleryEdit(), closeGalleryEdit: () => this.closeGalleryEdit(), pickGalleryEditImage: () => this.pickGalleryEditImage(), removeGalleryEditImage: () => this.removeGalleryEditImage(), saveGalleryEdit: () => this.saveGalleryEdit(),
       earned, spent, todayEarned: '+' + todayEarned,
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad: tier.btnGrad, tierScene: tier.scene, heroBg: tier.heroBg, heroSheen: tier.heroSheen,
       cardTop: tier.cardTop, cardBot: tier.cardBot, rowTop: tier.rowTop, rowBot: tier.rowBot,
@@ -2573,6 +2773,8 @@ class Component extends DCLogic {
           avgStr: avg == null ? '—' : ((avg > 0 ? '+' : '') + avg.toFixed(2) + '%'), avgColor: avg == null ? '#c8cedb' : (avg >= 0 ? '#4ade80' : '#f87171') };
       })(),
       pomoTime: mm + ':' + ss, pomoRingBg: `conic-gradient(${accent} ${pPct}%, #232833 0)`,
+      pomoTaskName: st.pomoTaskName || '番茄专注', pomoRewardExp: Math.max(0, parseInt(st.pomoRewardExp) || 0), pomoRewardLabel: '+' + Math.max(0, parseInt(st.pomoRewardExp) || 0) + ' EXP',
+      pomoCfgOpen: !!st.pomoCfgOpen, openPomoCfg: () => this.openPomoCfg(), closePomoCfg: () => this.closePomoCfg(), savePomoCfg: () => this.savePomoCfg(),
       pomoRunning: !!st.pomoRunning, pomoIdle: !st.pomoRunning,
       pomoStateLabel: st.pomoRunning ? '专注中…' : (pRem <= 0 ? '完成 ✦' : (pRem < pTotal ? '已暂停' : '准备开始')),
       pomoStartLabel: (st.pomoRemaining != null && st.pomoRemaining > 0 && st.pomoRemaining < pTotal) ? '继续' : '开始',
@@ -2600,13 +2802,16 @@ class Component extends DCLogic {
       editIsTask: editOpen && ed.confirmed && ed.type === 'task',
       editIsReward: editOpen && ed.confirmed && ed.type === 'reward',
       editIsFund: editOpen && ed.confirmed && ed.type === 'fund',
+      editIsOpex: editOpen && ed.confirmed && ed.type === 'opex', editIsStash: editOpen && ed.confirmed && ed.type === 'stash',
       editIsCountdown: editOpen && ed.confirmed && ed.type === 'countdown',
       editDate: editItem ? (editItem.date ?? '') : '', editTime: editItem ? (editItem.time || '00:00') : '00:00',
+      editHour: editItem && editItem.time ? parseInt(editItem.time.split(':')[0]) || 0 : 0, editMinute: editItem && editItem.time ? parseInt(editItem.time.split(':')[1]) || 0 : 0,
       editIsMilestone: editOpen && ed.confirmed && ed.type === 'milestone',
       editIsSet: editOpen && ed.confirmed && ed.type === 'set',
       editIsMilestoneSet: editOpen && ed.confirmed && ed.type === 'milestoneSet',
-      editItemName: editItem ? editItem.name : '',
-      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集', milestoneSet: '里程碑集', fund: '标的', countdown: '倒计时' }[ed.type]) : '',
+      editItemName: editItem ? (editItem.name || editItem.note || editItem.cat || '记录') : '',
+      editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集', milestoneSet: '里程碑集', fund: '标的', countdown: '倒计时', opex: '开销', stash: '存钱目标' }[ed.type]) : '',
+      editHasName: !ed || ed.type !== 'opex', editAskHint: ed && ed.type === 'opex' ? '可修改金额、分类、备注和日期。' : ed && ed.type === 'stash' ? '可修改目标名称和目标金额；当前余额请用卡片上的「存入 / 支出」调整。' : '可修改名称、分值、循环 / 截止日期等信息。',
       notionResultOpen: !!st.notionResultOpen, notionResultOk: st.notionResultOk, notionResultMsg: st.notionResultMsg || '', notionResultBusy: st.notionResultOk == null && !!st.notionResultOpen, notionResultColor: st.notionResultOk == null ? '#8b93a4' : (st.notionResultOk ? '#4ade80' : '#f87171'), closeNotionResult: () => this.closeNotionResult(),
       editSetId: editItem ? String(editItem.setId ?? '') : '',
       editName: editItem ? editItem.name : '',
@@ -2618,6 +2823,8 @@ class Component extends DCLogic {
       editCode: editItem ? (editItem.code ?? '') : '', editBase: editItem ? (editItem.base ?? '') : '',
       editTarget: editItem ? (editItem.target ?? '') : '', editStep: editItem ? (editItem.step ?? '') : '',
       editBonus: editItem ? (editItem.bonus ?? '') : '', editDeadline: editItem ? (editItem.deadline || '') : '',
+      editOpexAmount: editItem && ed && ed.type === 'opex' ? editItem.amount : '', editOpexCat: editItem && ed && ed.type === 'opex' ? editItem.cat : '其他', editOpexNote: editItem && ed && ed.type === 'opex' ? editItem.note : '', editOpexDate: editItem && ed && ed.type === 'opex' ? editItem.date : '',
+      editStashTarget: editItem && ed && ed.type === 'stash' ? editItem.target : '', editStashSaved: editItem && ed && ed.type === 'stash' ? editItem.saved : '', 
       closeEdit: () => this.closeEdit(), confirmEdit: () => this.confirmEdit(),
       saveEdit: () => this.saveEdit(), stopClick: e => e.stopPropagation(),
       backupOpen: !!st.backupOpen, backupCode: st.backupOpen ? ((st.backupFull && st.backupFullCode) ? st.backupFullCode : this.makeBackupCode()) : '',
