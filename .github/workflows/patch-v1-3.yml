@@ -20,7 +20,7 @@ jobs:
           ref: feature/v1-3-ops-focus
           fetch-depth: 0
 
-      - name: Normalize patch escaping
+      - name: Normalize patch matching
         shell: bash
         run: |
           python - <<'PY'
@@ -28,6 +28,7 @@ jobs:
           p = Path('.github/patch_v13_ops_focus.py')
           text = p.read_text(encoding='utf-8')
           text = text.replace(r"\\\\u00a5", r"\\u00a5")
+          text = text.replace("editDeadline: editItem ? (editItem.deadline || '') : '', '''", "editDeadline: editItem ? (editItem.deadline || '') : '','''")
           p.write_text(text, encoding='utf-8')
           PY
 
