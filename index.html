@@ -574,12 +574,15 @@ input[type="date"]{color-scheme:dark;}
           <div style="height:10px;border-radius:5px;background:#161a22;overflow:hidden;">
             <div style="height:100%;width:{{ s.pct }};border-radius:5px;background:{{ tierGrad }};"></div>
           </div>
-          <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;">
-            <div style="flex:1;min-width:150px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ s.savedStr }} / {{ s.targetStr }} · {{ s.pct }}</div>
-            <input id="stash-{{ s.id }}" type="number" min="0" step="0.01" placeholder="金额" style="width:104px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
-            <div style="display:flex;flex-direction:column;gap:5px;">
-              <div onClick="{{ s.onSave }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 13px;white-space:nowrap;" style-hover="filter:brightness(1.12);">存入</div>
-              <div onClick="{{ s.onWithdraw }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#f0b6b6;border:1px solid #4a2a2e;background:#1b1215;border-radius:8px;padding:5px 13px;white-space:nowrap;" style-hover="border-color:#f87171;color:#fecaca;">支出</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ s.savedStr }} / {{ s.targetStr }} · {{ s.pct }}</div>
+            <div style="display:flex;align-items:center;gap:10px;width:100%;">
+              <input id="stash-in-{{ s.id }}" type="number" min="0" step="0.01" placeholder="存入金额" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:9px 11px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;box-sizing:border-box;">
+              <div onClick="{{ s.onSave }}" style="cursor:pointer;width:112px;box-sizing:border-box;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:9px;padding:9px 16px;white-space:nowrap;" style-hover="filter:brightness(1.12);">存入</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;width:100%;">
+              <input id="stash-out-{{ s.id }}" type="number" min="0" step="0.01" placeholder="支出金额" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #34252b;border-radius:9px;padding:9px 11px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;box-sizing:border-box;">
+              <div onClick="{{ s.onWithdraw }}" style="cursor:pointer;width:112px;box-sizing:border-box;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#f0b6b6;border:1px solid #4a2a2e;background:#1b1215;border-radius:9px;padding:9px 16px;white-space:nowrap;" style-hover="border-color:#f87171;color:#fecaca;">支出</div>
             </div>
           </div>
         </div>
@@ -1397,7 +1400,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.3.0';
+const APP_VERSION = 'v1.3.1';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -2229,13 +2232,13 @@ class Component extends DCLogic {
   }
   delStash(id) { this.save({ stash: (this.state.stash || []).filter(s => s.id !== id) }); }
   stashWithdraw(id) {
-    const el = document.getElementById('stash-' + id); if (!el) return;
+    const el = document.getElementById('stash-out-' + id); if (!el) return;
     const amount = parseFloat(el.value); if (isNaN(amount) || amount <= 0) return;
     this.save({ stash: (this.state.stash || []).map(s => s.id === id ? { ...s, saved: Math.max(0, Math.round((s.saved - amount) * 100) / 100) } : s) });
     el.value = '';
   }
   stashDeposit(id) {
-    const el = document.getElementById('stash-' + id); if (!el) return;
+    const el = document.getElementById('stash-in-' + id); if (!el) return;
     const add = parseFloat(el.value); if (isNaN(add) || add === 0) return;
     let bonus = 0, name = '';
     const stash = (this.state.stash || []).map(s => {
