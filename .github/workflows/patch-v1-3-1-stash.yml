@@ -39,16 +39,12 @@ jobs:
 
           one("const APP_VERSION = 'v1.3.0';", "const APP_VERSION = 'v1.3.1';", 'app version')
 
-          one("""  stashWithdraw(id) {
-            const el = document.getElementById('stash-' + id); if (!el) return;""",
-              """  stashWithdraw(id) {
-            const el = document.getElementById('stash-out-' + id); if (!el) return;""",
+          one("  stashWithdraw(id) {\n    const el = document.getElementById('stash-' + id); if (!el) return;",
+              "  stashWithdraw(id) {\n    const el = document.getElementById('stash-out-' + id); if (!el) return;",
               'stash withdraw input')
 
-          one("""  stashDeposit(id) {
-            const el = document.getElementById('stash-' + id); if (!el) return;""",
-              """  stashDeposit(id) {
-            const el = document.getElementById('stash-in-' + id); if (!el) return;""",
+          one("  stashDeposit(id) {\n    const el = document.getElementById('stash-' + id); if (!el) return;",
+              "  stashDeposit(id) {\n    const el = document.getElementById('stash-in-' + id); if (!el) return;",
               'stash deposit input')
 
           old_ui = """          <div style=\"display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;\">
