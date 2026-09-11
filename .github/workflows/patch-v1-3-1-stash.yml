@@ -1,0 +1,127 @@
+name: EXP BANK v1.3.1 stash refinement
+
+on:
+  push:
+    branches:
+      - feature/v1-3-1-stash-ui
+    paths:
+      - .github/workflows/patch-v1-3-1-stash.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v1-3-1-stash-ui
+          fetch-depth: 0
+
+      - name: Apply deterministic patch
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          idx = Path('index.html')
+          swp = Path('sw.js')
+          s = idx.read_text(encoding='utf-8')
+
+          def one(old, new, label):
+              global s
+              n = s.count(old)
+              if n != 1:
+                  raise SystemExit(f'{label}: expected 1 match, got {n}')
+              s = s.replace(old, new, 1)
+
+          one("const APP_VERSION = 'v1.3.0';", "const APP_VERSION = 'v1.3.1';", 'app version')
+
+          one("""  stashWithdraw(id) {
+            const el = document.getElementById('stash-' + id); if (!el) return;""",
+              """  stashWithdraw(id) {
+            const el = document.getElementById('stash-out-' + id); if (!el) return;""",
+              'stash withdraw input')
+
+          one("""  stashDeposit(id) {
+            const el = document.getElementById('stash-' + id); if (!el) return;""",
+              """  stashDeposit(id) {
+            const el = document.getElementById('stash-in-' + id); if (!el) return;""",
+              'stash deposit input')
+
+          old_ui = """          <div style=\"display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;\">
+            <div style=\"flex:1;min-width:150px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;\">{{ s.savedStr }} / {{ s.targetStr }} · {{ s.pct }}</div>
+            <input id=\"stash-{{ s.id }}\" type=\"number\" min=\"0\" step=\"0.01\" placeholder=\"金额\" style=\"width:104px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:7px 9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;\">
+            <div style=\"display:flex;flex-direction:column;gap:5px;\">
+              <div onClick=\"{{ s.onSave }}\" style=\"cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 13px;white-space:nowrap;\" style-hover=\"filter:brightness(1.12);\">存入</div>
+              <div onClick=\"{{ s.onWithdraw }}\" style=\"cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#f0b6b6;border:1px solid #4a2a2e;background:#1b1215;border-radius:8px;padding:5px 13px;white-space:nowrap;\" style-hover=\"border-color:#f87171;color:#fecaca;\">支出</div>
+            </div>
+          </div>"""
+
+          new_ui = """          <div style=\"display:flex;flex-direction:column;gap:8px;\">
+            <div style=\"font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;\">{{ s.savedStr }} / {{ s.targetStr }} · {{ s.pct }}</div>
+            <div style=\"display:flex;align-items:center;gap:10px;width:100%;\">
+              <input id=\"stash-in-{{ s.id }}\" type=\"number\" min=\"0\" step=\"0.01\" placeholder=\"存入金额\" style=\"flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:9px 11px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;box-sizing:border-box;\">
+              <div onClick=\"{{ s.onSave }}\" style=\"cursor:pointer;width:112px;box-sizing:border-box;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:9px;padding:9px 16px;white-space:nowrap;\" style-hover=\"filter:brightness(1.12);\">存入</div>
+            </div>
+            <div style=\"display:flex;align-items:center;gap:10px;width:100%;\">
+              <input id=\"stash-out-{{ s.id }}\" type=\"number\" min=\"0\" step=\"0.01\" placeholder=\"支出金额\" style=\"flex:1;min-width:0;background:#0d0f14;border:1px solid #34252b;border-radius:9px;padding:9px 11px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;box-sizing:border-box;\">
+              <div onClick=\"{{ s.onWithdraw }}\" style=\"cursor:pointer;width:112px;box-sizing:border-box;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#f0b6b6;border:1px solid #4a2a2e;background:#1b1215;border-radius:9px;padding:9px 16px;white-space:nowrap;\" style-hover=\"border-color:#f87171;color:#fecaca;\">支出</div>
+            </div>
+          </div>"""
+
+          one(old_ui, new_ui, 'stash dual input layout')
+          idx.write_text(s, encoding='utf-8')
+
+          sw = swp.read_text(encoding='utf-8')
+          old_cache = "const CACHE = 'exp-bank-v1.3.0';"
+          if sw.count(old_cache) != 1:
+              raise SystemExit('service worker cache marker mismatch')
+          sw = sw.replace(old_cache, "const CACHE = 'exp-bank-v1.3.1';", 1)
+          swp.write_text(sw, encoding='utf-8')
+          print('EXP BANK v1.3.1 stash layout patch applied')
+          PY
+
+      - name: Validate app
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html = Path('index.html').read_text(encoding='utf-8')
+          required = [
+              "const APP_VERSION = 'v1.3.1';",
+              'id="stash-in-{{ s.id }}"',
+              'id="stash-out-{{ s.id }}"',
+              'placeholder="存入金额"',
+              'placeholder="支出金额"',
+              "document.getElementById('stash-in-' + id)",
+              "document.getElementById('stash-out-' + id)",
+          ]
+          for token in required:
+              if token not in html:
+                  raise SystemExit('missing token: ' + token)
+          if 'id="stash-{{ s.id }}"' in html:
+              raise SystemExit('old shared stash input still present')
+
+          marker = '<script type="text/x-dc" data-dc-script'
+          pos = html.find(marker)
+          if pos < 0:
+              raise SystemExit('data-dc script not found')
+          start = html.find('>', pos) + 1
+          end = html.find('</script>', start)
+          Path('/tmp/exp-bank-app.js').write_text(html[start:end], encoding='utf-8')
+          print('stash UI markers OK')
+          PY
+          node --check /tmp/exp-bank-app.js
+          grep -q "exp-bank-v1.3.1" sw.js
+
+      - name: Commit feature changes
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html sw.js
+          git commit -m 'feat: refine stash deposit and withdrawal controls'
+          git push origin HEAD:feature/v1-3-1-stash-ui
