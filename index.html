@@ -166,6 +166,7 @@ input[type="date"]{color-scheme:dark;}
           <sc-if value="{{ t.hasStreak }}" hint-placeholder-val="{{ true }}">
             <div title="连续打卡天数 · 昨天没完成会归零" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:{{ accent }};border:1px solid {{ tierBorder }};border-radius:99px;padding:3px 10px;white-space:nowrap;">▲ {{ t.streakLabel }}</div>
           </sc-if>
+          <div onClick="{{ t.onCalendar }}" title="查看完成存根日历" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#8b93a4;border:1px solid #2a2f3a;border-radius:8px;padding:4px 8px;white-space:nowrap;" style-hover="border-color:{{ accent }};color:{{ accent }};">▦ 存根</div>
           <sc-if value="{{ t.hasRing }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;align-items:center;gap:6px;">
               <div style="width:18px;height:18px;border-radius:50%;background:{{ t.ringBg }};display:grid;place-items:center;">
@@ -197,6 +198,31 @@ input[type="date"]{color-scheme:dark;}
       </sc-for>
     </div>
 
+    <!-- DAYLINE -->
+    <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">一天时间轴 // DAYLINE</div>
+        <div onClick="{{ openNewDayline }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.6);border-radius:8px;padding:6px 12px;">+ 日程</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #242a35;background:rgba(9,11,15,.28);border-radius:10px;padding:8px 9px;">
+        <div onClick="{{ daylinePrev }}" style="cursor:pointer;color:#8b93a4;padding:3px 7px;">‹</div>
+        <div style="text-align:center;flex:1;"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#dfe4ec;">{{ daylineDateLabel }}</div><div style="font-size:9.5px;color:#697084;margin-top:2px;">{{ daylineDateSub }}</div></div>
+        <div onClick="{{ daylineToday }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{{ accent }};border:1px solid #2a2f3a;border-radius:7px;padding:4px 7px;">今天</div>
+        <div onClick="{{ daylineNext }}" style="cursor:pointer;color:#8b93a4;padding:3px 7px;">›</div>
+      </div>
+      <sc-if value="{{ daylineEmpty }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;color:#535a6a;padding:18px 0;font-size:11px;">这一天还没有安排 · 给未来的自己留一个时间点</div></sc-if>
+      <sc-for list="{{ daylineRows }}" as="dl" hint-placeholder-count="0">
+        <div onClick="{{ dl.onEdit }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1px solid #222833;background:linear-gradient(180deg,{{ rowTop }},{{ rowBot }});border-radius:10px;padding:10px 11px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:{{ accent }};width:52px;flex-shrink:0;">{{ dl.time }}</div>
+          <div style="flex:1;min-width:0;font-size:13px;font-weight:700;color:#eef1f7;overflow-wrap:anywhere;">{{ dl.name }}</div>
+          <sc-if value="{{ dl.remind }}" hint-placeholder-val="{{ false }}"><div onClick="{{ dl.onExport }}" title="导出到系统日历，由系统负责提醒" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8b93a4;border:1px solid #303746;border-radius:7px;padding:4px 7px;white-space:nowrap;">⏰ 系统提醒</div></sc-if>
+          <div onClick="{{ dl.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;">×</div>
+        </div>
+      </sc-for>
+      <div style="font-size:10px;color:#697084;line-height:1.6;">提醒模式：EXP BANK 打开时会尝试在时间点提醒；需要后台也可靠提醒时，点「系统提醒」导入手机日历。纯 PWA 无法直接写入系统“时钟”闹钟。</div>
+    </div>
+
     <!-- BINGO -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:11px;">
       <div style="display:flex;align-items:center;gap:8px;">
@@ -214,7 +240,7 @@ input[type="date"]{color-scheme:dark;}
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #202530;background:rgba(9,11,15,.28);border-radius:10px;padding:8px 10px;">
         <div><div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1.4px;color:#697084;">{{ bingoPeriodLabel }}</div><div style="font-size:12.5px;font-weight:700;color:#dfe4ec;margin-top:2px;">{{ bingoSizeLabel }} · {{ bingoDrawCount }} 次行动已落盘</div></div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:{{ accent }};white-space:nowrap;">{{ bingoRewardLabel }}</div>
+        <div style="text-align:right;"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:{{ accent }};white-space:nowrap;">{{ bingoRewardLabel }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:8.8px;color:#697084;margin-top:2px;white-space:nowrap;">准入 ≥ {{ bingoMinExpLabel }} EXP</div></div>
       </div>
       <div style="display:grid;grid-template-columns:{{ bingoGridCols }};gap:6px;">
         <sc-for list="{{ bingoCells }}" as="bc" hint-placeholder-count="9">
@@ -1165,7 +1191,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。新增成长奖励集锦、极简 / 清森双主题与随机 BINGO Momentum Draw；你的 EXP、任务、里程碑、账本原样保留。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。新增 Bingo 准入门槛、任务完成存根日历与一天时间轴；月任务只有完成当月全部次数后才计入连续月。你的原有数据继续保留。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1175,17 +1201,54 @@ input[type="date"]{color-scheme:dark;}
   </sc-if>
 
 
+  <!-- TASK EFFORT CALENDAR -->
+  <sc-if value="{{ taskCalendarOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeTaskCalendar }}" style="position:fixed;inset:0;background:rgba(6,7,10,.76);backdrop-filter:blur(6px);z-index:78;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:410px;max-width:100%;background:linear-gradient(180deg,#14171e,#0f1117);border:1px solid #2a2f3a;border-radius:17px;padding:18px;box-shadow:0 28px 72px rgba(0,0,0,.76);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:{{ accent }};">EFFORT RECEIPT // 完成存根</div>
+        <div style="font-size:17px;font-weight:700;color:#eef1f7;margin-top:7px;line-height:1.45;">{{ taskCalendarName }}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin:14px 0 9px;"><div onClick="{{ taskCalendarPrev }}" style="cursor:pointer;color:#8b93a4;padding:4px 9px;">‹</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#c8cedb;">{{ taskCalendarMonth }}</div><div onClick="{{ taskCalendarNext }}" style="cursor:pointer;color:#8b93a4;padding:4px 9px;">›</div></div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:5px;"><sc-for list="{{ taskCalendarWeekdays }}" as="wd" hint-placeholder-count="7"><div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#697084;">{{ wd.label }}</div></sc-for></div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px;"><sc-for list="{{ taskCalendarCells }}" as="dc" hint-placeholder-count="42"><div style="height:39px;border:1px solid {{ dc.border }};background:{{ dc.bg }};border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:{{ dc.color }};">{{ dc.day }}</div><sc-if value="{{ dc.hit }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;color:{{ accent }};">{{ dc.mark }}</div></sc-if></div></sc-for></div>
+        <div style="font-size:10.5px;color:#697084;line-height:1.65;margin-top:12px;">每个亮起的日期，都是你真正往 EXP BANK 里存过努力的一天。旧版每日任务可从历史记录补回；周/月任务过去的精确日期无法可靠推断，所以不会伪造。</div>
+        <div style="display:flex;justify-content:flex-end;margin-top:12px;"><div onClick="{{ closeTaskCalendar }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">收起存根</div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- DAYLINE EDIT -->
+  <sc-if value="{{ daylineEditOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeDayline }}" style="position:fixed;inset:0;background:rgba(6,7,10,.76);backdrop-filter:blur(6px);z-index:79;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:390px;max-width:100%;background:linear-gradient(180deg,#14171e,#0f1117);border:1px solid #2a2f3a;border-radius:17px;padding:19px;display:flex;flex-direction:column;gap:12px;box-shadow:0 28px 72px rgba(0,0,0,.76);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:{{ accent }};">DAYLINE // {{ daylineEditTitle }}</div>
+        <input id="dl-name" defaultValue="{{ daylineEditName }}" placeholder="例如：抢票 / 出门 / 给朋友回信" style="background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:10px 11px;color:#e6e9f0;font-size:13px;font-family:inherit;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><input id="dl-date" type="date" defaultValue="{{ daylineEditDate }}" style="background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:10px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"><input id="dl-time" type="time" step="60" defaultValue="{{ daylineEditTime }}" style="background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:10px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></div>
+        <label style="display:flex;align-items:flex-start;gap:9px;color:#aeb6c6;font-size:11.5px;line-height:1.55;"><input id="dl-remind" type="checkbox" defaultChecked="{{ daylineEditRemind }}" style="margin-top:2px;">提醒模式：EXP BANK 打开时尝试提醒；保存后可在时间轴点「系统提醒」导入系统日历。</label>
+        <div style="font-size:10px;color:#697084;line-height:1.6;">注意：浏览器/PWA 被系统彻底挂起后，无法保证像原生闹钟一样准点唤醒；系统日历提醒由手机系统负责，更可靠。</div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;"><div onClick="{{ closeDayline }}" style="cursor:pointer;font-size:12px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;">取消</div><div onClick="{{ saveDayline }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">保存日程</div></div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- BINGO CONFIG -->
   <sc-if value="{{ bingoCfgOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeBingoCfg }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.74);backdrop-filter:blur(6px);z-index:76;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:380px;max-width:100%;background:linear-gradient(180deg,#14171e,#0f1117);border:1px solid #2a2f3a;border-radius:16px;padding:19px;display:flex;flex-direction:column;gap:13px;box-shadow:0 28px 72px rgba(0,0,0,.76);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">BINGO // REWARD CONFIG</div>
         <div style="font-size:12px;color:#8b93a4;line-height:1.7;">每个周期第一次连成完整横线 / 竖线 / 对角线时领取一次奖励。默认值刻意偏高，让 Bingo 真正像一次意外分红。</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8b93a4;letter-spacing:1px;">中奖奖励 EXP</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
           <label style="font-size:10px;color:#697084;">DAY 3×3<input id="bg-day" type="number" min="0" step="1" defaultValue="{{ bingoRewardDay }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
           <label style="font-size:10px;color:#697084;">WEEK 4×4<input id="bg-week" type="number" min="0" step="1" defaultValue="{{ bingoRewardWeek }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
           <label style="font-size:10px;color:#697084;">MONTH 5×5<input id="bg-month" type="number" min="0" step="1" defaultValue="{{ bingoRewardMonth }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
         </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8b93a4;letter-spacing:1px;margin-top:2px;">任务准入门槛 · EXP 至少达到</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+          <label style="font-size:10px;color:#697084;">DAY<input id="bt-day" type="number" min="0" step="1" defaultValue="{{ bingoMinDay }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">WEEK<input id="bt-week" type="number" min="0" step="1" defaultValue="{{ bingoMinWeek }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">MONTH<input id="bt-month" type="number" min="0" step="1" defaultValue="{{ bingoMinMonth }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+        </div>
+        <div style="font-size:10px;color:#697084;line-height:1.55;">保存时会自动保证 DAY ≤ WEEK ≤ MONTH，避免低价值任务持续制造高额 Bingo EXP。</div>
         <div style="display:flex;gap:8px;justify-content:flex-end;"><div onClick="{{ closeBingoCfg }}" style="cursor:pointer;font-size:12px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;">取消</div><div onClick="{{ saveBingoCfg }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">保存</div></div>
       </div>
     </div>
@@ -1469,7 +1532,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.5.0';
+const APP_VERSION = 'v1.6.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1478,6 +1541,7 @@ class Component extends DCLogic {
     if (s && s.tasks) {
       s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
         priority: t.priority || 'p4', note: t.note || '',
+        completionLog: t.completionLog || (t.cycle === 'daily' ? Object.fromEntries(Object.entries(t.done || {}).filter(([kk, vv]) => /^\d{4}-\d{2}-\d{2}$/.test(kk) && Number(vv) > 0).map(([kk, vv]) => [kk, Number(vv) || 1])) : {}),
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
       s.rewards = (s.rewards || []).map(r => ({ ...r, capCycle: 'daily', capTimes: 1 }));
       s.countdowns = (s.countdowns || []).map(c => ({ ...c, time: c.time || '00:00' }));
@@ -1508,6 +1572,9 @@ class Component extends DCLogic {
       if (!s.uiTheme) s.uiTheme = 'minimal';
       if (!s.bingoView) s.bingoView = 'day';
       if (!s.bingoRewards) s.bingoRewards = { day: 88, week: 288, month: 888 };
+      if (!s.bingoMinExp) s.bingoMinExp = { day: 80, week: 150, month: 300 };
+      if (!Array.isArray(s.dayline)) s.dayline = [];
+      if (!s.daylineDate) s.daylineDate = this.todayKey();
       s.bingoBoards = this.normalizeBingoBoards(s.bingoBoards || {});
       if (s.welcomed == null) s.welcomed = true;
       if (s.appVersion !== APP_VERSION) {
@@ -1518,11 +1585,12 @@ class Component extends DCLogic {
       }
       this.state = s;
     } else this.state = this.defaults();
+    setTimeout(() => this.startDaylineReminderWatch(), 700);
   }
   defaults() {
     return {
       exp: 0, warMode: false, nextId: 500,
-      appVersion: APP_VERSION, welcomed: false, uiMode: 'auto', uiTheme: 'minimal', bingoView: 'day', bingoRewards: { day: 88, week: 288, month: 888 }, bingoBoards: this.defaultBingoBoards(),
+      appVersion: APP_VERSION, welcomed: false, uiMode: 'auto', uiTheme: 'minimal', bingoView: 'day', bingoRewards: { day: 88, week: 288, month: 888 }, bingoMinExp: { day: 80, week: 150, month: 300 }, bingoBoards: this.defaultBingoBoards(), dayline: [], daylineDate: this.todayKey(),
       sets: [
         { id: 11, name: '日常 · 每天的小事', collapsed: false },
         { id: 12, name: '不做会后悔清单', collapsed: false },
@@ -1582,7 +1650,7 @@ class Component extends DCLogic {
       { id: 203, name: '2026 年结束', date: '2026-12-31' },
     ];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, pomoCfgOpen, bingoCfgOpen, bingoCelebration, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, pomoCfgOpen, bingoCfgOpen, bingoCelebration, calendarTaskId, calendarMonthOffset, newDaylineOpen, editingDaylineId, daylineMsg, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -1814,7 +1882,7 @@ class Component extends DCLogic {
     const p = this.state.pending; if (!p) return;
     clearTimeout(this._pt);
     const rm = arr => arr.filter(e => e.ts !== p.ledgerTs);
-    if (p.kind === 'complete') { this.cancelBingoDraw(p.bingoTimerKey); this.save({ tasks: this.state.tasks.map(x => x.id === p.id ? { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) } : x), exp: this.state.exp - p.exp, ledger: rm(this.state.ledger), pending: null }); }
+    if (p.kind === 'complete') { this.cancelBingoDraw(p.bingoTimerKey); this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const cl = { ...(x.completionLog || {}) }; if (p.completionDate && cl[p.completionDate]) { cl[p.completionDate] = Math.max(0, cl[p.completionDate] - 1); if (!cl[p.completionDate]) delete cl[p.completionDate]; } return { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, completionLog: cl, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) }; }), exp: this.state.exp - p.exp, ledger: rm(this.state.ledger), pending: null }); }
     else if (p.kind === 'abandon') this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const a = { ...(x.abandoned || {}) }; delete a[p.k]; return { ...x, abandoned: a }; }), pending: null });
     else if (p.kind === 'redeem') this.save({ exp: this.state.exp + p.cost, rewards: this.state.rewards.map(x => x.id === p.id ? { ...x, redeems: (x.redeems || []).filter(t => t !== p.rts) } : x), ledger: rm(this.state.ledger), pending: null });
     else if (p.kind === 'msPlus') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
@@ -2232,17 +2300,21 @@ class Component extends DCLogic {
     const cnt = k ? (t.done[k] || 0) : 0;
     if (k && cnt >= (t.times || 1)) return;
     const ts = Date.now(), key = 'task:' + id;
-    const curK = k, prevK = this.prevKey(t.cycle);
+    const curK = k, prevK = this.prevKey(t.cycle), times = t.times || 1;
     const prevStreak = t.streak || 0, prevPeriod = (t.lastPeriod != null ? t.lastPeriod : t.lastDone) || '';
-    const streakChanged = prevPeriod !== curK;
+    const streakCycle = ['daily','weekly','monthly'].includes(t.cycle);
+    const periodCompleteAfter = !!k && (cnt + 1) >= times;
+    const streakChanged = streakCycle && periodCompleteAfter && prevPeriod !== curK;
     const newStreak = streakChanged ? ((prevPeriod === prevK ? prevStreak : 0) + 1) : prevStreak;
     const newLastPeriod = streakChanged ? curK : prevPeriod;
-    const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, streak: newStreak, lastPeriod: newLastPeriod, lastDone: this.todayKey() } : x);
+    const completionDate = this.todayKey();
+    const completionLog = { ...(t.completionLog || {}), [completionDate]: ((t.completionLog || {})[completionDate] || 0) + 1 };
+    const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, completionLog, streak: newStreak, lastPeriod: newLastPeriod, lastDone: completionDate } : x);
     this.armTimer(key);
-    const bingoTimerKey = key + ':' + ts; this.scheduleBingoDraw(bingoTimerKey, { id: t.id, name: t.name });
+    const bingoTimerKey = key + ':' + ts; this.scheduleBingoDraw(bingoTimerKey, { id: t.id, name: t.name, exp: t.exp });
     const unit = { daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '';
     if (streakChanged && newStreak === 7 && unit) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 ' + unit + ',MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
-    this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+    this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', completionDate, bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
   redeem(id) {
     const r = this.state.rewards.find(x => x.id === id);
@@ -2308,10 +2380,12 @@ class Component extends DCLogic {
     if (!task) return;
     const periods = ['day','week','month'], names = { day: 'DAILY', week: 'WEEKLY', month: 'MONTHLY' };
     const cfg = this.state.bingoRewards || { day: 88, week: 288, month: 888 };
+    const minExp = this.state.bingoMinExp || { day: 80, week: 150, month: 300 };
     const boards = this.normalizeBingoBoards(this.state.bingoBoards || {}), now = Date.now();
     const wins = []; let totalReward = 0; const ledgerAdds = [];
     periods.forEach((period, pi) => {
       const b = { ...boards[period], cells: [...boards[period].cells], winLine: [...(boards[period].winLine || [])] };
+      if (Number(task.exp || 0) < Math.max(0, Number(minExp[period] || 0))) { boards[period] = b; return; }
       const empty = b.cells.map((v, i) => v ? -1 : i).filter(i => i >= 0);
       if (empty.length) { const idx = empty[Math.floor(Math.random() * empty.length)]; b.cells[idx] = { taskId: task.id, name: task.name, ts: now }; b.draws = (b.draws || 0) + 1; }
       const line = this.bingoWinLine(b.cells, this.bingoSize(period));
@@ -2338,10 +2412,59 @@ class Component extends DCLogic {
   saveBingoCfg() {
     const read = (id, fb) => { const n = parseInt(this.v(id)); return isNaN(n) ? fb : Math.max(0, n); };
     const old = this.state.bingoRewards || { day: 88, week: 288, month: 888 };
-    this.save({ bingoRewards: { day: read('bg-day', old.day), week: read('bg-week', old.week), month: read('bg-month', old.month) }, bingoCfgOpen: false });
+    const oldMin = this.state.bingoMinExp || { day: 80, week: 150, month: 300 };
+    const d = read('bt-day', oldMin.day), w = Math.max(d, read('bt-week', oldMin.week)), m = Math.max(w, read('bt-month', oldMin.month));
+    this.save({ bingoRewards: { day: read('bg-day', old.day), week: read('bg-week', old.week), month: read('bg-month', old.month) }, bingoMinExp: { day: d, week: w, month: m }, bingoCfgOpen: false });
   }
   setBingoView(period) { if (['day','week','month'].includes(period)) this.save({ bingoView: period }); }
   closeBingoCelebration() { clearTimeout(this._bingoCelebrationTimer); this.setState({ bingoCelebration: null }); }
+  openTaskCalendar(id) { this.setState({ calendarTaskId: id, calendarMonthOffset: 0 }); }
+  closeTaskCalendar() { this.setState({ calendarTaskId: null, calendarMonthOffset: 0 }); }
+  shiftTaskCalendar(delta) { this.setState({ calendarMonthOffset: (this.state.calendarMonthOffset || 0) + delta }); }
+  taskCalendarModel(task) {
+    const off = this.state.calendarMonthOffset || 0, base = new Date(); base.setDate(1); base.setMonth(base.getMonth() + off);
+    const y = base.getFullYear(), m = base.getMonth(), first = new Date(y, m, 1), days = new Date(y, m + 1, 0).getDate();
+    const mondayIndex = (first.getDay() + 6) % 7, cells = [];
+    for (let i = 0; i < mondayIndex; i++) cells.push({ day: '', hit: false, mark: '', bg: 'transparent', border: 'transparent', color: '#343a48' });
+    const log = (task && task.completionLog) || {};
+    const p = n => String(n).padStart(2,'0');
+    for (let d = 1; d <= days; d++) { const key = `${y}-${p(m+1)}-${p(d)}`, n = Number(log[key] || 0), hit = n > 0; cells.push({ day: String(d), hit, mark: n > 1 ? '×' + n : '•', bg: hit ? 'rgba(230,196,106,.10)' : 'rgba(12,14,20,.20)', border: hit ? '#6e5b2e' : '#232936', color: hit ? '#eef1f7' : '#697084' }); }
+    while (cells.length < 42) cells.push({ day: '', hit: false, mark: '', bg: 'transparent', border: 'transparent', color: '#343a48' });
+    return { label: `${y}年${m+1}月`, cells };
+  }
+  openNewDayline() { this.setState({ newDaylineOpen: true, editingDaylineId: null }); }
+  openEditDayline(id) { this.setState({ newDaylineOpen: true, editingDaylineId: id }); }
+  closeDayline() { this.setState({ newDaylineOpen: false, editingDaylineId: null }); }
+  setDaylineDate(date) { this.save({ daylineDate: date || this.todayKey() }); }
+  shiftDayline(delta) { this.save({ daylineDate: this.shiftDay(this.state.daylineDate || this.todayKey(), delta) }); }
+  saveDayline() {
+    const name = this.v('dl-name'), date = this.v('dl-date') || this.state.daylineDate || this.todayKey(), time = this.v('dl-time') || '09:00'; if (!name) return;
+    const cb = document.getElementById('dl-remind'), remind = !!(cb && cb.checked), id = this.state.editingDaylineId;
+    let dayline = [...(this.state.dayline || [])];
+    if (id != null) dayline = dayline.map(x => x.id === id ? { ...x, name, date, time, remind, notified: false } : x);
+    else dayline.push({ id: this.state.nextId, name, date, time, remind, notified: false });
+    const patch = { dayline, daylineDate: date, newDaylineOpen: false, editingDaylineId: null };
+    if (id == null) patch.nextId = this.state.nextId + 1;
+    this.save(patch); if (remind) this.requestDaylineNotificationPermission();
+  }
+  delDayline(id) { this.save({ dayline: (this.state.dayline || []).filter(x => x.id !== id) }); }
+  requestDaylineNotificationPermission() { try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); } catch (_) {} }
+  startDaylineReminderWatch() { clearInterval(this._daylineReminderTimer); this._daylineReminderTimer = setInterval(() => this.checkDaylineReminders(), 15000); this.checkDaylineReminders(); }
+  checkDaylineReminders() {
+    if (!this.state) return; const now = new Date(), today = this.todayKey(); let hit = null, changed = false;
+    const dayline = (this.state.dayline || []).map(x => { if (!x.remind || x.notified || x.date !== today || !x.time) return x; const at = new Date(x.date + 'T' + x.time + ':00'); const diff = now.getTime() - at.getTime(); if (diff >= 0 && diff < 120000) { changed = true; hit = x; return { ...x, notified: true }; } return x; });
+    if (!changed || !hit) return;
+    try { if ('Notification' in window && Notification.permission === 'granted') new Notification('EXP BANK · ' + hit.time, { body: hit.name, icon: './icon-192.png' }); } catch (_) {}
+    this.save({ dayline, momentumMsg: '⏰ ' + hit.time + ' · ' + hit.name }); clearTimeout(this._daylineMsgTimer); this._daylineMsgTimer = setTimeout(() => this.setState({ momentumMsg: '' }), 8000);
+  }
+  exportDaylineIcs(id) {
+    const x = (this.state.dayline || []).find(e => e.id === id); if (!x) return;
+    const clean = v => String(v || '').replace(/\\/g,'\\\\').replace(/([,;])/g,'\\$1').replace(/\n/g,'\\n');
+    const ds = x.date.replace(/-/g,''), tm = x.time.replace(':','') + '00';
+    const dt = ds + 'T' + tm, endD = new Date(x.date + 'T' + x.time + ':00'); endD.setMinutes(endD.getMinutes()+15); const p=n=>String(n).padStart(2,'0'); const de=`${endD.getFullYear()}${p(endD.getMonth()+1)}${p(endD.getDate())}T${p(endD.getHours())}${p(endD.getMinutes())}00`;
+    const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EXP BANK//DAYLINE//CN','BEGIN:VEVENT','UID:expbank-'+x.id+'-'+ds+'@local','DTSTART:'+dt,'DTEND:'+de,'SUMMARY:'+clean(x.name),'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY','DESCRIPTION:'+clean(x.name),'END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+    const blob = new Blob([ics], { type:'text/calendar;charset=utf-8' }), a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='EXP-BANK-'+x.date+'-'+x.time.replace(':','')+'.ics'; document.body.appendChild(a); a.click(); const u=a.href; a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000);
+  }
   cycleCurrency() { const list = ['\u00a5', 'RM', '$', 'NT$', '\u20ac']; const i = list.indexOf(this.state.opexCurrency || '\u00a5'); this.save({ opexCurrency: list[(i + 1) % list.length] }); }
   addOpex() {
     const amount = parseFloat(this.v('no-amount'));
@@ -2410,7 +2533,7 @@ class Component extends DCLogic {
     const note = this.v('nt-note');
     const setSel = document.getElementById('nt-set');
     const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
-    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, core, setId, priority, note, done: {} }], nextId: this.state.nextId + 1, newTaskOpen: false });
+    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, core, setId, priority, note, done: {}, completionLog: {} }], nextId: this.state.nextId + 1, newTaskOpen: false });
     this.clear(['nt-name', 'nt-exp', 'nt-times', 'nt-note']); const cb = document.getElementById('nt-core'); if (cb) cb.checked = false; if (setSel) setSel.value = '';
   }
   addReward() {
@@ -2534,6 +2657,12 @@ class Component extends DCLogic {
     const quota = this.props.coreQuota ?? 3;
     const st = this.state;
     const pend = st.pending;
+    const bingoMinExp = st.bingoMinExp || { day: 80, week: 150, month: 300 };
+    const daylineDate = st.daylineDate || this.todayKey();
+    const daylineRows = (st.dayline || []).filter(x => x.date === daylineDate).slice().sort((a,b) => (a.time || '').localeCompare(b.time || '')).map(x => ({ ...x, onEdit: () => this.openEditDayline(x.id), onDel: e => { e.stopPropagation(); this.delDayline(x.id); }, onExport: e => { e.stopPropagation(); this.exportDaylineIcs(x.id); } }));
+    const daylineEditing = st.editingDaylineId != null ? (st.dayline || []).find(x => x.id === st.editingDaylineId) : null;
+    const calTask = st.calendarTaskId != null ? st.tasks.find(x => x.id === st.calendarTaskId) : null;
+    const calModel = calTask ? this.taskCalendarModel(calTask) : { label: '', cells: [] };
     const vw = st.vw || (typeof window !== 'undefined' ? window.innerWidth : 1200);
     const uiMode = st.uiMode || 'auto';
     const evw = uiMode === 'phone' ? 390 : uiMode === 'tablet' ? 900 : uiMode === 'desktop' ? 1400 : vw;
@@ -2565,7 +2694,7 @@ class Component extends DCLogic {
       const _curK = k, _prevK = this.prevKey(t.cycle);
       const _lp = t.lastPeriod != null ? t.lastPeriod : t.lastDone;
       const _unit = { daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '';
-      const liveStreak = (_lp === _curK || _lp === _prevK) ? (t.streak || 0) : 0;
+      const liveStreak = _lp === _curK ? (doneNow ? (t.streak || 0) : Math.max(0, (t.streak || 0) - 1)) : (_lp === _prevK ? (t.streak || 0) : 0);
       const isFormed = liveStreak >= 7 && !!_unit;
       const abandonedNow = k ? !!(t.abandoned && t.abandoned[k]) : false;
       const abandonPending = pk === 'abandon';
@@ -2584,7 +2713,7 @@ class Component extends DCLogic {
         onUnabandon: e => { e.stopPropagation(); this.undo(); },
         onDel: e => { e.stopPropagation(); this.delTask(t.id); },
         onToggleCore: e => { e.stopPropagation(); this.toggleCore(t.id); },
-        onEdit: () => this.openEdit('task', t.id), onUndo: e => { e.stopPropagation(); this.undo(); },
+        onEdit: () => this.openEdit('task', t.id), onCalendar: e => { e.stopPropagation(); this.openTaskCalendar(t.id); }, onUndo: e => { e.stopPropagation(); this.undo(); },
         stop: e => e.stopPropagation(), isHeader: false, isTask: true };
     };
     const taskBase = (st.taskSortMode || 'priority') === 'manual' ? st.tasks : this.sortTasksByPriority(st.tasks);
@@ -2868,7 +2997,9 @@ class Component extends DCLogic {
       confirmGalleryEdit: () => this.confirmGalleryEdit(), closeGalleryEdit: () => this.closeGalleryEdit(), pickGalleryEditImage: () => this.pickGalleryEditImage(), removeGalleryEditImage: () => this.removeGalleryEditImage(), saveGalleryEdit: () => this.saveGalleryEdit(),
       earned, spent, todayEarned: '+' + todayEarned,
       themeLabel: verdant ? '清森' : '极简', cycleTheme: () => this.cycleTheme(), pageBg,
-      bingoTabs, bingoCells, bingoGridCols: `repeat(${bingoN},minmax(0,1fr))`, bingoCellH: bingoN === 3 ? '66px' : bingoN === 4 ? '54px' : '44px', bingoPeriodLabel: bingoNames[bingoView] + ' BOARD', bingoSizeLabel: bingoN + ' × ' + bingoN, bingoDrawCount: bingoBoard.draws || 0, bingoRewardLabel: '+' + Math.max(0, parseInt(bingoRewards[bingoView]) || 0) + ' EXP', bingoCfgOpen: !!st.bingoCfgOpen, openBingoCfg: () => this.openBingoCfg(), closeBingoCfg: () => this.closeBingoCfg(), saveBingoCfg: () => this.saveBingoCfg(), bingoRewardDay: bingoRewards.day, bingoRewardWeek: bingoRewards.week, bingoRewardMonth: bingoRewards.month,
+      bingoTabs, bingoCells, bingoGridCols: `repeat(${bingoN},minmax(0,1fr))`, bingoCellH: bingoN === 3 ? '66px' : bingoN === 4 ? '54px' : '44px', bingoPeriodLabel: bingoNames[bingoView] + ' BOARD', bingoSizeLabel: bingoN + ' × ' + bingoN, bingoDrawCount: bingoBoard.draws || 0, bingoRewardLabel: '+' + Math.max(0, parseInt(bingoRewards[bingoView]) || 0) + ' EXP', bingoCfgOpen: !!st.bingoCfgOpen, openBingoCfg: () => this.openBingoCfg(), closeBingoCfg: () => this.closeBingoCfg(), saveBingoCfg: () => this.saveBingoCfg(), bingoRewardDay: bingoRewards.day, bingoRewardWeek: bingoRewards.week, bingoRewardMonth: bingoRewards.month, bingoMinDay: bingoMinExp.day, bingoMinWeek: bingoMinExp.week, bingoMinMonth: bingoMinExp.month, bingoMinExpLabel: bingoMinExp[bingoView],
+      taskCalendarOpen: !!calTask, taskCalendarName: calTask ? calTask.name : '', taskCalendarMonth: calModel.label, taskCalendarCells: calModel.cells, taskCalendarWeekdays: ['一','二','三','四','五','六','日'].map(label => ({ label })), closeTaskCalendar: () => this.closeTaskCalendar(), taskCalendarPrev: () => this.shiftTaskCalendar(-1), taskCalendarNext: () => this.shiftTaskCalendar(1),
+      daylineRows, daylineEmpty: daylineRows.length === 0, daylineDateLabel: this.labelFromISO(daylineDate), daylineDateSub: daylineDate === this.todayKey() ? 'TODAY' : daylineDate, openNewDayline: () => this.openNewDayline(), daylinePrev: () => this.shiftDayline(-1), daylineNext: () => this.shiftDayline(1), daylineToday: () => this.setDaylineDate(this.todayKey()), daylineEditOpen: !!st.newDaylineOpen, daylineEditTitle: daylineEditing ? '编辑日程' : '新建日程', daylineEditName: daylineEditing ? daylineEditing.name : '', daylineEditDate: daylineEditing ? daylineEditing.date : daylineDate, daylineEditTime: daylineEditing ? daylineEditing.time : '09:00', daylineEditRemind: daylineEditing ? !!daylineEditing.remind : false, closeDayline: () => this.closeDayline(), saveDayline: () => this.saveDayline(),
       bingoCelebrationOpen: !!celebration, bingoCelebrationReward: celebration ? celebration.totalReward : 0, bingoWinRows: celebration ? celebration.wins.map(w => ({ label: w.label, reward: '+' + w.reward + ' EXP' })) : [], bingoConfetti, closeBingoCelebration: () => this.closeBingoCelebration(),
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad, tierScene: skin ? skin.scene : tier.scene, heroBg: skin ? skin.heroBg : tier.heroBg, heroSheen: skin ? skin.heroSheen : tier.heroSheen,
       cardTop, cardBot, rowTop, rowBot,
