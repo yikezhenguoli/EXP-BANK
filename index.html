@@ -36,6 +36,18 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ momentumShow }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;max-width:92%;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),0 12px 32px rgba(0,0,0,0.5);border-radius:99px;padding:11px 22px;text-align:center;">✦ {{ momentumMsg }}</div>
   </sc-if>
+  <sc-if value="{{ daylineAlertOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;top:14px;left:12px;right:12px;z-index:99;display:flex;justify-content:center;pointer-events:none;">
+      <div style="pointer-events:auto;width:720px;max-width:100%;position:relative;display:flex;align-items:center;gap:14px;background:linear-gradient(180deg,rgba(22,27,31,.97),rgba(10,14,16,.98)) padding-box,linear-gradient(100deg,{{ accent }},rgba(255,255,255,.18),{{ accent }}) border-box;border:1px solid transparent;border-radius:14px;padding:13px 48px 13px 15px;box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 18px 50px rgba(0,0,0,.66);backdrop-filter:blur(10px);">
+        <div style="font-size:22px;line-height:1;flex-shrink:0;">⏰</div>
+        <div style="min-width:0;flex:1;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.8px;color:{{ accent }};">REMINDER · {{ daylineAlertTime }}</div>
+          <div style="font-size:15px;font-weight:700;color:#eef1f7;line-height:1.4;margin-top:2px;overflow-wrap:anywhere;">{{ daylineAlertName }}</div>
+        </div>
+        <div onClick="{{ closeDaylineAlert }}" title="关闭提醒" style="position:absolute;right:12px;top:9px;cursor:pointer;font-size:21px;line-height:1;color:#8b93a4;padding:3px 5px;" style-hover="color:#eef1f7;">×</div>
+      </div>
+    </div>
+  </sc-if>
 
   <!-- HERO -->
   <div style="position:relative;z-index:1;height:{{ heroH }};min-height:{{ heroH }};overflow:hidden;border-bottom:1px solid #1e222b;">
@@ -132,7 +144,7 @@ input[type="date"]{color-scheme:dark;}
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px;">
         <div onClick="{{ openNewTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),inset 0 -1px 0 rgba(0,0,0,0.3);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务</div>
         <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务集</div>
-        <div onClick="{{ openGallery }}" title="查看任务与里程碑留下的心得和照片" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};color:#eef1f7;">▦ 集锦</div>
+        <div onClick="{{ openGallery }}" title="查看任务与里程碑留下的心得和照片" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">▦ 集锦</div>
         <div style="flex:1;"></div>
         <div onClick="{{ startReorder }}" title="批量编辑:排序 + 归入任务集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
@@ -160,13 +172,14 @@ input[type="date"]{color-scheme:dark;}
             <sc-if value="{{ t.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#8b93a4;line-height:1.45;margin-top:4px;white-space:normal;overflow-wrap:anywhere;">{{ t.noteText }}</div></sc-if>
             <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;letter-spacing:1px;margin-top:2px;">{{ t.cycleLabel }}</div>
           </div>
+          <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}"><div style="flex-basis:100%;height:0;"></div></sc-if>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div title="连续打卡满 7 天 · MOMENTUM 已成势,继续保持!" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.55),0 2px 8px rgba(0,0,0,0.4);border-radius:99px;padding:3px 10px;white-space:nowrap;">✦ {{ t.formedLabel }}</div>
           </sc-if>
           <sc-if value="{{ t.hasStreak }}" hint-placeholder-val="{{ true }}">
             <div title="连续打卡天数 · 昨天没完成会归零" style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:0.5px;color:{{ accent }};border:1px solid {{ tierBorder }};border-radius:99px;padding:3px 10px;white-space:nowrap;">▲ {{ t.streakLabel }}</div>
           </sc-if>
-          <div onClick="{{ t.onCalendar }}" title="查看完成存根日历" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#8b93a4;border:1px solid #2a2f3a;border-radius:8px;padding:4px 8px;white-space:nowrap;" style-hover="border-color:{{ accent }};color:{{ accent }};">▦ 存根</div>
+          <div onClick="{{ t.onCalendar }}" title="查看完成存根日历" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.60),inset 0 -1px 0 rgba(0,0,0,.30);border-radius:8px;padding:5px 9px;white-space:nowrap;" style-hover="filter:brightness(1.12);">▦ 存根</div>
           <sc-if value="{{ t.hasRing }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;align-items:center;gap:6px;">
               <div style="width:18px;height:18px;border-radius:50%;background:{{ t.ringBg }};display:grid;place-items:center;">
@@ -202,7 +215,7 @@ input[type="date"]{color-scheme:dark;}
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">一天时间轴 // DAYLINE</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">提醒 // REMINDER</div>
         <div onClick="{{ openNewDayline }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.6);border-radius:8px;padding:6px 12px;">+ 日程</div>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #242a35;background:rgba(9,11,15,.28);border-radius:10px;padding:8px 9px;">
@@ -303,7 +316,7 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">▦ 集锦</div><div onClick="{{ startReorderMilestones }}" title="排序 / 归类里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:6px 10px;" style-hover="filter:brightness(1.12);">▦ 集锦</div><div onClick="{{ startReorderMilestones }}" title="排序 / 归类里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div>
         <div onClick="{{ openNewMilestoneSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑集</div>
@@ -1191,7 +1204,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。新增 Bingo 准入门槛、任务完成存根日历与一天时间轴；月任务只有完成当月全部次数后才计入连续月。你的原有数据继续保留。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。提醒到点后会保持横向提醒条，直到你手动关闭；「一天时间轴」更名为「提醒」，存根 / 集锦升级为金属操作按钮，MOMENTUM 任务卡改为更清楚的两行布局。你的原有数据继续保留。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1220,10 +1233,10 @@ input[type="date"]{color-scheme:dark;}
   <sc-if value="{{ daylineEditOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeDayline }}" style="position:fixed;inset:0;background:rgba(6,7,10,.76);backdrop-filter:blur(6px);z-index:79;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:390px;max-width:100%;background:linear-gradient(180deg,#14171e,#0f1117);border:1px solid #2a2f3a;border-radius:17px;padding:19px;display:flex;flex-direction:column;gap:12px;box-shadow:0 28px 72px rgba(0,0,0,.76);">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:{{ accent }};">DAYLINE // {{ daylineEditTitle }}</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:{{ accent }};">REMINDER // {{ daylineEditTitle }}</div>
         <input id="dl-name" defaultValue="{{ daylineEditName }}" placeholder="例如：抢票 / 出门 / 给朋友回信" style="background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:10px 11px;color:#e6e9f0;font-size:13px;font-family:inherit;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><input id="dl-date" type="date" defaultValue="{{ daylineEditDate }}" style="background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:10px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"><input id="dl-time" type="time" step="60" defaultValue="{{ daylineEditTime }}" style="background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:10px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></div>
-        <label style="display:flex;align-items:flex-start;gap:9px;color:#aeb6c6;font-size:11.5px;line-height:1.55;"><input id="dl-remind" type="checkbox" defaultChecked="{{ daylineEditRemind }}" style="margin-top:2px;">提醒模式：EXP BANK 打开时尝试提醒；保存后可在时间轴点「系统提醒」导入系统日历。</label>
+        <label style="display:flex;align-items:flex-start;gap:9px;color:#aeb6c6;font-size:11.5px;line-height:1.55;"><input id="dl-remind" type="checkbox" defaultChecked="{{ daylineEditRemind }}" style="margin-top:2px;">提醒模式：EXP BANK 打开时尝试提醒；保存后可在提醒列表点「系统提醒」导入系统日历。</label>
         <div style="font-size:10px;color:#697084;line-height:1.6;">注意：浏览器/PWA 被系统彻底挂起后，无法保证像原生闹钟一样准点唤醒；系统日历提醒由手机系统负责，更可靠。</div>
         <div style="display:flex;gap:8px;justify-content:flex-end;"><div onClick="{{ closeDayline }}" style="cursor:pointer;font-size:12px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;">取消</div><div onClick="{{ saveDayline }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">保存日程</div></div>
       </div>
@@ -1532,7 +1545,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.6.0';
+const APP_VERSION = 'v1.6.1';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -2449,13 +2462,14 @@ class Component extends DCLogic {
   }
   delDayline(id) { this.save({ dayline: (this.state.dayline || []).filter(x => x.id !== id) }); }
   requestDaylineNotificationPermission() { try { if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {}); } catch (_) {} }
+  closeDaylineAlert() { this.save({ daylineAlert: null }); }
   startDaylineReminderWatch() { clearInterval(this._daylineReminderTimer); this._daylineReminderTimer = setInterval(() => this.checkDaylineReminders(), 15000); this.checkDaylineReminders(); }
   checkDaylineReminders() {
     if (!this.state) return; const now = new Date(), today = this.todayKey(); let hit = null, changed = false;
     const dayline = (this.state.dayline || []).map(x => { if (!x.remind || x.notified || x.date !== today || !x.time) return x; const at = new Date(x.date + 'T' + x.time + ':00'); const diff = now.getTime() - at.getTime(); if (diff >= 0 && diff < 120000) { changed = true; hit = x; return { ...x, notified: true }; } return x; });
     if (!changed || !hit) return;
     try { if ('Notification' in window && Notification.permission === 'granted') new Notification('EXP BANK · ' + hit.time, { body: hit.name, icon: './icon-192.png' }); } catch (_) {}
-    this.save({ dayline, momentumMsg: '⏰ ' + hit.time + ' · ' + hit.name }); clearTimeout(this._daylineMsgTimer); this._daylineMsgTimer = setTimeout(() => this.setState({ momentumMsg: '' }), 8000);
+    this.save({ dayline, daylineAlert: { id: hit.id, time: hit.time, name: hit.name } });
   }
   exportDaylineIcs(id) {
     const x = (this.state.dayline || []).find(e => e.id === id); if (!x) return;
@@ -2964,6 +2978,7 @@ class Component extends DCLogic {
       quadrantP1, quadrantP2, quadrantP3, quadrantP4, quadrantP1Count: quadrantP1.length, quadrantP2Count: quadrantP2.length, quadrantP3Count: quadrantP3.length, quadrantP4Count: quadrantP4.length, quadrantP1Empty: quadrantP1.length === 0, quadrantP2Empty: quadrantP2.length === 0, quadrantP3Empty: quadrantP3.length === 0, quadrantP4Empty: quadrantP4.length === 0,
       addSet: () => this.addSet(), addMilestoneSet: () => this.addMilestoneSet(),
       momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
+      daylineAlertOpen: !!st.daylineAlert, daylineAlertTime: st.daylineAlert ? st.daylineAlert.time : '', daylineAlertName: st.daylineAlert ? st.daylineAlert.name : '', closeDaylineAlert: () => this.closeDaylineAlert(),
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
       reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
       reorderIsOpex: (st.reorderKind || 'tasks') === 'opex', opexSortLabel: (st.opexSortMode || 'date') === 'manual' ? '手动排序' : '日期优先', restoreOpexSort: () => this.restoreOpexSort(),
