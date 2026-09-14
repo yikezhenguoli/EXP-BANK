@@ -257,7 +257,7 @@ input[type="date"]{color-scheme:dark;}
       </div>
       <div style="display:grid;grid-template-columns:{{ bingoGridCols }};gap:6px;">
         <sc-for list="{{ bingoCells }}" as="bc" hint-placeholder-count="9">
-          <div title="{{ bc.title }}" style="min-height:{{ bingoCellH }};border:1px solid {{ bc.border }};background:{{ bc.bg }};border-radius:9px;padding:7px 6px;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:{{ bc.shadow }};overflow:hidden;">
+          <div onClick="{{ bc.onClick }}" title="{{ bc.title }}" style="cursor:{{ bc.cursor }};min-height:{{ bingoCellH }};border:1px solid {{ bc.border }};background:{{ bc.bg }};border-radius:9px;padding:7px 6px;display:flex;align-items:center;justify-content:center;text-align:center;box-shadow:{{ bc.shadow }};overflow:hidden;">
             <div style="font-size:{{ bc.fontSize }};font-weight:700;line-height:1.35;color:{{ bc.color }};overflow-wrap:anywhere;">{{ bc.label }}</div>
           </div>
         </sc-for>
@@ -1545,7 +1545,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.6.1';
+const APP_VERSION = 'v1.6.2';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -2430,6 +2430,23 @@ class Component extends DCLogic {
     this.save({ bingoRewards: { day: read('bg-day', old.day), week: read('bg-week', old.week), month: read('bg-month', old.month) }, bingoMinExp: { day: d, week: w, month: m }, bingoCfgOpen: false });
   }
   setBingoView(period) { if (['day','week','month'].includes(period)) this.save({ bingoView: period }); }
+  editBingoCell(period, index) {
+    if (!['day','week','month'].includes(period)) return;
+    const boards = this.normalizeBingoBoards(this.state.bingoBoards || {});
+    const board = boards[period];
+    const cell = board && board.cells ? board.cells[index] : null;
+    if (!cell) return;
+    const periodName = { day: '日', week: '周', month: '月' }[period] || '';
+    const msg = 'BINGO ' + periodName + '棋盘 · ' + cell.name + '\n\n删除这条已落盘事件？\n原任务完成记录和已经获得的 EXP 不受影响。';
+    if (!window.confirm(msg)) return;
+    const cells = [...board.cells];
+    cells[index] = null;
+    const next = { ...board, cells, draws: Math.max(0, Number(board.draws || 0) - 1) };
+    const line = this.bingoWinLine(cells, this.bingoSize(period));
+    next.winLine = line || [];
+    boards[period] = next;
+    this.save({ bingoBoards: boards });
+  }
   closeBingoCelebration() { clearTimeout(this._bingoCelebrationTimer); this.setState({ bingoCelebration: null }); }
   openTaskCalendar(id) { this.setState({ calendarTaskId: id, calendarMonthOffset: 0 }); }
   closeTaskCalendar() { this.setState({ calendarTaskId: null, calendarMonthOffset: 0 }); }
@@ -2908,7 +2925,7 @@ class Component extends DCLogic {
     const bingoNames = { day: 'DAILY', week: 'WEEKLY', month: 'MONTHLY' };
     const bingoTabs = ['day','week','month'].map(p => { const active = p === bingoView; const b = bingoBoardsNow[p]; return { key: p, label: bingoNames[p], sub: (b.rewarded ? '✓ BINGO' : (b.draws || 0) + ' DRAW'), color: active ? '#14151c' : '#aeb6c6', bg: active ? btnGrad : 'rgba(13,15,20,.45)', border: active ? 'transparent' : '#2a2f3a', shadow: active ? 'inset 0 1px 0 rgba(255,255,255,.58)' : 'none', onClick: () => this.setBingoView(p) }; });
     const winSet = new Set(bingoBoard.winLine || []);
-    const bingoCells = bingoBoard.cells.map((cell, i) => ({ key: bingoView + '-' + i, label: cell ? cell.name : '?', title: cell ? cell.name : '等待下一次随机落位', filled: !!cell, border: winSet.has(i) ? accent : (cell ? 'rgba(255,255,255,.16)' : '#222833'), bg: winSet.has(i) ? 'linear-gradient(160deg,rgba(255,255,255,.16),rgba(123,214,162,.12))' : (cell ? 'rgba(18,22,26,.82)' : 'rgba(10,12,16,.38)'), shadow: winSet.has(i) ? '0 0 18px rgba(123,214,162,.18),inset 0 1px 0 rgba(255,255,255,.12)' : 'inset 0 1px 0 rgba(255,255,255,.03)', color: cell ? '#e8ecf2' : '#3f4654', fontSize: bingoN === 3 ? '11.5px' : bingoN === 4 ? '10px' : '9px' }));
+    const bingoCells = bingoBoard.cells.map((cell, i) => ({ key: bingoView + '-' + i, label: cell ? cell.name : '?', title: cell ? cell.name + ' · 点击管理此 Bingo 记录' : '等待下一次随机落位', onClick: cell ? () => this.editBingoCell(bingoView, i) : () => {}, cursor: cell ? 'pointer' : 'default', filled: !!cell, border: winSet.has(i) ? accent : (cell ? 'rgba(255,255,255,.16)' : '#222833'), bg: winSet.has(i) ? 'linear-gradient(160deg,rgba(255,255,255,.16),rgba(123,214,162,.12))' : (cell ? 'rgba(18,22,26,.82)' : 'rgba(10,12,16,.38)'), shadow: winSet.has(i) ? '0 0 18px rgba(123,214,162,.18),inset 0 1px 0 rgba(255,255,255,.12)' : 'inset 0 1px 0 rgba(255,255,255,.03)', color: cell ? '#e8ecf2' : '#3f4654', fontSize: bingoN === 3 ? '11.5px' : bingoN === 4 ? '10px' : '9px' }));
     const celebration = st.bingoCelebration || null;
     const confColors = verdant ? ['#dff6e8','#7bd6a2','#c9e8d4','#f1e0ac'] : ['#f8e8bb','#e0c16b','#f4f0e7','#cdb6f2'];
     const bingoConfetti = celebration ? Array.from({ length: 46 }, (_, i) => ({ key: i, left: (4 + (i * 37) % 92) + '%', color: confColors[i % confColors.length], delay: ((i % 11) * .055).toFixed(2) + 's', duration: (1.65 + (i % 6) * .16).toFixed(2) + 's', drift: (((i * 29) % 150) - 75) + 'px', rot: ((i * 53) % 420) + 'deg' })) : [];
