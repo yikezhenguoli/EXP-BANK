@@ -1,161 +1,30 @@
 name: Patch EXP BANK v1.6.3 Xiaomi file picker compatibility
 
-on:
+"on":
   push:
     branches:
       - feature/v1-6-3-xiaomi-file-picker
 
-permissions:
-  contents: write
-
 jobs:
   patch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
         with:
           ref: feature/v1-6-3-xiaomi-file-picker
           fetch-depth: 0
-      - name: Patch attached file picker compatibility
+      - name: Apply and validate compatibility patch
+        run: python3 .github/patch-v1-6-3.py
+      - name: Commit clean feature
+        shell: bash
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          path = Path('index.html')
-          s = path.read_text(encoding='utf-8')
-
-          def replace_one(old, new, label):
-              global s
-              n = s.count(old)
-              if n != 1:
-                  raise SystemExit(f'{label}: expected 1 match, found {n}')
-              s = s.replace(old, new, 1)
-
-          replace_one("const APP_VERSION = 'v1.6.2';", "const APP_VERSION = 'v1.6.3';", 'app version')
-
-          old_reward = """  pickRewardImage(id) {
-    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
-    inp.onchange = () => { const f = inp.files && inp.files[0]; if (f) this.readRewardImage(id, f); };
-    inp.click();
-  }
-"""
-          new_reward = """  openFilePicker(accept, onFile) {
-    if (this._filePickerEl) { try { this._filePickerEl.remove(); } catch (_) {} this._filePickerEl = null; }
-    const inp = document.createElement('input');
-    inp.type = 'file'; inp.accept = accept || '*/*'; inp.multiple = false;
-    inp.setAttribute('aria-hidden', 'true');
-    inp.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:1px;opacity:.01;pointer-events:none;z-index:-1;';
-    const cleanup = () => { if (this._filePickerEl === inp) this._filePickerEl = null; try { inp.remove(); } catch (_) {} };
-    inp.onchange = () => { const f = inp.files && inp.files[0]; if (f && onFile) onFile(f); setTimeout(cleanup, 0); };
-    inp.oncancel = cleanup;
-    document.body.appendChild(inp);
-    this._filePickerEl = inp;
-    try { inp.click(); } catch (e) { cleanup(); alert('当前浏览器没有成功打开文件选择器，请尝试系统 Chrome / Edge，或把 EXP BANK 添加到桌面后再试。'); }
-  }
-  pickRewardImage(id) { this.openFilePicker('image/*', f => this.readRewardImage(id, f)); }
-"""
-          replace_one(old_reward, new_reward, 'reward picker')
-
-          old_reflection = """  pickReflectionImage() {
-    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
-    inp.onchange = async () => {
-      const f = inp.files && inp.files[0]; if (!f) return;
-      try {
-        const blob = await this.compressGalleryImage(f);
-        if (this.state.reflectionPreview) try { URL.revokeObjectURL(this.state.reflectionPreview); } catch (_) {}
-        this.setState({ reflectionBlob: blob, reflectionPreview: URL.createObjectURL(blob) });
-      } catch (e) { alert('图片处理失败：' + e.message); }
-    };
-    inp.click();
-  }
-"""
-          new_reflection = """  pickReflectionImage() {
-    this.openFilePicker('image/*', async f => {
-      try {
-        const blob = await this.compressGalleryImage(f);
-        if (this.state.reflectionPreview) try { URL.revokeObjectURL(this.state.reflectionPreview); } catch (_) {}
-        this.setState({ reflectionBlob: blob, reflectionPreview: URL.createObjectURL(blob) });
-      } catch (e) { alert('图片处理失败：' + e.message); }
-    });
-  }
-"""
-          replace_one(old_reflection, new_reflection, 'reflection picker')
-
-          old_gallery_edit = """  pickGalleryEditImage() {
-    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
-    inp.onchange = async () => {
-      const f = inp.files && inp.files[0]; if (!f) return;
-      try {
-        const blob = await this.compressGalleryImage(f);
-        if (this.state.galleryEditPreview) try { URL.revokeObjectURL(this.state.galleryEditPreview); } catch (_) {}
-        this.setState({ galleryEditBlob: blob, galleryEditPreview: URL.createObjectURL(blob), galleryEditRemoveImage: false });
-      } catch (e) { alert('图片处理失败：' + e.message); }
-    };
-    inp.click();
-  }
-"""
-          new_gallery_edit = """  pickGalleryEditImage() {
-    this.openFilePicker('image/*', async f => {
-      try {
-        const blob = await this.compressGalleryImage(f);
-        if (this.state.galleryEditPreview) try { URL.revokeObjectURL(this.state.galleryEditPreview); } catch (_) {}
-        this.setState({ galleryEditBlob: blob, galleryEditPreview: URL.createObjectURL(blob), galleryEditRemoveImage: false });
-      } catch (e) { alert('图片处理失败：' + e.message); }
-    });
-  }
-"""
-          replace_one(old_gallery_edit, new_gallery_edit, 'gallery edit picker')
-
-          old_backup = """  pickDocx() {
-    const inp = document.createElement('input'); inp.type = 'file'; inp.accept = '.txt,.docx,.doc';
-    inp.onchange = () => { const f = inp.files && inp.files[0]; if (f) this.importDocxFile(f); };
-    inp.click();
-  }
-"""
-          new_backup = """  pickDocx() { this.openFilePicker('.txt,.docx,.doc', f => this.importDocxFile(f)); }
-"""
-          replace_one(old_backup, new_backup, 'backup picker')
-
-          path.write_text(s, encoding='utf-8')
-
-          sw = Path('sw.js')
-          w = sw.read_text(encoding='utf-8')
-          if w.count("const CACHE = 'exp-bank-v1.6.2';") != 1:
-              raise SystemExit('service worker cache marker mismatch')
-          w = w.replace("const CACHE = 'exp-bank-v1.6.2';", "const CACHE = 'exp-bank-v1.6.3';", 1)
-          sw.write_text(w, encoding='utf-8')
-          PY
-      - name: Validate patch
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          s = Path('index.html').read_text(encoding='utf-8')
-          required = [
-            "const APP_VERSION = 'v1.6.3';",
-            'openFilePicker(accept, onFile)',
-            'document.body.appendChild(inp);',
-            "pickRewardImage(id) { this.openFilePicker('image/*'",
-            "pickReflectionImage() {\n    this.openFilePicker('image/*'",
-            "pickGalleryEditImage() {\n    this.openFilePicker('image/*'",
-            "pickDocx() { this.openFilePicker('.txt,.docx,.doc'",
-          ]
-          for marker in required:
-              if marker not in s:
-                  raise SystemExit('missing marker: ' + marker)
-          if "const CACHE = 'exp-bank-v1.6.3';" not in Path('sw.js').read_text(encoding='utf-8'):
-              raise SystemExit('cache not bumped')
-          start = s.index('<script type="text/x-dc"')
-          start = s.index('>', start) + 1
-          end = s.index('</script>', start)
-          Path('/tmp/exp-bank-logic.js').write_text(s[start:end], encoding='utf-8')
-          PY
-          node --check /tmp/exp-bank-logic.js
-      - name: Commit clean patch
-        run: |
-          rm .github/workflows/patch-v1-6-3-xiaomi-file-picker.yml
+          rm -f .github/patch-v1-6-3.py
+          rm -f .github/workflows/patch-v1-6-3-xiaomi-file-picker.yml
           git config user.name "EXP BANK Builder"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html sw.js .github/workflows/patch-v1-6-3-xiaomi-file-picker.yml
+          git add -A
           git commit -m "fix: harden file picker compatibility on Xiaomi browser"
           git push origin HEAD:feature/v1-6-3-xiaomi-file-picker
