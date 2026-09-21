@@ -1,0 +1,72 @@
+name: EXP BANK v1.7 patch and validation
+on:
+  push:
+    branches:
+      - feature/v1-7-recurrence-reminder-safety
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v1-7-recurrence-reminder-safety
+          fetch-depth: 0
+      - name: Apply patch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('.github/patch_v17.py')
+          text=p.read_text(encoding='utf-8')
+          old="s = s.replace('this.prevKey(t.cycle)', 'this.previousPeriodKey(t)', 2)"
+          new="s = s.replace('this.prevKey(t.cycle)', 'this.previousPeriodKey(t)')\ns = s.replace('if (interval === 1) return this.previousPeriodKey(t);', 'if (interval === 1) return this.prevKey(t.cycle);')"
+          if text.count(old) != 1: raise SystemExit('previous-key safeguard mismatch')
+          p.write_text(text.replace(old,new),encoding='utf-8')
+          PY
+          python3 .github/patch_v17.py
+      - name: Validate embedded logic and core regression cases
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          a=s.index('<script type="text/x-dc" data-dc-script')
+          a=s.index('>', a)+1
+          b=s.index('</script>',a)
+          Path('/tmp/exp-v17.js').write_text(s[a:b],encoding='utf-8')
+          assert s.count('id="nt-interval"') == 1
+          assert s.count('id="ed-interval"') == 1
+          assert s.count('confirmRemoval(') >= 6
+          assert 'daylineCountdowns' in s and 'ungrouped-divider' in s
+          assert "const CACHE = 'exp-bank-v1.7.0';" in Path('sw.js').read_text(encoding='utf-8')
+          PY
+          node --check /tmp/exp-v17.js
+          node - <<'JS'
+          const fs=require('fs'),vm=require('vm'),assert=require('assert');
+          const ctx={DCLogic:class{},Date,Math,console,setTimeout:()=>{},clearTimeout:()=>{},window:{confirm:()=>false}};
+          vm.runInNewContext(fs.readFileSync('/tmp/exp-v17.js','utf8')+'\n;globalThis.TestComponent=Component;',ctx);
+          const app=Object.create(ctx.TestComponent.prototype);
+          app.todayKey=()=> '2026-09-21';
+          const mk=(cycle,interval,anchorDate='2026-09-21')=>({cycle,interval,anchorDate});
+          const date=x=>new Date(x+'T12:00:00');
+          assert.equal(app.periodKey(mk('daily',2),date('2026-09-21')),app.periodKey(mk('daily',2),date('2026-09-22')));
+          assert.notEqual(app.periodKey(mk('daily',2),date('2026-09-21')),app.periodKey(mk('daily',2),date('2026-09-23')));
+          assert.equal(app.periodKey(mk('weekly',2),date('2026-09-21')),app.periodKey(mk('weekly',2),date('2026-09-28')));
+          assert.notEqual(app.periodKey(mk('weekly',2),date('2026-09-28')),app.periodKey(mk('weekly',2),date('2026-10-05')));
+          assert.equal(app.periodKey(mk('monthly',2),date('2026-09-30')),app.periodKey(mk('monthly',2),date('2026-10-01')));
+          assert.notEqual(app.periodKey(mk('monthly',2),date('2026-10-31')),app.periodKey(mk('monthly',2),date('2026-11-01')));
+          assert.equal(app.periodKey(mk('weekly',1),date('2026-09-21')),app.keyFor('weekly',date('2026-09-21')));
+          assert.equal(app.periodKey(mk('daily',1),date('2026-09-21')),app.keyFor('daily',date('2026-09-21')));
+          let calls=0; ctx.window.confirm=()=>{calls++;return false}; app.state={tasks:[{id:1,name:'测试任务'}]};app.save=()=>{throw Error('cancel must not delete')}; app.delTask(1); assert.equal(calls,1);
+          console.log('PASS: interval boundaries, legacy weekly/day keys and delete cancellation');
+          JS
+      - name: Commit only production changes and remove one-shot tooling
+        run: |
+          rm .github/workflows/patch-v17.yml .github/patch_v17.py
+          git config user.name "EXP BANK Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html sw.js .github/workflows/patch-v17.yml .github/patch_v17.py
+          git diff --cached --check
+          git commit -m "EXP BANK v1.7.0: flexible intervals, reminder countdowns and deletion safeguards"
+          git push origin HEAD:feature/v1-7-recurrence-reminder-safety
