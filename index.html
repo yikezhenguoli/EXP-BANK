@@ -2295,10 +2295,19 @@ class Component extends DCLogic {
       this.save({ editing: null, tasks: this.state.tasks.map(x => {
         if (x.id !== ed.id) return x;
         const ruleChanged = x.cycle !== newCycle || this.taskInterval(x) !== newInterval;
-        return { ...x, name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
+        const updated = { ...x, name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
           setId, cycle: newCycle, interval: newInterval, anchorDate: ruleChanged ? anchor : (x.anchorDate || anchor),
           ...(ruleChanged ? { streak: 0, lastPeriod: '' } : {}),
           priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', note: this.v('ed-note') };
+        if (ruleChanged) {
+          const currentKey = this.periodKey(updated);
+          if (currentKey) {
+            const done = { ...(x.done || {}) }, abandoned = { ...(x.abandoned || {}) };
+            delete done[currentKey]; delete abandoned[currentKey];
+            updated.done = done; updated.abandoned = abandoned;
+          }
+        }
+        return updated;
       }) });
     } else if (ed.type === 'reward') {
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
