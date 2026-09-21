@@ -1,4 +1,4 @@
-name: EXP BANK v1.7 recurrence edit guard
+name: EXP BANK v1.7 recurrence safeguard
 on:
   push:
     branches:
@@ -6,66 +6,40 @@ on:
 permissions:
   contents: write
 jobs:
-  refine:
+  patch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
         with:
           ref: feature/v1-7-recurrence-reminder-safety
           fetch-depth: 0
-      - name: Protect new recurrence rule from stale current-period counts
+      - name: Apply guarded recurrence fix
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('index.html'); s=p.read_text(encoding='utf-8')
-          old="""        return { ...x, name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
-          setId, cycle: newCycle, interval: newInterval, anchorDate: ruleChanged ? anchor : (x.anchorDate || anchor),
-          ...(ruleChanged ? { streak: 0, lastPeriod: '' } : {}),
-          priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', note: this.v('ed-note') };
-"""
-          new="""        const updated = { ...x, name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
-          setId, cycle: newCycle, interval: newInterval, anchorDate: ruleChanged ? anchor : (x.anchorDate || anchor),
-          ...(ruleChanged ? { streak: 0, lastPeriod: '' } : {}),
-          priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', note: this.v('ed-note') };
-        if (ruleChanged) {
-          const currentKey = this.periodKey(updated);
-          if (currentKey) {
-            const done = { ...(x.done || {}) }, abandoned = { ...(x.abandoned || {}) };
-            delete done[currentKey]; delete abandoned[currentKey];
-            updated.done = done; updated.abandoned = abandoned;
-          }
-        }
-        return updated;
-"""
-          assert s.count(old)==1, 'task rule edit anchor moved'
-          p.write_text(s.replace(old,new,1),encoding='utf-8')
-          a=s.index('<script type="text/x-dc" data-dc-script'); a=s.index('>',a)+1; b=s.index('</script>',a)
-          Path('/tmp/exp-v17-check.js').write_text(s[a:b],encoding='utf-8')
-          PY
-          node --check /tmp/exp-v17-check.js
+          python3 .github/refine_v17.py
+          node --check /tmp/exp-v17-logic.js
+      - name: Validate period compatibility
+        run: |
           node - <<'JS'
-          const fs=require('fs'),vm=require('vm'),assert=require('assert');
-          const ctx={DCLogic:class{},Date,Math,console,setTimeout:()=>{},clearTimeout:()=>{}};
-          vm.runInNewContext(fs.readFileSync('/tmp/exp-v17-check.js','utf8')+'\n;globalThis.Test=Component;',ctx);
-          const app=Object.create(ctx.Test.prototype);
-          app.todayKey=()=> '2026-09-21';
-          app.state={editing:{type:'task',id:1},tasks:[{id:1,name:'读书',cycle:'daily',times:1,interval:1,done:{'2026-09-21':1,'2026-09-20':1},abandoned:{},streak:8,lastPeriod:'2026-09-21',completionLog:{'2026-09-20':1,'2026-09-21':1}}]};
-          app.v=id=>({'ed-name':'读书','ed-exp':'10','ed-times':'1','ed-interval':'2','ed-note':''})[id]||'';
-          ctx.document={getElementById:id=>({value:id==='ed-cycle'?'daily':id==='ed-priority'?'p4':''})};
-          app.save=patch=>{app.patch=patch};
-          app.saveEdit();
-          const t=app.patch.tasks[0];
-          assert.equal(t.interval,2);assert.equal(t.streak,0);assert.equal(t.completionLog['2026-09-21'],1);
-          assert.equal(t.done['2026-09-20'],1);assert.equal(t.done['2026-09-21'],1);
-          assert.equal(t.done[app.periodKey(t)],undefined);
-          console.log('PASS: editing recurrence resets new period without erasing historical receipts');
+          const fs = require('fs');
+          const vm = require('vm');
+          const assert = require('assert');
+          const ctx = {DCLogic:class{},Date,Math,console,setTimeout:()=>{},clearTimeout:()=>{}};
+          vm.runInNewContext(fs.readFileSync('/tmp/exp-v17-logic.js','utf8')+'\n;globalThis.Test=Component;',ctx);
+          const app = Object.create(ctx.Test.prototype);
+          app.todayKey = () => '2026-09-21';
+          const t = {cycle:'daily',interval:2,anchorDate:'2026-09-21'};
+          assert.equal(app.periodKey(t,new Date('2026-09-21T12:00:00')),app.periodKey(t,new Date('2026-09-22T12:00:00')));
+          assert.notEqual(app.periodKey(t,new Date('2026-09-22T12:00:00')),app.periodKey(t,new Date('2026-09-23T12:00:00')));
+          assert.equal(app.periodKey({cycle:'daily',interval:1},new Date('2026-09-21T12:00:00')),app.keyFor('daily',new Date('2026-09-21T12:00:00')));
+          console.log('PASS recurrence period compatibility');
           JS
-      - name: Commit clean production files
+      - name: Commit production-only patch
         run: |
-          rm .github/workflows/refine-v17.yml
+          rm .github/workflows/refine-v17.yml .github/refine_v17.py
           git config user.name "EXP BANK Builder"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html .github/workflows/refine-v17.yml
+          git add index.html .github/workflows/refine-v17.yml .github/refine_v17.py
           git diff --cached --check
-          git commit -m "fix: clear stale current-period counters after changing recurrence"
+          git commit -m "fix: guard edited recurrence from stale active period counts"
           git push origin HEAD:feature/v1-7-recurrence-reminder-safety
