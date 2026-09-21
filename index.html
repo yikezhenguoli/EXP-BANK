@@ -150,6 +150,13 @@ input[type="date"]{color-scheme:dark;}
       </div>
       </sc-if>
       <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="4">
+        <sc-if value="{{ t.isDivider }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:10px;margin:13px 2px 5px;min-height:22px;">
+            <div style="height:1px;flex:1;background:linear-gradient(90deg,transparent,{{ accent }});opacity:.56;"></div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1.1px;color:{{ accent }};white-space:nowrap;">未分组任务 / INBOX · {{ t.countLabel }}</div>
+            <div style="height:1px;flex:1;background:linear-gradient(90deg,{{ accent }},transparent);opacity:.56;"></div>
+          </div>
+        </sc-if>
         <sc-if value="{{ t.isHeader }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ t.onToggle }}" title="点击折叠/展开任务集" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
             <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};width:14px;text-align:center;line-height:1;">{{ t.chevron }}</div>
@@ -224,6 +231,20 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ daylineToday }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{{ accent }};border:1px solid #2a2f3a;border-radius:7px;padding:4px 7px;">今天</div>
         <div onClick="{{ daylineNext }}" style="cursor:pointer;color:#8b93a4;padding:3px 7px;">›</div>
       </div>
+      <sc-if value="{{ daylineHasCountdowns }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:9px;border-top:1px solid #29303b;padding-top:12px;margin-top:2px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:1px;color:{{ accent }};">⧗ 当日到期 · 未来倒计时</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ daylineCountdownCount }} 项</div>
+        </div>
+        <sc-for list="{{ daylineCountdowns }}" as="cd" hint-placeholder-count="0">
+          <div style="display:flex;align-items:center;gap:10px;border:1px solid #35402f;background:linear-gradient(180deg,rgba(179,154,93,.10),rgba(12,16,18,.42));border-radius:10px;padding:10px 11px;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};width:52px;flex-shrink:0;">{{ cd.time }}</div>
+            <div style="flex:1;min-width:0;font-size:12.5px;font-weight:700;color:#eef1f7;overflow-wrap:anywhere;">{{ cd.name }}</div>
+            <div style="font-size:9px;color:#c9b783;border:1px solid #51462f;border-radius:99px;padding:3px 6px;white-space:nowrap;">COUNTDOWN</div>
+          </div>
+        </sc-for>
+        <div style="font-size:10px;color:#697084;line-height:1.55;">自动同步未来倒计时的日期和时间；修改或删除倒计时，这里随之更新。此区域仅展示，不会自动创建闹钟。</div>
+      </sc-if>
       <sc-if value="{{ daylineEmpty }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;color:#535a6a;padding:18px 0;font-size:11px;">这一天还没有安排 · 给未来的自己留一个时间点</div></sc-if>
       <sc-for list="{{ daylineRows }}" as="dl" hint-placeholder-count="0">
         <div onClick="{{ dl.onEdit }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;border:1px solid #222833;background:linear-gradient(180deg,{{ rowTop }},{{ rowBot }});border-radius:10px;padding:10px 11px;">
@@ -761,7 +782,7 @@ input[type="date"]{color-scheme:dark;}
   <!-- EDIT MODAL -->
   <sc-if value="{{ editOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeEdit }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;">
-      <div onClick="{{ stopClick }}" style="width:340px;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;max-height:90vh;overflow-y:auto;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <sc-if value="{{ editAsk }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:15px;font-weight:700;">要编辑「{{ editItemName }}」吗?</div>
           <div style="font-size:12px;color:#8b93a4;line-height:1.6;">{{ editAskHint }}</div>
@@ -791,6 +812,11 @@ input[type="date"]{color-scheme:dark;}
                 </select>
               </label>
             </div>
+            <label style="display:block;font-size:11px;color:#697084;">循环跨度 · 每 N 天／周／月
+              <input id="ed-interval" type="number" min="1" max="999" step="1" defaultValue="{{ editInterval }}" inputmode="numeric" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              <span style="display:block;margin-top:4px;font-size:10px;color:#697084;line-height:1.5;">仅日／周／月循环有效；更改循环类型或跨度会从今天所在的新周期重新计算连续期数，历史存根保留。</span>
+            </label>
+
             <label style="display:block;font-size:11px;color:#697084;">归入任务集
               <select id="ed-set" defaultValue="{{ editSetId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
                 <option value="">无任务集</option>
@@ -1204,7 +1230,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。提醒到点后会保持横向提醒条，直到你手动关闭；「一天时间轴」更名为「提醒」，存根 / 集锦升级为金属操作按钮，MOMENTUM 任务卡改为更清楚的两行布局。你的原有数据继续保留。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。Lists 把未分组任务独立成区；任务支持每 N 天／周／月完成 M 次；提醒自动显示所选日期到期的未来倒计时；删除任务、任务集、里程碑、奖励和倒计时前均需确认。原有 EXP、任务历史与集锦继续保留。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1402,7 +1428,7 @@ input[type="date"]{color-scheme:dark;}
   <!-- NEW TASK MODAL -->
   <sc-if value="{{ newTaskOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
-      <div onClick="{{ stopClick }}" style="width:360px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+      <div onClick="{{ stopClick }}" style="width:360px;max-width:100%;max-height:90vh;overflow-y:auto;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建任务 // NEW TASK</div>
         <label style="display:block;font-size:11px;color:#697084;">任务名称
           <input id="nt-name" placeholder="例如:背 20 个单词" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
@@ -1428,6 +1454,11 @@ input[type="date"]{color-scheme:dark;}
             </select>
           </label>
         </div>
+        <label style="display:block;font-size:11px;color:#697084;">循环跨度 · 每 N 天／周／月
+          <input id="nt-interval" type="number" min="1" max="999" step="1" value="1" inputmode="numeric" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          <span style="display:block;margin-top:4px;font-size:10px;line-height:1.55;color:#697084;">例如：选“每周”、跨度 2、次数 3 = 每 2 周完成 3 次。单次／不限次忽略跨度。</span>
+        </label>
+
         <label style="display:block;font-size:11px;color:#697084;">优先级
           <select id="nt-priority" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 8px;color:#aeb6c6;font-size:12px;">
             <option value="p1">紧急且重要</option><option value="p2">紧急不重要</option><option value="p3">不紧急重要</option><option value="p4" selected>不重要不紧急</option>
@@ -1545,14 +1576,14 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.6.3';
+const APP_VERSION = 'v1.7.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
     let s = null;
     try { s = JSON.parse(localStorage.getItem('exp-bank-v1')); } catch (e) {}
     if (s && s.tasks) {
-      s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
+      s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, interval: Math.max(1, Math.min(999, parseInt(t.interval, 10) || 1)), anchorDate: t.anchorDate || this.todayKey(), streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
         priority: t.priority || 'p4', note: t.note || '',
         completionLog: t.completionLog || (t.cycle === 'daily' ? Object.fromEntries(Object.entries(t.done || {}).filter(([kk, vv]) => /^\d{4}-\d{2}-\d{2}$/.test(kk) && Number(vv) > 0).map(([kk, vv]) => [kk, Number(vv) || 1])) : {}),
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
@@ -1756,10 +1787,13 @@ class Component extends DCLogic {
     if (!isNaN(n)) this.save({ exp: n, expEditing: false, ledger: [{ ts: Date.now(), name: '手动修改余额', delta: n - this.state.exp }, ...this.state.ledger].slice(0, 200) });
     else this.setState({ expEditing: false });
   }
+  confirmRemoval(kind, name, detail = '') {
+    return window.confirm('确定删除' + kind + '「' + (name || '未命名') + '」？' + (detail ? '\n\n' + detail : '') + '\n\n删除后无法直接撤销。');
+  }
   toggleSet(id) { this.save({ sets: this.state.sets.map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
-  delSet(id) { this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
+  delSet(id) { const item = (this.state.sets || []).find(s => s.id === id); if (!item || !this.confirmRemoval('任务集', item.name, '组内任务不会删除，将移到未分组任务区。')) return; this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
   toggleMilestoneSet(id) { this.save({ milestoneSets: (this.state.milestoneSets || []).map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
-  delMilestoneSet(id) { this.save({ milestoneSets: (this.state.milestoneSets || []).filter(s => s.id !== id), milestones: this.state.milestones.map(m => m.setId === id ? { ...m, setId: null } : m) }); }
+  delMilestoneSet(id) { const item = (this.state.milestoneSets || []).find(s => s.id === id); if (!item || !this.confirmRemoval('里程碑集', item.name, '组内里程碑不会删除，将移到未分组区。')) return; this.save({ milestoneSets: (this.state.milestoneSets || []).filter(s => s.id !== id), milestones: this.state.milestones.map(m => m.setId === id ? { ...m, setId: null } : m) }); }
   sortMilestonesByDeadline(list) {
     return [...(list || [])].sort((a, b) => {
       const ad = a.deadline || '', bd = b.deadline || '';
@@ -2059,7 +2093,7 @@ class Component extends DCLogic {
     this.save({ countdowns: [...this.state.countdowns, { id: this.state.nextId, name, date, time }], nextId: this.state.nextId + 1, newCountdownOpen: false });
     this.clear(['nc-name', 'nc-date']); const h = document.getElementById('nc-hour'), m = document.getElementById('nc-minute'); if (h) h.value = '0'; if (m) m.value = '0';
   }
-  delCountdown(id) { this.save({ countdowns: this.state.countdowns.filter(c => c.id !== id) }); }
+  delCountdown(id) { const item = this.state.countdowns.find(c => c.id === id); if (!item || !this.confirmRemoval('未来倒计时', item.name, '提醒区关联显示的该事件也将同步消失。')) return; this.save({ countdowns: this.state.countdowns.filter(c => c.id !== id) }); }
   openPomoCfg() { this.setState({ pomoCfgOpen: true }); }
   closePomoCfg() { this.setState({ pomoCfgOpen: false }); }
   savePomoCfg() { const task = this.v('pc-task') || '番茄专注'; const n = parseInt(this.v('pc-exp')); const reward = isNaN(n) ? 0 : Math.max(0, n); this.save({ pomoTaskName: task, pomoRewardExp: reward, pomoCfgOpen: false }); }
@@ -2255,10 +2289,17 @@ class Component extends DCLogic {
     } else if (ed.type === 'task') {
       const setSel = document.getElementById('ed-set');
       const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
-      this.save({ editing: null, tasks: this.state.tasks.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
-        setId, cycle: document.getElementById('ed-cycle').value,
-        priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', note: this.v('ed-note') } : x) });
+      const newCycle = document.getElementById('ed-cycle').value;
+      const newInterval = ['daily','weekly','monthly'].includes(newCycle) ? this.readTaskInterval('ed-interval') : 1;
+      const anchor = this.todayKey();
+      this.save({ editing: null, tasks: this.state.tasks.map(x => {
+        if (x.id !== ed.id) return x;
+        const ruleChanged = x.cycle !== newCycle || this.taskInterval(x) !== newInterval;
+        return { ...x, name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
+          setId, cycle: newCycle, interval: newInterval, anchorDate: ruleChanged ? anchor : (x.anchorDate || anchor),
+          ...(ruleChanged ? { streak: 0, lastPeriod: '' } : {}),
+          priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', note: this.v('ed-note') };
+      }) });
     } else if (ed.type === 'reward') {
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)), capCycle: 'daily', capTimes: 1 } : x) });
@@ -2306,13 +2347,40 @@ class Component extends DCLogic {
     else return null;
     return this.keyFor(c, d);
   }
+  taskInterval(t) { const n = Number(t && t.interval); return Number.isInteger(n) && n > 0 ? Math.min(n, 999) : 1; }
+  readTaskInterval(id) { const n = parseInt(this.v(id), 10); return Number.isFinite(n) ? Math.max(1, Math.min(999, n)) : 1; }
+  periodKey(t, d = new Date()) {
+    if (!t) return null;
+    const cycle = t.cycle, interval = this.taskInterval(t);
+    if (interval === 1 || !['daily','weekly','monthly'].includes(cycle)) return this.keyFor(cycle, d);
+    const anchor = t.anchorDate || this.todayKey();
+    const [ay, am, ad] = anchor.split('-').map(Number);
+    const start = Date.UTC(ay, am - 1, ad), day = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+    let distance;
+    if (cycle === 'daily') distance = Math.floor((day - start) / 86400000);
+    else if (cycle === 'weekly') {
+      const monday = utc => utc - ((new Date(utc).getUTCDay() + 6) % 7) * 86400000;
+      distance = Math.round((monday(day) - monday(start)) / (7 * 86400000));
+    } else distance = (d.getFullYear() - ay) * 12 + d.getMonth() - (am - 1);
+    return 'interval:' + cycle + ':' + interval + ':' + anchor + ':' + Math.floor(distance / interval);
+  }
+  previousPeriodKey(t) {
+    if (!t || !['daily','weekly','monthly'].includes(t.cycle)) return null;
+    const interval = this.taskInterval(t);
+    if (interval === 1) return this.prevKey(t.cycle);
+    const d = new Date();
+    if (t.cycle === 'daily') d.setDate(d.getDate() - interval);
+    else if (t.cycle === 'weekly') d.setDate(d.getDate() - interval * 7);
+    else { d.setDate(1); d.setMonth(d.getMonth() - interval); }
+    return this.periodKey(t, d);
+  }
   log(name, delta) { return [{ ts: Date.now(), name, delta }, ...this.state.ledger].slice(0, 200); }
   complete(id) {
-    const t = this.state.tasks.find(x => x.id === id), k = this.key(t.cycle);
+    const t = this.state.tasks.find(x => x.id === id), k = this.periodKey(t);
     const cnt = k ? (t.done[k] || 0) : 0;
     if (k && cnt >= (t.times || 1)) return;
     const ts = Date.now(), key = 'task:' + id;
-    const curK = k, prevK = this.prevKey(t.cycle), times = t.times || 1;
+    const curK = k, prevK = this.previousPeriodKey(t), times = t.times || 1;
     const prevStreak = t.streak || 0, prevPeriod = (t.lastPeriod != null ? t.lastPeriod : t.lastDone) || '';
     const streakCycle = ['daily','weekly','monthly'].includes(t.cycle);
     const periodCompleteAfter = !!k && (cnt + 1) >= times;
@@ -2324,7 +2392,7 @@ class Component extends DCLogic {
     const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, completionLog, streak: newStreak, lastPeriod: newLastPeriod, lastDone: completionDate } : x);
     this.armTimer(key);
     const bingoTimerKey = key + ':' + ts; this.scheduleBingoDraw(bingoTimerKey, { id: t.id, name: t.name, exp: t.exp });
-    const unit = { daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '';
+    const unit = this.taskInterval(t) > 1 ? '轮' : ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '');
     if (streakChanged && newStreak === 7 && unit) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 ' + unit + ',MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
     this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', completionDate, bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
@@ -2338,16 +2406,16 @@ class Component extends DCLogic {
   }
   toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
   abandon(id) {
-    const t = this.state.tasks.find(x => x.id === id), k = this.key(t.cycle); if (!k) return;
+    const t = this.state.tasks.find(x => x.id === id), k = this.periodKey(t); if (!k) return;
     if (t.abandoned && t.abandoned[k]) return;
     const key = 'task:' + id;
     const abandoned = { ...(t.abandoned || {}), [k]: true };
     this.armTimer(key);
     this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, abandoned } : x), pending: { key, kind: 'abandon', id, k } });
   }
-  delTask(id) { this.save({ tasks: this.state.tasks.filter(x => x.id !== id) }); }
-  delReward(id) { this.save({ rewards: this.state.rewards.filter(x => x.id !== id) }); }
-  delMilestone(id) { this.save({ milestones: this.state.milestones.filter(x => x.id !== id) }); }
+  delTask(id) { const item = this.state.tasks.find(x => x.id === id); if (!item || !this.confirmRemoval('任务', item.name, '任务本身及其完成存根会移除；已入账的 EXP 与账本不会倒扣。')) return; this.save({ tasks: this.state.tasks.filter(x => x.id !== id) }); }
+  delReward(id) { const item = this.state.rewards.find(x => x.id === id); if (!item || !this.confirmRemoval('Shopping Mall 奖励', item.name, '奖励卡片及其图片会移除；过去的兑换账本不受影响。')) return; this.save({ rewards: this.state.rewards.filter(x => x.id !== id) }); }
+  delMilestone(id) { const item = this.state.milestones.find(x => x.id === id); if (!item || !this.confirmRemoval('里程碑', item.name, '里程碑进度会移除；已领取的 EXP 不自动扣回。')) return; this.save({ milestones: this.state.milestones.filter(x => x.id !== id) }); }
   openNewOpex() { this.setState({ newOpexOpen: true }); }
   openNewStash() { this.setState({ newStashOpen: true }); }
   closeWelcome() { this.save({ welcomed: true }); }
@@ -2557,14 +2625,15 @@ class Component extends DCLogic {
     const exp = parseInt(this.v('nt-exp')) || 10;
     const cycle = document.getElementById('nt-cycle').value;
     const times = Math.max(1, parseInt(this.v('nt-times')) || 1);
+    const interval = ['daily','weekly','monthly'].includes(cycle) ? this.readTaskInterval('nt-interval') : 1;
     const core = document.getElementById('nt-core').checked;
     const priorityEl = document.getElementById('nt-priority');
     const priority = priorityEl ? priorityEl.value : 'p4';
     const note = this.v('nt-note');
     const setSel = document.getElementById('nt-set');
     const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
-    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, core, setId, priority, note, done: {}, completionLog: {} }], nextId: this.state.nextId + 1, newTaskOpen: false });
-    this.clear(['nt-name', 'nt-exp', 'nt-times', 'nt-note']); const cb = document.getElementById('nt-core'); if (cb) cb.checked = false; if (setSel) setSel.value = '';
+    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, interval, anchorDate: this.todayKey(), core, setId, priority, note, done: {}, completionLog: {} }], nextId: this.state.nextId + 1, newTaskOpen: false });
+    this.clear(['nt-name', 'nt-exp', 'nt-times', 'nt-note']); const it = document.getElementById('nt-interval'); if (it) it.value = '1'; const cb = document.getElementById('nt-core'); if (cb) cb.checked = false; if (setSel) setSel.value = '';
   }
   addReward() {
     const name = this.v('nr-name'); if (!name) return;
@@ -2690,6 +2759,7 @@ class Component extends DCLogic {
     const bingoMinExp = st.bingoMinExp || { day: 80, week: 150, month: 300 };
     const daylineDate = st.daylineDate || this.todayKey();
     const daylineRows = (st.dayline || []).filter(x => x.date === daylineDate).slice().sort((a,b) => (a.time || '').localeCompare(b.time || '')).map(x => ({ ...x, onEdit: () => this.openEditDayline(x.id), onDel: e => { e.stopPropagation(); this.delDayline(x.id); }, onExport: e => { e.stopPropagation(); this.exportDaylineIcs(x.id); } }));
+    const daylineCountdowns = (st.countdowns || []).filter(c => c.date === daylineDate).slice().sort((a,b) => (a.time || '00:00').localeCompare(b.time || '00:00')).map(c => ({ id: c.id, name: c.name, time: c.time || '00:00' }));
     const daylineEditing = st.editingDaylineId != null ? (st.dayline || []).find(x => x.id === st.editingDaylineId) : null;
     const calTask = st.calendarTaskId != null ? st.tasks.find(x => x.id === st.calendarTaskId) : null;
     const calModel = calTask ? this.taskCalendarModel(calTask) : { label: '', cells: [] };
@@ -2715,15 +2785,15 @@ class Component extends DCLogic {
       fundPad: mob ? '12px' : '16px', milestoneStatsCols: mob ? '1fr 1fr' : '1.35fr 1fr 1fr 1fr' };
     const cyc = { daily: '每日', weekly: '每周', monthly: '每月', once: '单次', free: '不限次' };
     const dec = t => {
-      const k = this.key(t.cycle), times = t.times || 1;
+      const k = this.periodKey(t), times = t.times || 1, interval = this.taskInterval(t);
       const cnt = k ? Math.min(times, t.done[k] || 0) : 0;
       const doneNow = k ? cnt >= times : false;
       const pct = k ? Math.round(cnt / times * 100) : 0;
       const pk = (!!pend && pend.key === 'task:' + t.id) ? pend.kind : null;
       const tp = pk === 'complete';
-      const _curK = k, _prevK = this.prevKey(t.cycle);
+      const _curK = k, _prevK = this.previousPeriodKey(t);
       const _lp = t.lastPeriod != null ? t.lastPeriod : t.lastDone;
-      const _unit = { daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '';
+      const _unit = interval > 1 && ['daily','weekly','monthly'].includes(t.cycle) ? '轮' : ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '');
       const liveStreak = _lp === _curK ? (doneNow ? (t.streak || 0) : Math.max(0, (t.streak || 0) - 1)) : (_lp === _prevK ? (t.streak || 0) : 0);
       const isFormed = liveStreak >= 7 && !!_unit;
       const abandonedNow = k ? !!(t.abandoned && t.abandoned[k]) : false;
@@ -2733,8 +2803,8 @@ class Component extends DCLogic {
       return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
         hasNote: !!(t.note || '').trim(), noteText: t.note || '', priorityLabel: pmeta.label, priorityColor: pmeta.color, priorityBg: pmeta.bg,
         abandonedNow, abandonPending, showAbandonUndo: abandonPending, showAbandonLabel: abandonedNow && !abandonPending,
-        isFormed, hasStreak: liveStreak > 0 && !isFormed && !!_unit, streakLabel: '连 ' + liveStreak + ' ' + _unit, formedLabel: 'MOMENTUM · ' + liveStreak + ' 连' + _unit,
-        cycleLabel: k ? `${cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
+        isFormed, hasStreak: liveStreak > 0 && !isFormed && !!_unit, streakLabel: interval > 1 ? '连 ' + liveStreak + ' 轮' : '连 ' + liveStreak + ' ' + _unit, formedLabel: interval > 1 ? 'MOMENTUM · 连 ' + liveStreak + ' 轮' : 'MOMENTUM · ' + liveStreak + ' 连' + _unit,
+        cycleLabel: k ? `${interval > 1 ? ('每 ' + interval + ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle])) : cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
         hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
         starColor: t.core ? '#fbbf24' : '#2b3040',
@@ -2777,6 +2847,7 @@ class Component extends DCLogic {
           onDelSet: e => { e.stopPropagation(); this.delSet(s.id); } });
         if (!s.collapsed) members.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: true }));
       });
+      if (setsArr.length && ungrouped.length) taskRows.push({ rowKey: 'ungrouped-divider', isDivider: true, isHeader: false, isTask: false, countLabel: ungrouped.length + ' 项' });
       ungrouped.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: false }));
     }
     const milestoneBase = (st.milestoneSortMode || 'deadline') === 'manual' ? st.milestones : this.sortMilestonesByDeadline(st.milestones);
@@ -3030,7 +3101,7 @@ class Component extends DCLogic {
       themeLabel: verdant ? '清森' : '极简', cycleTheme: () => this.cycleTheme(), pageBg,
       bingoTabs, bingoCells, bingoGridCols: `repeat(${bingoN},minmax(0,1fr))`, bingoCellH: bingoN === 3 ? '66px' : bingoN === 4 ? '54px' : '44px', bingoPeriodLabel: bingoNames[bingoView] + ' BOARD', bingoSizeLabel: bingoN + ' × ' + bingoN, bingoDrawCount: bingoBoard.draws || 0, bingoRewardLabel: '+' + Math.max(0, parseInt(bingoRewards[bingoView]) || 0) + ' EXP', bingoCfgOpen: !!st.bingoCfgOpen, openBingoCfg: () => this.openBingoCfg(), closeBingoCfg: () => this.closeBingoCfg(), saveBingoCfg: () => this.saveBingoCfg(), bingoRewardDay: bingoRewards.day, bingoRewardWeek: bingoRewards.week, bingoRewardMonth: bingoRewards.month, bingoMinDay: bingoMinExp.day, bingoMinWeek: bingoMinExp.week, bingoMinMonth: bingoMinExp.month, bingoMinExpLabel: bingoMinExp[bingoView],
       taskCalendarOpen: !!calTask, taskCalendarName: calTask ? calTask.name : '', taskCalendarMonth: calModel.label, taskCalendarCells: calModel.cells, taskCalendarWeekdays: ['一','二','三','四','五','六','日'].map(label => ({ label })), closeTaskCalendar: () => this.closeTaskCalendar(), taskCalendarPrev: () => this.shiftTaskCalendar(-1), taskCalendarNext: () => this.shiftTaskCalendar(1),
-      daylineRows, daylineEmpty: daylineRows.length === 0, daylineDateLabel: this.labelFromISO(daylineDate), daylineDateSub: daylineDate === this.todayKey() ? 'TODAY' : daylineDate, openNewDayline: () => this.openNewDayline(), daylinePrev: () => this.shiftDayline(-1), daylineNext: () => this.shiftDayline(1), daylineToday: () => this.setDaylineDate(this.todayKey()), daylineEditOpen: !!st.newDaylineOpen, daylineEditTitle: daylineEditing ? '编辑日程' : '新建日程', daylineEditName: daylineEditing ? daylineEditing.name : '', daylineEditDate: daylineEditing ? daylineEditing.date : daylineDate, daylineEditTime: daylineEditing ? daylineEditing.time : '09:00', daylineEditRemind: daylineEditing ? !!daylineEditing.remind : false, closeDayline: () => this.closeDayline(), saveDayline: () => this.saveDayline(),
+      daylineRows, daylineCountdowns, daylineHasCountdowns: daylineCountdowns.length > 0, daylineCountdownCount: daylineCountdowns.length, daylineEmpty: daylineRows.length === 0 && daylineCountdowns.length === 0, daylineDateLabel: this.labelFromISO(daylineDate), daylineDateSub: daylineDate === this.todayKey() ? 'TODAY' : daylineDate, openNewDayline: () => this.openNewDayline(), daylinePrev: () => this.shiftDayline(-1), daylineNext: () => this.shiftDayline(1), daylineToday: () => this.setDaylineDate(this.todayKey()), daylineEditOpen: !!st.newDaylineOpen, daylineEditTitle: daylineEditing ? '编辑日程' : '新建日程', daylineEditName: daylineEditing ? daylineEditing.name : '', daylineEditDate: daylineEditing ? daylineEditing.date : daylineDate, daylineEditTime: daylineEditing ? daylineEditing.time : '09:00', daylineEditRemind: daylineEditing ? !!daylineEditing.remind : false, closeDayline: () => this.closeDayline(), saveDayline: () => this.saveDayline(),
       bingoCelebrationOpen: !!celebration, bingoCelebrationReward: celebration ? celebration.totalReward : 0, bingoWinRows: celebration ? celebration.wins.map(w => ({ label: w.label, reward: '+' + w.reward + ' EXP' })) : [], bingoConfetti, closeBingoCelebration: () => this.closeBingoCelebration(),
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad, tierScene: skin ? skin.scene : tier.scene, heroBg: skin ? skin.heroBg : tier.heroBg, heroSheen: skin ? skin.heroSheen : tier.heroSheen,
       cardTop, cardBot, rowTop, rowBot,
@@ -3147,7 +3218,7 @@ class Component extends DCLogic {
       notionResultOpen: !!st.notionResultOpen, notionResultOk: st.notionResultOk, notionResultMsg: st.notionResultMsg || '', notionResultBusy: st.notionResultOk == null && !!st.notionResultOpen, notionResultColor: st.notionResultOk == null ? '#8b93a4' : (st.notionResultOk ? '#4ade80' : '#f87171'), closeNotionResult: () => this.closeNotionResult(),
       editSetId: editItem ? String(editItem.setId ?? '') : '',
       editName: editItem ? editItem.name : '',
-      editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '',
+      editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '', editInterval: editItem ? this.taskInterval(editItem) : 1,
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
       editPriority: editItem ? (editItem.priority || 'p4') : 'p4', editNote: editItem ? (editItem.note || '') : '',
       editCost: editItem ? (editItem.cost ?? '') : '',
