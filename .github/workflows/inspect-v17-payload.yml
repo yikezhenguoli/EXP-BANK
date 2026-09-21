@@ -1,0 +1,28 @@
+name: Diagnose v1.7 patch payload
+on:
+  push:
+    branches: [feature/v1-7-task-period-reminder-delete]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v1-7-task-period-reminder-delete
+      - name: Compare encoded patch chunk checksums
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re,hashlib
+          s=Path('.github/workflows/patch-v1-7.yml').read_text()
+          payload=re.search(r"payload = '''(.*?)'''",s,re.S).group(1)
+          payload=''.join(payload.split())
+          expected='ca9db90b00eb,5df44f79edbb,46782a64f6bc,f9b0d6bd2fc4,7926789298e3,bb02572deb9a,bc170ab56e40,29a34d2c2a9f,ce5aa62dc968,5c6e2c56d6d2,799bfa130e67,4533e503cff0,b7f07352042d,3671a8f19605,0132da475313,42e4eae646ca,e5afb22e3703,6bd56ebd5ed0,04fa6a6d7e0c,551bbaf3e902,a67c6a4d1b35,6d2dba1080c5,8478877477e7,4f218bcd1489,73b8fe311b3c,aeaa8c1652d6,1dbaff262b1d,8916814c6e89,d74dee3a8069,b6d4b3527056,dbf1ba6c3711,6d24f18bc328,b725bb41ce2a,c644dc2eb8c3,5ed717f635fb,c4c66509e6f4,fee024a3d4ad,152517c3d818,087319baab25,f8b129698fbd,9d0b4134dd94,93f4bc394283,0f425759ad6f,ea04ac4bd3dd,5c3d99aac608,4a87755ef383,3b34d5e4e5b3,0f4256f11f9a,449e2b24ec9a,e0f47e894a25,b9bc151848de,c20d2841cd83'.split(',')
+          print('PAYLOAD_LENGTH',len(payload),'EXPECTED_LENGTH',8224)
+          for i in range(max(len(expected),(len(payload)+159)//160)):
+            chunk=payload[i*160:(i+1)*160]
+            got=hashlib.sha256(chunk.encode()).hexdigest()[:12]
+            if i>=len(expected) or got!=expected[i]: print('MISMATCH',i,got,'ACTUAL',chunk)
+          PY
