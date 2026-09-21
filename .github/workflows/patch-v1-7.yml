@@ -1,0 +1,121 @@
+name: Apply EXP BANK v1.7 feature patch
+on:
+  push:
+    branches:
+      - feature/v1-7-task-period-reminder-delete
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/v1-7-task-period-reminder-delete
+          fetch-depth: 0
+      - name: Apply exact-context source patch
+        run: |
+          python3 - <<'PY'
+          import lzma, base64, hashlib
+          payload = '''
+          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
+          '''
+          source = lzma.decompress(base64.b64decode(payload))
+          assert hashlib.sha256(source).hexdigest() == 'e0833b0ec5a65dd66585dd337d6f207bfcce2cf9aa893ec3c12b48ecaaff9e9d'
+          exec(compile(source, 'patch_v1_7.py', 'exec'))
+          PY
+      - name: Validate JavaScript and feature markers
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s = Path('index.html').read_text()
+          w = Path('sw.js').read_text()
+          must = ["const APP_VERSION = 'v1.7.0';", 'taskPeriodKey(t, d = new Date(), previous = false)', 'id="nt-cycle-every"', 'id="ed-cycle-every"', 'deleteConfirmOpen', 'daylineDueRows', 'ungrouped-divider']
+          for marker in must:
+              assert marker in s, marker
+          assert "const CACHE = 'exp-bank-v1.7.0';" in w
+          assert "localStorage.getItem('exp-bank-v1')" in s
+          begin = s.index('<script type="text/x-dc"')
+          begin = s.index('>', begin) + 1
+          end = s.index('</script>', begin)
+          Path('/tmp/exp-bank-v17-logic.js').write_text(s[begin:end])
+          print('STATIC_CHECKS_OK', len(s))
+          PY
+          node --check /tmp/exp-bank-v17-logic.js
+      - name: Commit only production files
+        run: |
+          rm .github/workflows/patch-v1-7.yml
+          git config user.name "EXP BANK Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html sw.js .github/workflows/patch-v1-7.yml
+          git commit -m "feat: v1.7 task cadence, reminder linkage, safer deletion"
+          git push origin HEAD:feature/v1-7-task-period-reminder-delete
