@@ -74,6 +74,9 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ cycleTheme }}" title="切换主题：极简 / 清森" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">◐ {{ themeLabel }}</span>
         </div>
+        <div onClick="{{ openAiHelp }}" title="AI HELP · 本地指令助手" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.08),rgba(14,16,22,0.68));border:1px solid rgba(255,255,255,0.14);box-shadow:inset 0 1px 0 rgba(255,255,255,0.11),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;color:{{ accent }};">✦ AI HELP</span>
+        </div>
         <div onClick="{{ openBackup }}" title="导出/导入备份码 · 跨设备搬运数据" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">⤓ 备份</span>
         </div>
@@ -105,7 +108,7 @@ input[type="date"]{color-scheme:dark;}
             <div style="pointer-events:auto;border:1px solid {{ tierBorder }};background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 6px 18px rgba(0,0,0,0.4);border-radius:99px;padding:3px 10px;backdrop-filter:blur(6px);" title="{{ tierHint }}"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;letter-spacing:2px;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.65));">{{ tierIcon }} {{ tierName }}</span></div>
           </div>
           <sc-if value="{{ expEditing }}" hint-placeholder-val="{{ false }}">
-            <input id="exp-edit" type="number" defaultValue="{{ exp }}" autoFocus="{{ true }}" onBlur="{{ commitExp }}" onKeyDown="{{ onExpKey }}" style="pointer-events:auto;width:180px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ balSize }};line-height:1;background:rgba(13,15,20,0.9);border:1px solid {{ accent }};border-radius:10px;padding:2px 10px;color:#eef1f7;box-sizing:border-box;">
+            <input id="exp-edit" type="number" step="0.01" defaultValue="{{ exp }}" autoFocus="{{ true }}" onBlur="{{ commitExp }}" onKeyDown="{{ onExpKey }}" style="pointer-events:auto;width:180px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ balSize }};line-height:1;background:rgba(13,15,20,0.9);border:1px solid {{ accent }};border-radius:10px;padding:2px 10px;color:#eef1f7;box-sizing:border-box;">
           </sc-if>
           <sc-if value="{{ expShow }}" hint-placeholder-val="{{ true }}">
             <div onClick="{{ startEditExp }}" title="点击直接修改余额" style="pointer-events:auto;cursor:text;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:{{ balSize }};line-height:1;background-image:{{ tierGrad }};-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,0.22)) drop-shadow(0 4px 14px rgba(0,0,0,0.75));">{{ exp }}</div>
@@ -146,6 +149,7 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务集</div>
         <div onClick="{{ openGallery }}" title="查看任务与里程碑留下的心得和照片" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">▦ 集锦</div>
         <div style="flex:1;"></div>
+        <div onClick="{{ startReorderSets }}" title="拖动调整任务集顺序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#aeb6c6;border:1px solid #2a2f3a;border-radius:8px;padding:7px 10px;" style-hover="border-color:{{ accent }};color:#eef1f7;">⇅ 任务集</div>
         <div onClick="{{ startReorder }}" title="批量编辑:排序 + 归入任务集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
       </sc-if>
@@ -337,7 +341,7 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:6px 10px;" style-hover="filter:brightness(1.12);">▦ 集锦</div><div onClick="{{ startReorderMilestones }}" title="排序 / 归类里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:6px 10px;" style-hover="filter:brightness(1.12);">▦ 集锦</div><div onClick="{{ startReorderMilestoneSets }}" title="拖动调整里程碑集顺序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#aeb6c6;border:1px solid #2a2f3a;border-radius:8px;padding:6px 9px;" style-hover="border-color:{{ accent }};">⇅ 集</div><div onClick="{{ startReorderMilestones }}" title="排序 / 归类里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 9px;" style-hover="border-color:{{ accent }};">⇅ 项</div></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div>
         <div onClick="{{ openNewMilestoneSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑集</div>
@@ -637,16 +641,11 @@ input[type="date"]{color-scheme:dark;}
       </sc-if>
 
       <div style="display:flex;flex-direction:column;gap:6px;">
-        <sc-for list="{{ opexRows }}" as="o" hint-placeholder-count="0">
-          <div onClick="{{ o.onEdit }}" title="点击编辑开销记录" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:{{ o.color }};border:1px solid #262b36;border-radius:99px;padding:3px 9px;flex-shrink:0;">{{ o.cat }}</div>
-            <div style="flex:1;min-width:0;">
-              <div style="font-size:13.5px;color:#e6e9f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ o.note }}</div>
-              <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#697084;margin-top:2px;">{{ o.dateStr }}</div>
-            </div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#eef1f7;white-space:nowrap;">{{ o.amount }}</div>
-            <div onClick="{{ o.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;flex-shrink:0;" style-hover="color:#f87171;">×</div>
-          </div>
+        <sc-for list="{{ opexTreeRows }}" as="o" hint-placeholder-count="0">
+          <sc-if value="{{ o.isMonth }}" hint-placeholder-val="{{ false }}"><div onClick="{{ o.onToggle }}" style="cursor:pointer;display:flex;align-items:center;gap:9px;padding:11px 12px;border:1px solid #34303a;border-radius:11px;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(12,14,19,.45));"><div style="font-family:'JetBrains Mono',monospace;color:{{ accent }};width:14px;">{{ o.chev }}</div><div style="font-size:13.5px;font-weight:700;color:#eef1f7;flex:1;">{{ o.label }}</div><div style="font-size:10px;color:#697084;">{{ o.count }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};">{{ o.amount }}</div></div></sc-if>
+          <sc-if value="{{ o.isWeek }}" hint-placeholder-val="{{ false }}"><div onClick="{{ o.onToggle }}" style="cursor:pointer;margin-left:12px;display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid #282e38;border-radius:10px;background:#0e1117;"><div style="font-family:'JetBrains Mono',monospace;color:#8b93a4;width:14px;">{{ o.chev }}</div><div style="font-size:12.5px;font-weight:700;color:#c8cedb;flex:1;">{{ o.label }}</div><div style="font-size:9.5px;color:#697084;">{{ o.count }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c8cedb;">{{ o.amount }}</div></div></sc-if>
+          <sc-if value="{{ o.isDay }}" hint-placeholder-val="{{ false }}"><div onClick="{{ o.onToggle }}" style="cursor:pointer;margin-left:24px;display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid #232936;border-radius:9px;background:rgba(10,12,17,.45);"><div style="font-family:'JetBrains Mono',monospace;color:#697084;width:14px;">{{ o.chev }}</div><div style="font-size:12px;font-weight:700;color:#aeb6c6;flex:1;">{{ o.label }}</div><div style="font-size:9.5px;color:#535a6a;">{{ o.count }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#aeb6c6;">{{ o.amount }}</div></div></sc-if>
+          <sc-if value="{{ o.isEntry }}" hint-placeholder-val="{{ false }}"><div onClick="{{ o.onEdit }}" title="点击编辑开销记录" style="cursor:pointer;margin-left:36px;display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,.14),rgba(255,255,255,.03)) border-box;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{{ o.color }};border:1px solid #262b36;border-radius:99px;padding:3px 7px;flex-shrink:0;">{{ o.cat }}</div><div style="flex:1;min-width:0;font-size:12.5px;color:#e6e9f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ o.note }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#eef1f7;white-space:nowrap;">{{ o.amount }}</div><div onClick="{{ o.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div></div></sc-if>
         </sc-for>
       </div>
     </div>
@@ -722,6 +721,19 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </div>
 
+  <!-- TASK FOCUS GATE -->
+  <sc-if value="{{ taskFocusOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeTaskFocus }}" style="position:fixed;inset:0;background:rgba(6,7,10,.78);backdrop-filter:blur(7px);z-index:86;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:390px;max-width:100%;background:linear-gradient(180deg,#151820,#0f1117);border:1px solid #2f3542;border-radius:17px;padding:20px;display:flex;flex-direction:column;gap:13px;box-shadow:0 28px 76px rgba(0,0,0,.76);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:2px;color:{{ accent }};">TASK → FOCUS</div>
+        <div style="font-size:16px;font-weight:700;color:#eef1f7;line-height:1.5;">{{ taskFocusName }}</div>
+        <div style="font-size:11.5px;color:#8b93a4;line-height:1.7;">如果这项任务需要一段专注时间，可以先开番茄钟；计时自然结束后再自动记为完成。也可以直接完成，不增加日常摩擦。</div>
+        <label style="font-size:11px;color:#697084;">本次专注时长（分钟）<input id="tf-min" type="number" min="1" max="600" step="1" defaultValue="{{ taskFocusMin }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:10px;color:#eef1f7;font-family:'JetBrains Mono',monospace;font-size:14px;"></label>
+        <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;"><div onClick="{{ closeTaskFocus }}" style="cursor:pointer;font-size:12px;color:#697084;padding:8px 10px;">取消</div><div onClick="{{ taskFocusDirect }}" style="cursor:pointer;font-size:12px;color:#c8cedb;border:1px solid #303746;border-radius:8px;padding:8px 14px;">直接完成</div><div onClick="{{ taskFocusStart }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 16px;">◷ 开始专注</div></div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- POMODORO CONFIG MODAL -->
   <sc-if value="{{ pomoCfgOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closePomoCfg }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.72);backdrop-filter:blur(5px);z-index:70;display:flex;align-items:center;justify-content:center;padding:16px;">
@@ -731,7 +743,7 @@ input[type="date"]{color-scheme:dark;}
           <input id="pc-task" defaultValue="{{ pomoTaskName }}" placeholder="例如：计算机二级操作题" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
         <label style="display:block;font-size:11px;color:#697084;">自然完成后奖励 EXP
-          <input id="pc-exp" type="number" min="0" step="1" defaultValue="{{ pomoRewardExp }}" placeholder="0" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:'JetBrains Mono',monospace;">
+          <input id="pc-exp" type="number" min="0" step="0.01" defaultValue="{{ pomoRewardExp }}" placeholder="0" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:'JetBrains Mono',monospace;">
         </label>
         <div style="font-size:11px;color:#697084;line-height:1.7;">只在倒计时自然走到 00:00 时入账；暂停、重置不会获得 EXP。设置为 0 即不奖励。</div>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
@@ -801,7 +813,7 @@ input[type="date"]{color-scheme:dark;}
           <sc-if value="{{ editIsTask }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:8px;">
               <label style="flex:1;font-size:11px;color:#697084;">EXP 分值
-                <input id="ed-exp" type="number" defaultValue="{{ editExp }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+                <input id="ed-exp" type="number" min="0" step="0.01" defaultValue="{{ editExp }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
               </label>
               <label style="flex:1;font-size:11px;color:#697084;">每周期次数
                 <input id="ed-times" type="number" defaultValue="{{ editTimes }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
@@ -834,7 +846,7 @@ input[type="date"]{color-scheme:dark;}
           </sc-if>
           <sc-if value="{{ editIsReward }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">价格(EXP)
-              <input id="ed-cost" type="number" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+              <input id="ed-cost" type="number" min="0.01" step="0.01" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
             </label>
             <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;border:1px solid #262b36;background:#0d0f14;border-radius:8px;padding:8px 10px;">兑换限制 · 每日 1 次（固定）</div>
           </sc-if>
@@ -860,7 +872,7 @@ input[type="date"]{color-scheme:dark;}
                 <input id="ed-step" type="number" defaultValue="{{ editStep }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
               </label>
               <label style="flex:1;font-size:11px;color:#697084;">奖励 EXP
-                <input id="ed-bonus" type="number" defaultValue="{{ editBonus }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+                <input id="ed-bonus" type="number" min="0" step="0.01" defaultValue="{{ editBonus }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
               </label>
             </div>
             <label style="display:block;font-size:11px;color:#697084;">截止日期(可留空)
@@ -942,6 +954,20 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+  <!-- AI HELP MODAL -->
+  <sc-if value="{{ aiHelpOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeAiHelp }}" style="position:fixed;inset:0;background:rgba(6,7,10,.78);backdrop-filter:blur(7px);z-index:88;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:540px;max-width:100%;background:linear-gradient(180deg,#151820,#0e1016);border:1px solid #2f3542;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:13px;box-shadow:0 30px 82px rgba(0,0,0,.78);">
+        <div style="display:flex;align-items:center;gap:9px;"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};flex:1;">✦ AI HELP // LOCAL COMMAND</div><div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:20px;color:#8b93a4;">×</div></div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.75;">当前是本地安全指令模式：不上传你的数据，也不在前端保存任何模型 API Key。它会把明确的自然语言指令解析成批量动作，并在执行前再次确认。</div>
+        <textarea id="ai-help-input" placeholder="例如：把26个英文字母列为26项任务，放在一个叫1的任务集里，每项0.5 EXP" style="width:100%;box-sizing:border-box;min-height:112px;background:#0b0d12;border:1px solid #2a303c;border-radius:11px;padding:12px;color:#eef1f7;font-size:13px;line-height:1.7;font-family:inherit;resize:vertical;"></textarea>
+        <div style="font-size:10.5px;color:#697084;line-height:1.7;">目前支持：A–Z / 26 个英文字母批量建任务；“任务名为 A、B、C”批量录入；自动创建或复用指定任务集；识别每日 / 每周 / 每月 / 单次与每项 EXP。删除类指令暂不执行。</div>
+        <sc-if value="{{ aiHelpMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:{{ aiHelpMsgColor }};line-height:1.65;border:1px solid #252b36;border-radius:9px;padding:9px 10px;background:#0d0f14;white-space:pre-wrap;">{{ aiHelpMsg }}</div></sc-if>
+        <div style="display:flex;gap:8px;justify-content:flex-end;"><div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:12px;color:#8b93a4;border:1px solid #2a2f3a;border-radius:8px;padding:8px 14px;">关闭</div><div onClick="{{ runAiHelp }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">解析并执行</div></div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- BACKUP MODAL -->
   <sc-if value="{{ backupOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeBackup }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
@@ -991,7 +1017,7 @@ input[type="date"]{color-scheme:dark;}
           <input id="nr-name" placeholder="例如:燕麦拿铁" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
         <label style="display:block;font-size:11px;color:#697084;">兑换价格(EXP)
-          <input id="nr-cost" type="number" placeholder="200" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+          <input id="nr-cost" type="number" min="0.01" step="0.01" placeholder="200" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1017,7 +1043,7 @@ input[type="date"]{color-scheme:dark;}
             <input id="nm-step" type="number" placeholder="10" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
           </label>
           <label style="flex:1;font-size:11px;color:#697084;">达成奖励
-            <input id="nm-bonus" type="number" placeholder="300" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            <input id="nm-bonus" type="number" min="0" step="0.01" placeholder="300" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
           </label>
         </div>
         <label style="display:block;font-size:11px;color:#697084;">截止日期(可留空)
@@ -1230,7 +1256,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。Lists 把未分组任务独立成区；任务支持每 N 天／周／月完成 M 次；提醒自动显示所选日期到期的未来倒计时；删除任务、任务集、里程碑、奖励和倒计时前均需确认。原有 EXP、任务历史与集锦继续保留。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。集锦支持关键词搜索；AI HELP 可在本机执行安全的批量任务指令；任务集 / 里程碑集可拖动排序；EXP 支持小数；点任务完成时可选择先进入番茄专注；开销改为月 → 周 → 日三级折叠。原有数据继续保留。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1277,15 +1303,15 @@ input[type="date"]{color-scheme:dark;}
         <div style="font-size:12px;color:#8b93a4;line-height:1.7;">每个周期第一次连成完整横线 / 竖线 / 对角线时领取一次奖励。默认值刻意偏高，让 Bingo 真正像一次意外分红。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8b93a4;letter-spacing:1px;">中奖奖励 EXP</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-          <label style="font-size:10px;color:#697084;">DAY 3×3<input id="bg-day" type="number" min="0" step="1" defaultValue="{{ bingoRewardDay }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
-          <label style="font-size:10px;color:#697084;">WEEK 4×4<input id="bg-week" type="number" min="0" step="1" defaultValue="{{ bingoRewardWeek }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
-          <label style="font-size:10px;color:#697084;">MONTH 5×5<input id="bg-month" type="number" min="0" step="1" defaultValue="{{ bingoRewardMonth }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">DAY 3×3<input id="bg-day" type="number" min="0" step="0.01" defaultValue="{{ bingoRewardDay }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">WEEK 4×4<input id="bg-week" type="number" min="0" step="0.01" defaultValue="{{ bingoRewardWeek }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">MONTH 5×5<input id="bg-month" type="number" min="0" step="0.01" defaultValue="{{ bingoRewardMonth }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
         </div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#8b93a4;letter-spacing:1px;margin-top:2px;">任务准入门槛 · EXP 至少达到</div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-          <label style="font-size:10px;color:#697084;">DAY<input id="bt-day" type="number" min="0" step="1" defaultValue="{{ bingoMinDay }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
-          <label style="font-size:10px;color:#697084;">WEEK<input id="bt-week" type="number" min="0" step="1" defaultValue="{{ bingoMinWeek }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
-          <label style="font-size:10px;color:#697084;">MONTH<input id="bt-month" type="number" min="0" step="1" defaultValue="{{ bingoMinMonth }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">DAY<input id="bt-day" type="number" min="0" step="0.01" defaultValue="{{ bingoMinDay }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">WEEK<input id="bt-week" type="number" min="0" step="0.01" defaultValue="{{ bingoMinWeek }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">MONTH<input id="bt-month" type="number" min="0" step="0.01" defaultValue="{{ bingoMinMonth }}" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
         </div>
         <div style="font-size:10px;color:#697084;line-height:1.55;">保存时会自动保证 DAY ≤ WEEK ≤ MONTH，避免低价值任务持续制造高额 Bingo EXP。</div>
         <div style="display:flex;gap:8px;justify-content:flex-end;"><div onClick="{{ closeBingoCfg }}" style="cursor:pointer;font-size:12px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;">取消</div><div onClick="{{ saveBingoCfg }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">保存</div></div>
@@ -1349,12 +1375,18 @@ input[type="date"]{color-scheme:dark;}
         <div style="display:flex;align-items:center;gap:10px;">
           <div style="width:3px;height:15px;border-radius:2px;background:{{ tierGrad }};"></div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">成长集锦 // GROWTH ARCHIVE</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;">{{ galleryCount }} 条</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;">{{ galleryCountLabel }}</div>
           <div onClick="{{ closeGallery }}" style="cursor:pointer;color:#8b93a4;font-size:20px;line-height:1;">×</div>
         </div>
         <div style="font-size:11.5px;color:#697084;line-height:1.7;">任务、里程碑与奖励兑换留下的文字和照片。照片保存在本机 IndexedDB，完整备份会一起打包。</div>
+        <div style="display:flex;align-items:center;gap:8px;border:1px solid #29303b;background:#0d0f14;border-radius:10px;padding:8px 10px;">
+          <div style="font-size:15px;color:#697084;">⌕</div>
+          <input value="{{ gallerySearch }}" onInput="{{ onGallerySearch }}" placeholder="搜索任务、奖励、里程碑或心得关键词…" style="flex:1;min-width:0;background:transparent;border:0;color:#e6e9f0;font-size:12.5px;font-family:inherit;">
+          <sc-if value="{{ gallerySearchOn }}" hint-placeholder-val="{{ false }}"><div onClick="{{ clearGallerySearch }}" style="cursor:pointer;font-size:10.5px;color:#8b93a4;border:1px solid #303746;border-radius:7px;padding:4px 7px;">清除</div></sc-if>
+        </div>
         <div style="overflow:auto;display:flex;flex-direction:column;gap:10px;padding-right:2px;">
           <sc-if value="{{ galleryEmpty }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;padding:36px 0;color:#535a6a;font-family:'JetBrains Mono',monospace;font-size:12px;">· 还没有集锦记录 ·</div></sc-if>
+          <sc-if value="{{ gallerySearchEmpty }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;padding:32px 0;color:#697084;font-family:'JetBrains Mono',monospace;font-size:11.5px;">没有找到匹配记录 · 换个关键词试试</div></sc-if>
           <sc-for list="{{ galleryEntries }}" as="g" hint-placeholder-count="0">
             <div onClick="{{ g.onEdit }}" title="点击编辑 / 补录" style="cursor:pointer;border:1px solid #222833;background:linear-gradient(180deg,#12151c,#0d0f14);border-radius:12px;padding:13px;display:flex;flex-direction:column;gap:9px;" style-hover="border-color:{{ accent }};">
               <div style="display:flex;align-items:center;gap:8px;">
@@ -1435,7 +1467,7 @@ input[type="date"]{color-scheme:dark;}
         </label>
         <div style="display:flex;gap:8px;">
           <label style="flex:1;font-size:11px;color:#697084;">EXP 分值
-            <input id="nt-exp" type="number" placeholder="10" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            <input id="nt-exp" type="number" min="0" step="0.01" placeholder="10" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
           </label>
           <label style="flex:1;font-size:11px;color:#697084;">每周期次数
             <input id="nt-times" type="number" placeholder="1" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
@@ -1576,7 +1608,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.7.0';
+const APP_VERSION = 'v1.8.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1612,6 +1644,7 @@ class Component extends DCLogic {
       if (!Array.isArray(s.stash)) s.stash = [];
       if (!s.opexCurrency) s.opexCurrency = '\u00a5';
       if (!s.opexLastLogDay) s.opexLastLogDay = '';
+      if (!s.opexFold || typeof s.opexFold !== 'object') s.opexFold = {};
       if (!s.uiMode) s.uiMode = 'auto';
       if (!s.uiTheme) s.uiTheme = 'minimal';
       if (!s.bingoView) s.bingoView = 'day';
@@ -1673,7 +1706,7 @@ class Component extends DCLogic {
       fundCfg: this.defaultFundCfg(),
       notion: { token: '', dbId: '', worker: '' },
       ledger: [],
-      opex: [], opexCurrency: '\u00a5', opexLastLogDay: '', opexSortMode: 'date',
+      opex: [], opexCurrency: '\u00a5', opexLastLogDay: '', opexSortMode: 'date', opexFold: {},
       stash: [
         { id: 41, name: '存 2000 · 去一个陌生的城市', target: 2000, saved: 0, claimed: false },
         { id: 42, name: '自由基金 · 随时可以走', target: 6000, saved: 0, claimed: false },
@@ -1694,7 +1727,7 @@ class Component extends DCLogic {
       { id: 203, name: '2026 年结束', date: '2026-12-31' },
     ];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, pomoCfgOpen, bingoCfgOpen, bingoCelebration, calendarTaskId, calendarMonthOffset, newDaylineOpen, editingDaylineId, daylineMsg, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, gallerySearch, aiHelpOpen, aiHelpMsg, aiHelpMsgColor, taskFocusId, taskFocusMin, pomoLinkedTaskId, pomoCfgOpen, bingoCfgOpen, bingoCelebration, calendarTaskId, calendarMonthOffset, newDaylineOpen, editingDaylineId, daylineMsg, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -1783,8 +1816,8 @@ class Component extends DCLogic {
   startEditExp() { this.setState({ expEditing: true }); }
   commitExp() {
     const el = document.getElementById('exp-edit'); if (!el) { this.setState({ expEditing: false }); return; }
-    const n = parseInt(el.value);
-    if (!isNaN(n)) this.save({ exp: n, expEditing: false, ledger: [{ ts: Date.now(), name: '手动修改余额', delta: n - this.state.exp }, ...this.state.ledger].slice(0, 200) });
+    const n = parseFloat(el.value);
+    if (!isNaN(n)) { const next = this.roundExp(n); this.save({ exp: next, expEditing: false, ledger: [{ ts: Date.now(), name: '手动修改余额', delta: this.roundExp(next - this.state.exp) }, ...this.state.ledger].slice(0, 200) }); }
     else this.setState({ expEditing: false });
   }
   confirmRemoval(kind, name, detail = '') {
@@ -1938,11 +1971,11 @@ class Component extends DCLogic {
     const p = this.state.pending; if (!p) return;
     clearTimeout(this._pt);
     const rm = arr => arr.filter(e => e.ts !== p.ledgerTs);
-    if (p.kind === 'complete') { this.cancelBingoDraw(p.bingoTimerKey); this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const cl = { ...(x.completionLog || {}) }; if (p.completionDate && cl[p.completionDate]) { cl[p.completionDate] = Math.max(0, cl[p.completionDate] - 1); if (!cl[p.completionDate]) delete cl[p.completionDate]; } return { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, completionLog: cl, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) }; }), exp: this.state.exp - p.exp, ledger: rm(this.state.ledger), pending: null }); }
+    if (p.kind === 'complete') { this.cancelBingoDraw(p.bingoTimerKey); this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const cl = { ...(x.completionLog || {}) }; if (p.completionDate && cl[p.completionDate]) { cl[p.completionDate] = Math.max(0, cl[p.completionDate] - 1); if (!cl[p.completionDate]) delete cl[p.completionDate]; } return { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, completionLog: cl, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) }; }), exp: this.roundExp(this.state.exp - p.exp), ledger: rm(this.state.ledger), pending: null }); }
     else if (p.kind === 'abandon') this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const a = { ...(x.abandoned || {}) }; delete a[p.k]; return { ...x, abandoned: a }; }), pending: null });
-    else if (p.kind === 'redeem') this.save({ exp: this.state.exp + p.cost, rewards: this.state.rewards.map(x => x.id === p.id ? { ...x, redeems: (x.redeems || []).filter(t => t !== p.rts) } : x), ledger: rm(this.state.ledger), pending: null });
+    else if (p.kind === 'redeem') this.save({ exp: this.roundExp(this.state.exp + p.cost), rewards: this.state.rewards.map(x => x.id === p.id ? { ...x, redeems: (x.redeems || []).filter(t => t !== p.rts) } : x), ledger: rm(this.state.ledger), pending: null });
     else if (p.kind === 'msPlus') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
-    else if (p.kind === 'msClaim') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.state.exp - p.bonus, ledger: rm(this.state.ledger), pending: null });
+    else if (p.kind === 'msClaim') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.roundExp(this.state.exp - p.bonus), ledger: rm(this.state.ledger), pending: null });
   }
   galleryDB() {
     if (this._galleryDB) return this._galleryDB;
@@ -2096,23 +2129,33 @@ class Component extends DCLogic {
   delCountdown(id) { const item = this.state.countdowns.find(c => c.id === id); if (!item || !this.confirmRemoval('未来倒计时', item.name, '提醒区关联显示的该事件也将同步消失。')) return; this.save({ countdowns: this.state.countdowns.filter(c => c.id !== id) }); }
   openPomoCfg() { this.setState({ pomoCfgOpen: true }); }
   closePomoCfg() { this.setState({ pomoCfgOpen: false }); }
-  savePomoCfg() { const task = this.v('pc-task') || '番茄专注'; const n = parseInt(this.v('pc-exp')); const reward = isNaN(n) ? 0 : Math.max(0, n); this.save({ pomoTaskName: task, pomoRewardExp: reward, pomoCfgOpen: false }); }
+  savePomoCfg() { const task = this.v('pc-task') || '番茄专注'; const n = parseFloat(this.v('pc-exp')); const reward = isNaN(n) ? 0 : Math.max(0, this.roundExp(n)); this.save({ pomoTaskName: task, pomoRewardExp: reward, pomoCfgOpen: false }); }
+  openTaskFocus(id) { const t = this.state.tasks.find(x => x.id === id); if (!t) return; this.setState({ taskFocusId: id, taskFocusMin: 25 }); }
+  closeTaskFocus() { this.setState({ taskFocusId: null }); }
+  taskFocusDirect() { const id = this.state.taskFocusId; if (id == null) return; this.setState({ taskFocusId: null }, () => this.complete(id)); }
+  taskFocusStart() {
+    const id = this.state.taskFocusId, t = this.state.tasks.find(x => x.id === id); if (!t) return;
+    const raw = parseInt(this.v('tf-min'), 10), min = Math.max(1, Math.min(600, isNaN(raw) ? 25 : raw)), sec = min * 60;
+    this.setState({ taskFocusId: null, pomoLinkedTaskId: id, pomoTaskName: t.name, pomoPreset: 'custom', pomoCustomMin: min, pomoRunning: false, pomoEndTs: null, pomoRemaining: sec, pomoTotal: sec, tab: 'pomo' }, () => this.pomoStart());
+  }
   pomoBase() { const p = this.state.pomoPreset || '25'; return (p === 'custom' ? (this.state.pomoCustomMin || 30) : parseInt(p)) * 60; }
   pomoStart() { const st = this.state; if (st.pomoRunning) return; const rem = (st.pomoRemaining != null && st.pomoRemaining > 0) ? st.pomoRemaining : this.pomoBase(); const total = st.pomoTotal || this.pomoBase(); this.setState({ pomoRunning: true, pomoEndTs: Date.now() + rem * 1000, pomoRemaining: rem, pomoTotal: total }, () => this.pomoTick()); }
   pomoPause() { const st = this.state; if (!st.pomoRunning) return; const rem = Math.max(0, Math.round((st.pomoEndTs - Date.now()) / 1000)); clearInterval(this._pomoTimer); this.setState({ pomoRunning: false, pomoEndTs: null, pomoRemaining: rem }); }
-  pomoReset() { clearInterval(this._pomoTimer); const base = this.pomoBase(); this.setState({ pomoRunning: false, pomoEndTs: null, pomoRemaining: base, pomoTotal: base }); }
+  pomoReset() { clearInterval(this._pomoTimer); const base = this.pomoBase(); this.setState({ pomoRunning: false, pomoEndTs: null, pomoRemaining: base, pomoTotal: base, pomoLinkedTaskId: null }); }
   pomoSetPreset(p) { clearInterval(this._pomoTimer); this.setState({ pomoPreset: p, pomoRunning: false, pomoEndTs: null }, () => { const base = this.pomoBase(); this.setState({ pomoRemaining: base, pomoTotal: base }); }); }
   pomoSetCustom(v) { const m = Math.max(1, parseInt(v) || 1); this.setState({ pomoCustomMin: m }, () => { if (this.state.pomoPreset === 'custom' && !this.state.pomoRunning) { const base = m * 60; this.setState({ pomoRemaining: base, pomoTotal: base }); } }); }
   pomoTick() { clearInterval(this._pomoTimer); this._pomoTimer = setInterval(() => { const s = this.state; if (!s.pomoRunning || !s.pomoEndTs) { clearInterval(this._pomoTimer); return; } if (Date.now() >= s.pomoEndTs) { clearInterval(this._pomoTimer); this.finishPomo(); } else this.forceUpdate(); }, 500); }
   finishPomo() {
-    const reward = Math.max(0, parseInt(this.state.pomoRewardExp) || 0);
+    const linkedId = this.state.pomoLinkedTaskId;
+    const reward = linkedId != null ? 0 : Math.max(0, this.roundExp(parseFloat(this.state.pomoRewardExp) || 0));
     const task = (this.state.pomoTaskName || '番茄专注').trim() || '番茄专注';
-    const patch = { pomoRunning: false, pomoRemaining: 0, pomoEndTs: null };
+    const patch = { pomoRunning: false, pomoRemaining: 0, pomoEndTs: null, pomoLinkedTaskId: null };
     if (reward > 0) {
-      const ts = Date.now(); patch.exp = this.state.exp + reward; patch.ledger = [{ ts, name: '番茄专注 · ' + task, delta: reward }, ...this.state.ledger].slice(0, 200); patch.momentumMsg = '「' + task + '」专注完成 · +' + reward + ' EXP';
+      const ts = Date.now(); patch.exp = this.roundExp(this.state.exp + reward); patch.ledger = [{ ts, name: '番茄专注 · ' + task, delta: reward }, ...this.state.ledger].slice(0, 200); patch.momentumMsg = '「' + task + '」专注完成 · +' + this.fmtExp(reward) + ' EXP';
       setTimeout(() => this.setState({ momentumMsg: '' }), 3200);
     }
     this.save(patch); this.pomoDing();
+    if (linkedId != null) setTimeout(() => this.complete(linkedId), 80);
   }
   pomoDing() { try { const a = this.ensureAudio(); if (a.ctx.state === 'suspended') a.ctx.resume(); const o = a.ctx.createOscillator(), g = a.ctx.createGain(); o.frequency.value = 880; o.connect(g); g.connect(a.ctx.destination); const t = a.ctx.currentTime; g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.3, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.9); o.start(t); o.stop(t + 0.95); } catch (_) {} }
   ensureAudio() { if (!this._au) { const C = window.AudioContext || window.webkitAudioContext; const ctx = new C(); const gain = ctx.createGain(); gain.gain.value = this.state.noiseVol ?? 0.5; gain.connect(ctx.destination); this._au = { ctx, gain, node: null, filter: null, mediaEl: null }; } return this._au; }
@@ -2141,7 +2184,7 @@ class Component extends DCLogic {
     while (b <= now) {
       const lastRedeem = Math.max(0, ...st.ledger.filter(e => e.delta < 0 && e.ts <= b).map(e => e.ts));
       if (b - lastRedeem >= 864e5 && exp > 0) {
-        const gain = Math.round(exp * rate);
+        const gain = this.roundExp(exp * rate);
         if (gain > 0) { exp += gain; ledger = [{ ts: b, name: 'EXP BANK · 定期利息 ' + (rate * 100) + '%/日', delta: gain }, ...ledger].slice(0, 200); changed = true; }
       }
       last = b; b += 864e5;
@@ -2282,6 +2325,7 @@ class Component extends DCLogic {
     const ed = this.state.editing; if (!ed) return;
     const name = this.v('ed-name');
     const num = (id, fb) => { const n = parseInt(this.v(id)); return isNaN(n) ? fb : n; };
+    const expNum = (id, fb) => this.readExp(id, fb);
     if (ed.type === 'set') {
       this.save({ editing: null, sets: this.state.sets.map(x => x.id === ed.id ? { ...x, name: name || x.name } : x) });
     } else if (ed.type === 'milestoneSet') {
@@ -2295,7 +2339,7 @@ class Component extends DCLogic {
       this.save({ editing: null, tasks: this.state.tasks.map(x => {
         if (x.id !== ed.id) return x;
         const ruleChanged = x.cycle !== newCycle || this.taskInterval(x) !== newInterval;
-        const updated = { ...x, name: name || x.name, exp: num('ed-exp', x.exp), times: Math.max(1, num('ed-times', x.times || 1)),
+        const updated = { ...x, name: name || x.name, exp: Math.max(0, expNum('ed-exp', x.exp)), times: Math.max(1, num('ed-times', x.times || 1)),
           setId, cycle: newCycle, interval: newInterval, anchorDate: ruleChanged ? anchor : (x.anchorDate || anchor),
           ...(ruleChanged ? { streak: 0, lastPeriod: '' } : {}),
           priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', note: this.v('ed-note') };
@@ -2311,7 +2355,7 @@ class Component extends DCLogic {
       }) });
     } else if (ed.type === 'reward') {
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, cost: Math.max(1, num('ed-cost', x.cost)), capCycle: 'daily', capTimes: 1 } : x) });
+        name: name || x.name, cost: Math.max(0.01, expNum('ed-cost', x.cost)), capCycle: 'daily', capTimes: 1 } : x) });
     } else if (ed.type === 'countdown') {
       const old = this.state.countdowns.find(x => x.id === ed.id); const time = this.read24h('ed-hour', 'ed-minute', old ? (old.time || '00:00') : '00:00');
       this.save({ editing: null, countdowns: this.state.countdowns.map(x => x.id === ed.id ? { ...x,
@@ -2336,7 +2380,7 @@ class Component extends DCLogic {
       const setId = msSetSel && msSetSel.value ? parseInt(msSetSel.value) : null;
       this.save({ editing: null, milestones: this.state.milestones.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, target: Math.max(1, num('ed-target', x.target)), step: Math.max(1, num('ed-step', x.step)),
-        bonus: num('ed-bonus', x.bonus), deadline: this.v('ed-deadline') || '', setId } : x) });
+        bonus: Math.max(0, expNum('ed-bonus', x.bonus)), deadline: this.v('ed-deadline') || '', setId } : x) });
     }
   }
   keyFor(c, d) {
@@ -2403,7 +2447,7 @@ class Component extends DCLogic {
     const bingoTimerKey = key + ':' + ts; this.scheduleBingoDraw(bingoTimerKey, { id: t.id, name: t.name, exp: t.exp });
     const unit = this.taskInterval(t) > 1 ? '轮' : ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '');
     if (streakChanged && newStreak === 7 && unit) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 ' + unit + ',MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
-    this.save({ tasks, exp: this.state.exp + t.exp, ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', completionDate, bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+    this.save({ tasks, exp: this.roundExp(this.state.exp + t.exp), ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', completionDate, bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
   redeem(id) {
     const r = this.state.rewards.find(x => x.id === id);
@@ -2411,7 +2455,7 @@ class Component extends DCLogic {
     if ((r.redeems || []).some(t => this.sameDay(t))) return;
     const ts = Date.now(), key = 'reward:' + id;
     this.armTimer(key);
-    this.save({ exp: this.state.exp - r.cost, rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-50) } : x), ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, rts: ts }, reflectionOpen: true, reflectionTarget: { kind: 'reward', id, name: r.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+    this.save({ exp: this.roundExp(this.state.exp - r.cost), rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-50) } : x), ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, rts: ts }, reflectionOpen: true, reflectionTarget: { kind: 'reward', id, name: r.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
   toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
   abandon(id) {
@@ -2425,6 +2469,7 @@ class Component extends DCLogic {
   delTask(id) { const item = this.state.tasks.find(x => x.id === id); if (!item || !this.confirmRemoval('任务', item.name, '任务本身及其完成存根会移除；已入账的 EXP 与账本不会倒扣。')) return; this.save({ tasks: this.state.tasks.filter(x => x.id !== id) }); }
   delReward(id) { const item = this.state.rewards.find(x => x.id === id); if (!item || !this.confirmRemoval('Shopping Mall 奖励', item.name, '奖励卡片及其图片会移除；过去的兑换账本不受影响。')) return; this.save({ rewards: this.state.rewards.filter(x => x.id !== id) }); }
   delMilestone(id) { const item = this.state.milestones.find(x => x.id === id); if (!item || !this.confirmRemoval('里程碑', item.name, '里程碑进度会移除；已领取的 EXP 不自动扣回。')) return; this.save({ milestones: this.state.milestones.filter(x => x.id !== id) }); }
+  toggleOpexFold(key) { const cur = { ...(this.state.opexFold || {}) }; cur[key] = !cur[key]; this.save({ opexFold: cur }); }
   openNewOpex() { this.setState({ newOpexOpen: true }); }
   openNewStash() { this.setState({ newStashOpen: true }); }
   closeWelcome() { this.save({ welcomed: true }); }
@@ -2480,7 +2525,7 @@ class Component extends DCLogic {
       const line = this.bingoWinLine(b.cells, this.bingoSize(period));
       if (line && !b.rewarded) {
         b.rewarded = true; b.winLine = line;
-        const reward = Math.max(0, parseInt(cfg[period]) || 0); totalReward += reward;
+        const reward = Math.max(0, this.roundExp(parseFloat(cfg[period]) || 0)); totalReward = this.roundExp(totalReward + reward);
         wins.push({ period, label: names[period] + ' BINGO', reward });
         if (reward > 0) ledgerAdds.push({ ts: now + pi, name: 'BINGO · ' + names[period], delta: reward });
       }
@@ -2488,10 +2533,10 @@ class Component extends DCLogic {
     });
     const patch = { bingoBoards: boards };
     if (wins.length) {
-      patch.exp = this.state.exp + totalReward;
+      patch.exp = this.roundExp(this.state.exp + totalReward);
       patch.ledger = [...ledgerAdds, ...this.state.ledger].slice(0, 200);
       patch.bingoCelebration = { wins, totalReward };
-      patch.momentumMsg = 'BINGO · +' + totalReward + ' EXP · Momentum 分红到账';
+      patch.momentumMsg = 'BINGO · +' + this.fmtExp(totalReward) + ' EXP · Momentum 分红到账';
       clearTimeout(this._bingoCelebrationTimer); this._bingoCelebrationTimer = setTimeout(() => this.setState({ bingoCelebration: null, momentumMsg: '' }), 7000);
     }
     this.save(patch);
@@ -2499,7 +2544,7 @@ class Component extends DCLogic {
   openBingoCfg() { this.setState({ bingoCfgOpen: true }); }
   closeBingoCfg() { this.setState({ bingoCfgOpen: false }); }
   saveBingoCfg() {
-    const read = (id, fb) => { const n = parseInt(this.v(id)); return isNaN(n) ? fb : Math.max(0, n); };
+    const read = (id, fb) => { const n = parseFloat(this.v(id)); return isNaN(n) ? fb : Math.max(0, this.roundExp(n)); };
     const old = this.state.bingoRewards || { day: 88, week: 288, month: 888 };
     const oldMin = this.state.bingoMinExp || { day: 80, week: 150, month: 300 };
     const d = read('bt-day', oldMin.day), w = Math.max(d, read('bt-week', oldMin.week)), m = Math.max(w, read('bt-month', oldMin.month));
@@ -2629,9 +2674,42 @@ class Component extends DCLogic {
   }
   v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
   clear(ids) { ids.forEach(i => { const el = document.getElementById(i); if (el) el.value = ''; }); }
+  roundExp(v) { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0; }
+  readExp(id, fallback = 0) { const raw = this.v(id); if (raw === '') return this.roundExp(fallback); const n = parseFloat(raw); return isNaN(n) ? this.roundExp(fallback) : this.roundExp(n); }
+  fmtExp(v) { const n = this.roundExp(v); return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0+$/, '').replace(/\.$/, ''); }
+  openAiHelp() { this.setState({ aiHelpOpen: true, aiHelpMsg: '', aiHelpMsgColor: '#8b93a4' }); }
+  closeAiHelp() { this.setState({ aiHelpOpen: false, aiHelpMsg: '' }); }
+  runAiHelp() {
+    const raw = this.v('ai-help-input'); if (!raw) { this.setState({ aiHelpMsg: '先告诉我你想批量做什么。', aiHelpMsgColor: '#fbbf24' }); return; }
+    if (/删除|清空|移除/.test(raw)) { this.setState({ aiHelpMsg: '当前安全版 AI HELP 不执行批量删除。请使用页面里的删除确认流程。', aiHelpMsgColor: '#fbbf24' }); return; }
+    let names = [];
+    if ((/26/.test(raw) && /英文字母|字母/.test(raw)) || /A\s*[-~到至]\s*Z/i.test(raw)) names = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    if (!names.length) {
+      const m = raw.match(/(?:任务(?:名)?(?:为|是|：|:)|创建任务(?:为|：|:)?)\s*([\s\S]+?)(?=\s*(?:放在|加入|归入|每项|每个任务|任务集|$))/);
+      if (m) names = m[1].split(/[\n，,、；;]+/).map(x => x.replace(/^[\s\-·\d.、]+|[\s。]+$/g,'').trim()).filter(Boolean);
+    }
+    if (!names.length) { this.setState({ aiHelpMsg: '这条指令我还不会安全解析。当前最稳的是“A–Z / 26个英文字母”或“任务名为 A、B、C”。', aiHelpMsgColor: '#f87171' }); return; }
+    names = [...new Set(names)].slice(0, 200);
+    let setName = '';
+    const sm = raw.match(/(?:叫|名为)\s*[「『"“]?([^「」『』"“”\s，,。；;]+)[」』"”]?\s*的?任务集/);
+    if (sm) setName = sm[1].trim();
+    if (!setName) { const sm2 = raw.match(/任务集\s*[「『"“]?([^「」『』"“”，,。；;\n]+)[」』"”]?\s*(?:里|中|$)/); if (sm2) setName = sm2[1].trim(); }
+    if (!setName) setName = 'AI 批量任务';
+    const em = raw.match(/(\d+(?:\.\d+)?)\s*EXP/i);
+    const exp = Math.max(0, this.roundExp(em ? parseFloat(em[1]) : 10));
+    const cycle = /每天|每日/.test(raw) ? 'daily' : /每周/.test(raw) ? 'weekly' : /每月/.test(raw) ? 'monthly' : 'once';
+    const cycleLabel = { daily:'每日', weekly:'每周', monthly:'每月', once:'单次' }[cycle];
+    if (!window.confirm('AI HELP 将创建 ' + names.length + ' 项任务\n任务集：' + setName + '\n循环：' + cycleLabel + '\n每项：' + this.fmtExp(exp) + ' EXP\n\n确认执行？')) return;
+    let nextId = this.state.nextId, sets = [...(this.state.sets || [])], set = sets.find(x => x.name === setName);
+    if (!set) { set = { id: nextId++, name: setName, collapsed: false }; sets.push(set); }
+    const tasks = [...this.state.tasks];
+    names.forEach(name => tasks.push({ id: nextId++, name, exp, cycle, times: 1, interval: 1, anchorDate: this.todayKey(), core: false, setId: set.id, priority: 'p4', note: 'AI HELP 批量录入', done: {}, completionLog: {} }));
+    this.save({ sets, tasks, nextId, aiHelpMsg: '✓ 已创建 ' + names.length + ' 项任务，并归入「' + setName + '」。', aiHelpMsgColor: '#4ade80' });
+  }
+
   addTask() {
     const name = this.v('nt-name'); if (!name) return;
-    const exp = parseInt(this.v('nt-exp')) || 10;
+    const exp = Math.max(0, this.readExp('nt-exp', 10));
     const cycle = document.getElementById('nt-cycle').value;
     const times = Math.max(1, parseInt(this.v('nt-times')) || 1);
     const interval = ['daily','weekly','monthly'].includes(cycle) ? this.readTaskInterval('nt-interval') : 1;
@@ -2646,7 +2724,7 @@ class Component extends DCLogic {
   }
   addReward() {
     const name = this.v('nr-name'); if (!name) return;
-    const cost = parseInt(this.v('nr-cost')) || 100;
+    const cost = Math.max(0.01, this.readExp('nr-cost', 100));
     this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost, capCycle: 'daily', capTimes: 1, redeems: [] }], nextId: this.state.nextId + 1, newRewardOpen: false });
     this.clear(['nr-name', 'nr-cost']);
   }
@@ -2654,7 +2732,7 @@ class Component extends DCLogic {
     const name = this.v('nm-name'); if (!name) return;
     const target = parseInt(this.v('nm-target')) || 100;
     const step = parseInt(this.v('nm-step')) || 1;
-    const bonus = parseInt(this.v('nm-bonus')) || 100;
+    const bonus = Math.max(0, this.readExp('nm-bonus', 100));
     const deadline = this.v('nm-deadline') || '';
     const setSel = document.getElementById('nm-ms-set');
     const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
@@ -2670,7 +2748,7 @@ class Component extends DCLogic {
     const m = this.state.milestones.find(x => x.id === id);
     if (!m || m.claimed || m.cur < m.target) return;
     const ts = Date.now(), key = 'ms:' + id; this.armTimer(key);
-    this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, claimed: true } : x), exp: this.state.exp + m.bonus, ledger: [{ ts, name: '里程碑达成 · ' + m.name, delta: m.bonus }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'msClaim', id, bonus: m.bonus, ledgerTs: ts }, reflectionOpen: true, reflectionTarget: { kind: 'milestone', id, name: m.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+    this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, claimed: true } : x), exp: this.roundExp(this.state.exp + m.bonus), ledger: [{ ts, name: '里程碑达成 · ' + m.name, delta: m.bonus }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'msClaim', id, bonus: m.bonus, ledgerTs: ts }, reflectionOpen: true, reflectionTarget: { kind: 'milestone', id, name: m.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
   sameDay(ts) { const a = new Date(ts), b = new Date(); return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
   dateKey(ts) { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; }
@@ -2771,6 +2849,7 @@ class Component extends DCLogic {
     const daylineCountdowns = (st.countdowns || []).filter(c => c.date === daylineDate).slice().sort((a,b) => (a.time || '00:00').localeCompare(b.time || '00:00')).map(c => ({ id: c.id, name: c.name, time: c.time || '00:00' }));
     const daylineEditing = st.editingDaylineId != null ? (st.dayline || []).find(x => x.id === st.editingDaylineId) : null;
     const calTask = st.calendarTaskId != null ? st.tasks.find(x => x.id === st.calendarTaskId) : null;
+    const taskFocusTask = st.taskFocusId != null ? st.tasks.find(x => x.id === st.taskFocusId) : null;
     const calModel = calTask ? this.taskCalendarModel(calTask) : { label: '', cells: [] };
     const vw = st.vw || (typeof window !== 'undefined' ? window.innerWidth : 1200);
     const uiMode = st.uiMode || 'auto';
@@ -2809,7 +2888,7 @@ class Component extends DCLogic {
       const abandonPending = pk === 'abandon';
       const showActions = !doneNow && !abandonedNow && !tp && !abandonPending;
       const pmeta = ({ p1: { label: '紧急且重要', color: '#f87171', bg: 'rgba(248,113,113,0.10)' }, p2: { label: '紧急不重要', color: '#fb923c', bg: 'rgba(251,146,60,0.10)' }, p3: { label: '不紧急重要', color: '#fbbf24', bg: 'rgba(251,191,36,0.10)' }, p4: { label: '不重要不紧急', color: '#60a5fa', bg: 'rgba(96,165,250,0.10)' } })[t.priority || 'p4'];
-      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + t.exp,
+      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + this.fmtExp(t.exp),
         hasNote: !!(t.note || '').trim(), noteText: t.note || '', priorityLabel: pmeta.label, priorityColor: pmeta.color, priorityBg: pmeta.bg,
         abandonedNow, abandonPending, showAbandonUndo: abandonPending, showAbandonLabel: abandonedNow && !abandonPending,
         isFormed, hasStreak: liveStreak > 0 && !isFormed && !!_unit, streakLabel: interval > 1 ? '连 ' + liveStreak + ' 轮' : '连 ' + liveStreak + ' ' + _unit, formedLabel: interval > 1 ? 'MOMENTUM · 连 ' + liveStreak + ' 轮' : 'MOMENTUM · ' + liveStreak + ' 连' + _unit,
@@ -2817,7 +2896,7 @@ class Component extends DCLogic {
         hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
         starColor: t.core ? '#fbbf24' : '#2b3040',
-        onDone: e => { e.stopPropagation(); this.complete(t.id); },
+        onDone: e => { e.stopPropagation(); this.openTaskFocus(t.id); },
         onAbandon: e => { e.stopPropagation(); this.abandon(t.id); },
         onUnabandon: e => { e.stopPropagation(); this.undo(); },
         onDel: e => { e.stopPropagation(); this.delTask(t.id); },
@@ -2863,7 +2942,9 @@ class Component extends DCLogic {
     const opexBase = (st.opexSortMode || 'date') === 'manual' ? (st.opex || []) : this.sortOpexByDate(st.opex || []);
     const stashBase = st.stash || [];
     const roKind = st.reorderKind || 'tasks';
-    const roSrc = roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: r.cost + ' EXP' }))
+    const roSrc = roKind === 'sets' ? setsArr.map(x => ({ id: x.id, name: x.name, sub: '任务集' }))
+      : roKind === 'milestoneSets' ? milestoneSetsArr.map(x => ({ id: x.id, name: x.name, sub: '里程碑集' }))
+      : roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: this.fmtExp(r.cost) + ' EXP' }))
       : roKind === 'milestones' ? milestoneBase.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
       : roKind === 'funds' ? st.funds.map(f => ({ id: f.id, name: f.name, sub: f.code || '' }))
       : roKind === 'opex' ? opexBase.map(o => ({ id: o.id, name: o.note || o.cat || '开销记录', sub: (o.date || '') + ' · ' + o.amount }))
@@ -2888,7 +2969,9 @@ class Component extends DCLogic {
       dragging: String(st.dragId) === String(m.id), dragBorder: String(st.dragId) === String(m.id) ? accent : '#262b36',
       dragBg: String(st.dragId) === String(m.id) ? '#1a1f2b' : (m.setId != null ? '#0b1017' : '#0d0f14'), dragShadow: String(st.dragId) === String(m.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(m.id, e) });
     let reorderRows;
-    if (roKind === 'tasks') {
+    if (roKind === 'sets' || roKind === 'milestoneSets') {
+      reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, hasSet: true, inGroup: false, indent: '0px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
+    } else if (roKind === 'tasks') {
       const decd = taskBase.map(dec);
       const rows = [];
       setsArr.forEach(s => {
@@ -2922,7 +3005,7 @@ class Component extends DCLogic {
         dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
         onDown: e => this.roDown(t.id, e) }));
     }
-    const reorderTitle = roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
+    const reorderTitle = roKind === 'sets' ? '任务集排序 // REORDER SETS' : roKind === 'milestoneSets' ? '里程碑集排序 // REORDER SETS' : roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
       const capped = (r.redeems || []).some(t => this.sameDay(t));
       const capLabelTop = '今日已兑换', capLabelBottom = '明日可兑';
@@ -2930,7 +3013,7 @@ class Component extends DCLogic {
       return { ...r,
       canAfford: st.exp >= r.cost && !rp && !capped, cannot: st.exp < r.cost && !rp && !capped, pending: rp,
       capped: capped && !rp, capLabelTop, capLabelBottom, hasCapHint: !!capHint, capHint,
-      costStr: r.cost + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '', imgPos: (r.imgPos != null ? r.imgPos : 50) + '%',
+      costStr: this.fmtExp(r.cost) + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '', imgPos: (r.imgPos != null ? r.imgPos : 50) + '%',
       imgBgStyle: r.img ? { position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'none', backgroundImage: 'url("' + r.img + '")', backgroundSize: 'cover', backgroundPosition: 'center ' + (r.imgPos != null ? r.imgPos : 50) + '%' } : {},
       onRedeem: e => { e.stopPropagation(); this.redeem(r.id); },
       onDel: e => { e.stopPropagation(); this.delReward(r.id); },
@@ -2948,11 +3031,11 @@ class Component extends DCLogic {
       const mp = !!pend && pend.key === 'ms:' + m.id;
       return { ...m, barW: pct + '%', remain: Math.max(0, m.target - m.cur),
         pending: mp, pendingLabel: m.claimed ? '✓ 已领取' : '✓ 已推进', showProgress: !m.claimed && m.cur < m.target && !mp, showReady: !m.claimed && m.cur >= m.target && !mp, showClaimed: m.claimed && !mp,
-        stepStr: '+' + m.step, bonusStr: '+' + m.bonus,
+        stepStr: '+' + m.step, bonusStr: '+' + this.fmtExp(m.bonus),
         hasDeadline: !!dl,
         deadlineLabel: dl ? (daysLeft < 0 ? dl + ' · 已截止' : dl + ' · 剩 ' + daysLeft + ' 天') : '未设置',
         deadlineColor: daysLeft !== null && daysLeft <= 3 ? '#f87171' : '#8b93a4',
-        progressStr: m.cur + ' / ' + m.target, rewardStr: '+' + m.bonus + ' EXP',
+        progressStr: m.cur + ' / ' + m.target, rewardStr: '+' + this.fmtExp(m.bonus) + ' EXP',
         onPlus: e => { e.stopPropagation(); this.msPlus(m.id); },
         onClaim: e => { e.stopPropagation(); this.msClaim(m.id); },
         onDel: e => { e.stopPropagation(); this.delMilestone(m.id); },
@@ -2967,7 +3050,10 @@ class Component extends DCLogic {
     });
     milestones.filter(m => m.setId == null || !milestoneSetsArr.some(ms => ms.id === m.setId)).forEach(m => milestoneRows.push({ ...m, rowKey: 'ms-' + m.id, isHeader: false, isMilestone: true }));
     const fmt = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
-    const galleryEntries = (st.galleryEntries || []).slice().sort((a, b) => b.ts - a.ts).map(g => {
+    const galleryQuery = (st.gallerySearch || '').trim().toLowerCase();
+    const galleryAll = (st.galleryEntries || []).slice().sort((a, b) => b.ts - a.ts);
+    const galleryFiltered = galleryQuery ? galleryAll.filter(g => ((g.targetName || '') + '\n' + (g.text || '') + '\n' + (g.kind || '')).toLowerCase().includes(galleryQuery)) : galleryAll;
+    const galleryEntries = galleryFiltered.map(g => {
       const imgUrl = (st.galleryImageUrls || {})[g.id] || '';
       return { ...g, targetName: g.targetName || '已删除项目', timeStr: fmt(g.ts), hasText: !!(g.text || '').trim(),
         hasImage: !!imgUrl, imgUrl, kindLabel: g.kind === 'milestone' ? 'MILESTONE' : g.kind === 'reward' ? 'REWARD' : 'TASK', kindColor: g.kind === 'milestone' ? '#e6c46a' : g.kind === 'reward' ? '#f0a6b4' : '#60a5fa',
@@ -2976,7 +3062,7 @@ class Component extends DCLogic {
     const galleryEditEntry = st.galleryEdit ? (st.galleryEntries || []).find(g => g.id === st.galleryEdit.id) : null;
     const galleryEditImageUrl = st.galleryEditRemoveImage ? '' : (st.galleryEditPreview || (galleryEditEntry ? ((st.galleryImageUrls || {})[galleryEditEntry.id] || '') : ''));
     const ledger = st.ledger.slice(0, 30).map((e, i) => ({ ...e, key: e.ts + '-' + i, time: fmt(e.ts),
-      deltaStr: (e.delta > 0 ? '+' : '') + e.delta, deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
+      deltaStr: (e.delta > 0 ? '+' : '') + this.fmtExp(e.delta), deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
     const earned = st.ledger.filter(e => e.delta > 0).reduce((a, e) => a + e.delta, 0);
     const spent = -st.ledger.filter(e => e.delta < 0).reduce((a, e) => a + e.delta, 0);
     const todayEarned = st.ledger.filter(e => e.delta > 0 && this.sameDay(e.ts)).reduce((a, e) => a + e.delta, 0);
@@ -2985,7 +3071,7 @@ class Component extends DCLogic {
     const hm = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return p(d.getHours()) + ':' + p(d.getMinutes()); };
     const lv = st.ledgerView === 'redeem' ? 'redeem' : 'all';
     const dayLedger = st.ledger.filter(e => this.dateKey(e.ts) === sel && (lv === 'all' || e.delta < 0)).sort((a, b) => b.ts - a.ts)
-      .map((e, i) => ({ key: e.ts + '-' + i, time: hm(e.ts), name: e.name, deltaStr: (e.delta > 0 ? '+' : '') + e.delta, deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
+      .map((e, i) => ({ key: e.ts + '-' + i, time: hm(e.ts), name: e.name, deltaStr: (e.delta > 0 ? '+' : '') + this.fmtExp(e.delta), deltaColor: e.delta > 0 ? '#4ade80' : '#f87171' }));
     const dayEarned = st.ledger.filter(e => this.dateKey(e.ts) === sel && e.delta > 0).reduce((a, e) => a + e.delta, 0);
     const daySpent = -st.ledger.filter(e => this.dateKey(e.ts) === sel && e.delta < 0).reduce((a, e) => a + e.delta, 0);
     const dayNet = dayEarned - daySpent;
@@ -3039,12 +3125,29 @@ class Component extends DCLogic {
         pct: (monthSum ? Math.round(byCat[k] / monthSum * 100) : 0) + '%',
         color: palette[k] || '#94a3b8',
       }));
-      const rows = list.slice(0, 60).map(o => ({
-        key: o.id, cat: o.cat, note: o.note, amount: money(o.amount),
-        color: palette[o.cat] || '#94a3b8',
-        dateStr: (o.date || '').replace(/^\d{4}-/, '').replace('-', '/'),
-        onEdit: () => this.openEdit('opex', o.id), onDel: e => { if (e && e.stopPropagation) e.stopPropagation(); this.delOpex(o.id); },
-      }));
+      const folds = st.opexFold || {}, hasFold = k => Object.prototype.hasOwnProperty.call(folds, k);
+      const p2 = n => String(n).padStart(2, '0');
+      const dateObj = iso => { const a = String(iso || '').split('-').map(Number); return new Date(a[0] || 2000, (a[1] || 1) - 1, a[2] || 1, 12, 0, 0); };
+      const weekInfo = iso => { const d = dateObj(iso), day = (d.getDay() + 6) % 7, mon = new Date(d); mon.setDate(d.getDate() - day); const sun = new Date(mon); sun.setDate(mon.getDate() + 6); const key = this.dateKey(mon); return { key, label: p2(mon.getMonth()+1) + '/' + p2(mon.getDate()) + ' – ' + p2(sun.getMonth()+1) + '/' + p2(sun.getDate()) }; };
+      const treeRows = [], months = {};
+      list.forEach(o => { const k = (o.date || '').slice(0,7) || '未标日期'; (months[k] = months[k] || []).push(o); });
+      Object.keys(months).sort().reverse().forEach(monthKey => {
+        const items = months[monthKey], key = 'm:' + monthKey, open = hasFold(key) ? !!folds[key] : monthKey === mk;
+        const ma = monthKey.split('-'); treeRows.push({ key, isMonth:true, isWeek:false, isDay:false, isEntry:false, label:(ma[0] || '') + '年' + (ma[1] ? Number(ma[1]) : '') + '月', count:items.length + ' 笔', amount:money(items.reduce((a,o)=>a+o.amount,0)), chev:open?'▾':'▸', onToggle:()=>this.toggleOpexFold(key) });
+        if (!open) return;
+        const weeks = {}; items.forEach(o => { const w=weekInfo(o.date); if(!weeks[w.key]) weeks[w.key]={label:w.label,items:[]}; weeks[w.key].items.push(o); });
+        Object.keys(weeks).sort().reverse().forEach(wk => {
+          const w=weeks[wk], wkey='w:'+wk, wopen=!!folds[wkey]; treeRows.push({key:wkey,isMonth:false,isWeek:true,isDay:false,isEntry:false,label:w.label,count:w.items.length+' 笔',amount:money(w.items.reduce((a,o)=>a+o.amount,0)),chev:wopen?'▾':'▸',onToggle:()=>this.toggleOpexFold(wkey)});
+          if(!wopen)return;
+          const days={}; w.items.forEach(o=>(days[o.date]=days[o.date]||[]).push(o));
+          Object.keys(days).sort().reverse().forEach(dk => {
+            const di=days[dk], dkey='d:'+dk, dopen=!!folds[dkey], d=dateObj(dk), wd=['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
+            treeRows.push({key:dkey,isMonth:false,isWeek:false,isDay:true,isEntry:false,label:p2(d.getMonth()+1)+'月'+p2(d.getDate())+'日 · '+wd,count:di.length+' 笔',amount:money(di.reduce((a,o)=>a+o.amount,0)),chev:dopen?'▾':'▸',onToggle:()=>this.toggleOpexFold(dkey)});
+            if(!dopen)return;
+            di.forEach(o=>treeRows.push({key:'e:'+o.id,isMonth:false,isWeek:false,isDay:false,isEntry:true,cat:o.cat,note:o.note,amount:money(o.amount),color:palette[o.cat]||'#94a3b8',onEdit:()=>this.openEdit('opex',o.id),onDel:e=>{if(e&&e.stopPropagation)e.stopPropagation();this.delOpex(o.id);}}));
+          });
+        });
+      });
       const stashRows = stashBase.map(s => {
         const pct = s.target > 0 ? Math.min(100, Math.round(s.saved / s.target * 100)) : 0;
         return { key: s.id, id: s.id, name: s.name, pct: pct + '%', reached: s.saved >= s.target,
@@ -3054,7 +3157,7 @@ class Component extends DCLogic {
       return {
         opexCurrency: cur, cycleCurrency: () => this.cycleCurrency(),
         opexToday: money(todaySum), opexMonth: money(monthSum), opexAvg: money(monthSum / dayCount),
-        opexCats: cats, opexRows: rows, opexEmpty: list.length === 0, opexHasData: monthList.length > 0,
+        opexCats: cats, opexTreeRows: treeRows, opexEmpty: list.length === 0, opexHasData: monthList.length > 0,
         stashRows, stashEmpty: (st.stash || []).length === 0,
         newOpexOpen: !!st.newOpexOpen, newStashOpen: !!st.newStashOpen,
         openNewOpex: () => this.openNewOpex(), openNewStash: () => this.openNewStash(),
@@ -3074,6 +3177,8 @@ class Component extends DCLogic {
       quadrantP1, quadrantP2, quadrantP3, quadrantP4, quadrantP1Count: quadrantP1.length, quadrantP2Count: quadrantP2.length, quadrantP3Count: quadrantP3.length, quadrantP4Count: quadrantP4.length, quadrantP1Empty: quadrantP1.length === 0, quadrantP2Empty: quadrantP2.length === 0, quadrantP3Empty: quadrantP3.length === 0, quadrantP4Empty: quadrantP4.length === 0,
       addSet: () => this.addSet(), addMilestoneSet: () => this.addMilestoneSet(),
       momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
+      aiHelpOpen: !!st.aiHelpOpen, aiHelpMsg: st.aiHelpMsg || '', aiHelpMsgShow: !!st.aiHelpMsg, aiHelpMsgColor: st.aiHelpMsgColor || '#8b93a4', openAiHelp: () => this.openAiHelp(), closeAiHelp: () => this.closeAiHelp(), runAiHelp: () => this.runAiHelp(),
+      taskFocusOpen: !!taskFocusTask, taskFocusName: taskFocusTask ? taskFocusTask.name : '', taskFocusMin: st.taskFocusMin || 25, closeTaskFocus: () => this.closeTaskFocus(), taskFocusDirect: () => this.taskFocusDirect(), taskFocusStart: () => this.taskFocusStart(),
       daylineAlertOpen: !!st.daylineAlert, daylineAlertTime: st.daylineAlert ? st.daylineAlert.time : '', daylineAlertName: st.daylineAlert ? st.daylineAlert.name : '', closeDaylineAlert: () => this.closeDaylineAlert(),
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
       reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
@@ -3092,26 +3197,26 @@ class Component extends DCLogic {
       roSelTextColor: (st.roMode || 'drag') === 'select' ? '#14151c' : '#c3c9d6',
       roSelShadow: (st.roMode || 'drag') === 'select' ? 'inset 0 1px 0 rgba(255,255,255,0.6)' : 'none',
       reorderCanGroup: ((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones'),
-      reorderItemName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑' : (st.reorderKind || 'tasks') === 'opex' ? '开销记录' : (st.reorderKind || 'tasks') === 'stash' ? '存钱目标' : '任务', reorderSetName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑集' : '任务集',
+      reorderItemName: (st.reorderKind || 'tasks') === 'sets' ? '任务集' : (st.reorderKind || 'tasks') === 'milestoneSets' ? '里程碑集' : (st.reorderKind || 'tasks') === 'milestones' ? '里程碑' : (st.reorderKind || 'tasks') === 'opex' ? '开销记录' : (st.reorderKind || 'tasks') === 'stash' ? '存钱目标' : '任务', reorderSetName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑集' : '任务集',
       roShowCheck: (((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones') && (st.roMode || 'drag') === 'select'),
       batchCount: (st.batchSel || []).length, batchHasSel: (st.batchSel || []).length > 0,
       batchSetOptions: ((st.reorderKind || 'tasks') === 'milestones' ? milestoneSetsArr : setsArr).map(s => ({ id: s.id, name: s.name })),
       batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
-      startReorder: () => this.startReorder('tasks'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderFunds: () => this.startReorder('funds'), startReorderOpex: () => this.startReorder('opex'), startReorderStash: () => this.startReorder('stash'), closeReorder: () => this.closeReorder(),
+      startReorder: () => this.startReorder('tasks'), startReorderSets: () => this.startReorder('sets'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderMilestoneSets: () => this.startReorder('milestoneSets'), startReorderFunds: () => this.startReorder('funds'), startReorderOpex: () => this.startReorder('opex'), startReorderStash: () => this.startReorder('stash'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
       rewards, milestones, milestoneRows, ledger, showLedger: this.props.showLedger ?? true,
       reflectionOpen: !!st.reflectionOpen, reflectionTargetName: st.reflectionTarget ? st.reflectionTarget.name : '', reflectionTitle: st.reflectionTarget && st.reflectionTarget.kind === 'reward' ? '兑换 · 留下这一刻 // REWARD MEMORY' : '完成 · 留下这一刻 // REFLECTION', reflectionHint: st.reflectionTarget && st.reflectionTarget.kind === 'reward' ? '奖励已经兑换，EXP 已正常扣除。这里完全可选：记两句话，或留一张照片给未来的自己。' : 'EXP 已经正常入账。这里完全可选：记两句话，或留一张照片给未来的自己。', reflectionHasImage: !!st.reflectionPreview, reflectionNoImage: !st.reflectionPreview, reflectionPreview: st.reflectionPreview || '',
       pickReflectionImage: () => this.pickReflectionImage(), skipReflection: () => this.skipReflection(), saveReflection: () => this.saveReflection(),
-      galleryOpen: !!st.galleryOpen, galleryEntries, galleryEmpty: galleryEntries.length === 0, galleryCount: galleryEntries.length, openGallery: () => this.openGallery(), closeGallery: () => this.closeGallery(),
+      galleryOpen: !!st.galleryOpen, galleryEntries, galleryEmpty: galleryAll.length === 0, gallerySearchEmpty: galleryAll.length > 0 && galleryEntries.length === 0, gallerySearch: st.gallerySearch || '', gallerySearchOn: !!galleryQuery, galleryCountLabel: galleryQuery ? (galleryEntries.length + ' / ' + galleryAll.length + ' 条') : (galleryAll.length + ' 条'), onGallerySearch: e => this.setState({ gallerySearch: (e && e.target ? e.target.value : '') || '' }), clearGallerySearch: () => this.setState({ gallerySearch: '' }), openGallery: () => this.openGallery(), closeGallery: () => this.closeGallery(),
       galleryEditOpen: !!galleryEditEntry, galleryEditAsk: !!galleryEditEntry && !st.galleryEdit.confirmed, galleryEditFormOn: !!galleryEditEntry && !!st.galleryEdit.confirmed,
       galleryEditName: galleryEditEntry ? (galleryEditEntry.targetName || '已删除项目') : '', galleryEditText: galleryEditEntry ? (galleryEditEntry.text || '') : '', galleryEditImageUrl, galleryEditHasImage: !!galleryEditImageUrl,
       confirmGalleryEdit: () => this.confirmGalleryEdit(), closeGalleryEdit: () => this.closeGalleryEdit(), pickGalleryEditImage: () => this.pickGalleryEditImage(), removeGalleryEditImage: () => this.removeGalleryEditImage(), saveGalleryEdit: () => this.saveGalleryEdit(),
-      earned, spent, todayEarned: '+' + todayEarned,
+      earned: this.fmtExp(earned), spent: this.fmtExp(spent), todayEarned: '+' + this.fmtExp(todayEarned),
       themeLabel: verdant ? '清森' : '极简', cycleTheme: () => this.cycleTheme(), pageBg,
-      bingoTabs, bingoCells, bingoGridCols: `repeat(${bingoN},minmax(0,1fr))`, bingoCellH: bingoN === 3 ? '66px' : bingoN === 4 ? '54px' : '44px', bingoPeriodLabel: bingoNames[bingoView] + ' BOARD', bingoSizeLabel: bingoN + ' × ' + bingoN, bingoDrawCount: bingoBoard.draws || 0, bingoRewardLabel: '+' + Math.max(0, parseInt(bingoRewards[bingoView]) || 0) + ' EXP', bingoCfgOpen: !!st.bingoCfgOpen, openBingoCfg: () => this.openBingoCfg(), closeBingoCfg: () => this.closeBingoCfg(), saveBingoCfg: () => this.saveBingoCfg(), bingoRewardDay: bingoRewards.day, bingoRewardWeek: bingoRewards.week, bingoRewardMonth: bingoRewards.month, bingoMinDay: bingoMinExp.day, bingoMinWeek: bingoMinExp.week, bingoMinMonth: bingoMinExp.month, bingoMinExpLabel: bingoMinExp[bingoView],
+      bingoTabs, bingoCells, bingoGridCols: `repeat(${bingoN},minmax(0,1fr))`, bingoCellH: bingoN === 3 ? '66px' : bingoN === 4 ? '54px' : '44px', bingoPeriodLabel: bingoNames[bingoView] + ' BOARD', bingoSizeLabel: bingoN + ' × ' + bingoN, bingoDrawCount: bingoBoard.draws || 0, bingoRewardLabel: '+' + this.fmtExp(Math.max(0, parseFloat(bingoRewards[bingoView]) || 0)) + ' EXP', bingoCfgOpen: !!st.bingoCfgOpen, openBingoCfg: () => this.openBingoCfg(), closeBingoCfg: () => this.closeBingoCfg(), saveBingoCfg: () => this.saveBingoCfg(), bingoRewardDay: bingoRewards.day, bingoRewardWeek: bingoRewards.week, bingoRewardMonth: bingoRewards.month, bingoMinDay: bingoMinExp.day, bingoMinWeek: bingoMinExp.week, bingoMinMonth: bingoMinExp.month, bingoMinExpLabel: bingoMinExp[bingoView],
       taskCalendarOpen: !!calTask, taskCalendarName: calTask ? calTask.name : '', taskCalendarMonth: calModel.label, taskCalendarCells: calModel.cells, taskCalendarWeekdays: ['一','二','三','四','五','六','日'].map(label => ({ label })), closeTaskCalendar: () => this.closeTaskCalendar(), taskCalendarPrev: () => this.shiftTaskCalendar(-1), taskCalendarNext: () => this.shiftTaskCalendar(1),
       daylineRows, daylineCountdowns, daylineHasCountdowns: daylineCountdowns.length > 0, daylineCountdownCount: daylineCountdowns.length, daylineEmpty: daylineRows.length === 0 && daylineCountdowns.length === 0, daylineDateLabel: this.labelFromISO(daylineDate), daylineDateSub: daylineDate === this.todayKey() ? 'TODAY' : daylineDate, openNewDayline: () => this.openNewDayline(), daylinePrev: () => this.shiftDayline(-1), daylineNext: () => this.shiftDayline(1), daylineToday: () => this.setDaylineDate(this.todayKey()), daylineEditOpen: !!st.newDaylineOpen, daylineEditTitle: daylineEditing ? '编辑日程' : '新建日程', daylineEditName: daylineEditing ? daylineEditing.name : '', daylineEditDate: daylineEditing ? daylineEditing.date : daylineDate, daylineEditTime: daylineEditing ? daylineEditing.time : '09:00', daylineEditRemind: daylineEditing ? !!daylineEditing.remind : false, closeDayline: () => this.closeDayline(), saveDayline: () => this.saveDayline(),
-      bingoCelebrationOpen: !!celebration, bingoCelebrationReward: celebration ? celebration.totalReward : 0, bingoWinRows: celebration ? celebration.wins.map(w => ({ label: w.label, reward: '+' + w.reward + ' EXP' })) : [], bingoConfetti, closeBingoCelebration: () => this.closeBingoCelebration(),
+      bingoCelebrationOpen: !!celebration, bingoCelebrationReward: celebration ? celebration.totalReward : 0, bingoWinRows: celebration ? celebration.wins.map(w => ({ label: w.label, reward: '+' + this.fmtExp(w.reward) + ' EXP' })) : [], bingoConfetti, closeBingoCelebration: () => this.closeBingoCelebration(),
       tierName: tier.name, tierIcon: tier.icon, tierBorder: tier.border, tierGrad: tier.grad, btnGrad, tierScene: skin ? skin.scene : tier.scene, heroBg: skin ? skin.heroBg : tier.heroBg, heroSheen: skin ? skin.heroSheen : tier.heroSheen,
       cardTop, cardBot, rowTop, rowBot,
       gridCols: resp.gridCols, pomoCols: resp.pomoCols, heroH: resp.heroH, titleSize: resp.titleSize, balSize: resp.balSize,
