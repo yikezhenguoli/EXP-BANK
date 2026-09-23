@@ -1,0 +1,35 @@
+name: validate v1.8
+
+on:
+  push:
+    branches:
+      - feature/v1-8-command-focus-opex
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract embedded app JavaScript
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          source = Path("index.html").read_text(encoding="utf-8")
+          match = re.search(r'<script type="text/x-dc" data-dc-script[^>]*>\s*(.*?)\s*</script>', source, re.S)
+          assert match, "embedded application script not found"
+          Path("/tmp/exp-bank-app.js").write_text(match.group(1), encoding="utf-8")
+          PY
+      - name: Check JavaScript syntax
+        run: node --check /tmp/exp-bank-app.js
+      - name: Validate v1.8 markers
+        run: |
+          grep -q "const APP_VERSION = 'v1.8.0'" index.html
+          grep -q "AI HELP // LOCAL COMMAND" index.html
+          grep -q "TASK → FOCUS" index.html
+          grep -q "opexTreeRows" index.html
+          grep -q "startReorderMilestoneSets" index.html
+          grep -q "const CACHE = 'exp-bank-v1.8.0'" sw.js
