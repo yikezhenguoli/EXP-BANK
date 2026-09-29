@@ -2880,7 +2880,7 @@ class Component extends DCLogic {
     this.applyTaskPlan(plan, false);
   }
 
-  addTask() {  addTask() {
+  addTask() {
     const name = this.v('nt-name'); if (!name) return;
     const exp = Math.max(0, this.readExp('nt-exp', 10));
     const cycle = document.getElementById('nt-cycle').value;
