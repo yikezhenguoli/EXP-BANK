@@ -149,8 +149,7 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务集</div>
         <div onClick="{{ openGallery }}" title="查看任务与里程碑留下的心得和照片" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">▦ 集锦</div>
         <div style="flex:1;"></div>
-        <div onClick="{{ startReorderSets }}" title="拖动调整任务集顺序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#aeb6c6;border:1px solid #2a2f3a;border-radius:8px;padding:7px 10px;" style-hover="border-color:{{ accent }};color:#eef1f7;">⇅ 任务集</div>
-        <div onClick="{{ startReorder }}" title="批量编辑:排序 + 归入任务集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
+        <div onClick="{{ startReorder }}" title="批量编辑任务与任务集：排序 + 归集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
       </sc-if>
       <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="4">
@@ -162,17 +161,16 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </sc-if>
         <sc-if value="{{ t.isHeader }}" hint-placeholder-val="{{ false }}">
-          <div onClick="{{ t.onToggle }}" title="点击折叠/展开任务集" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
+          <div onClick="{{ t.onToggle }}" title="点击任意空白区域折叠/展开；仅点击名称编辑" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;margin-left:{{ t.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
             <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};width:14px;text-align:center;line-height:1;">{{ t.chevron }}</div>
-            <div onClick="{{ t.onEditSet }}" title="点击编辑任务集名称" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ t.name }}</div>
+            <div onClick="{{ t.onEditSet }}" title="点击名称编辑任务集" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ t.name }}</div>
             <div style="flex:1;"></div>
             <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ t.countLabel }}</div>
-            <div onClick="{{ t.onEditSet }}" title="重命名任务集" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
-            <div onClick="{{ t.onDelSet }}" title="删除任务集（任务保留）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+            <div onClick="{{ t.onDelSet }}" title="删除任务集（内容上移一级）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
           </div>
         </sc-if>
         <sc-if value="{{ t.isTask }}" hint-placeholder-val="{{ true }}">
-        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;flex-wrap:{{ rowWrap }};justify-content:{{ rowJustify }};align-items:center;gap:8px;padding:{{ rowPad }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;flex-wrap:{{ rowWrap }};justify-content:{{ rowJustify }};align-items:center;gap:8px;padding:{{ rowPad }};margin-left:{{ t.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div onClick="{{ t.onToggleCore }}" title="设为核心微习惯(战时模式)" style="cursor:pointer;font-size:13px;color:{{ t.starColor }};width:16px;flex-shrink:0;text-align:center;">★</div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div style="width:3px;align-self:stretch;flex-shrink:0;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
@@ -341,23 +339,22 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:6px 10px;" style-hover="filter:brightness(1.12);">▦ 集锦</div><div onClick="{{ startReorderMilestoneSets }}" title="拖动调整里程碑集顺序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#aeb6c6;border:1px solid #2a2f3a;border-radius:8px;padding:6px 9px;" style-hover="border-color:{{ accent }};">⇅ 集</div><div onClick="{{ startReorderMilestones }}" title="排序 / 归类里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 9px;" style-hover="border-color:{{ accent }};">⇅ 项</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:6px 10px;" style-hover="filter:brightness(1.12);">▦ 集锦</div><div onClick="{{ startReorderMilestones }}" title="批量编辑里程碑与里程碑集：排序 + 归集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">批量编辑</div></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div>
         <div onClick="{{ openNewMilestoneSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑集</div>
       </div>
       <sc-for list="{{ milestoneRows }}" as="m" hint-placeholder-count="1">
         <sc-if value="{{ m.isHeader }}" hint-placeholder-val="{{ false }}">
-          <div onClick="{{ m.onToggleSet }}" title="点击折叠/展开里程碑集" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
+          <div onClick="{{ m.onToggleSet }}" title="点击任意空白区域折叠/展开；仅点击名称编辑" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;margin-left:{{ m.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
             <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};width:14px;text-align:center;line-height:1;">{{ m.chevron }}</div>
-            <div onClick="{{ m.onEditSet }}" title="点击编辑里程碑集名称" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ m.name }}</div>
+            <div onClick="{{ m.onEditSet }}" title="点击名称编辑里程碑集" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ m.name }}</div>
             <div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ m.countLabel }}</div>
-            <div onClick="{{ m.onEditSet }}" title="重命名里程碑集" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
-            <div onClick="{{ m.onDelSet }}" title="删除里程碑集（里程碑保留）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+            <div onClick="{{ m.onDelSet }}" title="删除里程碑集（内容上移一级）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
           </div>
         </sc-if>
         <sc-if value="{{ m.isMilestone }}" hint-placeholder-val="{{ true }}">
-        <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:14px;display:flex;flex-direction:column;gap:12px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+        <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;margin-left:{{ m.indent }};border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:14px;display:flex;flex-direction:column;gap:12px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div style="display:flex;align-items:flex-start;gap:12px;">
             <div style="flex:1;min-width:0;font-size:16px;line-height:1.45;font-weight:700;letter-spacing:0.2px;color:#eef1f7;word-break:break-word;">{{ m.name }}</div>
             <div onClick="{{ m.onDel }}" title="删除里程碑" style="cursor:pointer;color:#3d4353;font-size:16px;line-height:1;padding:3px 1px;flex-shrink:0;" style-hover="color:#f87171;">×</div>
@@ -499,23 +496,16 @@ input[type="date"]{color-scheme:dark;}
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">未来倒计时 // COUNTDOWN</div><div onClick="{{ openNewCountdown }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建倒计时</div></div>
       <sc-for list="{{ countdowns }}" as="cd" hint-placeholder-count="2">
-        <div onClick="{{ cd.onEdit }}" title="点击编辑" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }};">
-          <div style="flex:1;min-width:0;">
-            <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;white-space:normal;overflow-wrap:anywhere;word-break:break-word;">{{ cd.name }}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;margin-top:3px;">截止 {{ cd.dueStr }}</div>
+        <div onClick="{{ cd.onEdit }}" title="点击编辑" style="cursor:pointer;display:grid;grid-template-columns:{{ countdownCols }};align-items:center;column-gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }};">
+          <div style="min-width:0;padding-right:6px;">
+            <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;white-space:normal;overflow-wrap:normal;word-break:normal;">{{ cd.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;margin-top:3px;line-height:1.45;">截止 {{ cd.dueStr }}</div>
           </div>
-          <sc-if value="{{ cd.isToday }}" hint-placeholder-val="{{ false }}">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#fbbf24;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));">就在今天</div>
-          </sc-if>
-          <sc-if value="{{ cd.showNum }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;align-items:baseline;gap:5px;">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ cd.prefix }}</span>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;line-height:1;color:{{ cd.numColor }};filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ cd.numText }}</span>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#c3c9d6;">天</span>
-            </div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;white-space:nowrap;">{{ cd.remainDetail }}</div>
-          </sc-if>
-          <div onClick="{{ cd.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;padding-left:4px;" style-hover="color:#f87171;">×</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:92px;">
+            <sc-if value="{{ cd.isToday }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#fbbf24;">就在今天</div></sc-if>
+            <sc-if value="{{ cd.showNum }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:baseline;gap:4px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">{{ cd.prefix }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;line-height:1;color:{{ cd.numColor }};filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ cd.numText }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#c3c9d6;">天</span></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;white-space:nowrap;">{{ cd.remainDetail }}</div></sc-if>
+          </div>
+          <div onClick="{{ cd.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;text-align:center;" style-hover="color:#f87171;">×</div>
         </div>
       </sc-for>
     </div>
@@ -810,6 +800,16 @@ input[type="date"]{color-scheme:dark;}
               <input id="ed-name" defaultValue="{{ editName }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
             </label>
           </sc-if>
+          <sc-if value="{{ editIsSet }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">上级任务集
+              <select id="ed-set-parent" defaultValue="{{ editParentId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层任务集</option><sc-for list="{{ editSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+            </label>
+          </sc-if>
+          <sc-if value="{{ editIsMilestoneSet }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">上级里程碑集
+              <select id="ed-ms-parent" defaultValue="{{ editParentId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层里程碑集</option><sc-for list="{{ editMilestoneSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+            </label>
+          </sc-if>
           <sc-if value="{{ editIsTask }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:8px;">
               <label style="flex:1;font-size:11px;color:#697084;">EXP 分值
@@ -848,7 +848,12 @@ input[type="date"]{color-scheme:dark;}
             <label style="display:block;font-size:11px;color:#697084;">价格(EXP)
               <input id="ed-cost" type="number" min="0.01" step="0.01" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
             </label>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;border:1px solid #262b36;background:#0d0f14;border-radius:8px;padding:8px 10px;">兑换限制 · 每日 1 次（固定）</div>
+            <div style="font-size:10.5px;color:#697084;">兑换限制 · 每 N 日／周／月／年最多兑换 M 次</div>
+            <div style="display:grid;grid-template-columns:.8fr 1.15fr .8fr;gap:7px;">
+              <label style="font-size:10px;color:#697084;">每<input id="ed-cap-interval" type="number" min="1" max="999" step="1" defaultValue="{{ editCapInterval }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+              <label style="font-size:10px;color:#697084;">周期<select id="ed-cap-cycle" defaultValue="{{ editCapCycle }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 5px;color:#aeb6c6;"><option value="daily">日</option><option value="weekly">周</option><option value="monthly">月</option><option value="yearly">年</option></select></label>
+              <label style="font-size:10px;color:#697084;">可兑次数<input id="ed-cap-times" type="number" min="1" max="999" step="1" defaultValue="{{ editCapTimes }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+            </div>
           </sc-if>
           <sc-if value="{{ editIsFund }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">股票代码
@@ -1019,6 +1024,12 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">兑换价格(EXP)
           <input id="nr-cost" type="number" min="0.01" step="0.01" placeholder="200" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
         </label>
+        <div style="font-size:10.5px;color:#697084;">兑换限制 · 每 N 日／周／月／年最多兑换 M 次</div>
+        <div style="display:grid;grid-template-columns:.8fr 1.15fr .8fr;gap:7px;">
+          <label style="font-size:10px;color:#697084;">每<input id="nr-cap-interval" type="number" min="1" max="999" step="1" value="1" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">周期<select id="nr-cap-cycle" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 5px;color:#aeb6c6;"><option value="daily">日</option><option value="weekly">周</option><option value="monthly">月</option><option value="yearly">年</option></select></label>
+          <label style="font-size:10px;color:#697084;">可兑次数<input id="nr-cap-times" type="number" min="1" max="999" step="1" value="1" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+        </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加奖励</div>
@@ -1071,6 +1082,9 @@ input[type="date"]{color-scheme:dark;}
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">把同一阶段或同一方向的里程碑收进一个可折叠分组。之后可以在排序面板里拖动归类。</div>
         <label style="display:block;font-size:11px;color:#697084;">里程碑集名称
           <input id="nms-name" placeholder="例如:考试 / 旅行 / 长期作品" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">上级里程碑集（可留空）
+          <select id="nms-parent" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层里程碑集</option><sc-for list="{{ milestoneSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1256,7 +1270,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。集锦支持关键词搜索；AI HELP 可在本机执行安全的批量任务指令；任务集 / 里程碑集可拖动排序；EXP 支持小数；点任务完成时可选择先进入番茄专注；开销改为月 → 周 → 日三级折叠。原有数据继续保留。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。新建任务支持文字描述批量识别；任务集与里程碑集支持嵌套层级；奖励可设置每 N 日／周／月／年兑换 M 次；批量编辑统一管理项目与集合排序；集合标题除名称外均用于展开／收起；未来倒计时卡片扩大名称区域，减少不必要换行。原有数据继续保留。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1462,6 +1476,12 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:360px;max-width:100%;max-height:90vh;overflow-y:auto;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建任务 // NEW TASK</div>
+        <div style="border:1px solid #2a3040;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(10,12,17,.32));border-radius:11px;padding:10px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.2px;color:{{ accent }};">✦ AI 识别文字描述</div>
+          <textarea id="nt-ai-desc" placeholder="例如：创建“背单词、听力、阅读”3项任务，放在六级任务集，每周完成3次，每项5 EXP" style="width:100%;box-sizing:border-box;min-height:74px;background:#0b0d12;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;line-height:1.65;font-family:inherit;resize:vertical;"></textarea>
+          <div style="display:flex;align-items:center;gap:8px;"><div onClick="{{ runNewTaskAI }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:7px 12px;">识别并生成</div><sc-if value="{{ newTaskAiMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:{{ newTaskAiMsgColor }};line-height:1.45;">{{ newTaskAiMsg }}</div></sc-if></div>
+        </div>
+        <div style="font-size:10px;color:#535a6a;line-height:1.55;">也可以继续使用下面的手动表单，只新建一项任务。</div>
         <label style="display:block;font-size:11px;color:#697084;">任务名称
           <input id="nt-name" placeholder="例如:背 20 个单词" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
@@ -1517,6 +1537,9 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">任务集名称
           <input id="ns-name" placeholder="例如:学习区 / 健身区" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
+        <label style="display:block;font-size:11px;color:#697084;">上级任务集（可留空）
+          <select id="ns-parent" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层任务集</option><sc-for list="{{ setParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+        </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建任务集</div>
@@ -1530,6 +1553,8 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeReorder }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">{{ reorderTitle }}</div>
+        <sc-if value="{{ reorderTaskFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderTasks }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindTasks ? accent : '#2f3542' }};background:{{ reorderKindTasks ? btnGrad : '#161a22' }};color:{{ reorderKindTasks ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">任务</div><div onClick="{{ switchReorderSets }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindSets ? accent : '#2f3542' }};background:{{ reorderKindSets ? btnGrad : '#161a22' }};color:{{ reorderKindSets ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">任务集</div></div></sc-if>
+        <sc-if value="{{ reorderMilestoneFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderMilestones }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindMilestones ? accent : '#2f3542' }};background:{{ reorderKindMilestones ? btnGrad : '#161a22' }};color:{{ reorderKindMilestones ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">里程碑</div><div onClick="{{ switchReorderMilestoneSets }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindMilestoneSets ? accent : '#2f3542' }};background:{{ reorderKindMilestoneSets ? btnGrad : '#161a22' }};color:{{ reorderKindMilestoneSets ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">里程碑集</div></div></sc-if>
         <sc-if value="{{ reorderIsMilestones }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:8px;border:1px solid #202530;background:#0d0f14;border-radius:9px;padding:9px 10px;">
             <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">当前: {{ milestoneSortLabel }}</div>
@@ -1563,7 +1588,7 @@ input[type="date"]{color-scheme:dark;}
         <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px;">
           <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
             <sc-if value="{{ row.isSetHeader }}" hint-placeholder-val="{{ false }}">
-              <div data-ro-set="{{ row.roSet }}" onClick="{{ row.onToggleSet }}" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:9px;background:linear-gradient(180deg,#1a1e28,#12151d);border:1px solid #2a3040;">
+              <div data-ro-set="{{ row.roSet }}" onClick="{{ row.onToggleSet }}" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 12px;margin-left:{{ row.indent }};border-radius:9px;background:linear-gradient(180deg,#1a1e28,#12151d);border:1px solid #2a3040;">
                 <div style="font-size:13px;color:{{ accent }};width:14px;">{{ row.chev }}</div>
                 <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;">▤ {{ row.name }}</div>
                 <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;">{{ row.count }}</div>
@@ -1608,7 +1633,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.8.0';
+const APP_VERSION = 'v1.9.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1619,11 +1644,18 @@ class Component extends DCLogic {
         priority: t.priority || 'p4', note: t.note || '',
         completionLog: t.completionLog || (t.cycle === 'daily' ? Object.fromEntries(Object.entries(t.done || {}).filter(([kk, vv]) => /^\d{4}-\d{2}-\d{2}$/.test(kk) && Number(vv) > 0).map(([kk, vv]) => [kk, Number(vv) || 1])) : {}),
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
-      s.rewards = (s.rewards || []).map(r => ({ ...r, capCycle: 'daily', capTimes: 1 }));
+      s.rewards = (s.rewards || []).map(r => ({ ...r,
+        capCycle: ['daily','weekly','monthly','yearly'].includes(r.capCycle) ? r.capCycle : 'daily',
+        capInterval: Math.max(1, Math.min(999, parseInt(r.capInterval, 10) || 1)),
+        capTimes: Math.max(1, Math.min(999, parseInt(r.capTimes, 10) || 1)),
+        capAnchorDate: r.capAnchorDate || this.todayKey(),
+        redeems: Array.isArray(r.redeems) ? r.redeems : [] }));
       s.countdowns = (s.countdowns || []).map(c => ({ ...c, time: c.time || '00:00' }));
       s.milestones = (s.milestones || []).map(m => ({ ...m, setId: m.setId ?? null }));
       if (!s.sets) s.sets = [];
       if (!Array.isArray(s.milestoneSets)) s.milestoneSets = [];
+      s.sets = this.normalizeHierarchy(s.sets);
+      s.milestoneSets = this.normalizeHierarchy(s.milestoneSets);
       if (!s.funds) s.funds = this.defaultFunds();
       if (!s.fundCfg) s.fundCfg = this.defaultFundCfg();
       if (!s.notion) s.notion = { token: '', dbId: '', worker: '' };
@@ -1669,8 +1701,8 @@ class Component extends DCLogic {
       exp: 0, warMode: false, nextId: 500,
       appVersion: APP_VERSION, welcomed: false, uiMode: 'auto', uiTheme: 'minimal', bingoView: 'day', bingoRewards: { day: 88, week: 288, month: 888 }, bingoMinExp: { day: 80, week: 150, month: 300 }, bingoBoards: this.defaultBingoBoards(), dayline: [], daylineDate: this.todayKey(),
       sets: [
-        { id: 11, name: '日常 · 每天的小事', collapsed: false },
-        { id: 12, name: '不做会后悔清单', collapsed: false },
+        { id: 11, name: '日常 · 每天的小事', collapsed: false, parentId: null },
+        { id: 12, name: '不做会后悔清单', collapsed: false, parentId: null },
       ],
       tasks: [
         { id: 1, name: '下班时按下「打烊」开关', exp: 10, cycle: 'daily', times: 1, core: true, setId: 11, done: {} },
@@ -1689,11 +1721,11 @@ class Component extends DCLogic {
         { id: 16, name: '一个人去看一场电影', exp: 50, cycle: 'once', times: 1, core: false, setId: 12, done: {} },
       ],
       rewards: [
-        { id: 21, name: '一个纯粹发呆的下午 · 不许有罪恶感', cost: 100 },
-        { id: 22, name: '一杯想喝很久的饮料', cost: 300 },
-        { id: 23, name: '一次说走就走的短途', cost: 500 },
-        { id: 24, name: '人鱼汉顿 / 卡皮巴拉周边一件', cost: 800 },
-        { id: 25, name: '一张独自旅行的机票', cost: 1500 },
+        { id: 21, name: '一个纯粹发呆的下午 · 不许有罪恶感', cost: 100, capCycle: 'daily', capInterval: 1, capTimes: 1, capAnchorDate: this.todayKey(), redeems: [] },
+        { id: 22, name: '一杯想喝很久的饮料', cost: 300, capCycle: 'daily', capInterval: 1, capTimes: 1, capAnchorDate: this.todayKey(), redeems: [] },
+        { id: 23, name: '一次说走就走的短途', cost: 500, capCycle: 'daily', capInterval: 1, capTimes: 1, capAnchorDate: this.todayKey(), redeems: [] },
+        { id: 24, name: '人鱼汉顿 / 卡皮巴拉周边一件', cost: 800, capCycle: 'daily', capInterval: 1, capTimes: 1, capAnchorDate: this.todayKey(), redeems: [] },
+        { id: 25, name: '一张独自旅行的机票', cost: 1500, capCycle: 'daily', capInterval: 1, capTimes: 1, capAnchorDate: this.todayKey(), redeems: [] },
       ],
       milestones: [
         { id: 31, name: '职场第二年 · 打卡 100 天', cur: 0, target: 100, step: 1, bonus: 500, deadline: '', claimed: false },
@@ -1727,18 +1759,171 @@ class Component extends DCLogic {
       { id: 203, name: '2026 年结束', date: '2026-12-31' },
     ];
   }
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, gallerySearch, aiHelpOpen, aiHelpMsg, aiHelpMsgColor, taskFocusId, taskFocusMin, pomoLinkedTaskId, pomoCfgOpen, bingoCfgOpen, bingoCelebration, calendarTaskId, calendarMonthOffset, newDaylineOpen, editingDaylineId, daylineMsg, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  normalizeHierarchy(list) {
+    const arr = (list || []).map(x => ({ ...x, parentId: x.parentId == null ? null : Number(x.parentId), collapsed: !!x.collapsed }));
+    const byId = Object.fromEntries(arr.map(x => [x.id, x]));
+    arr.forEach(x => {
+      if (x.parentId == null || !byId[x.parentId] || x.parentId === x.id) { x.parentId = null; return; }
+      const seen = new Set([x.id]); let p = x.parentId, bad = false;
+      while (p != null) {
+        if (seen.has(p) || !byId[p]) { bad = true; break; }
+        seen.add(p); p = byId[p].parentId;
+      }
+      if (bad) x.parentId = null;
+    });
+    return arr;
+  }
+  hierarchyDescendants(list, id) {
+    const arr = this.normalizeHierarchy(list), out = new Set(), walk = pid => arr.filter(x => x.parentId === pid).forEach(x => { if (!out.has(x.id)) { out.add(x.id); walk(x.id); } });
+    walk(id); return out;
+  }
+  hierarchyOptions(list, excludeId = null) {
+    const arr = this.normalizeHierarchy(list), excluded = new Set();
+    if (excludeId != null) { excluded.add(excludeId); this.hierarchyDescendants(arr, excludeId).forEach(x => excluded.add(x)); }
+    const byParent = {};
+    arr.forEach(x => { const p = x.parentId == null ? 'root' : String(x.parentId); (byParent[p] = byParent[p] || []).push(x); });
+    const out = [];
+    const walk = (pid, depth) => (byParent[pid == null ? 'root' : String(pid)] || []).forEach(x => {
+      if (!excluded.has(x.id)) out.push({ id: x.id, idStr: String(x.id), depth, name: (depth ? '↳ '.repeat(depth) : '') + x.name, rawName: x.name });
+      walk(x.id, depth + 1);
+    });
+    walk(null, 0); return out;
+  }
+  safeHierarchyParent(list, selfId, parentId) {
+    if (parentId == null || parentId === '') return null;
+    const n = Number(parentId); if (!Number.isFinite(n) || n === selfId) return null;
+    const arr = this.normalizeHierarchy(list);
+    if (!arr.some(x => x.id === n)) return null;
+    if (selfId != null && this.hierarchyDescendants(arr, selfId).has(n)) return null;
+    return n;
+  }
+  parseTaskDescription(raw) {
+    const text = String(raw || '').trim(); if (!text) return null;
+    const parseCycle = src => {
+      let cycle = 'once', interval = 1, times = 1;
+      const m = src.match(/每\s*(\d+)?\s*(天|日|周|个?月)\s*(?:完成|做|进行|打卡)?\s*(\d+)?\s*次?/);
+      if (m) {
+        interval = Math.max(1, parseInt(m[1] || '1', 10));
+        cycle = /周/.test(m[2]) ? 'weekly' : /月/.test(m[2]) ? 'monthly' : 'daily';
+        times = Math.max(1, parseInt(m[3] || '1', 10));
+      } else if (/每天|每日/.test(src)) cycle = 'daily';
+      else if (/每周/.test(src)) cycle = 'weekly';
+      else if (/每月/.test(src)) cycle = 'monthly';
+      else if (/不限次|随时/.test(src)) cycle = 'free';
+      return { cycle, interval, times };
+    };
+    const globalCycle = parseCycle(text);
+    const globalExpMatch = text.match(/(?:每项|每个任务|每个)?\s*(\d+(?:\.\d+)?)\s*(?:EXP|积分)/i);
+    const globalExp = Math.max(0, this.roundExp(globalExpMatch ? parseFloat(globalExpMatch[1]) : 10));
+    const globalPriority = /紧急且重要|P1/i.test(text) ? 'p1' : /紧急不重要|P2/i.test(text) ? 'p2' : /不紧急重要|P3/i.test(text) ? 'p3' : 'p4';
+    let setName = '';
+    const sm = text.match(/(?:放在|加入|归入)\s*(?:一个)?(?:叫|名为)?\s*[「『"“]?([^「」『』"“”，,。；;\n]+?)[」』"”]?\s*(?:的)?任务集/);
+    if (sm) setName = sm[1].trim();
+    if (!setName) { const sm2 = text.match(/(?:叫|名为)\s*[「『"“]?([^「」『』"“”\s，,。；;]+)[」』"”]?\s*的?任务集/); if (sm2) setName = sm2[1].trim(); }
+    let names = [];
+    if ((/26/.test(text) && /英文字母|字母/.test(text)) || /A\s*[-~到至]\s*Z/i.test(text)) names = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const explicit = text.match(/(?:任务(?:名)?(?:为|是)|创建(?:以下|这些)?任务)\s*[：:]?\s*([\s\S]+?)(?=\s*(?:放在|加入|归入|每项|每个任务|每\s*\d*\s*(?:天|日|周|个?月)|$))/);
+    if (!names.length && explicit) names = explicit[1].split(/[\n，,、；;]+/);
+    if (!names.length) {
+      const lines = text.split(/\n+/).map(x => x.trim()).filter(Boolean);
+      if (lines.length >= 2) names = lines;
+    }
+    if (!names.length) {
+      const colon = text.match(/[：:]\s*([^。]+)$/);
+      if (colon && /任务|事项|计划|待办/.test(text.slice(0, text.indexOf(colon[0]) + 1))) names = colon[1].split(/[，,、；;]+/);
+    }
+    if (!names.length) {
+      const one = text.match(/(?:新建|创建|添加|录入)?\s*(?:一个|1个)?\s*任务\s*[：:]?\s*([^，,。；;]+)/);
+      if (one) names = [one[1]];
+    }
+    const cleanName = x => String(x || '')
+      .replace(/^[\s\-•·*\d.、（）()]+/, '')
+      .replace(/(?:放在|加入|归入)[\s\S]*?任务集/g, '')
+      .replace(/(?:每项|每个任务)?\s*\d+(?:\.\d+)?\s*(?:EXP|积分)/ig, '')
+      .replace(/每\s*\d*\s*(?:天|日|周|个?月)\s*(?:完成|做|进行|打卡)?\s*\d*\s*次?/g, '')
+      .replace(/每天|每日|每周|每月|不限次/g, '')
+      .replace(/紧急且重要|紧急不重要|不紧急重要|不重要不紧急|P[1-4]/ig, '')
+      .replace(/[，,；;。\s]+$/g, '').trim();
+    names = [...new Set(names.map(cleanName).filter(x => x && x.length <= 80))].slice(0, 200);
+    if (!names.length) return null;
+    const tasks = names.map(name => {
+      const source = text.includes(name) ? text : name + ' ' + text;
+      const cyc = parseCycle(source);
+      const em = source.match(/(?:每项|每个任务|每个)?\s*(\d+(?:\.\d+)?)\s*(?:EXP|积分)/i);
+      return { name, exp: Math.max(0, this.roundExp(em ? parseFloat(em[1]) : globalExp)), cycle: cyc.cycle || globalCycle.cycle, interval: cyc.interval || globalCycle.interval, times: cyc.times || globalCycle.times, priority: globalPriority };
+    });
+    return { tasks, setName };
+  }
+  applyTaskPlan(plan, closeNewTask = false) {
+    if (!plan || !plan.tasks || !plan.tasks.length) return false;
+    let nextId = this.state.nextId, sets = this.normalizeHierarchy(this.state.sets || []), setId = null;
+    if (plan.setName) {
+      let set = sets.find(x => x.name === plan.setName);
+      if (!set) { set = { id: nextId++, name: plan.setName, collapsed: false, parentId: null }; sets.push(set); }
+      setId = set.id;
+    }
+    const tasks = [...this.state.tasks];
+    plan.tasks.forEach(t => tasks.push({ id: nextId++, name: t.name, exp: t.exp, cycle: t.cycle, times: t.times || 1, interval: t.interval || 1, anchorDate: this.todayKey(), core: false, setId, priority: t.priority || 'p4', note: 'AI 文字描述生成', done: {}, completionLog: {} }));
+    const msg = '✓ 已生成 ' + plan.tasks.length + ' 项任务' + (plan.setName ? ' · 归入「' + plan.setName + '」' : '');
+    this.save({ sets, tasks, nextId, ...(closeNewTask ? { newTaskOpen: false } : {}), aiHelpMsg: msg, aiHelpMsgColor: '#4ade80', newTaskAiMsg: msg, newTaskAiMsgColor: '#4ade80', momentumMsg: msg });
+    setTimeout(() => this.setState({ momentumMsg: '' }), 3200);
+    return true;
+  }
+  runNewTaskAI() {
+    const raw = this.v('nt-ai-desc'), plan = this.parseTaskDescription(raw);
+    if (!plan) { this.setState({ newTaskAiMsg: '暂时没识别出明确任务。试试“任务名为 A、B、C，每项 5 EXP，放在学习任务集，每周 3 次”。', newTaskAiMsgColor: '#fbbf24' }); return; }
+    const preview = plan.tasks.slice(0, 6).map(x => '• ' + x.name).join('\n') + (plan.tasks.length > 6 ? '\n…共 ' + plan.tasks.length + ' 项' : '');
+    if (!window.confirm('识别到以下任务：\n' + preview + '\n\n' + (plan.setName ? '任务集：' + plan.setName + '\n' : '') + '确认生成？')) return;
+    this.applyTaskPlan(plan, true);
+  }
+  rewardCapRule(r) {
+    return { cycle: ['daily','weekly','monthly','yearly'].includes(r && r.capCycle) ? r.capCycle : 'daily', interval: Math.max(1, Math.min(999, parseInt(r && r.capInterval, 10) || 1)), times: Math.max(1, Math.min(999, parseInt(r && r.capTimes, 10) || 1)), anchor: (r && r.capAnchorDate) || this.todayKey() };
+  }
+  rewardPeriodKey(r, ts = Date.now()) {
+    const rule = this.rewardCapRule(r), d = new Date(ts), [ay,am,ad] = rule.anchor.split('-').map(Number);
+    const anchor = new Date(ay, (am || 1) - 1, ad || 1, 12, 0, 0), p = n => String(n).padStart(2,'0');
+    if (rule.interval === 1) {
+      if (rule.cycle === 'daily') return d.getFullYear() + '-' + p(d.getMonth()+1) + '-' + p(d.getDate());
+      if (rule.cycle === 'weekly') return this.keyFor('weekly', d);
+      if (rule.cycle === 'monthly') return d.getFullYear() + '-M' + (d.getMonth()+1);
+      return 'Y' + d.getFullYear();
+    }
+    let dist = 0;
+    if (rule.cycle === 'daily') {
+      const a = Date.UTC(anchor.getFullYear(), anchor.getMonth(), anchor.getDate()), b = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+      dist = Math.floor((b-a)/86400000);
+    } else if (rule.cycle === 'weekly') {
+      const monday = x => { const y = new Date(x); y.setHours(12,0,0,0); y.setDate(y.getDate() - ((y.getDay()+6)%7)); return y.getTime(); };
+      dist = Math.round((monday(d)-monday(anchor))/(7*86400000));
+    } else if (rule.cycle === 'monthly') dist = (d.getFullYear()-anchor.getFullYear())*12 + d.getMonth()-anchor.getMonth();
+    else dist = d.getFullYear()-anchor.getFullYear();
+    return 'cap:' + rule.cycle + ':' + rule.interval + ':' + rule.anchor + ':' + Math.floor(dist/rule.interval);
+  }
+  rewardRedeemCount(r, ts = Date.now()) {
+    const key = this.rewardPeriodKey(r, ts);
+    return (r && Array.isArray(r.redeems) ? r.redeems : []).filter(x => this.rewardPeriodKey(r, x) === key).length;
+  }
+  rewardCapLabel(r, count = null) {
+    const rule = this.rewardCapRule(r), n = count == null ? this.rewardRedeemCount(r) : count;
+    const unit = { daily:'日', weekly:'周', monthly:'月', yearly:'年' }[rule.cycle];
+    return '每 ' + rule.interval + ' ' + unit + ' · 可兑 ' + rule.times + ' 次 · 本期 ' + n + '/' + rule.times;
+  }
+  switchReorderKind(kind) { this.setState({ reorderKind: kind, dragId: null, batchSel: [], batchMsg: '', roMode: 'drag' }); }
+
+  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, gallerySearch, aiHelpOpen, aiHelpMsg, aiHelpMsgColor, newTaskAiMsg, newTaskAiMsgColor, taskFocusId, taskFocusMin, pomoLinkedTaskId, pomoCfgOpen, bingoCfgOpen, bingoCelebration, calendarTaskId, calendarMonthOffset, newDaylineOpen, editingDaylineId, daylineMsg, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
-    this.save({ sets: [...(this.state.sets || []), { id: this.state.nextId, name, collapsed: false }], nextId: this.state.nextId + 1, newSetOpen: false });
-    if (el) el.value = '';
+    const p = document.getElementById('ns-parent'), parentId = this.safeHierarchyParent(this.state.sets || [], null, p && p.value ? parseInt(p.value) : null);
+    this.save({ sets: [...this.normalizeHierarchy(this.state.sets || []), { id: this.state.nextId, name, collapsed: false, parentId }], nextId: this.state.nextId + 1, newSetOpen: false });
+    if (el) el.value = ''; if (p) p.value = '';
   }
   addMilestoneSet() {
     const el = document.getElementById('nms-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
-    this.save({ milestoneSets: [...(this.state.milestoneSets || []), { id: this.state.nextId, name, collapsed: false }], nextId: this.state.nextId + 1, newMilestoneSetOpen: false });
-    if (el) el.value = '';
+    const p = document.getElementById('nms-parent'), parentId = this.safeHierarchyParent(this.state.milestoneSets || [], null, p && p.value ? parseInt(p.value) : null);
+    this.save({ milestoneSets: [...this.normalizeHierarchy(this.state.milestoneSets || []), { id: this.state.nextId, name, collapsed: false, parentId }], nextId: this.state.nextId + 1, newMilestoneSetOpen: false });
+    if (el) el.value = ''; if (p) p.value = '';
   }
   openQuadrant() { this.setState({ quadrantOpen: true }); }
   closeQuadrant() { this.setState({ quadrantOpen: false }); }
@@ -1824,9 +2009,9 @@ class Component extends DCLogic {
     return window.confirm('确定删除' + kind + '「' + (name || '未命名') + '」？' + (detail ? '\n\n' + detail : '') + '\n\n删除后无法直接撤销。');
   }
   toggleSet(id) { this.save({ sets: this.state.sets.map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
-  delSet(id) { const item = (this.state.sets || []).find(s => s.id === id); if (!item || !this.confirmRemoval('任务集', item.name, '组内任务不会删除，将移到未分组任务区。')) return; this.save({ sets: this.state.sets.filter(s => s.id !== id), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: null } : t) }); }
+  delSet(id) { const sets = this.normalizeHierarchy(this.state.sets || []), item = sets.find(s => s.id === id); if (!item || !this.confirmRemoval('任务集', item.name, '直接任务和子任务集都会上移一级，不会被删除。')) return; const parentId = item.parentId ?? null; this.save({ sets: sets.filter(s => s.id !== id).map(s => s.parentId === id ? { ...s, parentId } : s), tasks: this.state.tasks.map(t => t.setId === id ? { ...t, setId: parentId } : t) }); }
   toggleMilestoneSet(id) { this.save({ milestoneSets: (this.state.milestoneSets || []).map(s => s.id === id ? { ...s, collapsed: !s.collapsed } : s) }); }
-  delMilestoneSet(id) { const item = (this.state.milestoneSets || []).find(s => s.id === id); if (!item || !this.confirmRemoval('里程碑集', item.name, '组内里程碑不会删除，将移到未分组区。')) return; this.save({ milestoneSets: (this.state.milestoneSets || []).filter(s => s.id !== id), milestones: this.state.milestones.map(m => m.setId === id ? { ...m, setId: null } : m) }); }
+  delMilestoneSet(id) { const sets = this.normalizeHierarchy(this.state.milestoneSets || []), item = sets.find(s => s.id === id); if (!item || !this.confirmRemoval('里程碑集', item.name, '直接里程碑和子里程碑集都会上移一级，不会被删除。')) return; const parentId = item.parentId ?? null; this.save({ milestoneSets: sets.filter(s => s.id !== id).map(s => s.parentId === id ? { ...s, parentId } : s), milestones: this.state.milestones.map(m => m.setId === id ? { ...m, setId: parentId } : m) }); }
   sortMilestonesByDeadline(list) {
     return [...(list || [])].sort((a, b) => {
       const ad = a.deadline || '', bd = b.deadline || '';
@@ -2327,9 +2512,11 @@ class Component extends DCLogic {
     const num = (id, fb) => { const n = parseInt(this.v(id)); return isNaN(n) ? fb : n; };
     const expNum = (id, fb) => this.readExp(id, fb);
     if (ed.type === 'set') {
-      this.save({ editing: null, sets: this.state.sets.map(x => x.id === ed.id ? { ...x, name: name || x.name } : x) });
+      const el = document.getElementById('ed-set-parent'), parentId = this.safeHierarchyParent(this.state.sets || [], ed.id, el && el.value ? parseInt(el.value) : null);
+      this.save({ editing: null, sets: this.normalizeHierarchy(this.state.sets || []).map(x => x.id === ed.id ? { ...x, name: name || x.name, parentId } : x) });
     } else if (ed.type === 'milestoneSet') {
-      this.save({ editing: null, milestoneSets: (this.state.milestoneSets || []).map(x => x.id === ed.id ? { ...x, name: name || x.name } : x) });
+      const el = document.getElementById('ed-ms-parent'), parentId = this.safeHierarchyParent(this.state.milestoneSets || [], ed.id, el && el.value ? parseInt(el.value) : null);
+      this.save({ editing: null, milestoneSets: this.normalizeHierarchy(this.state.milestoneSets || []).map(x => x.id === ed.id ? { ...x, name: name || x.name, parentId } : x) });
     } else if (ed.type === 'task') {
       const setSel = document.getElementById('ed-set');
       const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
@@ -2354,8 +2541,12 @@ class Component extends DCLogic {
         return updated;
       }) });
     } else if (ed.type === 'reward') {
+      const cycleEl = document.getElementById('ed-cap-cycle'), capCycle = cycleEl ? cycleEl.value : 'daily';
+      const capInterval = Math.max(1, Math.min(999, num('ed-cap-interval', 1)));
+      const capTimes = Math.max(1, Math.min(999, num('ed-cap-times', 1)));
       this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, cost: Math.max(0.01, expNum('ed-cost', x.cost)), capCycle: 'daily', capTimes: 1 } : x) });
+        name: name || x.name, cost: Math.max(0.01, expNum('ed-cost', x.cost)), capCycle, capInterval, capTimes,
+        capAnchorDate: (x.capCycle !== capCycle || Number(x.capInterval || 1) !== capInterval) ? this.todayKey() : (x.capAnchorDate || this.todayKey()) } : x) });
     } else if (ed.type === 'countdown') {
       const old = this.state.countdowns.find(x => x.id === ed.id); const time = this.read24h('ed-hour', 'ed-minute', old ? (old.time || '00:00') : '00:00');
       this.save({ editing: null, countdowns: this.state.countdowns.map(x => x.id === ed.id ? { ...x,
@@ -2450,12 +2641,12 @@ class Component extends DCLogic {
     this.save({ tasks, exp: this.roundExp(this.state.exp + t.exp), ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', completionDate, bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
   redeem(id) {
-    const r = this.state.rewards.find(x => x.id === id);
+    const r = this.state.rewards.find(x => x.id === id); if (!r) return;
     if (this.state.exp < r.cost) return;
-    if ((r.redeems || []).some(t => this.sameDay(t))) return;
+    if (this.rewardRedeemCount(r) >= this.rewardCapRule(r).times) return;
     const ts = Date.now(), key = 'reward:' + id;
     this.armTimer(key);
-    this.save({ exp: this.roundExp(this.state.exp - r.cost), rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-50) } : x), ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, rts: ts }, reflectionOpen: true, reflectionTarget: { kind: 'reward', id, name: r.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+    this.save({ exp: this.roundExp(this.state.exp - r.cost), rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-500) } : x), ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, rts: ts }, reflectionOpen: true, reflectionTarget: { kind: 'reward', id, name: r.name, ts }, reflectionBlob: null, reflectionPreview: '' });
   }
   toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
   abandon(id) {
@@ -2682,29 +2873,11 @@ class Component extends DCLogic {
   runAiHelp() {
     const raw = this.v('ai-help-input'); if (!raw) { this.setState({ aiHelpMsg: '先告诉我你想批量做什么。', aiHelpMsgColor: '#fbbf24' }); return; }
     if (/删除|清空|移除/.test(raw)) { this.setState({ aiHelpMsg: '当前安全版 AI HELP 不执行批量删除。请使用页面里的删除确认流程。', aiHelpMsgColor: '#fbbf24' }); return; }
-    let names = [];
-    if ((/26/.test(raw) && /英文字母|字母/.test(raw)) || /A\s*[-~到至]\s*Z/i.test(raw)) names = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    if (!names.length) {
-      const m = raw.match(/(?:任务(?:名)?(?:为|是|：|:)|创建任务(?:为|：|:)?)\s*([\s\S]+?)(?=\s*(?:放在|加入|归入|每项|每个任务|任务集|$))/);
-      if (m) names = m[1].split(/[\n，,、；;]+/).map(x => x.replace(/^[\s\-·\d.、]+|[\s。]+$/g,'').trim()).filter(Boolean);
-    }
-    if (!names.length) { this.setState({ aiHelpMsg: '这条指令我还不会安全解析。当前最稳的是“A–Z / 26个英文字母”或“任务名为 A、B、C”。', aiHelpMsgColor: '#f87171' }); return; }
-    names = [...new Set(names)].slice(0, 200);
-    let setName = '';
-    const sm = raw.match(/(?:叫|名为)\s*[「『"“]?([^「」『』"“”\s，,。；;]+)[」』"”]?\s*的?任务集/);
-    if (sm) setName = sm[1].trim();
-    if (!setName) { const sm2 = raw.match(/任务集\s*[「『"“]?([^「」『』"“”，,。；;\n]+)[」』"”]?\s*(?:里|中|$)/); if (sm2) setName = sm2[1].trim(); }
-    if (!setName) setName = 'AI 批量任务';
-    const em = raw.match(/(\d+(?:\.\d+)?)\s*EXP/i);
-    const exp = Math.max(0, this.roundExp(em ? parseFloat(em[1]) : 10));
-    const cycle = /每天|每日/.test(raw) ? 'daily' : /每周/.test(raw) ? 'weekly' : /每月/.test(raw) ? 'monthly' : 'once';
-    const cycleLabel = { daily:'每日', weekly:'每周', monthly:'每月', once:'单次' }[cycle];
-    if (!window.confirm('AI HELP 将创建 ' + names.length + ' 项任务\n任务集：' + setName + '\n循环：' + cycleLabel + '\n每项：' + this.fmtExp(exp) + ' EXP\n\n确认执行？')) return;
-    let nextId = this.state.nextId, sets = [...(this.state.sets || [])], set = sets.find(x => x.name === setName);
-    if (!set) { set = { id: nextId++, name: setName, collapsed: false }; sets.push(set); }
-    const tasks = [...this.state.tasks];
-    names.forEach(name => tasks.push({ id: nextId++, name, exp, cycle, times: 1, interval: 1, anchorDate: this.todayKey(), core: false, setId: set.id, priority: 'p4', note: 'AI HELP 批量录入', done: {}, completionLog: {} }));
-    this.save({ sets, tasks, nextId, aiHelpMsg: '✓ 已创建 ' + names.length + ' 项任务，并归入「' + setName + '」。', aiHelpMsgColor: '#4ade80' });
+    const plan = this.parseTaskDescription(raw);
+    if (!plan) { this.setState({ aiHelpMsg: '这条指令暂时没识别成明确任务。可以直接写任务清单、循环、EXP 和任务集名称。', aiHelpMsgColor: '#f87171' }); return; }
+    const preview = plan.tasks.slice(0, 8).map(x => '• ' + x.name).join('\n') + (plan.tasks.length > 8 ? '\n…共 ' + plan.tasks.length + ' 项' : '');
+    if (!window.confirm('AI HELP 将生成：\n' + preview + '\n\n' + (plan.setName ? '任务集：' + plan.setName + '\n' : '') + '确认执行？')) return;
+    this.applyTaskPlan(plan, false);
   }
 
   addTask() {
@@ -2725,8 +2898,11 @@ class Component extends DCLogic {
   addReward() {
     const name = this.v('nr-name'); if (!name) return;
     const cost = Math.max(0.01, this.readExp('nr-cost', 100));
-    this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost, capCycle: 'daily', capTimes: 1, redeems: [] }], nextId: this.state.nextId + 1, newRewardOpen: false });
-    this.clear(['nr-name', 'nr-cost']);
+    const cycleEl = document.getElementById('nr-cap-cycle'), capCycle = cycleEl ? cycleEl.value : 'daily';
+    const capInterval = Math.max(1, Math.min(999, parseInt(this.v('nr-cap-interval'), 10) || 1));
+    const capTimes = Math.max(1, Math.min(999, parseInt(this.v('nr-cap-times'), 10) || 1));
+    this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost, capCycle, capInterval, capTimes, capAnchorDate: this.todayKey(), redeems: [] }], nextId: this.state.nextId + 1, newRewardOpen: false });
+    this.clear(['nr-name', 'nr-cost', 'nr-cap-interval', 'nr-cap-times']);
   }
   addMilestone() {
     const name = this.v('nm-name'); if (!name) return;
@@ -2859,7 +3035,7 @@ class Component extends DCLogic {
     const resp = { gridCols: mob ? '1fr' : (wide ? '1.05fr 1fr' : '1fr'), pomoCols: mob ? '1fr' : '1.15fr 1fr',
       heroH: mob ? 'auto' : '264px', titleSize: mob ? '30px' : (wide ? '38px' : '34px'), balSize: mob ? '48px' : '54px',
       titleLS: mob ? '2px' : '4px', heroPad: mob ? '16px 16px 18px' : '22px 24px',
-      mainPad: mob ? '14px 12px 0' : '18px 24px 0',
+      mainPad: mob ? '14px 12px 0' : '18px 24px 0', countdownCols: mob ? 'minmax(0,1fr) auto 18px' : 'minmax(260px,1fr) auto 18px',
       cardPad: mob ? '13px' : '16px',
       rowWrap: mob ? 'wrap' : 'nowrap', rowJustify: mob ? 'flex-end' : 'flex-start',
       rowPad: mob ? '12px 12px' : '10px 12px',
@@ -2908,42 +3084,48 @@ class Component extends DCLogic {
     const all = taskBase.map(dec);
     const coreAll = all.filter(t => t.core);
     const coreDone = coreAll.filter(t => t.doneNow).length;
-    const setsArr = st.sets || [];
-    const setOptions = setsArr.map(s => ({ idStr: String(s.id), name: s.name }));
-    const milestoneSetsArr = st.milestoneSets || [];
-    const milestoneSetOptions = milestoneSetsArr.map(s => ({ idStr: String(s.id), name: s.name }));
+    const setsArr = this.normalizeHierarchy(st.sets || []);
+    const milestoneSetsArr = this.normalizeHierarchy(st.milestoneSets || []);
+    const setOptions = this.hierarchyOptions(setsArr);
+    const milestoneSetOptions = this.hierarchyOptions(milestoneSetsArr);
     const quadrantP1 = all.filter(t => (t.priority || 'p4') === 'p1');
     const quadrantP2 = all.filter(t => (t.priority || 'p4') === 'p2');
     const quadrantP3 = all.filter(t => (t.priority || 'p4') === 'p3');
     const quadrantP4 = all.filter(t => (t.priority || 'p4') === 'p4');
+    const setChildren = (list, pid) => list.filter(x => (x.parentId ?? null) === (pid ?? null));
+    const setSubtreeIds = (list, id) => { const out = new Set([id]); this.hierarchyDescendants(list, id).forEach(x => out.add(x)); return out; };
     let taskRows;
     if (st.warMode) {
-      taskRows = coreAll.map(t => ({ ...t, rowKey: 't-' + t.id, inSet: false }));
+      taskRows = coreAll.map(t => ({ ...t, rowKey: 't-' + t.id, inSet: false, indent: '0px' }));
     } else {
       taskRows = [];
-      const byId = {}; all.forEach(t => { byId[t.id] = t; });
-      const grouped = {}; setsArr.forEach(s => grouped[s.id] = []);
+      const grouped = {}; setsArr.forEach(x => grouped[x.id] = []);
       const ungrouped = [];
       all.forEach(t => { if (t.setId != null && grouped[t.setId]) grouped[t.setId].push(t); else ungrouped.push(t); });
-      setsArr.forEach(s => {
-        const members = grouped[s.id] || [];
-        const done = members.filter(m => m.doneNow).length;
-        taskRows.push({ rowKey: 'set-' + s.id, isHeader: true, isTask: false, id: s.id, name: s.name,
-          countLabel: done + '/' + members.length, collapsed: !!s.collapsed, chevron: s.collapsed ? '›' : '‹',
-          onToggle: e => { e.stopPropagation(); this.toggleSet(s.id); },
-          onEditSet: e => { e.stopPropagation(); this.openEdit('set', s.id); },
-          onDelSet: e => { e.stopPropagation(); this.delSet(s.id); } });
-        if (!s.collapsed) members.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: true }));
+      const walkSets = (pid, depth) => setChildren(setsArr, pid).forEach(set => {
+        const ids = setSubtreeIds(setsArr, set.id), members = all.filter(t => ids.has(t.setId)), done = members.filter(m => m.doneNow).length;
+        taskRows.push({ rowKey: 'set-' + set.id, isHeader: true, isTask: false, id: set.id, name: set.name, indent: (depth * 14) + 'px',
+          countLabel: done + '/' + members.length, collapsed: !!set.collapsed, chevron: set.collapsed ? '›' : '‹',
+          onToggle: e => { e.stopPropagation(); this.toggleSet(set.id); },
+          onEditSet: e => { e.stopPropagation(); this.openEdit('set', set.id); },
+          onDelSet: e => { e.stopPropagation(); this.delSet(set.id); } });
+        if (!set.collapsed) {
+          (grouped[set.id] || []).forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: true, indent: ((depth + 1) * 14) + 'px' }));
+          walkSets(set.id, depth + 1);
+        }
       });
+      walkSets(null, 0);
       if (setsArr.length && ungrouped.length) taskRows.push({ rowKey: 'ungrouped-divider', isDivider: true, isHeader: false, isTask: false, countLabel: ungrouped.length + ' 项' });
-      ungrouped.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: false }));
+      ungrouped.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: false, indent: '0px' }));
     }
     const milestoneBase = (st.milestoneSortMode || 'deadline') === 'manual' ? st.milestones : this.sortMilestonesByDeadline(st.milestones);
     const opexBase = (st.opexSortMode || 'date') === 'manual' ? (st.opex || []) : this.sortOpexByDate(st.opex || []);
     const stashBase = st.stash || [];
     const roKind = st.reorderKind || 'tasks';
-    const roSrc = roKind === 'sets' ? setsArr.map(x => ({ id: x.id, name: x.name, sub: '任务集' }))
-      : roKind === 'milestoneSets' ? milestoneSetsArr.map(x => ({ id: x.id, name: x.name, sub: '里程碑集' }))
+    const taskSetOrder = this.hierarchyOptions(setsArr);
+    const milestoneSetOrder = this.hierarchyOptions(milestoneSetsArr);
+    const roSrc = roKind === 'sets' ? taskSetOrder.map(x => ({ id: x.id, name: x.rawName, sub: '任务集', depth: x.depth }))
+      : roKind === 'milestoneSets' ? milestoneSetOrder.map(x => ({ id: x.id, name: x.rawName, sub: '里程碑集', depth: x.depth }))
       : roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: this.fmtExp(r.cost) + ' EXP' }))
       : roKind === 'milestones' ? milestoneBase.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
       : roKind === 'funds' ? st.funds.map(f => ({ id: f.id, name: f.name, sub: f.code || '' }))
@@ -2970,46 +3152,44 @@ class Component extends DCLogic {
       dragBg: String(st.dragId) === String(m.id) ? '#1a1f2b' : (m.setId != null ? '#0b1017' : '#0d0f14'), dragShadow: String(st.dragId) === String(m.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(m.id, e) });
     let reorderRows;
     if (roKind === 'sets' || roKind === 'milestoneSets') {
-      reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, hasSet: true, inGroup: false, indent: '0px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
+      reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, hasSet: true, inGroup: false, indent: ((t.depth || 0) * 16) + 'px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
     } else if (roKind === 'tasks') {
-      const decd = taskBase.map(dec);
-      const rows = [];
-      setsArr.forEach(s => {
-        const its = decd.filter(t => t.setId === s.id);
-        rows.push({ isSetHeader: true, isRow: false, roSet: String(s.id), name: s.name, count: its.length + ' 项',
-          collapsed: !!s.collapsed, chev: s.collapsed ? '▸' : '▾', onToggleSet: () => this.toggleSet(s.id) });
-        if (!s.collapsed) its.forEach(t => rows.push(mkTaskRow(t)));
+      const decd = taskBase.map(dec), rows = [], grouped = {}; setsArr.forEach(x => grouped[x.id] = []);
+      const ungrouped = []; decd.forEach(t => { if (t.setId != null && grouped[t.setId]) grouped[t.setId].push(t); else ungrouped.push(t); });
+      const walk = (pid, depth) => setChildren(setsArr, pid).forEach(set => {
+        const ids = setSubtreeIds(setsArr, set.id), count = decd.filter(t => ids.has(t.setId)).length;
+        rows.push({ isSetHeader: true, isRow: false, roSet: String(set.id), name: set.name, count: count + ' 项', indent: (depth * 14) + 'px',
+          collapsed: !!set.collapsed, chev: set.collapsed ? '▸' : '▾', onToggleSet: () => this.toggleSet(set.id) });
+        if (!set.collapsed) { (grouped[set.id] || []).forEach(t => rows.push({ ...mkTaskRow(t), indent: ((depth + 1) * 14) + 'px' })); walk(set.id, depth + 1); }
       });
-      const ungrouped = decd.filter(t => t.setId == null);
-      if (setsArr.length) rows.push({ isSetHeader: true, isRow: false, roSet: 'none', name: '未分组', count: ungrouped.length + ' 项', collapsed: false, chev: '', onToggleSet: () => {} });
-      ungrouped.forEach(t => rows.push(mkTaskRow(t)));
-      reorderRows = rows;
+      walk(null, 0);
+      if (setsArr.length) rows.push({ isSetHeader: true, isRow: false, roSet: 'none', name: '未分组', count: ungrouped.length + ' 项', indent: '0px', collapsed: false, chev: '', onToggleSet: () => {} });
+      ungrouped.forEach(t => rows.push(mkTaskRow(t))); reorderRows = rows;
     } else if (roKind === 'milestones') {
-      const rows = [];
-      milestoneSetsArr.forEach(ms => {
-        const its = milestoneBase.filter(m => m.setId === ms.id);
-        rows.push({ isSetHeader: true, isRow: false, roSet: String(ms.id), name: ms.name, count: its.length + ' 项', collapsed: !!ms.collapsed, chev: ms.collapsed ? '▸' : '▾', onToggleSet: () => this.toggleMilestoneSet(ms.id) });
-        if (!ms.collapsed) its.forEach(m => rows.push(mkMilestoneRoRow(m)));
+      const rows = [], grouped = {}; milestoneSetsArr.forEach(x => grouped[x.id] = []);
+      const ungroupedMs = []; milestoneBase.forEach(m => { if (m.setId != null && grouped[m.setId]) grouped[m.setId].push(m); else ungroupedMs.push(m); });
+      const walk = (pid, depth) => setChildren(milestoneSetsArr, pid).forEach(set => {
+        const ids = setSubtreeIds(milestoneSetsArr, set.id), count = milestoneBase.filter(m => ids.has(m.setId)).length;
+        rows.push({ isSetHeader: true, isRow: false, roSet: String(set.id), name: set.name, count: count + ' 项', indent: (depth * 14) + 'px',
+          collapsed: !!set.collapsed, chev: set.collapsed ? '▸' : '▾', onToggleSet: () => this.toggleMilestoneSet(set.id) });
+        if (!set.collapsed) { (grouped[set.id] || []).forEach(m => rows.push({ ...mkMilestoneRoRow(m), indent: ((depth + 1) * 14) + 'px' })); walk(set.id, depth + 1); }
       });
-      const ungroupedMs = milestoneBase.filter(m => m.setId == null || !milestoneSetsArr.some(ms => ms.id === m.setId));
-      if (milestoneSetsArr.length) rows.push({ isSetHeader: true, isRow: false, roSet: 'none', name: '未分组', count: ungroupedMs.length + ' 项', collapsed: false, chev: '', onToggleSet: () => {} });
-      ungroupedMs.forEach(m => rows.push(mkMilestoneRoRow(m)));
-      reorderRows = rows;
+      walk(null, 0);
+      if (milestoneSetsArr.length) rows.push({ isSetHeader: true, isRow: false, roSet: 'none', name: '未分组', count: ungroupedMs.length + ' 项', indent: '0px', collapsed: false, chev: '', onToggleSet: () => {} });
+      ungroupedMs.forEach(m => rows.push(mkMilestoneRoRow(m))); reorderRows = rows;
     } else {
       reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name,
         setName: t.sub, hasSet: !!t.sub, inGroup: false, indent: '0px',
         batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '',
-        dragging: String(st.dragId) === String(t.id),
-        dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36',
+        dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36',
         dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
-        dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
-        onDown: e => this.roDown(t.id, e) }));
+        dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
     }
     const reorderTitle = roKind === 'sets' ? '任务集排序 // REORDER SETS' : roKind === 'milestoneSets' ? '里程碑集排序 // REORDER SETS' : roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
-      const capped = (r.redeems || []).some(t => this.sameDay(t));
-      const capLabelTop = '今日已兑换', capLabelBottom = '明日可兑';
-      const capHint = '每日 1 次';
+      const capCount = this.rewardRedeemCount(r), capRule = this.rewardCapRule(r), capped = capCount >= capRule.times;
+      const capLabelTop = capped ? '本期已兑满' : ('本期 ' + capCount + '/' + capRule.times), capLabelBottom = capped ? '下期可兑' : '仍可兑换';
+      const capHint = this.rewardCapLabel(r, capCount);
       return { ...r,
       canAfford: st.exp >= r.cost && !rp && !capped, cannot: st.exp < r.cost && !rp && !capped, pending: rp,
       capped: capped && !rp, capLabelTop, capLabelBottom, hasCapHint: !!capHint, capHint,
@@ -3042,13 +3222,19 @@ class Component extends DCLogic {
         onEdit: () => this.openEdit('milestone', m.id), onUndo: e => { e.stopPropagation(); this.undo(); } };
     });
     const milestoneRows = [];
-    milestoneSetsArr.forEach(ms => {
-      const members = milestones.filter(m => m.setId === ms.id);
-      const done = members.filter(m => m.claimed).length;
-      milestoneRows.push({ rowKey: 'ms-set-' + ms.id, isHeader: true, isMilestone: false, id: ms.id, name: ms.name, countLabel: done + '/' + members.length, chevron: ms.collapsed ? '›' : '‹', onToggleSet: e => { e.stopPropagation(); this.toggleMilestoneSet(ms.id); }, onEditSet: e => { e.stopPropagation(); this.openEdit('milestoneSet', ms.id); }, onDelSet: e => { e.stopPropagation(); this.delMilestoneSet(ms.id); } });
-      if (!ms.collapsed) members.forEach(m => milestoneRows.push({ ...m, rowKey: 'ms-' + m.id, isHeader: false, isMilestone: true }));
+    const msGrouped = {}; milestoneSetsArr.forEach(x => msGrouped[x.id] = []);
+    const msUngrouped = []; milestones.forEach(m => { if (m.setId != null && msGrouped[m.setId]) msGrouped[m.setId].push(m); else msUngrouped.push(m); });
+    const walkMsSets = (pid, depth) => setChildren(milestoneSetsArr, pid).forEach(ms => {
+      const ids = setSubtreeIds(milestoneSetsArr, ms.id), members = milestones.filter(m => ids.has(m.setId)), done = members.filter(m => m.claimed).length;
+      milestoneRows.push({ rowKey: 'ms-set-' + ms.id, isHeader: true, isMilestone: false, id: ms.id, name: ms.name, indent: (depth * 14) + 'px',
+        countLabel: done + '/' + members.length, chevron: ms.collapsed ? '›' : '‹',
+        onToggleSet: e => { e.stopPropagation(); this.toggleMilestoneSet(ms.id); },
+        onEditSet: e => { e.stopPropagation(); this.openEdit('milestoneSet', ms.id); },
+        onDelSet: e => { e.stopPropagation(); this.delMilestoneSet(ms.id); } });
+      if (!ms.collapsed) { (msGrouped[ms.id] || []).forEach(m => milestoneRows.push({ ...m, rowKey: 'ms-' + m.id, isHeader: false, isMilestone: true, indent: ((depth + 1) * 14) + 'px' })); walkMsSets(ms.id, depth + 1); }
     });
-    milestones.filter(m => m.setId == null || !milestoneSetsArr.some(ms => ms.id === m.setId)).forEach(m => milestoneRows.push({ ...m, rowKey: 'ms-' + m.id, isHeader: false, isMilestone: true }));
+    walkMsSets(null, 0);
+    msUngrouped.forEach(m => milestoneRows.push({ ...m, rowKey: 'ms-' + m.id, isHeader: false, isMilestone: true, indent: '0px' }));
     const fmt = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
     const galleryQuery = (st.gallerySearch || '').trim().toLowerCase();
     const galleryAll = (st.galleryEntries || []).slice().sort((a, b) => b.ts - a.ts);
@@ -3172,15 +3358,15 @@ class Component extends DCLogic {
     const editOpen = !!editItem;
     return { accent, exp: st.exp, warMode: st.warMode, warOff: !st.warMode,
       toggleWar: () => this.save({ warMode: !st.warMode }),
-      tasks: st.warMode ? coreAll : all, taskRows, setOptions, milestoneSetOptions, coreDone, coreTotal: coreAll.length,
+      tasks: st.warMode ? coreAll : all, taskRows, setOptions, milestoneSetOptions, setParentOptions: this.hierarchyOptions(setsArr), milestoneSetParentOptions: this.hierarchyOptions(milestoneSetsArr), coreDone, coreTotal: coreAll.length,
       quadrantOpen: !!st.quadrantOpen, openQuadrant: () => this.openQuadrant(), closeQuadrant: () => this.closeQuadrant(),
       quadrantP1, quadrantP2, quadrantP3, quadrantP4, quadrantP1Count: quadrantP1.length, quadrantP2Count: quadrantP2.length, quadrantP3Count: quadrantP3.length, quadrantP4Count: quadrantP4.length, quadrantP1Empty: quadrantP1.length === 0, quadrantP2Empty: quadrantP2.length === 0, quadrantP3Empty: quadrantP3.length === 0, quadrantP4Empty: quadrantP4.length === 0,
       addSet: () => this.addSet(), addMilestoneSet: () => this.addMilestoneSet(),
       momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
-      aiHelpOpen: !!st.aiHelpOpen, aiHelpMsg: st.aiHelpMsg || '', aiHelpMsgShow: !!st.aiHelpMsg, aiHelpMsgColor: st.aiHelpMsgColor || '#8b93a4', openAiHelp: () => this.openAiHelp(), closeAiHelp: () => this.closeAiHelp(), runAiHelp: () => this.runAiHelp(),
+      aiHelpOpen: !!st.aiHelpOpen, aiHelpMsg: st.aiHelpMsg || '', aiHelpMsgShow: !!st.aiHelpMsg, aiHelpMsgColor: st.aiHelpMsgColor || '#8b93a4', openAiHelp: () => this.openAiHelp(), closeAiHelp: () => this.closeAiHelp(), runAiHelp: () => this.runAiHelp(), newTaskAiMsg: st.newTaskAiMsg || '', newTaskAiMsgShow: !!st.newTaskAiMsg, newTaskAiMsgColor: st.newTaskAiMsgColor || '#8b93a4', runNewTaskAI: () => this.runNewTaskAI(),
       taskFocusOpen: !!taskFocusTask, taskFocusName: taskFocusTask ? taskFocusTask.name : '', taskFocusMin: st.taskFocusMin || 25, closeTaskFocus: () => this.closeTaskFocus(), taskFocusDirect: () => this.taskFocusDirect(), taskFocusStart: () => this.taskFocusStart(),
       daylineAlertOpen: !!st.daylineAlert, daylineAlertTime: st.daylineAlert ? st.daylineAlert.time : '', daylineAlertName: st.daylineAlert ? st.daylineAlert.name : '', closeDaylineAlert: () => this.closeDaylineAlert(),
-      reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
+      reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle, reorderTaskFamily: ['tasks','sets'].includes(st.reorderKind || 'tasks'), reorderMilestoneFamily: ['milestones','milestoneSets'].includes(st.reorderKind || 'tasks'), reorderKindTasks: (st.reorderKind || 'tasks') === 'tasks', reorderKindSets: (st.reorderKind || 'tasks') === 'sets', reorderKindMilestones: (st.reorderKind || 'tasks') === 'milestones', reorderKindMilestoneSets: (st.reorderKind || 'tasks') === 'milestoneSets', switchReorderTasks: () => this.switchReorderKind('tasks'), switchReorderSets: () => this.switchReorderKind('sets'), switchReorderMilestones: () => this.switchReorderKind('milestones'), switchReorderMilestoneSets: () => this.switchReorderKind('milestoneSets'),
       reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
       reorderIsOpex: (st.reorderKind || 'tasks') === 'opex', opexSortLabel: (st.opexSortMode || 'date') === 'manual' ? '手动排序' : '日期优先', restoreOpexSort: () => this.restoreOpexSort(),
       reorderIsMilestones: (st.reorderKind || 'tasks') === 'milestones', milestoneSortLabel: (st.milestoneSortMode || 'deadline') === 'manual' ? '手动排序' : '截止日期优先',
@@ -3200,7 +3386,7 @@ class Component extends DCLogic {
       reorderItemName: (st.reorderKind || 'tasks') === 'sets' ? '任务集' : (st.reorderKind || 'tasks') === 'milestoneSets' ? '里程碑集' : (st.reorderKind || 'tasks') === 'milestones' ? '里程碑' : (st.reorderKind || 'tasks') === 'opex' ? '开销记录' : (st.reorderKind || 'tasks') === 'stash' ? '存钱目标' : '任务', reorderSetName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑集' : '任务集',
       roShowCheck: (((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones') && (st.roMode || 'drag') === 'select'),
       batchCount: (st.batchSel || []).length, batchHasSel: (st.batchSel || []).length > 0,
-      batchSetOptions: ((st.reorderKind || 'tasks') === 'milestones' ? milestoneSetsArr : setsArr).map(s => ({ id: s.id, name: s.name })),
+      batchSetOptions: ((st.reorderKind || 'tasks') === 'milestones' ? this.hierarchyOptions(milestoneSetsArr) : this.hierarchyOptions(setsArr)).map(s => ({ id: s.id, name: s.name })),
       batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
       startReorder: () => this.startReorder('tasks'), startReorderSets: () => this.startReorder('sets'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderMilestoneSets: () => this.startReorder('milestoneSets'), startReorderFunds: () => this.startReorder('funds'), startReorderOpex: () => this.startReorder('opex'), startReorderStash: () => this.startReorder('stash'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
@@ -3330,13 +3516,13 @@ class Component extends DCLogic {
       editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集', milestoneSet: '里程碑集', fund: '标的', countdown: '倒计时', opex: '开销', stash: '存钱目标' }[ed.type]) : '',
       editHasName: !ed || ed.type !== 'opex', editAskHint: ed && ed.type === 'opex' ? '可修改金额、分类、备注和日期。' : ed && ed.type === 'stash' ? '可修改目标名称和目标金额；当前余额请用卡片上的「存入 / 支出」调整。' : '可修改名称、分值、循环 / 截止日期等信息。',
       notionResultOpen: !!st.notionResultOpen, notionResultOk: st.notionResultOk, notionResultMsg: st.notionResultMsg || '', notionResultBusy: st.notionResultOk == null && !!st.notionResultOpen, notionResultColor: st.notionResultOk == null ? '#8b93a4' : (st.notionResultOk ? '#4ade80' : '#f87171'), closeNotionResult: () => this.closeNotionResult(),
-      editSetId: editItem ? String(editItem.setId ?? '') : '',
+      editSetId: editItem ? String(editItem.setId ?? '') : '', editParentId: editItem ? String(editItem.parentId ?? '') : '', editSetParentOptions: ed && ed.type === 'set' ? this.hierarchyOptions(setsArr, ed.id) : this.hierarchyOptions(setsArr), editMilestoneSetParentOptions: ed && ed.type === 'milestoneSet' ? this.hierarchyOptions(milestoneSetsArr, ed.id) : this.hierarchyOptions(milestoneSetsArr),
       editName: editItem ? editItem.name : '',
       editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '', editInterval: editItem ? this.taskInterval(editItem) : 1,
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
       editPriority: editItem ? (editItem.priority || 'p4') : 'p4', editNote: editItem ? (editItem.note || '') : '',
       editCost: editItem ? (editItem.cost ?? '') : '',
-      editCapCycle: editItem ? (editItem.capCycle || 'none') : 'none', editCapTimes: editItem ? (editItem.capTimes || 1) : 1,
+      editCapCycle: editItem ? (editItem.capCycle || 'daily') : 'daily', editCapInterval: editItem ? (editItem.capInterval || 1) : 1, editCapTimes: editItem ? (editItem.capTimes || 1) : 1,
       editCode: editItem ? (editItem.code ?? '') : '', editBase: editItem ? (editItem.base ?? '') : '',
       editTarget: editItem ? (editItem.target ?? '') : '', editStep: editItem ? (editItem.step ?? '') : '',
       editBonus: editItem ? (editItem.bonus ?? '') : '', editDeadline: editItem ? (editItem.deadline || '') : '',
