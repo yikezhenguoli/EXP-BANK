@@ -309,11 +309,18 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
               <div style="display:flex;flex-direction:column;gap:3px;">
                 <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;min-height:61px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere;">{{ r.name }}</div>
-                <div style="display:flex;align-items:center;gap:8px;">
-                  <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:{{ accent }};">{{ r.costStr }}</div>
-                  <sc-if value="{{ r.hasCapHint }}" hint-placeholder-val="{{ false }}">
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;border:1px solid #262b36;border-radius:99px;padding:1px 7px;">{{ r.capHint }}</div>
-                  </sc-if>
+                <div style="display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:10px;">
+                  <div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;min-width:48px;line-height:1;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:800;letter-spacing:-0.5px;color:{{ accent }};white-space:nowrap;">{{ r.costValue }}</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.2px;color:#8b93a4;margin-top:4px;">EXP</div>
+                  </div>
+                  <div style="min-width:0;border-left:1px solid #2a303a;padding-left:9px;display:flex;flex-direction:column;gap:4px;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:9.6px;color:#a6adba;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.capPeriodLabel }}</div>
+                    <div style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.2px;line-height:1.2;">
+                      <span style="color:#697084;">本期</span>
+                      <span style="font-weight:700;color:{{ r.capUsageColor }};white-space:nowrap;">{{ r.capUsageLabel }}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ false }}">
@@ -326,7 +333,7 @@ input[type="date"]{color-scheme:dark;}
                 <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px dashed #262b36;border-radius:8px;padding:6px 0;">余额不足</div>
               </sc-if>
               <sc-if value="{{ r.capped }}" hint-placeholder-val="{{ false }}">
-                <div title="今日已兑换 · 明日恢复" style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#9f6a70;border:1px solid #4a2b30;background:#1a1315;border-radius:8px;padding:7px 0;display:flex;flex-direction:column;gap:2px;">
+                <div title="{{ r.capHint }}" style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#9f6a70;border:1px solid #4a2b30;background:#1a1315;border-radius:8px;padding:7px 0;display:flex;flex-direction:column;gap:2px;">
                   <div style="font-size:11.5px;">✓ {{ r.capLabelTop }}</div>
                   <div style="font-size:9.5px;font-weight:500;color:#765158;letter-spacing:.5px;">{{ r.capLabelBottom }}</div>
                 </div>
@@ -1270,7 +1277,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。新建任务支持文字描述批量识别；任务集与里程碑集支持嵌套层级；奖励可设置每 N 日／周／月／年兑换 M 次；批量编辑统一管理项目与集合排序；集合标题除名称外均用于展开／收起；未来倒计时卡片扩大名称区域，减少不必要换行。原有数据继续保留。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。Shopping Mall 奖励卡重新整理价格与兑换额度层级：EXP 价格成为主信息，周期和本期额度变成紧凑辅助信息，移动端不再互相挤压。功能与原有数据不变。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1633,7 +1640,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.9.0';
+const APP_VERSION = 'v1.9.1';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -3189,11 +3196,13 @@ class Component extends DCLogic {
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
       const capCount = this.rewardRedeemCount(r), capRule = this.rewardCapRule(r), capped = capCount >= capRule.times;
       const capLabelTop = capped ? '本期已兑满' : ('本期 ' + capCount + '/' + capRule.times), capLabelBottom = capped ? '下期可兑' : '仍可兑换';
-      const capHint = this.rewardCapLabel(r, capCount);
+      const capHint = this.rewardCapLabel(r, capCount), capUnit = { daily: '日', weekly: '周', monthly: '月', yearly: '年' }[capRule.cycle] || '日';
+      const capPeriodLabel = '每 ' + capRule.interval + ' ' + capUnit + ' · ' + capRule.times + ' 次';
+      const capUsageLabel = capCount + ' / ' + capRule.times;
       return { ...r,
       canAfford: st.exp >= r.cost && !rp && !capped, cannot: st.exp < r.cost && !rp && !capped, pending: rp,
-      capped: capped && !rp, capLabelTop, capLabelBottom, hasCapHint: !!capHint, capHint,
-      costStr: this.fmtExp(r.cost) + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '', imgPos: (r.imgPos != null ? r.imgPos : 50) + '%',
+      capped: capped && !rp, capLabelTop, capLabelBottom, hasCapHint: !!capHint, capHint, capPeriodLabel, capUsageLabel, capUsageColor: capped ? '#b7777f' : accent,
+      costValue: this.fmtExp(r.cost), costStr: this.fmtExp(r.cost) + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '', imgPos: (r.imgPos != null ? r.imgPos : 50) + '%',
       imgBgStyle: r.img ? { position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'none', backgroundImage: 'url("' + r.img + '")', backgroundSize: 'cover', backgroundPosition: 'center ' + (r.imgPos != null ? r.imgPos : 50) + '%' } : {},
       onRedeem: e => { e.stopPropagation(); this.redeem(r.id); },
       onDel: e => { e.stopPropagation(); this.delReward(r.id); },
