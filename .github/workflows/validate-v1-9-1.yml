@@ -1,0 +1,35 @@
+name: validate v1.9.1
+
+on:
+  push:
+    branches:
+      - feature/v1-9-1-shopping-card-layout
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract embedded app JavaScript
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          source = Path("index.html").read_text(encoding="utf-8")
+          match = re.search(r'<script type="text/x-dc" data-dc-script[^>]*>\s*(.*?)\s*</script>', source, re.S)
+          assert match, "embedded application script not found"
+          Path("/tmp/exp-bank-app.js").write_text(match.group(1), encoding="utf-8")
+          PY
+      - name: Check JavaScript syntax
+        run: node --check /tmp/exp-bank-app.js
+      - name: Validate Shopping Mall layout markers
+        run: |
+          grep -q "const APP_VERSION = 'v1.9.1'" index.html
+          grep -q "r.costValue" index.html
+          grep -q "r.capPeriodLabel" index.html
+          grep -q "r.capUsageLabel" index.html
+          grep -q "border-left:1px solid #2a303a" index.html
+          grep -q "const CACHE = 'exp-bank-v1.9.1'" sw.js
