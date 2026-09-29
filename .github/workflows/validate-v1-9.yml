@@ -25,6 +25,44 @@ jobs:
           PY
       - name: Check JavaScript syntax
         run: node --check /tmp/exp-bank-app.js
+      - name: Unit-check hierarchy, task parser and reward caps
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          app = Path("/tmp/exp-bank-app.js").read_text(encoding="utf-8")
+          prelude = r"""
+          class DCLogic {
+            constructor(props){ this.props = props || {}; this.state = {}; }
+            setState(patch, cb){ this.state = Object.assign({}, this.state, patch || {}); if (cb) cb(); }
+            forceUpdate(){}
+          }
+          const localStorage = { getItem(){ return null; }, setItem(){} };
+          const document = { getElementById(){ return null; }, querySelectorAll(){ return []; } };
+          const navigator = {};
+          const window = {};
+          const __realSetTimeout = globalThis.setTimeout;
+          globalThis.setTimeout = () => 0;
+          """
+          tests = r"""
+          const c = new Component({});
+          const p1 = c.parseTaskDescription('任务名为 A、B、C，每项 5 EXP，放在一个叫学习的任务集里，每周 3 次');
+          if (!p1 || p1.tasks.length !== 3 || p1.setName !== '学习') throw new Error('task parser list/set failed');
+          if (p1.tasks.some(x => x.exp !== 5 || x.cycle !== 'weekly' || x.times !== 3)) throw new Error('task parser rule failed');
+          const p2 = c.parseTaskDescription('把26个英文字母列为26项任务，放在一个叫1的任务集里，每项0.5 EXP');
+          if (!p2 || p2.tasks.length !== 26 || p2.setName !== '1' || p2.tasks[0].exp !== 0.5) throw new Error('A-Z parser failed');
+          const h = c.normalizeHierarchy([{id:1,name:'A',parentId:null},{id:2,name:'B',parentId:1},{id:3,name:'C',parentId:2}]);
+          if (c.hierarchyOptions(h).map(x => x.id).join(',') !== '1,2,3') throw new Error('hierarchy flatten failed');
+          if (c.safeHierarchyParent(h,1,3) !== null) throw new Error('hierarchy cycle guard failed');
+          const r = {capCycle:'daily',capInterval:2,capTimes:2,capAnchorDate:'2026-09-29',redeems:[]};
+          const k0 = c.rewardPeriodKey(r, new Date('2026-09-29T12:00:00').getTime());
+          const k1 = c.rewardPeriodKey(r, new Date('2026-09-30T12:00:00').getTime());
+          const k2 = c.rewardPeriodKey(r, new Date('2026-10-01T12:00:00').getTime());
+          if (k0 !== k1 || k0 === k2) throw new Error('reward interval bucketing failed');
+          console.log('v1.9 unit checks passed');
+          """
+          Path("/tmp/exp-bank-unit.js").write_text(prelude + "\n" + app + "\n" + tests, encoding="utf-8")
+          PY
+          node /tmp/exp-bank-unit.js
       - name: Validate v1.9 markers
         run: |
           grep -q "const APP_VERSION = 'v1.9.0'" index.html
