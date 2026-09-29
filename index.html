@@ -149,8 +149,7 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ openNewSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 14px;" style-hover="filter:brightness(1.12);">+ 新建任务集</div>
         <div onClick="{{ openGallery }}" title="查看任务与里程碑留下的心得和照片" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">▦ 集锦</div>
         <div style="flex:1;"></div>
-        <div onClick="{{ startReorderSets }}" title="拖动调整任务集顺序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#aeb6c6;border:1px solid #2a2f3a;border-radius:8px;padding:7px 10px;" style-hover="border-color:{{ accent }};color:#eef1f7;">⇅ 任务集</div>
-        <div onClick="{{ startReorder }}" title="批量编辑:排序 + 归入任务集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
+        <div onClick="{{ startReorder }}" title="批量编辑任务与任务集：排序 + 归集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
       </sc-if>
       <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="4">
@@ -162,17 +161,16 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </sc-if>
         <sc-if value="{{ t.isHeader }}" hint-placeholder-val="{{ false }}">
-          <div onClick="{{ t.onToggle }}" title="点击折叠/展开任务集" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
+          <div onClick="{{ t.onToggle }}" title="点击任意空白区域折叠/展开；仅点击名称编辑" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;margin-left:{{ t.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
             <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};width:14px;text-align:center;line-height:1;">{{ t.chevron }}</div>
-            <div onClick="{{ t.onEditSet }}" title="点击编辑任务集名称" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ t.name }}</div>
+            <div onClick="{{ t.onEditSet }}" title="点击名称编辑任务集" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ t.name }}</div>
             <div style="flex:1;"></div>
             <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ t.countLabel }}</div>
-            <div onClick="{{ t.onEditSet }}" title="重命名任务集" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
-            <div onClick="{{ t.onDelSet }}" title="删除任务集（任务保留）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+            <div onClick="{{ t.onDelSet }}" title="删除任务集（内容上移一级）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
           </div>
         </sc-if>
         <sc-if value="{{ t.isTask }}" hint-placeholder-val="{{ true }}">
-        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;flex-wrap:{{ rowWrap }};justify-content:{{ rowJustify }};align-items:center;gap:8px;padding:{{ rowPad }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;flex-wrap:{{ rowWrap }};justify-content:{{ rowJustify }};align-items:center;gap:8px;padding:{{ rowPad }};margin-left:{{ t.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div onClick="{{ t.onToggleCore }}" title="设为核心微习惯(战时模式)" style="cursor:pointer;font-size:13px;color:{{ t.starColor }};width:16px;flex-shrink:0;text-align:center;">★</div>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div style="width:3px;align-self:stretch;flex-shrink:0;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
@@ -341,23 +339,22 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- MILESTONES -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:6px 10px;" style-hover="filter:brightness(1.12);">▦ 集锦</div><div onClick="{{ startReorderMilestoneSets }}" title="拖动调整里程碑集顺序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#aeb6c6;border:1px solid #2a2f3a;border-radius:8px;padding:6px 9px;" style-hover="border-color:{{ accent }};">⇅ 集</div><div onClick="{{ startReorderMilestones }}" title="排序 / 归类里程碑" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.8px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 9px;" style-hover="border-color:{{ accent }};">⇅ 项</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">里程碑 // MILESTONE</div><div onClick="{{ openGallery }}" title="查看成长集锦" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 -1px 0 rgba(0,0,0,.32),0 4px 14px rgba(0,0,0,.38);border-radius:8px;padding:6px 10px;" style-hover="filter:brightness(1.12);">▦ 集锦</div><div onClick="{{ startReorderMilestones }}" title="批量编辑里程碑与里程碑集：排序 + 归集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">批量编辑</div></div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <div onClick="{{ openNewMilestone }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑</div>
         <div onClick="{{ openNewMilestoneSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:7px 12px;" style-hover="filter:brightness(1.12);">+ 新建里程碑集</div>
       </div>
       <sc-for list="{{ milestoneRows }}" as="m" hint-placeholder-count="1">
         <sc-if value="{{ m.isHeader }}" hint-placeholder-val="{{ false }}">
-          <div onClick="{{ m.onToggleSet }}" title="点击折叠/展开里程碑集" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
+          <div onClick="{{ m.onToggleSet }}" title="点击任意空白区域折叠/展开；仅点击名称编辑" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px;margin-left:{{ m.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.22),rgba(255,255,255,0.06) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 0 0 1px {{ accent }};">
             <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:{{ accent }};width:14px;text-align:center;line-height:1;">{{ m.chevron }}</div>
-            <div onClick="{{ m.onEditSet }}" title="点击编辑里程碑集名称" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ m.name }}</div>
+            <div onClick="{{ m.onEditSet }}" title="点击名称编辑里程碑集" style="cursor:text;font-size:13.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;" style-hover="color:{{ accent }};">▤ {{ m.name }}</div>
             <div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ m.countLabel }}</div>
-            <div onClick="{{ m.onEditSet }}" title="重命名里程碑集" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
-            <div onClick="{{ m.onDelSet }}" title="删除里程碑集（里程碑保留）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
+            <div onClick="{{ m.onDelSet }}" title="删除里程碑集（内容上移一级）" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
           </div>
         </sc-if>
         <sc-if value="{{ m.isMilestone }}" hint-placeholder-val="{{ true }}">
-        <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:14px;display:flex;flex-direction:column;gap:12px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+        <div onClick="{{ m.onEdit }}" title="点击编辑此里程碑" style="cursor:pointer;margin-left:{{ m.indent }};border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);padding:14px;display:flex;flex-direction:column;gap:12px;" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
           <div style="display:flex;align-items:flex-start;gap:12px;">
             <div style="flex:1;min-width:0;font-size:16px;line-height:1.45;font-weight:700;letter-spacing:0.2px;color:#eef1f7;word-break:break-word;">{{ m.name }}</div>
             <div onClick="{{ m.onDel }}" title="删除里程碑" style="cursor:pointer;color:#3d4353;font-size:16px;line-height:1;padding:3px 1px;flex-shrink:0;" style-hover="color:#f87171;">×</div>
@@ -499,23 +496,16 @@ input[type="date"]{color-scheme:dark;}
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">未来倒计时 // COUNTDOWN</div><div onClick="{{ openNewCountdown }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建倒计时</div></div>
       <sc-for list="{{ countdowns }}" as="cd" hint-placeholder-count="2">
-        <div onClick="{{ cd.onEdit }}" title="点击编辑" style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }};">
-          <div style="flex:1;min-width:0;">
-            <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;white-space:normal;overflow-wrap:anywhere;word-break:break-word;">{{ cd.name }}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;margin-top:3px;">截止 {{ cd.dueStr }}</div>
+        <div onClick="{{ cd.onEdit }}" title="点击编辑" style="cursor:pointer;display:grid;grid-template-columns:{{ countdownCols }};align-items:center;column-gap:12px;padding:14px 16px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }};">
+          <div style="min-width:0;padding-right:6px;">
+            <div style="font-size:16px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;white-space:normal;overflow-wrap:normal;word-break:normal;">{{ cd.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;margin-top:3px;line-height:1.45;">截止 {{ cd.dueStr }}</div>
           </div>
-          <sc-if value="{{ cd.isToday }}" hint-placeholder-val="{{ false }}">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:#fbbf24;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));">就在今天</div>
-          </sc-if>
-          <sc-if value="{{ cd.showNum }}" hint-placeholder-val="{{ true }}">
-            <div style="display:flex;align-items:baseline;gap:5px;">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ cd.prefix }}</span>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:700;line-height:1;color:{{ cd.numColor }};filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ cd.numText }}</span>
-              <span style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#c3c9d6;">天</span>
-            </div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;white-space:nowrap;">{{ cd.remainDetail }}</div>
-          </sc-if>
-          <div onClick="{{ cd.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;padding-left:4px;" style-hover="color:#f87171;">×</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:92px;">
+            <sc-if value="{{ cd.isToday }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#fbbf24;">就在今天</div></sc-if>
+            <sc-if value="{{ cd.showNum }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:baseline;gap:4px;"><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">{{ cd.prefix }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:700;line-height:1;color:{{ cd.numColor }};filter:drop-shadow(0 2px 8px rgba(0,0,0,0.5));">{{ cd.numText }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#c3c9d6;">天</span></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;white-space:nowrap;">{{ cd.remainDetail }}</div></sc-if>
+          </div>
+          <div onClick="{{ cd.onDel }}" style="cursor:pointer;color:#3d4353;font-size:16px;text-align:center;" style-hover="color:#f87171;">×</div>
         </div>
       </sc-for>
     </div>
@@ -810,6 +800,16 @@ input[type="date"]{color-scheme:dark;}
               <input id="ed-name" defaultValue="{{ editName }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
             </label>
           </sc-if>
+          <sc-if value="{{ editIsSet }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">上级任务集
+              <select id="ed-set-parent" defaultValue="{{ editParentId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层任务集</option><sc-for list="{{ editSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+            </label>
+          </sc-if>
+          <sc-if value="{{ editIsMilestoneSet }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">上级里程碑集
+              <select id="ed-ms-parent" defaultValue="{{ editParentId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层里程碑集</option><sc-for list="{{ editMilestoneSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+            </label>
+          </sc-if>
           <sc-if value="{{ editIsTask }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:8px;">
               <label style="flex:1;font-size:11px;color:#697084;">EXP 分值
@@ -848,7 +848,12 @@ input[type="date"]{color-scheme:dark;}
             <label style="display:block;font-size:11px;color:#697084;">价格(EXP)
               <input id="ed-cost" type="number" min="0.01" step="0.01" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
             </label>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;border:1px solid #262b36;background:#0d0f14;border-radius:8px;padding:8px 10px;">兑换限制 · 每日 1 次（固定）</div>
+            <div style="font-size:10.5px;color:#697084;">兑换限制 · 每 N 日／周／月／年最多兑换 M 次</div>
+            <div style="display:grid;grid-template-columns:.8fr 1.15fr .8fr;gap:7px;">
+              <label style="font-size:10px;color:#697084;">每<input id="ed-cap-interval" type="number" min="1" max="999" step="1" defaultValue="{{ editCapInterval }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+              <label style="font-size:10px;color:#697084;">周期<select id="ed-cap-cycle" defaultValue="{{ editCapCycle }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 5px;color:#aeb6c6;"><option value="daily">日</option><option value="weekly">周</option><option value="monthly">月</option><option value="yearly">年</option></select></label>
+              <label style="font-size:10px;color:#697084;">可兑次数<input id="ed-cap-times" type="number" min="1" max="999" step="1" defaultValue="{{ editCapTimes }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+            </div>
           </sc-if>
           <sc-if value="{{ editIsFund }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">股票代码
@@ -1019,6 +1024,12 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">兑换价格(EXP)
           <input id="nr-cost" type="number" min="0.01" step="0.01" placeholder="200" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
         </label>
+        <div style="font-size:10.5px;color:#697084;">兑换限制 · 每 N 日／周／月／年最多兑换 M 次</div>
+        <div style="display:grid;grid-template-columns:.8fr 1.15fr .8fr;gap:7px;">
+          <label style="font-size:10px;color:#697084;">每<input id="nr-cap-interval" type="number" min="1" max="999" step="1" value="1" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+          <label style="font-size:10px;color:#697084;">周期<select id="nr-cap-cycle" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 5px;color:#aeb6c6;"><option value="daily">日</option><option value="weekly">周</option><option value="monthly">月</option><option value="yearly">年</option></select></label>
+          <label style="font-size:10px;color:#697084;">可兑次数<input id="nr-cap-times" type="number" min="1" max="999" step="1" value="1" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
+        </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加奖励</div>
@@ -1071,6 +1082,9 @@ input[type="date"]{color-scheme:dark;}
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">把同一阶段或同一方向的里程碑收进一个可折叠分组。之后可以在排序面板里拖动归类。</div>
         <label style="display:block;font-size:11px;color:#697084;">里程碑集名称
           <input id="nms-name" placeholder="例如:考试 / 旅行 / 长期作品" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">上级里程碑集（可留空）
+          <select id="nms-parent" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层里程碑集</option><sc-for list="{{ milestoneSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1462,6 +1476,12 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:360px;max-width:100%;max-height:90vh;overflow-y:auto;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建任务 // NEW TASK</div>
+        <div style="border:1px solid #2a3040;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(10,12,17,.32));border-radius:11px;padding:10px;display:flex;flex-direction:column;gap:8px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.2px;color:{{ accent }};">✦ AI 识别文字描述</div>
+          <textarea id="nt-ai-desc" placeholder="例如：创建“背单词、听力、阅读”3项任务，放在六级任务集，每周完成3次，每项5 EXP" style="width:100%;box-sizing:border-box;min-height:74px;background:#0b0d12;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;line-height:1.65;font-family:inherit;resize:vertical;"></textarea>
+          <div style="display:flex;align-items:center;gap:8px;"><div onClick="{{ runNewTaskAI }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:7px 12px;">识别并生成</div><sc-if value="{{ newTaskAiMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:{{ newTaskAiMsgColor }};line-height:1.45;">{{ newTaskAiMsg }}</div></sc-if></div>
+        </div>
+        <div style="font-size:10px;color:#535a6a;line-height:1.55;">也可以继续使用下面的手动表单，只新建一项任务。</div>
         <label style="display:block;font-size:11px;color:#697084;">任务名称
           <input id="nt-name" placeholder="例如:背 20 个单词" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
@@ -1517,6 +1537,9 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">任务集名称
           <input id="ns-name" placeholder="例如:学习区 / 健身区" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
+        <label style="display:block;font-size:11px;color:#697084;">上级任务集（可留空）
+          <select id="ns-parent" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层任务集</option><sc-for list="{{ setParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+        </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addSet }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建任务集</div>
@@ -1530,6 +1553,8 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeReorder }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">{{ reorderTitle }}</div>
+        <sc-if value="{{ reorderTaskFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderTasks }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindTasks ? accent : '#2f3542' }};background:{{ reorderKindTasks ? btnGrad : '#161a22' }};color:{{ reorderKindTasks ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">任务</div><div onClick="{{ switchReorderSets }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindSets ? accent : '#2f3542' }};background:{{ reorderKindSets ? btnGrad : '#161a22' }};color:{{ reorderKindSets ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">任务集</div></div></sc-if>
+        <sc-if value="{{ reorderMilestoneFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderMilestones }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindMilestones ? accent : '#2f3542' }};background:{{ reorderKindMilestones ? btnGrad : '#161a22' }};color:{{ reorderKindMilestones ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">里程碑</div><div onClick="{{ switchReorderMilestoneSets }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindMilestoneSets ? accent : '#2f3542' }};background:{{ reorderKindMilestoneSets ? btnGrad : '#161a22' }};color:{{ reorderKindMilestoneSets ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">里程碑集</div></div></sc-if>
         <sc-if value="{{ reorderIsMilestones }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:8px;border:1px solid #202530;background:#0d0f14;border-radius:9px;padding:9px 10px;">
             <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">当前: {{ milestoneSortLabel }}</div>
@@ -1563,7 +1588,7 @@ input[type="date"]{color-scheme:dark;}
         <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px;">
           <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
             <sc-if value="{{ row.isSetHeader }}" hint-placeholder-val="{{ false }}">
-              <div data-ro-set="{{ row.roSet }}" onClick="{{ row.onToggleSet }}" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:9px;background:linear-gradient(180deg,#1a1e28,#12151d);border:1px solid #2a3040;">
+              <div data-ro-set="{{ row.roSet }}" onClick="{{ row.onToggleSet }}" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 12px;margin-left:{{ row.indent }};border-radius:9px;background:linear-gradient(180deg,#1a1e28,#12151d);border:1px solid #2a3040;">
                 <div style="font-size:13px;color:{{ accent }};width:14px;">{{ row.chev }}</div>
                 <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;letter-spacing:1px;color:#c8cedb;">▤ {{ row.name }}</div>
                 <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;">{{ row.count }}</div>
