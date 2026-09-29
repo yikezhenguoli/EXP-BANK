@@ -3118,7 +3118,7 @@ class Component extends DCLogic {
       if (setsArr.length && ungrouped.length) taskRows.push({ rowKey: 'ungrouped-divider', isDivider: true, isHeader: false, isTask: false, countLabel: ungrouped.length + ' 项' });
       ungrouped.forEach(m => taskRows.push({ ...m, rowKey: 't-' + m.id, inSet: false, indent: '0px' }));
     }
-    const milestoneBase =    const milestoneBase = (st.milestoneSortMode || 'deadline') === 'manual' ? st.milestones : this.sortMilestonesByDeadline(st.milestones);
+    const milestoneBase = (st.milestoneSortMode || 'deadline') === 'manual' ? st.milestones : this.sortMilestonesByDeadline(st.milestones);
     const opexBase = (st.opexSortMode || 'date') === 'manual' ? (st.opex || []) : this.sortOpexByDate(st.opex || []);
     const stashBase = st.stash || [];
     const roKind = st.reorderKind || 'tasks';
@@ -3132,7 +3132,7 @@ class Component extends DCLogic {
       : roKind === 'opex' ? opexBase.map(o => ({ id: o.id, name: o.note || o.cat || '开销记录', sub: (o.date || '') + ' · ' + o.amount }))
       : roKind === 'stash' ? stashBase.map(x => ({ id: x.id, name: x.name, sub: x.saved + '/' + x.target }))
       : taskBase.map(dec).map(t => ({ id: t.id, name: t.name, sub: (setsArr.find(s => s.id === t.setId) || {}).name || '' }));
-    const accGreen =    const accGreen = this.props.accent ?? '#4ade80';
+    const accGreen = this.props.accent ?? '#4ade80';
     const mkTaskRow = t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name,
       setName: '', hasSet: false, inGroup: t.setId != null, indent: t.setId != null ? '16px' : '0px',
       batchOn: (st.batchSel || []).includes(t.id), onToggleBatch: () => this.toggleBatch(t.id),
@@ -3185,7 +3185,7 @@ class Component extends DCLogic {
         dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
         dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
     }
-    const reorderTitle =    const reorderTitle = roKind === 'sets' ? '任务集排序 // REORDER SETS' : roKind === 'milestoneSets' ? '里程碑集排序 // REORDER SETS' : roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
+    const reorderTitle = roKind === 'sets' ? '任务集排序 // REORDER SETS' : roKind === 'milestoneSets' ? '里程碑集排序 // REORDER SETS' : roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
       const capCount = this.rewardRedeemCount(r), capRule = this.rewardCapRule(r), capped = capCount >= capRule.times;
       const capLabelTop = capped ? '本期已兑满' : ('本期 ' + capCount + '/' + capRule.times), capLabelBottom = capped ? '下期可兑' : '仍可兑换';
@@ -3203,7 +3203,7 @@ class Component extends DCLogic {
       onImgDown: e => this.rewardImgDown(r.id, e),
       onAskImg: e => { e.stopPropagation(); this.askRewardImage(r.id); },
       onEdit: () => this.openEdit('reward', r.id) }; });
-    const imgEditItem =    const imgEditItem = st.imgEditId != null ? st.rewards.find(r => r.id === st.imgEditId) : null;
+    const imgEditItem = st.imgEditId != null ? st.rewards.find(r => r.id === st.imgEditId) : null;
     const milestones = milestoneBase.map(m => {
       const pct = Math.min(100, Math.round(m.cur / m.target * 100));
       const dl = m.deadline || '';
@@ -3235,7 +3235,7 @@ class Component extends DCLogic {
     });
     walkMsSets(null, 0);
     msUngrouped.forEach(m => milestoneRows.push({ ...m, rowKey: 'ms-' + m.id, isHeader: false, isMilestone: true, indent: '0px' }));
-    const fmt =    const fmt = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+    const fmt = ts => { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
     const galleryQuery = (st.gallerySearch || '').trim().toLowerCase();
     const galleryAll = (st.galleryEntries || []).slice().sort((a, b) => b.ts - a.ts);
     const galleryFiltered = galleryQuery ? galleryAll.filter(g => ((g.targetName || '') + '\n' + (g.text || '') + '\n' + (g.kind || '')).toLowerCase().includes(galleryQuery)) : galleryAll;
