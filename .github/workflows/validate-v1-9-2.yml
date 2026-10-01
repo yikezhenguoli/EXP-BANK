@@ -1,0 +1,36 @@
+name: validate v1.9.2
+
+on:
+  push:
+    branches:
+      - feature/v1-9-2-holiday-country
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract embedded app JavaScript
+        run: |
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          source = Path("index.html").read_text(encoding="utf-8")
+          m = re.search(r'<script type="text/x-dc" data-dc-script[^>]*>\s*(.*?)\s*</script>', source, re.S)
+          assert m, "embedded app script not found"
+          Path("/tmp/app.js").write_text(m.group(1), encoding="utf-8")
+          PY
+      - name: Check JavaScript syntax
+        run: node --check /tmp/app.js
+      - name: Validate holiday-country markers
+        run: |
+          grep -q "const APP_VERSION = 'v1.9.2'" index.html
+          grep -q "holidayCountry: 'cn'" index.html
+          grep -q "MY 马来西亚" index.html
+          grep -q "cycleHolidayCountry()" index.html
+          grep -q "开斋节" index.html
+          grep -q "badgeColor = '#4ade80'" index.html
+          grep -q "const CACHE = 'exp-bank-v1.9.2'" sw.js
