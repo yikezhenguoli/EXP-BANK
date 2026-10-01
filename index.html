@@ -74,6 +74,9 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ cycleTheme }}" title="切换主题：极简 / 清森" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:#aeb6c6;">◐ {{ themeLabel }}</span>
         </div>
+        <div onClick="{{ cycleHolidayCountry }}" title="切换节假日国家：中国 / 马来西亚" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.07),rgba(14,16,22,0.62));border:1px solid rgba(255,255,255,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.10),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:#4ade80;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.4px;color:#aeb6c6;">◎ {{ holidayCountryLabel }}</span>
+        </div>
         <div onClick="{{ openAiHelp }}" title="AI HELP · 本地指令助手" style="cursor:pointer;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,rgba(255,255,255,0.08),rgba(14,16,22,0.68));border:1px solid rgba(255,255,255,0.14);box-shadow:inset 0 1px 0 rgba(255,255,255,0.11),0 8px 24px rgba(0,0,0,0.35);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);" style-hover="border-color:{{ accent }};">
           <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;color:{{ accent }};">✦ AI HELP</span>
         </div>
@@ -1277,7 +1280,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。Shopping Mall 奖励卡重新整理价格与兑换额度层级：EXP 价格成为主信息，周期和本期额度变成紧凑辅助信息，移动端不再互相挤压。功能与原有数据不变。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。顶部新增节假日国家切换，可在 CN 中国与 MY 马来西亚之间切换；日期栏按当前国家显示法定／全国公共假期，并统一使用绿色假期文字。选择会保存在本机。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1640,7 +1643,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.9.1';
+const APP_VERSION = 'v1.9.2';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1686,6 +1689,7 @@ class Component extends DCLogic {
       if (!s.opexFold || typeof s.opexFold !== 'object') s.opexFold = {};
       if (!s.uiMode) s.uiMode = 'auto';
       if (!s.uiTheme) s.uiTheme = 'minimal';
+      if (!['cn','my'].includes(s.holidayCountry)) s.holidayCountry = 'cn';
       if (!s.bingoView) s.bingoView = 'day';
       if (!s.bingoRewards) s.bingoRewards = { day: 88, week: 288, month: 888 };
       if (!s.bingoMinExp) s.bingoMinExp = { day: 80, week: 150, month: 300 };
@@ -1706,7 +1710,7 @@ class Component extends DCLogic {
   defaults() {
     return {
       exp: 0, warMode: false, nextId: 500,
-      appVersion: APP_VERSION, welcomed: false, uiMode: 'auto', uiTheme: 'minimal', bingoView: 'day', bingoRewards: { day: 88, week: 288, month: 888 }, bingoMinExp: { day: 80, week: 150, month: 300 }, bingoBoards: this.defaultBingoBoards(), dayline: [], daylineDate: this.todayKey(),
+      appVersion: APP_VERSION, welcomed: false, uiMode: 'auto', uiTheme: 'minimal', holidayCountry: 'cn', bingoView: 'day', bingoRewards: { day: 88, week: 288, month: 888 }, bingoMinExp: { day: 80, week: 150, month: 300 }, bingoBoards: this.defaultBingoBoards(), dayline: [], daylineDate: this.todayKey(),
       sets: [
         { id: 11, name: '日常 · 每天的小事', collapsed: false, parentId: null },
         { id: 12, name: '不做会后悔清单', collapsed: false, parentId: null },
@@ -2682,6 +2686,7 @@ class Component extends DCLogic {
   }
   cycleUiMode() { const list = ['auto', 'phone', 'tablet', 'desktop']; const i = list.indexOf(this.state.uiMode || 'auto'); this.save({ uiMode: list[(i + 1) % list.length] }); }
   cycleTheme() { this.save({ uiTheme: (this.state.uiTheme || 'minimal') === 'minimal' ? 'verdant' : 'minimal' }); }
+  cycleHolidayCountry() { this.save({ holidayCountry: (this.state.holidayCountry || 'cn') === 'cn' ? 'my' : 'cn' }); }
   bingoPeriodKey(period) { return this.keyFor(period === 'day' ? 'daily' : period === 'week' ? 'weekly' : 'monthly', new Date()); }
   bingoSize(period) { return period === 'day' ? 3 : period === 'week' ? 4 : 5; }
   newBingoBoard(period) { const n = this.bingoSize(period); return { key: this.bingoPeriodKey(period), cells: Array(n * n).fill(null), draws: 0, rewarded: false, winLine: [] }; }
@@ -2936,8 +2941,8 @@ class Component extends DCLogic {
   sameDay(ts) { const a = new Date(ts), b = new Date(); return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
   dateKey(ts) { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; }
   todayKey() { return this.dateKey(Date.now()); }
-  holidayTable() {
-    return [
+  holidayTable(country = (this.state.holidayCountry || 'cn')) {
+    const cn = [
       { name: '元旦', s: '2025-01-01', e: '2025-01-01' },
       { name: '春节', s: '2025-01-28', e: '2025-02-04' },
       { name: '清明', s: '2025-04-04', e: '2025-04-06' },
@@ -2959,19 +2964,49 @@ class Component extends DCLogic {
       { name: '中秋', s: '2027-09-15', e: '2027-09-17' },
       { name: '国庆', s: '2027-10-01', e: '2027-10-07' },
     ];
+    const my = [
+      { name: '元旦', s: '2025-01-01', e: '2025-01-01' },
+      { name: '农历新年', s: '2025-01-29', e: '2025-01-30' },
+      { name: '开斋节', s: '2025-03-31', e: '2025-04-01' },
+      { name: '劳动节', s: '2025-05-01', e: '2025-05-01' },
+      { name: '卫塞节', s: '2025-05-12', e: '2025-05-12' },
+      { name: '最高元首诞辰', s: '2025-06-02', e: '2025-06-02' },
+      { name: '哈芝节', s: '2025-06-07', e: '2025-06-07' },
+      { name: '回历元旦', s: '2025-06-27', e: '2025-06-27' },
+      { name: '国庆日', s: '2025-08-31', e: '2025-08-31' },
+      { name: '穆罕默德诞辰', s: '2025-09-05', e: '2025-09-05' },
+      { name: '马来西亚日', s: '2025-09-16', e: '2025-09-16' },
+      { name: '屠妖节', s: '2025-10-20', e: '2025-10-20' },
+      { name: '圣诞节', s: '2025-12-25', e: '2025-12-25' },
+      { name: '元旦', s: '2026-01-01', e: '2026-01-01' },
+      { name: '农历新年', s: '2026-02-17', e: '2026-02-18' },
+      { name: '开斋节', s: '2026-03-21', e: '2026-03-22' },
+      { name: '劳动节', s: '2026-05-01', e: '2026-05-01' },
+      { name: '哈芝节', s: '2026-05-27', e: '2026-05-27' },
+      { name: '卫塞节', s: '2026-05-31', e: '2026-05-31' },
+      { name: '最高元首诞辰', s: '2026-06-01', e: '2026-06-01' },
+      { name: '回历元旦', s: '2026-06-17', e: '2026-06-17' },
+      { name: '穆罕默德诞辰', s: '2026-08-25', e: '2026-08-25' },
+      { name: '国庆日', s: '2026-08-31', e: '2026-08-31' },
+      { name: '马来西亚日', s: '2026-09-16', e: '2026-09-16' },
+      { name: '屠妖节', s: '2026-11-08', e: '2026-11-08' },
+      { name: '圣诞节', s: '2026-12-25', e: '2026-12-25' },
+    ];
+    return country === 'my' ? my : cn;
   }
   dateInfo() {
     const now = new Date(), p = n => String(n).padStart(2, '0');
     const iso = this.todayKey();
     const y = now.getFullYear(), mo = now.getMonth() + 1, d = now.getDate();
     const wd = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][now.getDay()];
-    const hol = this.holidayTable().find(h => iso >= h.s && iso <= h.e);
+    const country = this.state.holidayCountry || 'cn';
+    const hol = this.holidayTable(country).find(h => iso >= h.s && iso <= h.e);
     const isWeekend = now.getDay() === 0 || now.getDay() === 6;
     let badge = '', badgeColor = '#8b93a4', rest = false;
-    if (hol) { badge = hol.name + '假期'; badgeColor = '#f87171'; rest = true; }
+    if (hol) { badge = hol.name + '假期'; badgeColor = '#4ade80'; rest = true; }
     else if (isWeekend) { badge = '周末'; badgeColor = '#4ade80'; rest = true; }
     else { badge = '工作日'; badgeColor = '#8b93a4'; }
-    return { full: `${y}年${p(mo)}月${p(d)}日`, wd, badge, badgeColor, rest, clock: p(now.getHours()) + ':' + p(now.getMinutes()) };
+    return { full: `${y}年${p(mo)}月${p(d)}日`, wd, badge, badgeColor, rest, clock: p(now.getHours()) + ':' + p(now.getMinutes()), country };
   }
   shiftDay(iso, delta) { const [y, m, dd] = iso.split('-').map(Number); const d = new Date(y, m - 1, dd); d.setDate(d.getDate() + delta); return this.dateKey(d); }
   labelFromISO(iso) { const [y, m, dd] = iso.split('-').map(Number); const d = new Date(y, m - 1, dd); const wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()]; return `${m}月${dd}日 · ${wd}`; }
@@ -3407,7 +3442,7 @@ class Component extends DCLogic {
       galleryEditName: galleryEditEntry ? (galleryEditEntry.targetName || '已删除项目') : '', galleryEditText: galleryEditEntry ? (galleryEditEntry.text || '') : '', galleryEditImageUrl, galleryEditHasImage: !!galleryEditImageUrl,
       confirmGalleryEdit: () => this.confirmGalleryEdit(), closeGalleryEdit: () => this.closeGalleryEdit(), pickGalleryEditImage: () => this.pickGalleryEditImage(), removeGalleryEditImage: () => this.removeGalleryEditImage(), saveGalleryEdit: () => this.saveGalleryEdit(),
       earned: this.fmtExp(earned), spent: this.fmtExp(spent), todayEarned: '+' + this.fmtExp(todayEarned),
-      themeLabel: verdant ? '清森' : '极简', cycleTheme: () => this.cycleTheme(), pageBg,
+      themeLabel: verdant ? '清森' : '极简', cycleTheme: () => this.cycleTheme(), holidayCountryLabel: (st.holidayCountry || 'cn') === 'my' ? 'MY 马来西亚' : 'CN 中国', cycleHolidayCountry: () => this.cycleHolidayCountry(), pageBg,
       bingoTabs, bingoCells, bingoGridCols: `repeat(${bingoN},minmax(0,1fr))`, bingoCellH: bingoN === 3 ? '66px' : bingoN === 4 ? '54px' : '44px', bingoPeriodLabel: bingoNames[bingoView] + ' BOARD', bingoSizeLabel: bingoN + ' × ' + bingoN, bingoDrawCount: bingoBoard.draws || 0, bingoRewardLabel: '+' + this.fmtExp(Math.max(0, parseFloat(bingoRewards[bingoView]) || 0)) + ' EXP', bingoCfgOpen: !!st.bingoCfgOpen, openBingoCfg: () => this.openBingoCfg(), closeBingoCfg: () => this.closeBingoCfg(), saveBingoCfg: () => this.saveBingoCfg(), bingoRewardDay: bingoRewards.day, bingoRewardWeek: bingoRewards.week, bingoRewardMonth: bingoRewards.month, bingoMinDay: bingoMinExp.day, bingoMinWeek: bingoMinExp.week, bingoMinMonth: bingoMinExp.month, bingoMinExpLabel: bingoMinExp[bingoView],
       taskCalendarOpen: !!calTask, taskCalendarName: calTask ? calTask.name : '', taskCalendarMonth: calModel.label, taskCalendarCells: calModel.cells, taskCalendarWeekdays: ['一','二','三','四','五','六','日'].map(label => ({ label })), closeTaskCalendar: () => this.closeTaskCalendar(), taskCalendarPrev: () => this.shiftTaskCalendar(-1), taskCalendarNext: () => this.shiftTaskCalendar(1),
       daylineRows, daylineCountdowns, daylineHasCountdowns: daylineCountdowns.length > 0, daylineCountdownCount: daylineCountdowns.length, daylineEmpty: daylineRows.length === 0 && daylineCountdowns.length === 0, daylineDateLabel: this.labelFromISO(daylineDate), daylineDateSub: daylineDate === this.todayKey() ? 'TODAY' : daylineDate, openNewDayline: () => this.openNewDayline(), daylinePrev: () => this.shiftDayline(-1), daylineNext: () => this.shiftDayline(1), daylineToday: () => this.setDaylineDate(this.todayKey()), daylineEditOpen: !!st.newDaylineOpen, daylineEditTitle: daylineEditing ? '编辑日程' : '新建日程', daylineEditName: daylineEditing ? daylineEditing.name : '', daylineEditDate: daylineEditing ? daylineEditing.date : daylineDate, daylineEditTime: daylineEditing ? daylineEditing.time : '09:00', daylineEditRemind: daylineEditing ? !!daylineEditing.remind : false, closeDayline: () => this.closeDayline(), saveDayline: () => this.saveDayline(),
