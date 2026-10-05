@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./vendor/react.production.min.js"></script>
+<script src="./vendor/react-dom.production.min.js"></script>
+<script src="./money.js"></script>
 <script src="./support.js"></script>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0a0b10">
@@ -12,7 +15,12 @@
 <meta name="apple-mobile-web-app-title" content="EXP BANK">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" type="image/png" href="./icon-192.png">
-<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('./sw.js').catch(function(){});});}</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='EXP_BANK_CLIENT_PROTOCOL'&&e.ports[0])e.ports[0].postMessage({protocol:1});});
+  window.expBankRegistration=navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(function(){return null;});
+}
+</script>
 </head>
 <body>
 <x-dc>
@@ -29,9 +37,30 @@ input[type="date"]{color-scheme:dark;}
 @keyframes bingoBurst{0%{transform:translate3d(0,-4vh,0) rotate(0deg) scale(.7);opacity:0}12%{opacity:1}100%{transform:translate3d(var(--drift),58vh,0) rotate(var(--rot)) scale(1);opacity:0}}
 @keyframes bingoGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(255,255,255,0))}50%{filter:drop-shadow(0 0 18px rgba(255,236,184,.38))}}
 .bingo-particle{position:absolute;top:35%;width:7px;height:12px;border-radius:2px;opacity:0;animation:bingoBurst var(--dur) cubic-bezier(.18,.72,.2,1) var(--delay) forwards;pointer-events:none;}
+
+.money-overlay{position:fixed;inset:0;z-index:55;background:rgba(6,7,10,.76);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;}
+.money-panel{width:390px;max-width:100%;max-height:85vh;max-height:85dvh;overflow-y:auto;box-sizing:border-box;background:linear-gradient(180deg,#14151e,#101218);border:1px solid #34303f;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,.65);}
+.money-panel label{display:block;font-size:12px;color:#aeb6c6;}
+.money-panel label .money-input{display:block;margin-top:5px;}
+.money-input{width:100%;min-width:0;box-sizing:border-box;background:#0d0f14;border:1px solid #303544;border-radius:9px;padding:11px;color:#e6e9f0;font-size:14px;font-family:inherit;}
+.money-input:focus{border-color:#a78bfa;box-shadow:0 0 0 2px rgba(167,139,250,.16);}
+.money-btn{cursor:pointer;min-height:42px;box-sizing:border-box;border:1px solid #343847;border-radius:9px;background:#171922;color:#c8cedb;padding:8px 12px;font-family:inherit;font-size:12px;line-height:1.4;}
+.money-btn:focus-visible{outline:2px solid #c4b5fd;outline-offset:2px;}
+.money-btn:disabled{opacity:.35;cursor:default;}
+.money-primary{color:#14151c;font-weight:700;border-color:transparent;}
+.money-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0;}
+.money-hint{font-size:11.5px;line-height:1.7;color:#8b93a4;overflow-wrap:anywhere;}
+.money-preview{font-size:12px;line-height:1.7;color:#c4b5fd;overflow-wrap:anywhere;background:#171320;border:1px solid #352d46;border-radius:9px;padding:10px;}
+.money-error{font-size:12px;line-height:1.7;color:#fecaca;background:#23151b;border:1px solid #58313f;border-radius:9px;padding:10px;overflow-wrap:anywhere;}
+.money-banner{position:relative;z-index:45;max-width:760px;margin:12px auto;padding:0 16px;box-sizing:border-box;}
+.money-title{font-size:15px;font-weight:700;color:#eef1f7;letter-spacing:1px;}
+.money-category{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid #2a2f3a;border-radius:9px;background:#0d0f14;}
+@media(max-width:420px){.money-opex-title{flex-basis:calc(100% - 14px)!important;}.money-overlay{padding:12px;}.money-panel{padding:15px;}.money-title{font-size:14px;}.money-btn{min-height:44px;}.money-entry{margin-left:16px!important;flex-wrap:wrap;}.money-entry-note{flex-basis:calc(100% - 90px);}.money-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;}.money-stats>div:last-child{grid-column:span 2;}}
 </style>
 </helmet>
 <div style="min-height:100vh;background:{{ pageBg }};color:#e6e9f0;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;padding-bottom:96px;">
+  <sc-if value="{{ storageHasError }}" hint-placeholder-val="{{ false }}"><div class="money-banner"><div class="money-error" role="alert">{{ storageError }}<div class="money-line" style="margin-top:8px;"><sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if><button class="money-btn" onClick="{{ exportRawMoneyBackup }}">导出原始备份</button></div></div></div></sc-if>
+  <sc-if value="{{ updateMessageVisible }}" hint-placeholder-val="{{ false }}"><div class="money-banner"><div class="money-preview" role="status">{{ updateMessage }}</div></div></sc-if>
   <div style="position:fixed;inset:0;pointer-events:none;z-index:0;background:{{ tierScene }};"></div>
   <sc-if value="{{ momentumShow }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:80;max-width:92%;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6),0 12px 32px rgba(0,0,0,0.5);border-radius:99px;padding:11px 22px;text-align:center;">✦ {{ momentumMsg }}</div>
@@ -600,13 +629,18 @@ input[type="date"]{color-scheme:dark;}
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">开销记录 // OPEX</div>
-        <div onClick="{{ cycleCurrency }}" title="切换货币符号" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 11px;" style-hover="border-color:{{ accent }};">{{ opexCurrency }}</div>
+        <div class="money-opex-title" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">开销记录 // OPEX</div>
+        <div onClick="{{ cycleCurrency }}" title="切换新记录的默认币种及统计币种；历史记录不变" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 11px;" style-hover="border-color:{{ accent }};">{{ opexCurrency }}</div>
+        <button class="money-btn" onClick="{{ openCategories }}">类别排序</button>
         <div onClick="{{ startReorderOpex }}" title="长按拖动排序开销记录" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div>
         <div onClick="{{ openNewOpex }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 记一笔</div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <label style="font-size:11px;color:#8b93a4;">按付款目标筛选<select id="opex-goal-filter" class="money-input" style="margin-top:5px;" value="{{ opexGoalFilter }}" onChange="{{ onOpexGoalFilter }}"><option value="">全部目标</option><option value="unlinked">未关联目标</option><sc-for list="{{ opexFilterGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}">{{ g.name }}</option></sc-for></select></label>
+      <div class="money-hint">统计币种：{{ opexCurrency }} · 切换只影响新记录与统计，历史开销和目标币种保持原值。</div>
+      <sc-if value="{{ moneyMigrationVisible }}" hint-placeholder-val="{{ false }}"><div class="money-preview">{{ moneyMigrationNotice }}<button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ confirmMoneyMigration }}">已核对历史币种</button></div></sc-if>
+      <sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
+      <div class="money-stats" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
         <div style="border:1px solid #1e222b;border-radius:11px;background:#0d0f14;padding:10px 12px;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#8b93a4;margin-bottom:4px;">今日</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;color:#eef1f7;">{{ opexToday }}</div>
@@ -626,7 +660,7 @@ input[type="date"]{color-scheme:dark;}
           <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:#697084;">本月分类占比</div>
           <sc-for list="{{ opexCats }}" as="c" hint-placeholder-count="3">
             <div style="display:flex;align-items:center;gap:9px;">
-              <div style="width:52px;font-size:11.5px;color:#aeb6c6;flex-shrink:0;">{{ c.name }}</div>
+              <div style="width:68px;overflow-wrap:anywhere;font-size:11.5px;color:#aeb6c6;flex-shrink:0;">{{ c.name }}</div>
               <div style="flex:1;height:8px;border-radius:4px;background:#161a22;overflow:hidden;">
                 <div style="height:100%;width:{{ c.pct }};border-radius:4px;background:{{ c.color }};"></div>
               </div>
@@ -645,11 +679,12 @@ input[type="date"]{color-scheme:dark;}
           <sc-if value="{{ o.isMonth }}" hint-placeholder-val="{{ false }}"><div onClick="{{ o.onToggle }}" style="cursor:pointer;display:flex;align-items:center;gap:9px;padding:11px 12px;border:1px solid #34303a;border-radius:11px;background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(12,14,19,.45));"><div style="font-family:'JetBrains Mono',monospace;color:{{ accent }};width:14px;">{{ o.chev }}</div><div style="font-size:13.5px;font-weight:700;color:#eef1f7;flex:1;">{{ o.label }}</div><div style="font-size:10px;color:#697084;">{{ o.count }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:{{ accent }};">{{ o.amount }}</div></div></sc-if>
           <sc-if value="{{ o.isWeek }}" hint-placeholder-val="{{ false }}"><div onClick="{{ o.onToggle }}" style="cursor:pointer;margin-left:12px;display:flex;align-items:center;gap:9px;padding:9px 11px;border:1px solid #282e38;border-radius:10px;background:#0e1117;"><div style="font-family:'JetBrains Mono',monospace;color:#8b93a4;width:14px;">{{ o.chev }}</div><div style="font-size:12.5px;font-weight:700;color:#c8cedb;flex:1;">{{ o.label }}</div><div style="font-size:9.5px;color:#697084;">{{ o.count }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c8cedb;">{{ o.amount }}</div></div></sc-if>
           <sc-if value="{{ o.isDay }}" hint-placeholder-val="{{ false }}"><div onClick="{{ o.onToggle }}" style="cursor:pointer;margin-left:24px;display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid #232936;border-radius:9px;background:rgba(10,12,17,.45);"><div style="font-family:'JetBrains Mono',monospace;color:#697084;width:14px;">{{ o.chev }}</div><div style="font-size:12px;font-weight:700;color:#aeb6c6;flex:1;">{{ o.label }}</div><div style="font-size:9.5px;color:#535a6a;">{{ o.count }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#aeb6c6;">{{ o.amount }}</div></div></sc-if>
-          <sc-if value="{{ o.isEntry }}" hint-placeholder-val="{{ false }}"><div onClick="{{ o.onEdit }}" title="点击编辑开销记录" style="cursor:pointer;margin-left:36px;display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,.14),rgba(255,255,255,.03)) border-box;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{{ o.color }};border:1px solid #262b36;border-radius:99px;padding:3px 7px;flex-shrink:0;">{{ o.cat }}</div><div style="flex:1;min-width:0;font-size:12.5px;color:#e6e9f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ o.note }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#eef1f7;white-space:nowrap;">{{ o.amount }}</div><div onClick="{{ o.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div></div></sc-if>
+          <sc-if value="{{ o.isEntry }}" hint-placeholder-val="{{ false }}"><div class="money-entry" onClick="{{ o.onEdit }}" title="点击编辑开销记录" style="cursor:pointer;margin-left:36px;display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,.14),rgba(255,255,255,.03)) border-box;"><div style="font-family:'JetBrains Mono',monospace;font-size:9.5px;color:{{ o.color }};border:1px solid #262b36;border-radius:99px;padding:3px 7px;flex-shrink:0;">{{ o.cat }}</div><div class="money-entry-note" style="flex:1;min-width:0;font-size:12.5px;color:#e6e9f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ o.note }}<div style="font-size:10px;color:#8b93a4;overflow:hidden;text-overflow:ellipsis;">{{ o.goalLabel }}</div></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#eef1f7;white-space:nowrap;">{{ o.amount }}</div><div onClick="{{ o.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div></div></sc-if>
         </sc-for>
       </div>
     </div>
 
+    <sc-if value="{{ opexMoreVisible }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ moreOpex }}">显示更多开销（历史全部保留）</button></sc-if>
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;">
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
@@ -660,31 +695,14 @@ input[type="date"]{color-scheme:dark;}
       <sc-if value="{{ stashEmpty }}" hint-placeholder-val="{{ false }}">
         <div style="text-align:center;padding:20px 0;color:#535a6a;font-size:12.5px;font-family:'JetBrains Mono',monospace;letter-spacing:1px;">· 还没有存钱目标 ·</div>
       </sc-if>
-      <sc-for list="{{ stashRows }}" as="s" hint-placeholder-count="1">
-        <div style="display:flex;flex-direction:column;gap:9px;padding:13px 14px;border:1px solid transparent;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="flex:1;min-width:0;font-size:15px;font-weight:700;color:#eef1f7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ s.name }}</div>
-            <sc-if value="{{ s.reached }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#4ade80;">✦ 已达成</div></sc-if>
-            <div onClick="{{ s.onEdit }}" title="编辑存钱目标" style="cursor:pointer;color:#5a6172;font-size:13px;" style-hover="color:#c8cedb;">✎</div>
-            <div onClick="{{ s.onDel }}" style="cursor:pointer;color:#3d4353;font-size:15px;" style-hover="color:#f87171;">×</div>
-          </div>
-          <div style="height:10px;border-radius:5px;background:#161a22;overflow:hidden;">
-            <div style="height:100%;width:{{ s.pct }};border-radius:5px;background:{{ tierGrad }};"></div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#8b93a4;">{{ s.savedStr }} / {{ s.targetStr }} · {{ s.pct }}</div>
-            <div style="display:flex;align-items:center;gap:10px;width:100%;">
-              <input id="stash-in-{{ s.id }}" type="number" min="0" step="0.01" placeholder="存入金额" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #262b36;border-radius:9px;padding:9px 11px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;box-sizing:border-box;">
-              <div onClick="{{ s.onSave }}" style="cursor:pointer;width:112px;box-sizing:border-box;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:9px;padding:9px 16px;white-space:nowrap;" style-hover="filter:brightness(1.12);">存入</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;width:100%;">
-              <input id="stash-out-{{ s.id }}" type="number" min="0" step="0.01" placeholder="支出金额" style="flex:1;min-width:0;background:#0d0f14;border:1px solid #34252b;border-radius:9px;padding:9px 11px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;box-sizing:border-box;">
-              <div onClick="{{ s.onWithdraw }}" style="cursor:pointer;width:112px;box-sizing:border-box;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#f0b6b6;border:1px solid #4a2a2e;background:#1b1215;border-radius:9px;padding:9px 16px;white-space:nowrap;" style-hover="border-color:#f87171;color:#fecaca;">支出</div>
-            </div>
-          </div>
-        </div>
-      </sc-for>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.7;color:#535a6a;">存钱罐只记录数字，不连接任何银行账户。每天第一笔记账 +5 EXP，存钱目标达成 +100 EXP。</div>
+      <div class="money-line"><button class="money-btn" onClick="{{ toggleStashArchived }}">{{ stashArchiveLabel }}</button><div class="money-hint">归档保留余额与流水，可随时恢复。</div></div>
+      <sc-for list="{{ stashRows }}" as="s" hint-placeholder-count="0"><div style="display:flex;flex-direction:column;gap:10px;padding:13px;border:1px solid #302c39;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }},{{ rowBot }});">
+        <div class="money-line"><div style="flex:1;min-width:0;font-size:14px;font-weight:700;color:#eef1f7;overflow-wrap:anywhere;">{{ s.name }}</div><button class="money-btn" onClick="{{ s.onEdit }}" aria-label="编辑目标">✎</button><sc-if value="{{ s.active }}" hint-placeholder-val="{{ true }}"><button class="money-btn" onClick="{{ s.onDel }}">归档</button></sc-if><sc-if value="{{ s.archived }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ s.onRestore }}">恢复</button></sc-if></div>
+        <div class="money-line"><div style="font-size:11px;color:#8b93a4;">可用余额</div><sc-if value="{{ s.claimed }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#4ade80;">✦ 曾达成</span></sc-if><sc-if value="{{ s.archived }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#8b93a4;">已归档</span></sc-if></div><div style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;color:{{ accent }};">{{ s.savedStr }}</div><div style="height:8px;border-radius:4px;background:#161a22;overflow:hidden;"><div style="height:100%;width:{{ s.pct }};background:{{ tierGrad }};"></div></div><div class="money-hint">目标 {{ s.targetStr }} · 当前 {{ s.pct }}</div>
+        <sc-if value="{{ s.active }}" hint-placeholder-val="{{ true }}"><div class="money-line" style="flex-wrap:nowrap;"><input id="stash-in-{{ s.id }}" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="存入金额" style="flex:1;"><button class="money-btn money-primary" style="background:{{ btnGrad }};min-width:80px;" onClick="{{ s.onSave }}" disabled="{{ moneyBusy }}">存入</button></div><div class="money-line" style="flex-wrap:nowrap;"><input id="stash-out-{{ s.id }}" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="支出金额" style="flex:1;"><button class="money-btn" style="min-width:80px;color:#f0b6b6;border-color:#51303c;" onClick="{{ s.onWithdraw }}">支出</button></div></sc-if>
+        <button class="money-btn" onClick="{{ s.onDetail }}">流水 / 取出 / 调整</button>
+      </div></sc-for>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.7;color:#535a6a;">存入与取出记录目标资金分配，消费才记入 OPEX。每天第一笔消费记账 +5 EXP，目标首次达成 +100 EXP。</div>
     </div>
 
   </div>
@@ -794,7 +812,7 @@ input[type="date"]{color-scheme:dark;}
   <!-- EDIT MODAL -->
   <sc-if value="{{ editOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeEdit }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;">
-      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;max-height:90vh;overflow-y:auto;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;max-height:90vh;overflow-y:auto;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;max-height:85vh;max-height:85dvh;overflow-y:auto;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <sc-if value="{{ editAsk }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:15px;font-weight:700;">要编辑「{{ editItemName }}」吗?</div>
           <div style="font-size:12px;color:#8b93a4;line-height:1.6;">{{ editAskHint }}</div>
@@ -900,27 +918,22 @@ input[type="date"]{color-scheme:dark;}
               </select>
             </label>
           </sc-if>
-          <sc-if value="{{ editIsOpex }}" hint-placeholder-val="{{ false }}">
-            <label style="display:block;font-size:11px;color:#697084;">金额（{{ opexCurrency }}）
-              <input id="ed-opex-amount" type="number" min="0.01" step="0.01" defaultValue="{{ editOpexAmount }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:14px;font-family:'JetBrains Mono',monospace;">
-            </label>
-            <label style="display:block;font-size:11px;color:#697084;">分类
-              <select id="ed-opex-cat" defaultValue="{{ editOpexCat }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:13px;">
-                <option value="吃饭">吃饭</option><option value="交通">交通</option><option value="购物">购物</option><option value="人情">人情</option><option value="娱乐">娱乐</option><option value="其他">其他</option>
-              </select>
-            </label>
-            <label style="display:block;font-size:11px;color:#697084;">备注
-              <input id="ed-opex-note" defaultValue="{{ editOpexNote }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:13px;font-family:inherit;">
-            </label>
-            <label style="display:block;font-size:11px;color:#697084;">日期
-              <input id="ed-opex-date" type="date" defaultValue="{{ editOpexDate }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
-            </label>
-          </sc-if>
+          <sc-if value="{{ editIsOpex }}" hint-placeholder-val="{{ false }}"><label>币种<select id="ed-opex-currency" class="money-input" value="{{ editExpenseCurrency }}" onChange="{{ onEditExpenseCurrency }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}">{{ c.label }}</option></sc-for></select></label>
+<label>金额（{{ editExpenseCurrencySymbol }}）<input id="ed-opex-amount" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="如：28.50" value="{{ editExpenseAmount }}" onInput="{{ onEditExpenseAmount }}"></label>
+<label>类别<select id="ed-opex-cat" class="money-input" value="{{ editExpenseCategoryId }}" onChange="{{ onEditExpenseCategory }}"><sc-for list="{{ categoryOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.id }}">{{ c.name }}</option></sc-for></select></label>
+<div class="money-line"><button class="money-btn" onClick="{{ openEditCategory }}">+ 自定义类别</button></div>
+<label>付款目标<select id="ed-opex-stash" class="money-input" value="{{ editExpenseStashId }}" onChange="{{ onEditExpenseStash }}"><option value="">不关联目标</option><sc-for list="{{ editExpenseGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}" disabled="{{ g.disabled }}">{{ g.name }}</option></sc-for></select></label>
+<div class="money-preview" aria-live="polite">{{ editExpensePreview }}</div>
+<label>备注<input id="ed-opex-note" class="money-input" placeholder="如：旅行车票" value="{{ editExpenseNote }}" onInput="{{ onEditExpenseNote }}"></label>
+<label>日期<input id="ed-opex-date" class="money-input" type="date" value="{{ editExpenseDate }}" onInput="{{ onEditExpenseDate }}"></label>
+<sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
+<div class="money-hint">币种修改只修正记录标记，不会换算金额。删除或更换付款目标时，原目标同步返还。</div><sc-if value="{{ editExpenseLegacyLink }}" hint-placeholder-val="{{ false }}"><div class="money-error">这是升级前未关联的开销。本次关联会扣减目标余额，请核对是否曾手动从该目标支出。</div></sc-if></sc-if>
           <sc-if value="{{ editIsStash }}" hint-placeholder-val="{{ false }}">
-            <label style="display:block;font-size:11px;color:#697084;">目标金额（{{ opexCurrency }}）
+            <label style="display:block;font-size:11px;color:#697084;">目标金额（{{ editStashCurrencySymbol }}）
               <input id="ed-stash-target" type="number" min="0.01" step="0.01" defaultValue="{{ editStashTarget }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:14px;font-family:'JetBrains Mono',monospace;">
             </label>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;border:1px solid #202530;background:#0d0f14;border-radius:8px;padding:8px 10px;">当前已存 {{ editStashSaved }} · 余额请使用卡片上的「存入 / 支出」调整</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#697084;border:1px solid #202530;background:#0d0f14;border-radius:8px;padding:8px 10px;">当前可用 {{ editStashSaved }} · 取出或调整余额请在目标流水中操作</div>
+<sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
           </sc-if>
           <sc-if value="{{ editIsCountdown }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;gap:8px;">
@@ -1229,31 +1242,17 @@ input[type="date"]{color-scheme:dark;}
 
 
   <!-- NEW OPEX MODAL -->
-  <sc-if value="{{ newOpexOpen }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
-      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">记一笔 // OPEX</div>
-        <label style="display:block;font-size:11px;color:#697084;">金额（{{ opexCurrency }}）
-          <input id="no-amount" type="number" step="0.01" placeholder="如:28.5" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:15px;font-family:'JetBrains Mono',monospace;">
-        </label>
-        <label style="display:block;font-size:11px;color:#697084;">分类
-          <select id="no-cat" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:13px;">
-            <option value="吃饭">吃饭</option><option value="交通">交通</option><option value="购物">购物</option><option value="人情">人情</option><option value="娱乐">娱乐</option><option value="其他">其他</option>
-          </select>
-        </label>
-        <label style="display:block;font-size:11px;color:#697084;">备注
-          <input id="no-note" placeholder="如:和朋友的早餐" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
-        </label>
-        <label style="display:block;font-size:11px;color:#697084;">日期
-          <input id="no-date" type="date" defaultValue="{{ todayISO }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:13px;font-family:'JetBrains Mono',monospace;">
-        </label>
-        <div style="display:flex;gap:8px;justify-content:flex-end;">
-          <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
-          <div onClick="{{ addOpex }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">记下</div>
-        </div>
-      </div>
-    </div>
-  </sc-if>
+  <sc-if value="{{ newOpexOpen }}" hint-placeholder-val="{{ false }}"><div class="money-overlay" onClick="{{ closeNew }}"><div class="money-panel" role="dialog" aria-modal="true" aria-label="记一笔开销" onClick="{{ stopClick }}"><div class="money-title">记一笔 // OPEX</div>
+<label>币种<select id="no-currency" class="money-input" value="{{ expenseCurrency }}" onChange="{{ onExpenseCurrency }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}">{{ c.label }}</option></sc-for></select></label>
+<label>金额（{{ expenseCurrencySymbol }}）<input id="no-amount" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="如：28.50" value="{{ expenseAmount }}" onInput="{{ onExpenseAmount }}"></label>
+<label>类别<select id="no-cat" class="money-input" value="{{ expenseCategoryId }}" onChange="{{ onExpenseCategory }}"><sc-for list="{{ categoryOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.id }}">{{ c.name }}</option></sc-for></select></label>
+<div class="money-line"><button class="money-btn" onClick="{{ openNewCategory }}">+ 自定义类别</button></div>
+<label>付款目标<select id="no-stash" class="money-input" value="{{ expenseStashId }}" onChange="{{ onExpenseStash }}"><option value="">不关联目标</option><sc-for list="{{ expenseGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}" disabled="{{ g.disabled }}">{{ g.name }}</option></sc-for></select></label>
+<div class="money-preview" aria-live="polite">{{ expensePreview }}</div>
+<label>备注<input id="no-note" class="money-input" placeholder="如：旅行车票" value="{{ expenseNote }}" onInput="{{ onExpenseNote }}"></label>
+<label>日期<input id="no-date" class="money-input" type="date" value="{{ expenseDate }}" onInput="{{ onExpenseDate }}"></label>
+<sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
+<div class="money-line" style="justify-content:flex-end;"><button class="money-btn" onClick="{{ closeNew }}">取消</button><button class="money-btn money-primary" style="background:{{ btnGrad }};" disabled="{{ moneyBusy }}" onClick="{{ addOpex }}">记下</button></div></div></div></sc-if>
 
   <!-- NEW STASH MODAL -->
   <sc-if value="{{ newStashOpen }}" hint-placeholder-val="{{ false }}">
@@ -1263,9 +1262,10 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">目标名称
           <input id="ns2-name" placeholder="如:存 2000 去一个陌生的城市" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
-        <label style="display:block;font-size:11px;color:#697084;">目标金额（{{ opexCurrency }}）
-          <input id="ns2-target" type="number" placeholder="2000" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:15px;font-family:'JetBrains Mono',monospace;">
+        <label style="display:block;font-size:11px;color:#697084;">目标金额
+          <input id="ns2-target" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="2000" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:15px;font-family:'JetBrains Mono',monospace;">
         </label>
+        <label>币种<select id="ns2-currency" class="money-input" defaultValue="{{ defaultCurrencyCode }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}">{{ c.label }}</option></sc-for></select></label><sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addStash }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建</div>
@@ -1274,14 +1274,35 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+
+  <!-- CATEGORY MANAGEMENT -->
+  <sc-if value="{{ categoryOpen }}" hint-placeholder-val="{{ false }}"><div class="money-overlay" style="z-index:75;" onClick="{{ closeCategories }}"><div class="money-panel" role="dialog" aria-modal="true" aria-label="OPEX 类别" onClick="{{ stopClick }}">
+    <div class="money-line"><div class="money-title" style="flex:1;">OPEX 类别</div><button class="money-btn" onClick="{{ closeCategories }}">完成</button></div>
+    <label>自定义类别<input id="category-name" class="money-input" maxlength="24" placeholder="例如：学习 / 医疗 / 房租" value="{{ categoryNameDraft }}" onInput="{{ onCategoryName }}"></label>
+    <button class="money-btn money-primary" style="background:{{ btnGrad }};" onClick="{{ addOpexCategory }}" disabled="{{ moneyBusy }}">+ 新增自定义类别</button>
+    <div class="money-hint">内置和自定义类别都可排序。使用 ↑ ↓ 调整，实时保存；新增、编辑和分类统计同步使用此顺序。</div>
+    <sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
+    <sc-for list="{{ categoryRows }}" as="c" hint-placeholder-count="0"><div class="money-category"><span style="width:8px;height:8px;flex-shrink:0;border-radius:50%;background:{{ c.color }};"></span><div style="flex:1;min-width:0;overflow-wrap:anywhere;font-size:13px;color:#e6e9f0;">{{ c.name }}<div style="font-size:10px;color:#697084;">{{ c.hint }}</div></div><button class="money-btn" disabled="{{ c.upDisabled }}" onClick="{{ c.onUp }}" aria-label="{{ c.upLabel }}">↑</button><button class="money-btn" disabled="{{ c.downDisabled }}" onClick="{{ c.onDown }}" aria-label="{{ c.downLabel }}">↓</button></div></sc-for>
+  </div></div></sc-if>
+  <!-- GOAL LEDGER -->
+  <sc-if value="{{ stashDetailOpen }}" hint-placeholder-val="{{ false }}"><div class="money-overlay" onClick="{{ closeStashDetail }}"><div class="money-panel" style="width:470px;" role="dialog" aria-modal="true" aria-label="目标流水" onClick="{{ stopClick }}">
+    <div class="money-line"><div class="money-title" style="flex:1;overflow-wrap:anywhere;">{{ stashDetailName }}</div><button class="money-btn" onClick="{{ closeStashDetail }}">关闭</button></div><div style="font-size:11px;color:#8b93a4;">可用余额</div><div style="font-family:'JetBrains Mono',monospace;font-size:24px;color:{{ accent }};font-weight:700;">{{ stashDetailBalance }}</div>
+    <sc-if value="{{ stashDetailArchived }}" hint-placeholder-val="{{ false }}"><div class="money-preview">已归档，余额与历史保留。</div><button class="money-btn" onClick="{{ restoreDetailStash }}" disabled="{{ moneyBusy }}">恢复目标</button></sc-if>
+    <sc-if value="{{ stashDetailActive }}" hint-placeholder-val="{{ true }}"><div style="border-top:1px solid #282532;padding-top:12px;display:flex;flex-direction:column;gap:9px;"><label>资金操作<select id="stash-txn-type" class="money-input" value="{{ stashTxnType }}" onChange="{{ onStashTxnType }}"><option value="withdraw">取出分配（非消费）</option><option value="adjustBalance">调整可用余额</option></select></label><label>{{ stashTxnAmountLabel }}<input id="stash-txn-amount" class="money-input" type="number" inputmode="decimal" min="0" step="0.01" value="{{ stashTxnAmount }}" onInput="{{ onStashTxnAmount }}"></label><label>原因（调整必填）<input id="stash-txn-note" class="money-input" placeholder="如：重新核对现金余额" value="{{ stashTxnNote }}" onInput="{{ onStashTxnNote }}"></label><button class="money-btn" onClick="{{ saveStashTransaction }}" disabled="{{ moneyBusy }}">保存资金操作</button></div></sc-if>
+    <sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
+    <div class="money-title" style="font-size:12px;margin-top:6px;">目标流水</div><div class="money-hint">消费与 OPEX 使用同一笔记录。点击“编辑消费”会同时更新余额与开销。</div>
+    <sc-if value="{{ stashHistoryEmpty }}" hint-placeholder-val="{{ false }}"><div class="money-hint">还没有资金流水。</div></sc-if>
+    <sc-for list="{{ stashHistoryRows }}" as="r" hint-placeholder-count="0"><div style="padding:11px;border:1px solid #282c37;border-radius:10px;background:#0d0f14;display:flex;flex-direction:column;gap:6px;"><div class="money-line"><div style="font-size:12px;color:#c8cedb;flex:1;">{{ r.kind }} · {{ r.date }}</div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:{{ r.color }};">{{ r.amount }}</div></div><div class="money-hint">{{ r.note }}</div><div class="money-line"><div style="font-size:10px;color:#697084;flex:1;">按记账日期累计 {{ r.balance }}</div><sc-if value="{{ r.isExpense }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ r.onEdit }}">编辑消费</button></sc-if></div></div></sc-for><sc-if value="{{ stashHistoryMore }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ moreStashHistory }}">显示更多流水</button></sc-if>
+  </div></div></sc-if>
+
   <!-- UPDATE NOTICE -->
   <sc-if value="{{ updateNoteOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeUpdateNote }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.72);backdrop-filter:blur(5px);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。顶部新增节假日国家切换，可在 CN 中国与 MY 马来西亚之间切换；日期栏按当前国家显示法定／全国公共假期，并统一使用绿色假期文字。选择会保存在本机。</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">如果界面看起来还是旧的，点右上角「↻ 更新」再刷新一次。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。OPEX 可选择付款目标，STASH 支出会同步生成开销；编辑和删除同步调整余额。新增目标流水、归档恢复，以及自定义类别与所有类别排序。旧余额保留，旧开销不自动关联。</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">金额以整数分保存，历史币种不会随切换改变；更新会保留账本和照片。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
         </div>
@@ -1643,13 +1664,44 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.9.2';
+const APP_VERSION = 'v1.10.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
-    let s = null;
-    try { s = JSON.parse(localStorage.getItem('exp-bank-v1')); } catch (e) {}
-    if (s && s.tasks) {
+    this._persistedRaw = null;
+    this._writeQueue = Promise.resolve();
+    this._storageBlocked = false;
+    try {
+      this._persistedRaw = localStorage.getItem('exp-bank-v1');
+      const raw = this._persistedRaw ? JSON.parse(this._persistedRaw) : null;
+      if (raw && !Array.isArray(raw.tasks)) throw new Error('本机数据无法识别，原始内容已保留。请先导出原始备份。');
+      this.state = this.normalizeLoadedState(raw || this.defaults());
+      if (raw && raw.appVersion !== APP_VERSION) {
+        this.state.prevVersion = raw.appVersion || 'v0.x';
+        this.state.updateNoteOpen = true;
+      }
+    } catch (e) {
+      this._storageBlocked = true;
+      this.state = this.normalizeLoadedState(this.defaults());
+      this.state.storageError = e.message;
+      this.state.moneyError = e.message;
+    }
+    try {
+      const draft = JSON.parse(sessionStorage.getItem('exp-bank-pending-expense') || 'null');
+      if (draft && ExpMoney.CURRENCIES.some(c => c.code === draft.currencyCode)) {
+        if (!this.state.opexCategories.some(c => c.id === draft.categoryId)) draft.categoryId = this.state.opexCategories[0].id;
+        this.state.expenseDraft = draft;
+      }
+      sessionStorage.removeItem('exp-bank-pending-expense');
+    } catch (_) {}
+    setTimeout(() => this.startDaylineReminderWatch(), 700);
+  }
+  normalizeLoadedState(input) {
+    if (!input || !Array.isArray(input.tasks)) throw new Error('备份内容无效：缺少任务数组');
+    let s = { ...this.defaults(), ...input };
+    for (const key of ['tasks','sets','rewards','milestones','milestoneSets','funds','countdowns','ledger','opex','stash','galleryEntries','dayline']) {
+      s[key] = Array.isArray(input[key]) ? input[key] : [];
+    }
       s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, interval: Math.max(1, Math.min(999, parseInt(t.interval, 10) || 1)), anchorDate: t.anchorDate || this.todayKey(), streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
         priority: t.priority || 'p4', note: t.note || '',
         completionLog: t.completionLog || (t.cycle === 'daily' ? Object.fromEntries(Object.entries(t.done || {}).filter(([kk, vv]) => /^\d{4}-\d{2}-\d{2}$/.test(kk) && Number(vv) > 0).map(([kk, vv]) => [kk, Number(vv) || 1])) : {}),
@@ -1697,15 +1749,8 @@ class Component extends DCLogic {
       if (!s.daylineDate) s.daylineDate = this.todayKey();
       s.bingoBoards = this.normalizeBingoBoards(s.bingoBoards || {});
       if (s.welcomed == null) s.welcomed = true;
-      if (s.appVersion !== APP_VERSION) {
-        s.prevVersion = s.appVersion || 'v0.x';
-        s.appVersion = APP_VERSION;
-        try { const { updateNoteOpen, ...persist } = s; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); } catch (e) {}
-        s.updateNoteOpen = true;
-      }
-      this.state = s;
-    } else this.state = this.defaults();
-    setTimeout(() => this.startDaylineReminderWatch(), 700);
+    s.appVersion = APP_VERSION;
+    return ExpMoney.normalize(s);
   }
   defaults() {
     return {
@@ -1921,7 +1966,275 @@ class Component extends DCLogic {
   }
   switchReorderKind(kind) { this.setState({ reorderKind: kind, dragId: null, batchSel: [], batchMsg: '', roMode: 'drag' }); }
 
-  save(patch) { this.setState(patch, () => { const { editing, pending, selectedDate, pomoRunning, pomoEndTs, pomoRemaining, pomoTotal, noiseOn, noiseFileName, backupOpen, backupMsg, backupMsgColor, copyLabel, reorderOpen, reorderKind, roMode, batchSel, batchMsg, momentumMsg, tierCfgOpen, dragId, vw, newTaskOpen, newSetOpen, newRewardOpen, newMilestoneOpen, newMilestoneSetOpen, newFundOpen, newCountdownOpen, quadrantOpen, imgEditId, fundSettingsOpen, notionMsg, notionMsgColor, notionBusy, notionResultOpen, notionResultOk, notionResultMsg, expEditing, newOpexOpen, newStashOpen, updateNoteOpen, prevVersion, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, gallerySearch, aiHelpOpen, aiHelpMsg, aiHelpMsgColor, newTaskAiMsg, newTaskAiMsgColor, taskFocusId, taskFocusMin, pomoLinkedTaskId, pomoCfgOpen, bingoCfgOpen, bingoCelebration, calendarTaskId, calendarMonthOffset, newDaylineOpen, editingDaylineId, daylineMsg, backupFullCode, ...persist } = this.state; localStorage.setItem('exp-bank-v1', JSON.stringify(persist)); }); }
+  persistentState(state = this.state) { return ExpMoney.persistent(state); }
+  async assertCompatibleMoneyClients() {
+    if (typeof navigator === 'undefined' || !navigator.serviceWorker) return;
+    let registration = window.expBankRegistration ? await window.expBankRegistration : null;
+    if (!registration) registration = await navigator.serviceWorker.getRegistration();
+    const worker = registration && (registration.waiting || registration.installing || registration.active);
+    if (!worker) return;
+    const result = await new Promise((resolve, reject) => {
+      const channel = new MessageChannel();
+      const timer = setTimeout(() => { channel.port1.close(); reject(new Error('新版保存保护尚未就绪，请检查更新后重试。')); }, 2500);
+      channel.port1.onmessage = e => { clearTimeout(timer); channel.port1.close(); resolve(e.data); };
+      worker.postMessage({ type: 'CHECK_MONEY_CLIENTS', protocol: 1 }, [channel.port2]);
+    });
+    if (!result || result.protocol !== 1) throw new Error('新版保存保护尚未就绪，请检查更新后重试。');
+    if (result.legacyCount) throw new Error('检测到旧版窗口。请关闭或刷新其他 EXP BANK 窗口，再同步最新数据；本次操作未提交。');
+  }
+  writeState(build, ui = {}, replace = false, allowBlocked = false) {
+    const execute = async () => {
+      try {
+        await this.assertCompatibleMoneyClients();
+        return await ExpMoney.withWriteLock(() => {
+          if (this._storageBlocked && !allowBlocked) throw new Error('当前数据无法安全写入，请先导出原始备份或导入有效备份');
+          const raw = localStorage.getItem('exp-bank-v1');
+          if (raw !== this._persistedRaw) {
+            this.setState({ moneyConflict: true });
+            throw new Error('另一页已保存新数据。当前操作未提交，请同步最新数据后重试');
+          }
+          const candidate = ExpMoney.normalize(build());
+          const json = JSON.stringify(this.persistentState(candidate));
+          localStorage.setItem('exp-bank-v1', json);
+          this._persistedRaw = json;
+          this._storageBlocked = false;
+          const cleared = replace ? Object.fromEntries(Object.keys(this.state).filter(k => !(k in candidate)).map(k => [k, undefined])) : {};
+          this.setState({ ...cleared, ...candidate, ...ui, storageError: '', moneyError: '', moneyConflict: false });
+          return true;
+        });
+      } catch (e) {
+        const message = e.name === 'QuotaExceededError' ? '本机存储空间不足，本次未保存。请先导出备份，保留所有旧记录后再重试。' : e.message || '保存失败，本次未入账';
+        this.setState({ storageError: message, moneyError: message });
+        return false;
+      }
+    };
+    const result = (this._writeQueue || Promise.resolve()).then(execute, execute);
+    this._writeQueue = result.then(() => undefined);
+    return result;
+  }
+  save(patch) {
+    const base = this.state;
+    return this.writeState(() => {
+      const current = this.state, next = { ...current, ...patch };
+      // A queued task, reward or sort must preserve a just-committed money operation.
+      if ('exp' in patch && current.exp !== base.exp) {
+        if ((patch.ledger || [])[0] && patch.ledger[0].name === '手动修改余额') throw new Error('EXP 余额已变动，请核对后重试');
+        next.exp = this.roundExp(current.exp + (patch.exp - base.exp));
+      }
+      if ('ledger' in patch && current.ledger !== base.ledger) {
+        const key = row => row.commandId || JSON.stringify(row);
+        const before = new Set((base.ledger || []).map(key)), intended = new Set(patch.ledger.map(key));
+        const additions = patch.ledger.filter(row => !before.has(key(row)));
+        const removals = new Set([...before].filter(k => !intended.has(k)));
+        next.ledger = [...additions, ...(current.ledger || []).filter(row => !removals.has(key(row)))].slice(0, 200);
+      }
+      const offset = 'nextId' in patch ? current.nextId - base.nextId : 0;
+      for (const name of ['tasks','sets','rewards','milestones','milestoneSets','funds','countdowns','dayline','galleryEntries','opex','stash']) {
+        if (!Array.isArray(patch[name])) continue;
+        const original = base[name] || [], rows = current[name] || [], intended = patch[name];
+        if (name === 'opex' || name === 'stash') {
+          if (intended.length !== original.length || intended.some(row => !original.some(o => o.id === row.id))) throw new Error('请通过资金操作入口修改账本');
+          const order = intended.map(row => rows.find(r => r.id === row.id)).filter(Boolean), extras = rows.filter(row => !original.some(o => o.id === row.id));
+          next[name] = name === 'opex' ? [...extras, ...order] : [...order, ...extras];
+          continue;
+        }
+        const extras = rows.filter(row => !original.some(o => o.id === row.id));
+        next[name] = intended.map(row => {
+          const old = original.find(o => o.id === row.id), latest = rows.find(r => r.id === row.id);
+          if (!old) {
+            const remap = n => typeof n === 'number' && n >= base.nextId ? n + offset : n;
+            return offset ? { ...row, id: remap(row.id), ...(row.setId != null ? { setId: remap(row.setId) } : {}), ...(row.parentId != null ? { parentId: remap(row.parentId) } : {}) } : row;
+          }
+          if (!latest) return null;
+          if (JSON.stringify(row) === JSON.stringify(old)) return latest;
+          if (JSON.stringify(latest) !== JSON.stringify(old)) throw new Error('这项内容已在其他操作中更新，请核对后重试');
+          return row;
+        }).filter(Boolean).concat(extras);
+      }
+      if ('nextId' in patch) next.nextId = current.nextId + (patch.nextId - base.nextId);
+      if ('bingoBoards' in patch && JSON.stringify(current.bingoBoards) !== JSON.stringify(base.bingoBoards) && JSON.stringify(patch.bingoBoards) !== JSON.stringify(base.bingoBoards)) throw new Error('Bingo 记录正在保存，请稍后重试');
+      return next;
+    });
+  }
+  async pointAction(work) {
+    if (this._pointSaving) return false;
+    this._pointSaving = true;
+    try { return await work(); } finally { this._pointSaving = false; }
+  }
+  newCommandId() { return typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : Date.now() + '-' + Math.random().toString(36).slice(2); }
+  async runMoney(command, ui = {}) {
+    if (this._moneySubmitting) return false;
+    this._moneySubmitting = true;
+    this.setState({ moneyBusy: true, moneyError: '' });
+    try { return await this.writeState(() => ExpMoney.mutate(this.state, command, { today: this.todayKey() }), ui); }
+    finally { this._moneySubmitting = false; this.setState({ moneyBusy: false }); }
+  }
+  async syncLatestMoney() {
+    try {
+      const raw = localStorage.getItem('exp-bank-v1');
+      const next = this.normalizeLoadedState(raw ? JSON.parse(raw) : this.defaults());
+      this._persistedRaw = raw;
+      this._storageBlocked = false;
+      // Keep the user's unsubmitted forms while replacing the persisted business state.
+      const transient = Object.fromEntries(Object.entries(this.state).filter(([k]) => !(k in this.persistentState(this.state))));
+      const cleared = Object.fromEntries(Object.keys(this.state).filter(k => !(k in next) && !(k in transient)).map(k => [k, undefined]));
+      this.setState({ ...cleared, ...next, ...transient, moneyConflict: false, storageError: '', moneyError: '已同步最新账本；请核对付款余额后再提交。' });
+    } catch (e) { this.setState({ storageError: e.message, moneyError: e.message }); }
+  }
+  blankExpense(currencyCode = this.state.defaultCurrencyCode) {
+    return { amount: '', categoryId: this.state.opexCategories[0].id, note: '', date: this.todayKey(), currencyCode, stashId: '' };
+  }
+  openNewOpex(stashId = null, amount = '') {
+    const goal = stashId == null ? null : (this.state.stash || []).find(s => s.id === stashId && !s.archivedAt);
+    if (stashId != null && !goal) return;
+    const draft = goal ? { ...this.blankExpense(goal.currencyCode), stashId: String(goal.id), amount: String(amount || '') } : this.state.expenseDraft || this.blankExpense();
+    this.setState({ newOpexOpen: true, expenseDraft: draft, expenseCommandId: this.newCommandId(), moneyError: '', stashDetailId: null });
+  }
+  openNewStash() { this.setState({ newStashOpen: true, moneyError: '' }); }
+  updateExpenseDraft(field, value, edit = false) {
+    const key = edit ? 'expenseEditDraft' : 'expenseDraft';
+    this.setState({ [key]: { ...(this.state[key] || this.blankExpense()), [field]: value }, moneyError: '' });
+  }
+  resolveStashId(text) { const s = (this.state.stash || []).find(s => String(s.id) === String(text)); return s ? s.id : null; }
+  expenseCommand(draft, type, id) {
+    if (draft.stashId && this.resolveStashId(draft.stashId) == null) throw new Error('原付款目标已不存在，请重新选择付款目标');
+    return { type, id, commandId: this.state.expenseCommandId || this.newCommandId(), amountMinor: ExpMoney.parseMinor(draft.amount),
+      categoryId: draft.categoryId, note: draft.note, date: draft.date, currencyCode: draft.currencyCode, stashId: this.resolveStashId(draft.stashId), confirmCurrency: true };
+  }
+  async addOpex() {
+    if (!this.state.newOpexOpen) return false;
+    try {
+      const stashId = this.resolveStashId(this.state.expenseDraft.stashId);
+      const result = await this.runMoney(this.expenseCommand(this.state.expenseDraft, 'addExpense'), { newOpexOpen: false, expenseDraft: null });
+      if (result && stashId != null) this.clear(['stash-out-' + stashId]);
+      return result;
+    } catch (e) { this.setState({ moneyError: e.message }); return false; }
+  }
+  async editOpex(ed) {
+    try { return await this.runMoney(this.expenseCommand(this.state.expenseEditDraft, 'editExpense', ed.id), { editing: null, expenseEditDraft: null }); }
+    catch (e) { this.setState({ moneyError: e.message }); return false; }
+  }
+  async delOpex(id) {
+    const old = (this.state.opex || []).find(o => o.id === id); if (!old) return;
+    const goal = (this.state.stash || []).find(s => s.id === old.stashId);
+    const hint = '删除这笔开销用于纠错。' + (goal ? '\n将向「' + goal.name + '」返还 ' + ExpMoney.format(old.amountMinor, old.currencyCode) : '') + '\n真实退款请另行核对，删除后原记录不再保留。';
+    if (!window.confirm(hint)) return;
+    return this.runMoney({ type: 'deleteExpense', id, commandId: this.newCommandId() });
+  }
+  async addStash() {
+    try {
+      const c = this.v('ns2-currency') || this.state.defaultCurrencyCode;
+      const result = await this.runMoney({ type: 'addGoal', commandId: this.newCommandId(), name: this.v('ns2-name'), targetMinor: ExpMoney.parseMinor(this.v('ns2-target')), currencyCode: c }, { newStashOpen: false });
+      if (result) this.clear(['ns2-name', 'ns2-target']);
+      return result;
+    } catch (e) { this.setState({ moneyError: e.message }); return false; }
+  }
+  async editStash(ed) {
+    try { return await this.runMoney({ type: 'editGoal', id: ed.id, commandId: this.newCommandId(), name: this.v('ed-name'), targetMinor: ExpMoney.parseMinor(this.v('ed-stash-target')) }, { editing: null }); }
+    catch (e) { this.setState({ moneyError: e.message }); return false; }
+  }
+  async delStash(id) {
+    const goal = (this.state.stash || []).find(s => s.id === id); if (!goal) return;
+    if (!window.confirm('归档「' + goal.name + '」？\n余额与历史流水保留，可以恢复；归档后不能作为新支出的付款目标。')) return;
+    return this.runMoney({ type: 'archiveGoal', id, commandId: this.newCommandId() }, { stashDetailId: null });
+  }
+  async restoreStash(id) { return this.runMoney({ type: 'restoreGoal', id, commandId: this.newCommandId() }); }
+  stashWithdraw(id) { const amount = this.v('stash-out-' + id); this.openNewOpex(id, amount); }
+  async stashDeposit(id) {
+    try {
+      const result = await this.runMoney({ type: 'deposit', id, commandId: this.newCommandId(), amountMinor: ExpMoney.parseMinor(this.v('stash-in-' + id)) });
+      if (result) this.clear(['stash-in-' + id]);
+      return result;
+    } catch (e) { this.setState({ moneyError: e.message }); return false; }
+  }
+  openStashDetail(id) { this.setState({ stashDetailId: id, stashTimelineLimit: 80, stashTxnType: 'withdraw', stashTxnAmount: '', stashTxnNote: '', stashTxnCommandId: this.newCommandId(), moneyError: '' }); }
+  closeStashDetail() { this.setState({ stashDetailId: null }); }
+  async saveStashTransaction() {
+    try {
+      const type = this.state.stashTxnType || 'withdraw';
+      return await this.runMoney({ type, id: this.state.stashDetailId, commandId: this.state.stashTxnCommandId, amountMinor: ExpMoney.parseMinor(this.state.stashTxnAmount, type === 'adjustBalance'), note: this.state.stashTxnNote }, { stashTxnAmount: '', stashTxnNote: '', stashTxnCommandId: this.newCommandId() });
+    } catch (e) { this.setState({ moneyError: e.message }); return false; }
+  }
+  async cycleCurrency() { const codes = ExpMoney.CURRENCIES.map(c => c.code), i = codes.indexOf(this.state.defaultCurrencyCode); return this.runMoney({ type: 'setCurrency', currencyCode: codes[(i + 1) % codes.length], commandId: this.newCommandId() }); }
+  setOpexGoalFilter(text) { this.setState({ opexGoalFilter: text, opexVisibleLimit: 120 }); }
+  openCategories(from = '') { this.setState({ categoryOpen: true, categoryReturn: from, categoryNameDraft: '', categoryCommandId: this.newCommandId(), moneyError: '' }); }
+  closeCategories() { this.setState({ categoryOpen: false, categoryNameDraft: '', moneyError: '' }); }
+  async addOpexCategory() {
+    const name = String(this.state.categoryNameDraft || '').trim();
+    const from = this.state.categoryReturn;
+    const ok = await this.runMoney({ type: 'addCategory', name, commandId: this.state.categoryCommandId }, { categoryNameDraft: '', categoryCommandId: this.newCommandId() });
+    if (ok) {
+      const c = this.state.opexCategories.find(c => c.name === name);
+      if (c && (from === 'new' || from === 'edit')) {
+        this.updateExpenseDraft('categoryId', c.id, from === 'edit');
+        this.setState({ categoryOpen: false });
+      }
+    }
+    return ok;
+  }
+  async moveOpexCategory(id, direction) {
+    const ids = this.state.opexCategories.map(c => c.id), i = ids.indexOf(id), j = i + direction;
+    if (i < 0 || j < 0 || j >= ids.length) return;
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    return this.runMoney({ type: 'reorderCategories', ids, commandId: this.newCommandId() });
+  }
+  confirmMoneyMigration() { return this.runMoney({ type: 'confirmLegacyCurrency', commandId: this.newCommandId() }); }
+  exportRawMoneyBackup() {
+    const blob = new Blob([this._persistedRaw || JSON.stringify(this.persistentState())], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'EXP_BANK_原始数据_' + this.todayKey() + '.txt'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+  moneyViewProps(st) {
+    const draft = st.expenseDraft || this.blankExpense(), editDraft = st.expenseEditDraft || this.blankExpense();
+    const editing = st.editing && st.editing.type === 'opex' ? (st.opex || []).find(o => o.id === st.editing.id) : null;
+    const options = (d, old) => st.stash.filter(s => !s.archivedAt || old && old.stashId === s.id).map(s => ({ key: s.id, idStr: String(s.id), disabled: s.currencyCode !== d.currencyCode, name: s.name + (s.archivedAt ? '（已归档）' : '') + ' · ' + ExpMoney.format(ExpMoney.balance(st, s.id), s.currencyCode) }));
+    const preview = (d, old) => {
+      if (!d.stashId) return '不关联目标，仅记录开销。';
+      const goal = st.stash.find(s => String(s.id) === String(d.stashId)); if (!goal) return '原付款目标不存在，请重新选择。';
+      try {
+        if (goal.currencyCode !== d.currencyCode) return '币种不同，无法从此目标付款。';
+        const amount = ExpMoney.parseMinor(d.amount), current = ExpMoney.balance(st, goal.id);
+        const available = current + (old && old.stashId === goal.id ? old.amountMinor : 0), after = available - amount;
+        let text = goal.name + ' · ' + ExpMoney.format(current, goal.currencyCode) + ' → ' + ExpMoney.format(after, goal.currencyCode);
+        if (after < 0) text += ' · 余额不足';
+        if (old && old.stashId != null && old.stashId !== goal.id) {
+          const previous = st.stash.find(s => s.id === old.stashId);
+          text += '；' + previous.name + '返还 ' + ExpMoney.format(old.amountMinor, previous.currencyCode);
+        }
+        return text;
+      } catch (_) { return '当前可用 ' + ExpMoney.format(ExpMoney.balance(st, goal.id), goal.currencyCode) + '；填金额查看支出后余额。'; }
+    };
+    let editPreview = preview(editDraft, editing);
+    if (editing && !editDraft.stashId && editing.stashId != null) {
+      const previous = st.stash.find(s => s.id === editing.stashId);
+      editPreview += ' 将向「' + previous.name + '」返还 ' + ExpMoney.format(editing.amountMinor, previous.currencyCode) + '。';
+    }
+    const detail = st.stash.find(s => s.id === st.stashDetailId), history = detail ? ExpMoney.timeline(st, detail.id) : [], limit = st.stashTimelineLimit || 80;
+    return {
+      moneyError: st.moneyError || '', moneyHasError: !!st.moneyError, moneyBusy: !!st.moneyBusy,
+      storageError: st.storageError || '', storageHasError: !!st.storageError, moneyConflict: !!st.moneyConflict,
+      syncLatestMoney: () => this.syncLatestMoney(), exportRawMoneyBackup: () => this.exportRawMoneyBackup(),
+      moneyMigrationNotice: st.moneyMigrationNotice || '', moneyMigrationVisible: !!st.moneyMigrationNotice, confirmMoneyMigration: () => this.confirmMoneyMigration(),
+      currencyOptions: ExpMoney.CURRENCIES.map(c => ({ key: c.code, ...c })), defaultCurrencyCode: st.defaultCurrencyCode,
+      categoryOptions: st.opexCategories.map(c => ({ key: c.id, ...c })),
+      expenseAmount: draft.amount, expenseCategoryId: draft.categoryId, expenseNote: draft.note, expenseDate: draft.date, expenseCurrency: draft.currencyCode, expenseStashId: draft.stashId,
+      expenseCurrencySymbol: ExpMoney.CURRENCIES.find(c => c.code === draft.currencyCode).symbol,
+      onExpenseAmount: e => this.updateExpenseDraft('amount', e.target.value), onExpenseCategory: e => this.updateExpenseDraft('categoryId', e.target.value), onExpenseNote: e => this.updateExpenseDraft('note', e.target.value), onExpenseDate: e => this.updateExpenseDraft('date', e.target.value), onExpenseCurrency: e => this.updateExpenseDraft('currencyCode', e.target.value), onExpenseStash: e => this.updateExpenseDraft('stashId', e.target.value),
+      expenseGoals: options(draft), expensePreview: preview(draft),
+      editExpenseAmount: editDraft.amount, editExpenseCategoryId: editDraft.categoryId, editExpenseNote: editDraft.note, editExpenseDate: editDraft.date, editExpenseCurrency: editDraft.currencyCode, editExpenseStashId: editDraft.stashId,
+      editExpenseCurrencySymbol: ExpMoney.CURRENCIES.find(c => c.code === editDraft.currencyCode).symbol,
+      onEditExpenseAmount: e => this.updateExpenseDraft('amount', e.target.value, true), onEditExpenseCategory: e => this.updateExpenseDraft('categoryId', e.target.value, true), onEditExpenseNote: e => this.updateExpenseDraft('note', e.target.value, true), onEditExpenseDate: e => this.updateExpenseDraft('date', e.target.value, true), onEditExpenseCurrency: e => this.updateExpenseDraft('currencyCode', e.target.value, true), onEditExpenseStash: e => this.updateExpenseDraft('stashId', e.target.value, true),
+      editExpenseGoals: options(editDraft, editing), editExpensePreview: editPreview,
+      editExpenseLegacyLink: !!(editing && editing.currencyInferred && editing.stashId == null && editDraft.stashId),
+      categoryOpen: !!st.categoryOpen, openCategories: () => this.openCategories(), openNewCategory: () => this.openCategories('new'), openEditCategory: () => this.openCategories('edit'), closeCategories: () => this.closeCategories(), categoryNameDraft: st.categoryNameDraft || '', onCategoryName: e => this.setState({ categoryNameDraft: e.target.value }), addOpexCategory: () => this.addOpexCategory(),
+      categoryRows: st.opexCategories.map((c, i, list) => ({ key: c.id, ...c, hint: c.builtin ? '内置' : '自定义', upDisabled: i === 0 || !!st.moneyBusy, downDisabled: i === list.length - 1 || !!st.moneyBusy, upLabel: '上移' + c.name, downLabel: '下移' + c.name, onUp: () => this.moveOpexCategory(c.id, -1), onDown: () => this.moveOpexCategory(c.id, 1) })),
+      opexGoalFilter: st.opexGoalFilter || '', onOpexGoalFilter: e => this.setOpexGoalFilter(e.target.value), opexFilterGoals: st.stash.map(s => ({ key: s.id, idStr: String(s.id), name: s.name + (s.archivedAt ? '（已归档）' : '') })),
+      stashDetailOpen: !!detail, stashDetailName: detail ? detail.name : '', stashDetailBalance: detail ? ExpMoney.format(ExpMoney.balance(st, detail.id), detail.currencyCode) : '', stashDetailArchived: !!(detail && detail.archivedAt), stashDetailActive: !!detail && !detail.archivedAt, closeStashDetail: () => this.closeStashDetail(), restoreDetailStash: () => detail && this.restoreStash(detail.id),
+      stashHistoryRows: history.slice(0, limit).map(r => ({ key: r.id, kind: r.kindLabel, date: r.date || '升级前', note: r.note, amount: (r.deltaMinor > 0 ? '+' : r.deltaMinor < 0 ? '−' : '') + ExpMoney.format(Math.abs(r.deltaMinor), r.currencyCode), balance: ExpMoney.format(r.balanceMinor, r.currencyCode), color: r.deltaMinor < 0 ? '#f0b6b6' : '#4ade80', isExpense: r.expenseId != null, onEdit: () => { if (r.expenseId != null) this.openEdit('opex', r.expenseId); } })),
+      stashHistoryMore: history.length > limit, moreStashHistory: () => this.setState({ stashTimelineLimit: limit + 80 }), stashHistoryEmpty: history.length === 0,
+      stashTxnType: st.stashTxnType || 'withdraw', onStashTxnType: e => this.setState({ stashTxnType: e.target.value, stashTxnCommandId: this.newCommandId(), moneyError: '' }), stashTxnAmount: st.stashTxnAmount || '', onStashTxnAmount: e => this.setState({ stashTxnAmount: e.target.value }), stashTxnNote: st.stashTxnNote || '', onStashTxnNote: e => this.setState({ stashTxnNote: e.target.value }), stashTxnAmountLabel: st.stashTxnType === 'adjustBalance' ? '调整后的可用余额' : '取出金额（不生成 OPEX）', saveStashTransaction: () => this.saveStashTransaction(),
+    };
+  }
+
   addSet() {
     const el = document.getElementById('ns-name'); const name = el ? el.value.trim() : '';
     if (!name) return;
@@ -2164,14 +2477,19 @@ class Component extends DCLogic {
   roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
   armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
   undo() {
-    const p = this.state.pending; if (!p) return;
-    clearTimeout(this._pt);
-    const rm = arr => arr.filter(e => e.ts !== p.ledgerTs);
-    if (p.kind === 'complete') { this.cancelBingoDraw(p.bingoTimerKey); this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const cl = { ...(x.completionLog || {}) }; if (p.completionDate && cl[p.completionDate]) { cl[p.completionDate] = Math.max(0, cl[p.completionDate] - 1); if (!cl[p.completionDate]) delete cl[p.completionDate]; } return { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, completionLog: cl, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) }; }), exp: this.roundExp(this.state.exp - p.exp), ledger: rm(this.state.ledger), pending: null }); }
-    else if (p.kind === 'abandon') this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const a = { ...(x.abandoned || {}) }; delete a[p.k]; return { ...x, abandoned: a }; }), pending: null });
-    else if (p.kind === 'redeem') this.save({ exp: this.roundExp(this.state.exp + p.cost), rewards: this.state.rewards.map(x => x.id === p.id ? { ...x, redeems: (x.redeems || []).filter(t => t !== p.rts) } : x), ledger: rm(this.state.ledger), pending: null });
-    else if (p.kind === 'msPlus') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
-    else if (p.kind === 'msClaim') this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.roundExp(this.state.exp - p.bonus), ledger: rm(this.state.ledger), pending: null });
+    return this.pointAction(async () => {
+      const p = this.state.pending; if (!p) return;
+      const rm = arr => arr.filter(e => p.ledgerCommandId ? e.commandId !== p.ledgerCommandId : e.ts !== p.ledgerTs);
+      let ok = false;
+      if (p.kind === 'complete') { ok = await this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const cl = { ...(x.completionLog || {}) }; if (p.completionDate && cl[p.completionDate]) { cl[p.completionDate] = Math.max(0, cl[p.completionDate] - 1); if (!cl[p.completionDate]) delete cl[p.completionDate]; } return { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, completionLog: cl, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) }; }), exp: this.roundExp(this.state.exp - p.exp), ledger: rm(this.state.ledger), pending: null }); }
+      else if (p.kind === 'abandon') ok = await this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const a = { ...(x.abandoned || {}) }; delete a[p.k]; return { ...x, abandoned: a }; }), pending: null });
+      else if (p.kind === 'redeem') ok = await this.save({ exp: this.roundExp(this.state.exp + p.cost), rewards: this.state.rewards.map(x => x.id === p.id ? { ...x, redeems: (x.redeems || []).filter(t => t !== p.rts) } : x), ledger: rm(this.state.ledger), pending: null });
+      else if (p.kind === 'msPlus') ok = await this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
+      else if (p.kind === 'msClaim') ok = await this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.roundExp(this.state.exp - p.bonus), ledger: rm(this.state.ledger), pending: null });
+      if (ok) { clearTimeout(this._pt); if (p.kind === 'complete') this.cancelBingoDraw(p.bingoTimerKey); }
+      return ok;
+
+    });
   }
   galleryDB() {
     if (this._galleryDB) return this._galleryDB;
@@ -2284,19 +2602,27 @@ class Component extends DCLogic {
     this.save({ galleryEntries: entries, galleryImageUrls: urls, galleryEdit: null, galleryEditBlob: null, galleryEditPreview: '', galleryEditRemoveImage: false });
   }
   async makeFullBackupAsync() {
-    const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, pomoCfgOpen, bingoCfgOpen, bingoCelebration, backupFullCode, ...data } = this.state;
+    if (this._storageBlocked) throw new Error('当前数据无法安全解析，请使用“导出原始备份”保留完整原文；照片库保持原样。');
+    const data = this.persistentState();
     const galleryImages = {};
     for (const e of (data.galleryEntries || [])) if (e.hasImage) {
-      try { const b = await this.galleryGet(e.id); if (b) galleryImages[e.id] = await this.blobToDataURL(b); } catch (_) {}
+      const b = await this.galleryGet(e.id); if (!b) throw new Error('集锦照片缺失：' + (e.targetName || e.id) + '；请先导出短码保留文字与账本。'); galleryImages[e.id] = await this.blobToDataURL(b);
     }
     return btoa(unescape(encodeURIComponent(JSON.stringify({ ...data, galleryImages }))));
   }
   async restoreGalleryImages(images) {
     if (!images || typeof images !== 'object') return;
-    await this.galleryClearImages();
-    for (const [id, data] of Object.entries(images)) { try { if (data) await this.galleryPut(id, this.dataURLToBlob(data)); } catch (_) {} }
+    const decoded = Object.entries(images).filter(([id,data]) => data).map(([id,data]) => [id, this.dataURLToBlob(data)]);
+    // Restore successful images without first destroying the existing image store.
+    for (const [id, blob] of decoded) {
+      const entry = (this.state.galleryEntries || []).find(e => String(e.id) === String(id));
+      await this.galleryPut(entry ? entry.id : id, blob);
+    }
   }
   componentDidMount() {
+    if (!this._storageBlocked) this.save({});
+    this._onStorage = e => { if (e.key === 'exp-bank-v1' && e.newValue !== this._persistedRaw) this.setState({ moneyConflict: true, storageError: '另一页已保存新数据，请同步最新数据后再操作。' }); };
+    window.addEventListener('storage', this._onStorage);
     this.pruneOnce();
     this.applyInterest();
     this._intTimer = setInterval(() => { this.pruneOnce(); this.applyInterest(); }, 300000);
@@ -2306,7 +2632,7 @@ class Component extends DCLogic {
     if (this.state.vw == null) this.setState({ vw: window.innerWidth });
     this.refreshBingoBoards();
   }
-  componentWillUnmount() { if (this._bingoTimers) Object.values(this._bingoTimers).forEach(clearTimeout); clearInterval(this._intTimer); clearInterval(this._clockTimer); clearTimeout(this._pt); clearInterval(this._pomoTimer); this.stopNoiseNodes(); if (this._onResize) window.removeEventListener('resize', this._onResize); }
+  componentWillUnmount() { if (this._onStorage) window.removeEventListener('storage', this._onStorage); if (this._bingoTimers) Object.values(this._bingoTimers).forEach(clearTimeout); clearInterval(this._intTimer); clearInterval(this._clockTimer); clearTimeout(this._pt); clearInterval(this._pomoTimer); this.stopNoiseNodes(); if (this._onResize) window.removeEventListener('resize', this._onResize); }
   setTab(t) { this.setState({ tab: t }); }
   read24h(hourId, minuteId, fallback) {
     const hEl = document.getElementById(hourId), mEl = document.getElementById(minuteId);
@@ -2387,9 +2713,13 @@ class Component extends DCLogic {
     }
     if (changed || last !== st.lastInterest) this.save({ exp, ledger, lastInterest: last });
   }
-  openEdit(type, id) { this.setState({ editing: { type, id, confirmed: false } }); }
+  openEdit(type, id) {
+    const item = type === 'opex' ? (this.state.opex || []).find(o => o.id === id) : null;
+    const draft = item ? { amount: String(item.amountMinor / 100), categoryId: item.categoryId, note: item.note || '', date: item.date || this.todayKey(), currencyCode: item.currencyCode, stashId: item.stashId == null ? '' : String(item.stashId) } : null;
+    this.setState({ editing: { type, id, confirmed: false }, expenseEditDraft: draft, expenseCommandId: this.newCommandId(), stashDetailId: null, moneyError: '' });
+  }
   confirmEdit() { this.setState({ editing: { ...this.state.editing, confirmed: true } }); }
-  closeEdit() { this.setState({ editing: null }); }
+  closeEdit() { this.setState({ editing: null, moneyError: '' }); }
   openBackup() { this.setState({ backupOpen: true, backupMsg: '', copyLabel: '复制备份码' }); }
   openTierCfg() { this.setState({ tierCfgOpen: true }); }
   closeTierCfg() { this.setState({ tierCfgOpen: false }); }
@@ -2403,8 +2733,8 @@ class Component extends DCLogic {
   }
   toggleLedgerView() { this.setState({ ledgerView: (this.state.ledgerView === 'redeem') ? 'all' : 'redeem' }); }
   closeBackup() { this.setState({ backupOpen: false, backupMsg: '' }); }
-  makeBackupCode() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, reflectionOpen, reflectionTarget, reflectionBlob, reflectionPreview, galleryOpen, galleryImageUrls, galleryEdit, galleryEditBlob, galleryEditPreview, galleryEditRemoveImage, pomoCfgOpen, bingoCfgOpen, bingoCelebration, backupFullCode, ...data } = this.state; const lite = { ...data, rewards: (data.rewards || []).map(r => { const { img, ...rest } = r; return rest; }) }; return btoa(unescape(encodeURIComponent(JSON.stringify(lite)))); }
-  makeFullBackup() { const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...data } = this.state; return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
+  makeBackupCode() { if (this._storageBlocked) return btoa(unescape(encodeURIComponent(this._persistedRaw || '{}'))); const data = this.persistentState(); const lite = { ...data, rewards: (data.rewards || []).map(r => { const { img, ...rest } = r; return rest; }) }; return btoa(unescape(encodeURIComponent(JSON.stringify(lite)))); }
+  makeFullBackup() { if (this._storageBlocked) return this.makeBackupCode(); return btoa(unescape(encodeURIComponent(JSON.stringify(this.persistentState())))); }
   setRewardPos(id, pos) { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, imgPos: Math.max(0, Math.min(100, pos)) } : r) }); }
   rewardImgDown(id, e) {
     e.stopPropagation();
@@ -2503,7 +2833,7 @@ class Component extends DCLogic {
     if (name.endsWith('.txt')) reader.readAsText(file); else reader.readAsArrayBuffer(file);
   }
   pickDocx() { this.openFilePicker('.txt,.docx,.doc', f => this.importDocxFile(f)); }
-  importBackup() {
+  async importBackup() {
     const el = document.getElementById('bk-import'); const raw = el ? el.value.trim() : '';
     if (!raw) { this.setState({ backupMsg: '请先粘贴备份码', backupMsgColor: '#f87171' }); return; }
     const clean = raw.replace(/\s+/g, '');
@@ -2512,10 +2842,16 @@ class Component extends DCLogic {
     catch (e) { try { data = JSON.parse(raw); } catch (e2) { this.setState({ backupMsg: '备份码无法识别,请检查是否复制完整', backupMsgColor: '#f87171' }); return; } }
     if (!data || !Array.isArray(data.tasks)) { this.setState({ backupMsg: '备份码内容无效', backupMsgColor: '#f87171' }); return; }
     const galleryImages = data.galleryImages || null; delete data.galleryImages;
-    this.setState({ ...data, editing: null, pending: null, backupMsg: '✓ 导入成功,数据已恢复', backupMsgColor: '#4ade80' }, () => {
-      localStorage.setItem('exp-bank-v1', JSON.stringify(data));
-      if (galleryImages) this.restoreGalleryImages(galleryImages).then(() => this.setState({ backupMsg: '✓ 导入成功，集锦照片也已恢复', backupMsgColor: '#4ade80' }));
-    });
+    try {
+      const restored = this.normalizeLoadedState(data);
+      const ok = await this.writeState(() => restored, { backupOpen: true, editing: null, pending: null, backupMsg: '✓ 导入成功，数据已恢复', backupMsgColor: '#4ade80' }, true, true);
+      if (!ok) { this.setState({ backupMsg: this.state.storageError, backupMsgColor: '#f87171' }); return false; }
+      if (galleryImages) {
+        try { await this.restoreGalleryImages(galleryImages); this.setState({ backupMsg: '✓ 导入成功，集锦照片也已恢复', backupMsgColor: '#4ade80' }); }
+        catch (e) { this.setState({ backupMsg: '文字与账本已恢复；部分照片恢复失败：' + e.message, backupMsgColor: '#fbbf24' }); }
+      }
+      return true;
+    } catch (e) { this.setState({ backupMsg: '未覆盖当前数据：' + e.message, backupMsgColor: '#f87171' }); return false; }
   }
   saveEdit() {
     const ed = this.state.editing; if (!ed) return;
@@ -2563,14 +2899,9 @@ class Component extends DCLogic {
       this.save({ editing: null, countdowns: this.state.countdowns.map(x => x.id === ed.id ? { ...x,
         name: name || x.name, date: this.v('ed-date') || x.date, time } : x) });
     } else if (ed.type === 'opex') {
-      const catEl = document.getElementById('ed-opex-cat'); const amount = parseFloat(this.v('ed-opex-amount'));
-      this.save({ editing: null, opex: (this.state.opex || []).map(x => x.id === ed.id ? { ...x,
-        amount: isNaN(amount) || amount <= 0 ? x.amount : Math.round(amount * 100) / 100,
-        cat: catEl ? catEl.value : x.cat, note: this.v('ed-opex-note') || (catEl ? catEl.value : x.cat), date: this.v('ed-opex-date') || x.date } : x) });
+      return this.editOpex(ed);
     } else if (ed.type === 'stash') {
-      const target = parseFloat(this.v('ed-stash-target'));
-      this.save({ editing: null, stash: (this.state.stash || []).map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, target: isNaN(target) || target <= 0 ? x.target : Math.round(target * 100) / 100 } : x) });
+      return this.editStash(ed);
     } else if (ed.type === 'fund') {
       const fnum = (id, fb) => { const n = parseFloat(this.v(id)); return isNaN(n) ? fb : n; };
       this.save({ editing: null, funds: this.state.funds.map(x => x.id === ed.id ? { ...x,
@@ -2631,33 +2962,44 @@ class Component extends DCLogic {
   }
   log(name, delta) { return [{ ts: Date.now(), name, delta }, ...this.state.ledger].slice(0, 200); }
   complete(id) {
-    const t = this.state.tasks.find(x => x.id === id), k = this.periodKey(t);
-    const cnt = k ? (t.done[k] || 0) : 0;
-    if (k && cnt >= (t.times || 1)) return;
-    const ts = Date.now(), key = 'task:' + id;
-    const curK = k, prevK = this.previousPeriodKey(t), times = t.times || 1;
-    const prevStreak = t.streak || 0, prevPeriod = (t.lastPeriod != null ? t.lastPeriod : t.lastDone) || '';
-    const streakCycle = ['daily','weekly','monthly'].includes(t.cycle);
-    const periodCompleteAfter = !!k && (cnt + 1) >= times;
-    const streakChanged = streakCycle && periodCompleteAfter && prevPeriod !== curK;
-    const newStreak = streakChanged ? ((prevPeriod === prevK ? prevStreak : 0) + 1) : prevStreak;
-    const newLastPeriod = streakChanged ? curK : prevPeriod;
-    const completionDate = this.todayKey();
-    const completionLog = { ...(t.completionLog || {}), [completionDate]: ((t.completionLog || {})[completionDate] || 0) + 1 };
-    const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, completionLog, streak: newStreak, lastPeriod: newLastPeriod, lastDone: completionDate } : x);
-    this.armTimer(key);
-    const bingoTimerKey = key + ':' + ts; this.scheduleBingoDraw(bingoTimerKey, { id: t.id, name: t.name, exp: t.exp });
-    const unit = this.taskInterval(t) > 1 ? '轮' : ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '');
-    if (streakChanged && newStreak === 7 && unit) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 ' + unit + ',MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
-    this.save({ tasks, exp: this.roundExp(this.state.exp + t.exp), ledger: [{ ts, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', completionDate, bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+    return this.pointAction(async () => {
+      const t = this.state.tasks.find(x => x.id === id), k = this.periodKey(t);
+      const cnt = k ? (t.done[k] || 0) : 0;
+      if (k && cnt >= (t.times || 1)) return;
+      const commandId = this.newCommandId();
+      const ts = Date.now(), key = 'task:' + id;
+      const curK = k, prevK = this.previousPeriodKey(t), times = t.times || 1;
+      const prevStreak = t.streak || 0, prevPeriod = (t.lastPeriod != null ? t.lastPeriod : t.lastDone) || '';
+      const streakCycle = ['daily','weekly','monthly'].includes(t.cycle);
+      const periodCompleteAfter = !!k && (cnt + 1) >= times;
+      const streakChanged = streakCycle && periodCompleteAfter && prevPeriod !== curK;
+      const newStreak = streakChanged ? ((prevPeriod === prevK ? prevStreak : 0) + 1) : prevStreak;
+      const newLastPeriod = streakChanged ? curK : prevPeriod;
+      const completionDate = this.todayKey();
+      const completionLog = { ...(t.completionLog || {}), [completionDate]: ((t.completionLog || {})[completionDate] || 0) + 1 };
+      const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, completionLog, streak: newStreak, lastPeriod: newLastPeriod, lastDone: completionDate } : x);
+      const bingoTimerKey = key + ':' + ts;
+      const ok = await this.save({ tasks, exp: this.roundExp(this.state.exp + t.exp), ledger: [{ ts, commandId, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, ledgerCommandId: commandId, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', completionDate, bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+      if (ok) { this.armTimer(key); this.scheduleBingoDraw(bingoTimerKey, { id: t.id, name: t.name, exp: t.exp });
+      const unit = this.taskInterval(t) > 1 ? '轮' : ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '');
+      if (streakChanged && newStreak === 7 && unit) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 ' + unit + ',MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
+      }
+      return ok;
+
+    });
   }
   redeem(id) {
-    const r = this.state.rewards.find(x => x.id === id); if (!r) return;
-    if (this.state.exp < r.cost) return;
-    if (this.rewardRedeemCount(r) >= this.rewardCapRule(r).times) return;
-    const ts = Date.now(), key = 'reward:' + id;
-    this.armTimer(key);
-    this.save({ exp: this.roundExp(this.state.exp - r.cost), rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-500) } : x), ledger: [{ ts, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, rts: ts }, reflectionOpen: true, reflectionTarget: { kind: 'reward', id, name: r.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+    return this.pointAction(async () => {
+      const r = this.state.rewards.find(x => x.id === id); if (!r) return;
+      if (this.state.exp < r.cost) return;
+      if (this.rewardRedeemCount(r) >= this.rewardCapRule(r).times) return;
+      const commandId = this.newCommandId();
+      const ts = Date.now(), key = 'reward:' + id;
+      const ok = await this.save({ exp: this.roundExp(this.state.exp - r.cost), rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-500) } : x), ledger: [{ ts, commandId, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, ledgerCommandId: commandId, rts: ts }, reflectionOpen: true, reflectionTarget: { kind: 'reward', id, name: r.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+      if (ok) this.armTimer(key);
+      return ok;
+
+    });
   }
   toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
   abandon(id) {
@@ -2672,17 +3014,41 @@ class Component extends DCLogic {
   delReward(id) { const item = this.state.rewards.find(x => x.id === id); if (!item || !this.confirmRemoval('Shopping Mall 奖励', item.name, '奖励卡片及其图片会移除；过去的兑换账本不受影响。')) return; this.save({ rewards: this.state.rewards.filter(x => x.id !== id) }); }
   delMilestone(id) { const item = this.state.milestones.find(x => x.id === id); if (!item || !this.confirmRemoval('里程碑', item.name, '里程碑进度会移除；已领取的 EXP 不自动扣回。')) return; this.save({ milestones: this.state.milestones.filter(x => x.id !== id) }); }
   toggleOpexFold(key) { const cur = { ...(this.state.opexFold || {}) }; cur[key] = !cur[key]; this.save({ opexFold: cur }); }
-  openNewOpex() { this.setState({ newOpexOpen: true }); }
-  openNewStash() { this.setState({ newStashOpen: true }); }
   closeWelcome() { this.save({ welcomed: true }); }
   closeUpdateNote() { this.setState({ updateNoteOpen: false }); }
-  checkUpdate() {
-    const go = () => location.reload();
+  async checkUpdate() {
+    if (this.state.updateBusy) return;
+    if (['newOpexOpen','newStashOpen','editing','categoryOpen','stashDetailId','newTaskOpen','newSetOpen','newRewardOpen','newMilestoneOpen','newCountdownOpen','newDaylineOpen','reflectionOpen','galleryEdit','backupOpen','reorderOpen'].some(k => this.state[k])) {
+      this.setState({ updateMessage: '请先完成或关闭当前操作窗口，再检查更新；当前输入已保留。' }); return;
+    }
+    this.setState({ updateBusy: true, updateMessage: '正在检查更新，账本和照片保留…' });
     try {
-      const cacheClear = (window.caches && caches.keys) ? caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k)))) : Promise.resolve();
-      const swUpdate = ('serviceWorker' in navigator) ? navigator.serviceWorker.getRegistrations().then(rs => Promise.all(rs.map(r => r.update().catch(() => {})))) : Promise.resolve();
-      Promise.all([cacheClear, swUpdate]).then(go).catch(go);
-    } catch (e) { go(); }
+      await (this._writeQueue || Promise.resolve());
+      if (!('serviceWorker' in navigator)) throw new Error('当前浏览器不支持离线更新，请使用浏览器重新打开应用。');
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) throw new Error('离线资源尚未准备，请联网重新打开应用后再检查。');
+      await registration.update();
+      if (registration.installing) await new Promise((resolve, reject) => {
+        const worker = registration.installing;
+        const timer = setTimeout(() => reject(new Error('资源下载超时，已保留当前版本；稍后重试。')), 30000);
+        const check = () => {
+          if (worker.state === 'installed' || worker.state === 'activated') { clearTimeout(timer); worker.removeEventListener('statechange', check); resolve(); }
+          else if (worker.state === 'redundant') { clearTimeout(timer); worker.removeEventListener('statechange', check); reject(new Error('新版本资源不完整，继续使用当前版本。')); }
+        };
+        worker.addEventListener('statechange', check); check();
+      });
+      const waiting = registration.waiting;
+      if (!waiting) { this.setState({ updateMessage: '当前已是最新可用版本，离线资源已保留。' }); return; }
+      if (this.state.expenseDraft) try { sessionStorage.setItem('exp-bank-pending-expense', JSON.stringify(this.state.expenseDraft)); } catch (_) {}
+      this.setState({ updateMessage: '新版本资源已准备，正在刷新…' });
+      await new Promise((resolve, reject) => {
+        const timer = setTimeout(() => { navigator.serviceWorker.removeEventListener('controllerchange', changed); reject(new Error('更新尚未完成，当前数据已保留；稍后重试。')); }, 15000);
+        const changed = () => { clearTimeout(timer); navigator.serviceWorker.removeEventListener('controllerchange', changed); resolve(); location.reload(); };
+        navigator.serviceWorker.addEventListener('controllerchange', changed);
+        waiting.postMessage({ type: 'SKIP_WAITING' });
+      });
+    } catch (e) { this.setState({ updateMessage: e.message || '更新失败，继续使用当前版本。' }); }
+    finally { this.setState({ updateBusy: false }); }
   }
   cycleUiMode() { const list = ['auto', 'phone', 'tablet', 'desktop']; const i = list.indexOf(this.state.uiMode || 'auto'); this.save({ uiMode: list[(i + 1) % list.length] }); }
   cycleTheme() { this.save({ uiTheme: (this.state.uiTheme || 'minimal') === 'minimal' ? 'verdant' : 'minimal' }); }
@@ -2820,61 +3186,6 @@ class Component extends DCLogic {
     const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//EXP BANK//DAYLINE//CN','BEGIN:VEVENT','UID:expbank-'+x.id+'-'+ds+'@local','DTSTART:'+dt,'DTEND:'+de,'SUMMARY:'+clean(x.name),'BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY','DESCRIPTION:'+clean(x.name),'END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
     const blob = new Blob([ics], { type:'text/calendar;charset=utf-8' }), a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='EXP-BANK-'+x.date+'-'+x.time.replace(':','')+'.ics'; document.body.appendChild(a); a.click(); const u=a.href; a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000);
   }
-  cycleCurrency() { const list = ['\u00a5', 'RM', '$', 'NT$', '\u20ac']; const i = list.indexOf(this.state.opexCurrency || '\u00a5'); this.save({ opexCurrency: list[(i + 1) % list.length] }); }
-  addOpex() {
-    const amount = parseFloat(this.v('no-amount'));
-    if (isNaN(amount) || amount <= 0) return;
-    const catEl = document.getElementById('no-cat');
-    const cat = catEl ? catEl.value : '\u5176\u4ed6';
-    const note = this.v('no-note') || cat;
-    const date = this.v('no-date') || this.todayKey();
-    const entry = { id: this.state.nextId, date, amount: Math.round(amount * 100) / 100, cat, note, ts: Date.now() };
-    const today = this.todayKey();
-    const patch = { opex: [entry, ...(this.state.opex || [])].slice(0, 800), nextId: this.state.nextId + 1, newOpexOpen: false };
-    if (this.state.opexLastLogDay !== today) {
-      patch.opexLastLogDay = today;
-      patch.exp = this.state.exp + 5;
-      patch.ledger = [{ ts: Date.now(), name: '\u8bb0\u8d26\u6253\u5361 \u00b7 OPEX', delta: 5 }, ...this.state.ledger].slice(0, 200);
-      patch.momentumMsg = '\u4eca\u5929\u7684\u7b2c\u4e00\u7b14\u5df2\u8bb0\u4e0b \u00b7 +5 EXP';
-      setTimeout(() => this.setState({ momentumMsg: '' }), 2600);
-    }
-    this.save(patch);
-    this.clear(['no-amount', 'no-note']);
-  }
-  delOpex(id) { this.save({ opex: (this.state.opex || []).filter(o => o.id !== id) }); }
-  addStash() {
-    const name = this.v('ns2-name'); if (!name) return;
-    const target = parseFloat(this.v('ns2-target')); if (isNaN(target) || target <= 0) return;
-    this.save({ stash: [...(this.state.stash || []), { id: this.state.nextId, name, target, saved: 0, claimed: false }], nextId: this.state.nextId + 1, newStashOpen: false });
-    this.clear(['ns2-name', 'ns2-target']);
-  }
-  delStash(id) { this.save({ stash: (this.state.stash || []).filter(s => s.id !== id) }); }
-  stashWithdraw(id) {
-    const el = document.getElementById('stash-out-' + id); if (!el) return;
-    const amount = parseFloat(el.value); if (isNaN(amount) || amount <= 0) return;
-    this.save({ stash: (this.state.stash || []).map(s => s.id === id ? { ...s, saved: Math.max(0, Math.round((s.saved - amount) * 100) / 100) } : s) });
-    el.value = '';
-  }
-  stashDeposit(id) {
-    const el = document.getElementById('stash-in-' + id); if (!el) return;
-    const add = parseFloat(el.value); if (isNaN(add) || add === 0) return;
-    let bonus = 0, name = '';
-    const stash = (this.state.stash || []).map(s => {
-      if (s.id !== id) return s;
-      const saved = Math.max(0, Math.round((s.saved + add) * 100) / 100);
-      if (!s.claimed && saved >= s.target) { bonus = 100; name = s.name; return { ...s, saved, claimed: true }; }
-      return { ...s, saved };
-    });
-    const patch = { stash };
-    if (bonus) {
-      patch.exp = this.state.exp + bonus;
-      patch.ledger = [{ ts: Date.now(), name: '\u5b58\u94b1\u7f50\u8fbe\u6210 \u00b7 ' + name, delta: bonus }, ...this.state.ledger].slice(0, 200);
-      patch.momentumMsg = '\u5b58\u94b1\u76ee\u6807\u8fbe\u6210 \u00b7 +100 EXP';
-      setTimeout(() => this.setState({ momentumMsg: '' }), 3000);
-    }
-    this.save(patch);
-    el.value = '';
-  }
   v(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
   clear(ids) { ids.forEach(i => { const el = document.getElementById(i); if (el) el.value = ''; }); }
   roundExp(v) { const n = Number(v); return Number.isFinite(n) ? Math.round(n * 100) / 100 : 0; }
@@ -2933,10 +3244,16 @@ class Component extends DCLogic {
     this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, cur: Math.min(x.target, x.cur + x.step) } : x), pending: { key, kind: 'msPlus', id, prev: m.cur } });
   }
   msClaim(id) {
-    const m = this.state.milestones.find(x => x.id === id);
-    if (!m || m.claimed || m.cur < m.target) return;
-    const ts = Date.now(), key = 'ms:' + id; this.armTimer(key);
-    this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, claimed: true } : x), exp: this.roundExp(this.state.exp + m.bonus), ledger: [{ ts, name: '里程碑达成 · ' + m.name, delta: m.bonus }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'msClaim', id, bonus: m.bonus, ledgerTs: ts }, reflectionOpen: true, reflectionTarget: { kind: 'milestone', id, name: m.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+    return this.pointAction(async () => {
+      const m = this.state.milestones.find(x => x.id === id);
+      if (!m || m.claimed || m.cur < m.target) return;
+      const commandId = this.newCommandId();
+      const ts = Date.now(), key = 'ms:' + id;
+      const ok = await this.save({ milestones: this.state.milestones.map(x => x.id === id ? { ...x, claimed: true } : x), exp: this.roundExp(this.state.exp + m.bonus), ledger: [{ ts, commandId, name: '里程碑达成 · ' + m.name, delta: m.bonus }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'msClaim', id, bonus: m.bonus, ledgerTs: ts, ledgerCommandId: commandId }, reflectionOpen: true, reflectionTarget: { kind: 'milestone', id, name: m.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+      if (ok) this.armTimer(key);
+      return ok;
+
+    });
   }
   sameDay(ts) { const a = new Date(ts), b = new Date(); return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
   dateKey(ts) { const d = new Date(ts), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; }
@@ -3337,24 +3654,21 @@ class Component extends DCLogic {
         onDel: e => { e.stopPropagation(); this.delCountdown(c.id); }, onEdit: () => this.openEdit('countdown', c.id) };
     }).sort((a, b) => a.targetTs - b.targetTs);
     const opexProps = (() => {
-      const cur = st.opexCurrency || '\u00a5';
-      const list = opexBase;
+      const cur = st.defaultCurrencyCode, symbol = ExpMoney.CURRENCIES.find(c => c.code === cur).symbol;
+      const filter = st.opexGoalFilter || '';
+      const list = opexBase.filter(o => o.currencyCode === cur && (!filter || (filter === 'unlinked' ? o.stashId == null : String(o.stashId) === filter)));
       const now = new Date();
       const mk = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       const todayK = this.todayKey();
-      const money = n => cur + (Math.round(n * 100) / 100).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      const money = n => ExpMoney.format(Math.round(n), cur);
       const monthList = list.filter(o => (o.date || '').slice(0, 7) === mk);
-      const monthSum = monthList.reduce((a, o) => a + o.amount, 0);
-      const todaySum = list.filter(o => o.date === todayK).reduce((a, o) => a + o.amount, 0);
+      const monthSum = monthList.reduce((a, o) => a + o.amountMinor, 0);
+      const todaySum = list.filter(o => o.date === todayK).reduce((a, o) => a + o.amountMinor, 0);
       const dayCount = Math.max(1, now.getDate());
-      const palette = { '\u5403\u996d': '#f59e0b', '\u4ea4\u901a': '#60a5fa', '\u8d2d\u7269': '#a78bfa', '\u4eba\u60c5': '#f472b6', '\u5a31\u4e50': '#34d399', '\u5176\u4ed6': '#94a3b8' };
+      const palette = Object.fromEntries(st.opexCategories.map(c => [c.name, c.color]));
       const byCat = {};
-      monthList.forEach(o => { byCat[o.cat] = (byCat[o.cat] || 0) + o.amount; });
-      const cats = Object.keys(byCat).sort((a, b) => byCat[b] - byCat[a]).map(k => ({
-        key: k, name: k, amount: money(byCat[k]),
-        pct: (monthSum ? Math.round(byCat[k] / monthSum * 100) : 0) + '%',
-        color: palette[k] || '#94a3b8',
-      }));
+      monthList.forEach(o => { byCat[o.categoryId] = (byCat[o.categoryId] || 0) + o.amountMinor; });
+      const cats = st.opexCategories.filter(c => byCat[c.id]).map(c => ({ key: c.id, name: c.name, amount: money(byCat[c.id]), pct: (monthSum ? Math.round(byCat[c.id] / monthSum * 100) : 0) + '%', color: c.color }));
       const folds = st.opexFold || {}, hasFold = k => Object.prototype.hasOwnProperty.call(folds, k);
       const p2 = n => String(n).padStart(2, '0');
       const dateObj = iso => { const a = String(iso || '').split('-').map(Number); return new Date(a[0] || 2000, (a[1] || 1) - 1, a[2] || 1, 12, 0, 0); };
@@ -3363,32 +3677,39 @@ class Component extends DCLogic {
       list.forEach(o => { const k = (o.date || '').slice(0,7) || '未标日期'; (months[k] = months[k] || []).push(o); });
       Object.keys(months).sort().reverse().forEach(monthKey => {
         const items = months[monthKey], key = 'm:' + monthKey, open = hasFold(key) ? !!folds[key] : monthKey === mk;
-        const ma = monthKey.split('-'); treeRows.push({ key, isMonth:true, isWeek:false, isDay:false, isEntry:false, label:(ma[0] || '') + '年' + (ma[1] ? Number(ma[1]) : '') + '月', count:items.length + ' 笔', amount:money(items.reduce((a,o)=>a+o.amount,0)), chev:open?'▾':'▸', onToggle:()=>this.toggleOpexFold(key) });
+        const ma = monthKey.split('-'); treeRows.push({ key, isMonth:true, isWeek:false, isDay:false, isEntry:false, label:(ma[0] || '') + '年' + (ma[1] ? Number(ma[1]) : '') + '月', count:items.length + ' 笔', amount:money(items.reduce((a,o)=>a+o.amountMinor,0)), chev:open?'▾':'▸', onToggle:()=>this.toggleOpexFold(key) });
         if (!open) return;
         const weeks = {}; items.forEach(o => { const w=weekInfo(o.date); if(!weeks[w.key]) weeks[w.key]={label:w.label,items:[]}; weeks[w.key].items.push(o); });
         Object.keys(weeks).sort().reverse().forEach(wk => {
-          const w=weeks[wk], wkey='w:'+wk, wopen=!!folds[wkey]; treeRows.push({key:wkey,isMonth:false,isWeek:true,isDay:false,isEntry:false,label:w.label,count:w.items.length+' 笔',amount:money(w.items.reduce((a,o)=>a+o.amount,0)),chev:wopen?'▾':'▸',onToggle:()=>this.toggleOpexFold(wkey)});
+          const w=weeks[wk], wkey='w:'+wk, wopen=!!folds[wkey]; treeRows.push({key:wkey,isMonth:false,isWeek:true,isDay:false,isEntry:false,label:w.label,count:w.items.length+' 笔',amount:money(w.items.reduce((a,o)=>a+o.amountMinor,0)),chev:wopen?'▾':'▸',onToggle:()=>this.toggleOpexFold(wkey)});
           if(!wopen)return;
           const days={}; w.items.forEach(o=>(days[o.date]=days[o.date]||[]).push(o));
           Object.keys(days).sort().reverse().forEach(dk => {
             const di=days[dk], dkey='d:'+dk, dopen=!!folds[dkey], d=dateObj(dk), wd=['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
-            treeRows.push({key:dkey,isMonth:false,isWeek:false,isDay:true,isEntry:false,label:p2(d.getMonth()+1)+'月'+p2(d.getDate())+'日 · '+wd,count:di.length+' 笔',amount:money(di.reduce((a,o)=>a+o.amount,0)),chev:dopen?'▾':'▸',onToggle:()=>this.toggleOpexFold(dkey)});
+            treeRows.push({key:dkey,isMonth:false,isWeek:false,isDay:true,isEntry:false,label:p2(d.getMonth()+1)+'月'+p2(d.getDate())+'日 · '+wd,count:di.length+' 笔',amount:money(di.reduce((a,o)=>a+o.amountMinor,0)),chev:dopen?'▾':'▸',onToggle:()=>this.toggleOpexFold(dkey)});
             if(!dopen)return;
-            di.forEach(o=>treeRows.push({key:'e:'+o.id,isMonth:false,isWeek:false,isDay:false,isEntry:true,cat:o.cat,note:o.note,amount:money(o.amount),color:palette[o.cat]||'#94a3b8',onEdit:()=>this.openEdit('opex',o.id),onDel:e=>{if(e&&e.stopPropagation)e.stopPropagation();this.delOpex(o.id);}}));
+            di.forEach(o=>treeRows.push({key:'e:'+o.id,isMonth:false,isWeek:false,isDay:false,isEntry:true,cat:o.cat,note:o.note,goalLabel:o.stashId == null ? '未关联目标' : '来自 ' + ((st.stash.find(s => s.id === o.stashId) || {}).name || o.stashNameSnapshot),amount:money(o.amountMinor),color:palette[o.cat]||'#94a3b8',onEdit:()=>this.openEdit('opex',o.id),onDel:e=>{if(e&&e.stopPropagation)e.stopPropagation();this.delOpex(o.id);}}));
           });
         });
       });
-      const stashRows = stashBase.map(s => {
-        const pct = s.target > 0 ? Math.min(100, Math.round(s.saved / s.target * 100)) : 0;
-        return { key: s.id, id: s.id, name: s.name, pct: pct + '%', reached: s.saved >= s.target,
-          savedStr: money(s.saved), targetStr: money(s.target),
-          onSave: () => this.stashDeposit(s.id), onWithdraw: () => this.stashWithdraw(s.id), onEdit: () => this.openEdit('stash', s.id), onDel: () => this.delStash(s.id) };
+      const archiveMode = !!st.stashShowArchived;
+      const archiveCount = stashBase.filter(s => s.archivedAt).length;
+      const visibleGoals = stashBase.filter(s => archiveMode ? !!s.archivedAt : !s.archivedAt);
+      const stashRows = visibleGoals.map(s => {
+        const minor = ExpMoney.balance(st, s.id), pct = Math.min(100, Math.round(minor / s.targetMinor * 100));
+      return { key: s.id, id: s.id, name: s.name, pct: pct + '%', reached: minor >= s.targetMinor, claimed: s.claimed, active: !s.archivedAt, archived: !!s.archivedAt,
+          savedStr: ExpMoney.format(minor, s.currencyCode), targetStr: ExpMoney.format(s.targetMinor, s.currencyCode),
+          onSave: () => this.stashDeposit(s.id), onWithdraw: () => this.stashWithdraw(s.id), onEdit: () => this.openEdit('stash', s.id), onDel: () => this.delStash(s.id), onDetail: () => this.openStashDetail(s.id), onRestore: () => this.restoreStash(s.id) };
       });
+      const limit = st.opexVisibleLimit || 120;
+      let entriesSeen = 0;
+      const visibleTree = treeRows.filter(row => !row.isEntry || ++entriesSeen <= limit);
       return {
-        opexCurrency: cur, cycleCurrency: () => this.cycleCurrency(),
+        opexCurrency: symbol + ' ' + cur, cycleCurrency: () => this.cycleCurrency(),
         opexToday: money(todaySum), opexMonth: money(monthSum), opexAvg: money(monthSum / dayCount),
-        opexCats: cats, opexTreeRows: treeRows, opexEmpty: list.length === 0, opexHasData: monthList.length > 0,
-        stashRows, stashEmpty: (st.stash || []).length === 0,
+        opexCats: cats, opexTreeRows: visibleTree, opexEmpty: list.length === 0, opexHasData: monthList.length > 0,
+        stashRows, stashEmpty: visibleGoals.length === 0, stashArchiveLabel: archiveMode ? '← 返回活动目标' : '已归档 ' + archiveCount, toggleStashArchived: () => this.setState({ stashShowArchived: !archiveMode }),
+        opexMoreVisible: entriesSeen > limit, moreOpex: () => this.setState({ opexVisibleLimit: limit + 120 }),
         newOpexOpen: !!st.newOpexOpen, newStashOpen: !!st.newStashOpen,
         openNewOpex: () => this.openNewOpex(), openNewStash: () => this.openNewStash(),
         addOpex: () => this.addOpex(), addStash: () => this.addStash(),
@@ -3465,9 +3786,10 @@ class Component extends DCLogic {
       navListsActive: tabNow === 'lists', navPomoActive: tabNow === 'pomo', navCountdownActive: tabNow === 'countdown', navFundActive: tabNow === 'fund', navOpexActive: tabNow === 'opex',
       navListsColor: tabNow === 'lists' ? accent : '#7c8494', navPomoColor: tabNow === 'pomo' ? accent : '#7c8494', navCountdownColor: tabNow === 'countdown' ? accent : '#7c8494', navFundColor: tabNow === 'fund' ? accent : '#7c8494', navOpexColor: tabNow === 'opex' ? accent : '#7c8494',
       appVersion: APP_VERSION, prevVersion: st.prevVersion || 'v0.x',
-      updateNoteOpen: !!st.updateNoteOpen, closeUpdateNote: () => this.closeUpdateNote(), checkUpdate: () => this.checkUpdate(),
+      updateMessage: st.updateMessage || '', updateMessageVisible: !!st.updateMessage, updateNoteOpen: !!st.updateNoteOpen, closeUpdateNote: () => this.closeUpdateNote(), checkUpdate: () => this.checkUpdate(),
       welcomeOpen: st.welcomed === false, closeWelcome: () => this.closeWelcome(),
       ...opexProps,
+      ...this.moneyViewProps(st),
       newRewardOpen: !!st.newRewardOpen, newMilestoneOpen: !!st.newMilestoneOpen, newMilestoneSetOpen: !!st.newMilestoneSetOpen, newFundOpen: !!st.newFundOpen,
       openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewMilestoneSet: () => this.openNewMilestoneSet(), openNewFund: () => this.openNewFund(),
       addFund: () => this.addFund(),
@@ -3558,7 +3880,7 @@ class Component extends DCLogic {
       editIsMilestoneSet: editOpen && ed.confirmed && ed.type === 'milestoneSet',
       editItemName: editItem ? (editItem.name || editItem.note || editItem.cat || '记录') : '',
       editTypeName: ed ? ({ task: '任务', reward: '奖励', milestone: '里程碑', set: '任务集', milestoneSet: '里程碑集', fund: '标的', countdown: '倒计时', opex: '开销', stash: '存钱目标' }[ed.type]) : '',
-      editHasName: !ed || ed.type !== 'opex', editAskHint: ed && ed.type === 'opex' ? '可修改金额、分类、备注和日期。' : ed && ed.type === 'stash' ? '可修改目标名称和目标金额；当前余额请用卡片上的「存入 / 支出」调整。' : '可修改名称、分值、循环 / 截止日期等信息。',
+      editHasName: !ed || ed.type !== 'opex', editAskHint: ed && ed.type === 'opex' ? '修改金额或付款目标会同步调整余额；分类、备注和日期不改变余额。' : ed && ed.type === 'stash' ? '可修改目标名称和目标金额；存入在卡片操作，取出与调整在流水详情操作。' : '可修改名称、分值、循环 / 截止日期等信息。',
       notionResultOpen: !!st.notionResultOpen, notionResultOk: st.notionResultOk, notionResultMsg: st.notionResultMsg || '', notionResultBusy: st.notionResultOk == null && !!st.notionResultOpen, notionResultColor: st.notionResultOk == null ? '#8b93a4' : (st.notionResultOk ? '#4ade80' : '#f87171'), closeNotionResult: () => this.closeNotionResult(),
       editSetId: editItem ? String(editItem.setId ?? '') : '', editParentId: editItem ? String(editItem.parentId ?? '') : '', editSetParentOptions: ed && ed.type === 'set' ? this.hierarchyOptions(setsArr, ed.id) : this.hierarchyOptions(setsArr), editMilestoneSetParentOptions: ed && ed.type === 'milestoneSet' ? this.hierarchyOptions(milestoneSetsArr, ed.id) : this.hierarchyOptions(milestoneSetsArr),
       editName: editItem ? editItem.name : '',
@@ -3571,7 +3893,8 @@ class Component extends DCLogic {
       editTarget: editItem ? (editItem.target ?? '') : '', editStep: editItem ? (editItem.step ?? '') : '',
       editBonus: editItem ? (editItem.bonus ?? '') : '', editDeadline: editItem ? (editItem.deadline || '') : '',
       editOpexAmount: editItem && ed && ed.type === 'opex' ? editItem.amount : '', editOpexCat: editItem && ed && ed.type === 'opex' ? editItem.cat : '其他', editOpexNote: editItem && ed && ed.type === 'opex' ? editItem.note : '', editOpexDate: editItem && ed && ed.type === 'opex' ? editItem.date : '',
-      editStashTarget: editItem && ed && ed.type === 'stash' ? editItem.target : '', editStashSaved: editItem && ed && ed.type === 'stash' ? editItem.saved : '', 
+      editStashTarget: editItem && ed && ed.type === 'stash' ? editItem.target : '', editStashCurrencySymbol: editItem && ed && ed.type === 'stash' ? ExpMoney.CURRENCIES.find(c => c.code === editItem.currencyCode).symbol : '',
+      editStashSaved: editItem && ed && ed.type === 'stash' ? ExpMoney.format(ExpMoney.balance(st, editItem.id), editItem.currencyCode) : '',
       closeEdit: () => this.closeEdit(), confirmEdit: () => this.confirmEdit(),
       saveEdit: () => this.saveEdit(), stopClick: e => e.stopPropagation(),
       backupOpen: !!st.backupOpen, backupCode: st.backupOpen ? ((st.backupFull && st.backupFullCode) ? st.backupFullCode : this.makeBackupCode()) : '',
