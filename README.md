@@ -1,0 +1,25 @@
+# EXP BANK
+
+本地优先的 EXP 积分与生活记录 PWA。当前版本 **v1.10.0**：目标资金和开销联动，OPEX 支持自定义类别及全部类别排序。
+
+## 启动与部署
+
+无需构建。保留整个目录结构，在根目录运行 `python3 -m http.server 8080`，打开 `http://localhost:8080`。正式使用应部署到 HTTPS；GitHub Pages 从仓库根目录发布即可。`money.js` 与 `vendor/` 必须一起部署，单独替换 `index.html` 不足以完成本版升级。
+
+现有 PWA 可使用顶部“↻ 更新”。完整资源就绪后才切换版本，账本和照片保留。更新前可使用“备份”导出完整 TXT；个人账本存在本机，不在此代码仓库中。
+
+[完整版本说明](docs/release-v1.10.0.md)列出交互、数据迁移、涉及文件和验证范围。
+
+## 验证
+
+使用 Node 18 或更高版本：
+
+```bash
+node tests/money-state.smoke.mjs
+node tests/component.smoke.mjs
+node tests/sw-update.smoke.mjs
+```
+
+浏览器脚本需要 Playwright 与 Chromium；已配置 Playwright 的环境可运行 `node tests/browser.smoke.mjs`。需要指定已有浏览器时设置 `EXP_BANK_CHROME` 为其绝对路径。脚本使用临时本地服务与合成数据，不读取日常账本。
+
+`support.js` 和 `image-slot.js` 为既有运行时，未为资金功能修改。React 与 ReactDOM 18.3.1 的本地分发及许可证放在 `vendor/`。
