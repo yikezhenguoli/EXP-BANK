@@ -17,7 +17,7 @@ const server = http.createServer((req, res) => {
   const file = path.resolve(root, '.' + (pathname.endsWith('/') ? pathname + 'index.html' : pathname));
   if (!file.startsWith(root) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { res.writeHead(404); res.end('not found'); return; }
   res.writeHead(200, { 'Content-Type': mime[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store' });
-  if (release.version && ['.html', '.js'].includes(path.extname(file))) res.end(fs.readFileSync(file, 'utf8').replaceAll('v1.10.0', release.version));
+  if (release.version && ['.html', '.js'].includes(path.extname(file))) res.end(fs.readFileSync(file, 'utf8').replaceAll('v1.11.0', release.version));
   else res.end(fs.readFileSync(file));
 });
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -112,13 +112,13 @@ try {
       await new Promise((resolve, reject) => { const t = db.transaction('images', 'readwrite'); t.objectStore('images').put(new Blob(['photo-fixture'], { type: 'image/png' }), 77); t.oncomplete = resolve; t.onerror = () => reject(t.error); }); db.close();
       const other = await caches.open('other-app-cache'); await other.put('/other', new Response('keep'));
     });
-    release.version = 'v1.10.1'; release.missing = 'money.js';
+    release.version = 'v1.11.1'; release.missing = 'money.js';
     await page.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); await r.update(); });
     await page.waitForFunction(async () => !(await navigator.serviceWorker.getRegistration()).installing);
-    assert.ok((await page.evaluate(() => caches.keys())).includes('exp-bank-v1.10.0')); assert.deepEqual(await stored(page), before);
-    await context.setOffline(true); await page.reload(); await page.locator('#stash-in-41').waitFor(); assert.equal((await stored(page)).appVersion, 'v1.10.0');
+    assert.ok((await page.evaluate(() => caches.keys())).includes('exp-bank-v1.11.0')); assert.deepEqual(await stored(page), before);
+    await context.setOffline(true); await page.reload(); await page.locator('#stash-in-41').waitFor(); assert.equal((await stored(page)).appVersion, 'v1.11.0');
     await context.setOffline(false); release.missing = null;
-    await page.getByText('↻ 更新', { exact: true }).click(); await page.waitForFunction(() => document.body.innerText.includes('v1.10.1'));
+    await page.getByText('↻ 更新', { exact: true }).click(); await page.waitForFunction(() => document.body.innerText.includes('v1.11.1'));
     await page.locator('#stash-in-41').waitFor({ state: 'attached' });
     const after = await stored(page); assert.equal(after.stash[0].saved, 1000); assert.equal(after.exp, 10); assert.equal(after.galleryEntries[0].id, 77);
     assert.ok((await page.evaluate(() => caches.keys())).includes('other-app-cache'));
