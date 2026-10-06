@@ -6,6 +6,8 @@
 <script src="./vendor/react.production.min.js"></script>
 <script src="./vendor/react-dom.production.min.js"></script>
 <script src="./money.js"></script>
+<script src="./progression.js"></script>
+<script src="./task-assistant.js"></script>
 <script src="./support.js"></script>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0a0b10">
@@ -17,7 +19,7 @@
 <link rel="icon" type="image/png" href="./icon-192.png">
 <script>
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='EXP_BANK_CLIENT_PROTOCOL'&&e.ports[0])e.ports[0].postMessage({protocol:1});});
+  navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='EXP_BANK_CLIENT_PROTOCOL'&&e.ports[0])e.ports[0].postMessage({protocol:2});});
   window.expBankRegistration=navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(function(){return null;});
 }
 </script>
@@ -184,6 +186,7 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ startReorder }}" title="批量编辑任务与任务集：排序 + 归集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
       </sc-if>
+      <div class="money-line" style="padding:8px 0;flex-wrap:wrap;"><div class="money-hint" style="flex:1;">{{ maintenanceSummary }}</div><button class="money-btn" onClick="{{ openMaintenancePlan }}">+ 维护任务</button></div>
       <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="4">
         <sc-if value="{{ t.isDivider }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:10px;margin:13px 2px 5px;min-height:22px;">
@@ -338,7 +341,7 @@ input[type="date"]{color-scheme:dark;}
                 </div>
               </sc-if>
             </div>
-            <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+            <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;"><div style="font-size:10px;color:{{ r.riskColor }};">{{ r.riskLabel }}</div>
               <div style="display:flex;flex-direction:column;gap:3px;">
                 <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;min-height:61px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere;">{{ r.name }}</div>
                 <div style="display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:10px;">
@@ -868,14 +871,24 @@ input[type="date"]{color-scheme:dark;}
                 <option value="p1">紧急且重要</option><option value="p2">紧急不重要</option><option value="p3">不紧急重要</option><option value="p4">不重要不紧急</option>
               </select>
             </label>
+            <label style="display:block;font-size:11px;color:#697084;">任务类别
+              <select id="ed-task-kind" class="money-input" defaultValue="{{ editTaskKind }}" aria-label="任务类别"><option value="standard">普通任务</option><option value="maintenance">生活维护 · 每日最多15 EXP</option></select>
+            </label>
             <label style="display:block;font-size:11px;color:#697084;">备注(可留空)
               <textarea id="ed-note" defaultValue="{{ editNote }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
             </label>
           </sc-if>
           <sc-if value="{{ editIsReward }}" hint-placeholder-val="{{ false }}">
-            <label style="display:block;font-size:11px;color:#697084;">价格(EXP)
-              <input id="ed-cost" type="number" min="0.01" step="0.01" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+            <label style="display:block;font-size:11px;color:#697084;">基础价格(EXP)
+              <input id="ed-cost" onInput="{{ quoteEditReward }}" type="number" min="0.01" step="0.01" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
             </label>
+            <label>奖励分级<select id="ed-risk" class="money-input" defaultValue="{{ editRiskBand }}" onChange="{{ onEditRewardRisk }}"><option value="green">Green · 正常兑换</option><option value="amber">Amber · 有顾虑，默认冷却7天</option><option value="red">Red · 下架，不兑换</option></select></label>
+            <label>个人顾虑系数<select id="ed-friction" class="money-input" defaultValue="{{ editFrictionFactor }}" onChange="{{ quoteEditReward }}"><option value="1">1.0 · 无明显负担</option><option value="1.2">1.2 · 有一点顾虑</option><option value="1.5">1.5 · 多次怀疑或兑换后焦虑</option></select></label>
+            <div class="money-hint">系数表达你的个人顾虑。明确不愿承担时选 Red 下架。</div>
+            <label>参考金额（元，可留空）<input id="ed-money" class="money-input" type="number" min="0.01" step="0.01" defaultValue="{{ editBaseMoney }}" onInput="{{ quoteEditReward }}" placeholder="1元 = 10 EXP"></label>
+            <label>每次兑换后冷却天数<input id="ed-cooldown" class="money-input" type="number" min="0" max="3650" step="1" defaultValue="{{ editCooldownDays }}" onInput="{{ quoteEditReward }}"></label>
+            <div class="money-preview">{{ editRewardPricingPreview }}</div>
+
             <div style="font-size:10.5px;color:#697084;">兑换限制 · 每 N 日／周／月／年最多兑换 M 次</div>
             <div style="display:grid;grid-template-columns:.8fr 1.15fr .8fr;gap:7px;">
               <label style="font-size:10px;color:#697084;">每<input id="ed-cap-interval" type="number" min="1" max="999" step="1" defaultValue="{{ editCapInterval }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
@@ -985,13 +998,51 @@ input[type="date"]{color-scheme:dark;}
   <!-- AI HELP MODAL -->
   <sc-if value="{{ aiHelpOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeAiHelp }}" style="position:fixed;inset:0;background:rgba(6,7,10,.78);backdrop-filter:blur(7px);z-index:88;display:flex;align-items:center;justify-content:center;padding:16px;">
-      <div onClick="{{ stopClick }}" style="width:540px;max-width:100%;background:linear-gradient(180deg,#151820,#0e1016);border:1px solid #2f3542;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:13px;box-shadow:0 30px 82px rgba(0,0,0,.78);">
-        <div style="display:flex;align-items:center;gap:9px;"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};flex:1;">✦ AI HELP // LOCAL COMMAND</div><div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:20px;color:#8b93a4;">×</div></div>
-        <div style="font-size:12px;color:#8b93a4;line-height:1.75;">当前是本地安全指令模式：不上传你的数据，也不在前端保存任何模型 API Key。它会把明确的自然语言指令解析成批量动作，并在执行前再次确认。</div>
-        <textarea id="ai-help-input" placeholder="例如：把26个英文字母列为26项任务，放在一个叫1的任务集里，每项0.5 EXP" style="width:100%;box-sizing:border-box;min-height:112px;background:#0b0d12;border:1px solid #2a303c;border-radius:11px;padding:12px;color:#eef1f7;font-size:13px;line-height:1.7;font-family:inherit;resize:vertical;"></textarea>
-        <div style="font-size:10.5px;color:#697084;line-height:1.7;">目前支持：A–Z / 26 个英文字母批量建任务；“任务名为 A、B、C”批量录入；自动创建或复用指定任务集；识别每日 / 每周 / 每月 / 单次与每项 EXP。删除类指令暂不执行。</div>
+      <div onClick="{{ stopClick }}" style="width:540px;max-width:100%;max-height:85vh;overflow-y:auto;background:linear-gradient(180deg,#151820,#0e1016);border:1px solid #2f3542;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:13px;box-shadow:0 30px 82px rgba(0,0,0,.78);">
+        <div style="display:flex;align-items:center;gap:9px;"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};flex:1;">✦ AI HELP // 任务助手</div><div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:20px;color:#8b93a4;">×</div></div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.75;">直接描述你想做的事情，可以写一句话或一份清单。先识别成可修改的草稿，确认后才创建；本机处理，断网也可使用。</div>
+        <textarea id="ai-help-input" value="{{ aiHelpInput }}" onInput="{{ onAiHelpInput }}" placeholder="每天读20页书，每次5积分；每周跑步三次，每次8积分。放在学习与健康任务集。" style="width:100%;box-sizing:border-box;min-height:112px;background:#0b0d12;border:1px solid #2a303c;border-radius:11px;padding:12px;color:#eef1f7;font-size:13px;line-height:1.7;font-family:inherit;resize:vertical;"></textarea>
+        <div style="font-size:10.5px;color:#697084;line-height:1.7;">支持中文数字、不同任务各自的积分和频率、换行／逗号清单、A–Z，以及任务集。识别不准时可编辑字段或补充一句话；同名任务默认不重复创建。</div>
         <sc-if value="{{ aiHelpMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:{{ aiHelpMsgColor }};line-height:1.65;border:1px solid #252b36;border-radius:9px;padding:9px 10px;background:#0d0f14;white-space:pre-wrap;">{{ aiHelpMsg }}</div></sc-if>
-        <div style="display:flex;gap:8px;justify-content:flex-end;"><div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:12px;color:#8b93a4;border:1px solid #2a2f3a;border-radius:8px;padding:8px 14px;">关闭</div><div onClick="{{ runAiHelp }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">解析并执行</div></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;"><div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:12px;color:#8b93a4;border:1px solid #2a2f3a;border-radius:8px;padding:8px 14px;">关闭</div><div onClick="{{ runAiHelp }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">识别并预览</div></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- SHARED TASK DRAFT REVIEW -->
+  <sc-if value="{{ assistantOpen }}" hint-placeholder-val="{{ false }}">
+    <div class="money-overlay" style="z-index:100;" onClick="{{ closeTaskPlan }}">
+      <div class="money-panel" style="width:560px;" role="dialog" aria-modal="true" aria-label="确认任务草稿" onClick="{{ stopClick }}">
+        <div class="money-line"><div class="money-title" style="flex:1;">确认任务草稿 · {{ assistantCount }} 项</div><button class="money-btn" onClick="{{ closeTaskPlan }}" disabled="{{ assistantBusy }}">返回修改描述</button></div>
+        <div class="money-hint">先核对每项的积分、周期、次数和任务集。预填建议会注明；有歧义的字段需选择确认。勾选后才会创建。</div>
+        <sc-for list="{{ assistantRows }}" as="t" hint-placeholder-count="0">
+          <div class="assistant-row" style="border:1px solid #2d3240;background:#0d0f14;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;">
+            <label style="display:flex;gap:8px;align-items:flex-start;min-height:36px;color:#c8cedb;font-size:12px;line-height:1.7;"><input type="checkbox" checked="{{ t.selected }}" onChange="{{ t.onSelect }}" disabled="{{ assistantBusy }}" style="flex-shrink:0;margin-top:4px;"><span style="flex:1;min-width:0;">创建第 {{ t.indexLabel }} 项 · {{ t.summary }}</span></label>
+            <label>任务名称<input class="money-input" value="{{ t.name }}" onInput="{{ t.onName }}" maxlength="120" disabled="{{ assistantBusy }}" aria-label="任务名称"></label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+              <label>每次 EXP<input class="money-input" type="number" min="0" max="1000000" step="0.01" value="{{ t.exp }}" onInput="{{ t.onExp }}" disabled="{{ assistantBusy }}" aria-label="每次 EXP"></label>
+              <label>周期<select class="money-input" value="{{ t.cycle }}" onChange="{{ t.onCycle }}" disabled="{{ assistantBusy }}" aria-label="周期"><option value="once">单次</option><option value="daily">每日</option><option value="weekly">每周</option><option value="monthly">每月</option><option value="free">不限次</option></select></label>
+              <label>周期跨度<input class="money-input" type="number" min="1" max="999" step="1" value="{{ t.interval }}" onInput="{{ t.onInterval }}" disabled="{{ assistantBusy }}" aria-label="周期跨度"></label>
+              <label>每周期次数<input class="money-input" type="number" min="1" max="999" step="1" value="{{ t.times }}" onInput="{{ t.onTimes }}" disabled="{{ assistantBusy }}" aria-label="每周期次数"></label>
+            </div>
+            <div class="money-hint">跨度 2、周期“每周”、次数 3，表示每两周完成三次。单次／不限次的跨度不生效。</div>
+            <label>任务集<input class="money-input" list="assistant-set-options" value="{{ t.setName }}" onInput="{{ t.onSetName }}" maxlength="80" disabled="{{ assistantBusy }}" aria-label="任务集" placeholder="留空为不分组；不存在的任务集会创建"></label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+              <label>类别<select class="money-input" value="{{ t.taskKind }}" onChange="{{ t.onTaskKind }}" disabled="{{ assistantBusy }}" aria-label="任务类别"><option value="standard">普通任务</option><option value="maintenance">生活维护 · 每日封顶</option></select></label>
+              <label>优先级<select class="money-input" value="{{ t.priority }}" onChange="{{ t.onPriority }}" disabled="{{ assistantBusy }}" aria-label="优先级"><option value="p1">紧急且重要</option><option value="p2">紧急不重要</option><option value="p3">不紧急重要</option><option value="p4">不重要不紧急</option></select></label>
+            </div>
+            <label>备注<textarea class="money-input" value="{{ t.note }}" onInput="{{ t.onNote }}" maxlength="2000" disabled="{{ assistantBusy }}" aria-label="备注" style="min-height:50px;resize:vertical;"></textarea></label>
+            <sc-if value="{{ t.hasWarning }}" hint-placeholder-val="{{ false }}"><div class="money-hint" style="color:#d3b574;">{{ t.warning }}</div></sc-if>
+            <sc-if value="{{ t.hasErrors }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ t.errors }}</div></sc-if>
+          </div>
+        </sc-for>
+        <datalist id="assistant-set-options"><sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.rawName }}"></option></sc-for></datalist>
+        <label>补充一句话<input class="money-input" value="{{ assistantCorrection }}" onInput="{{ onAssistantCorrection }}" disabled="{{ assistantBusy }}" placeholder="跑步改成每周两次；全部每项5积分" aria-label="补充一句话"></label>
+        <button class="money-btn" onClick="{{ refineAssistantPlan }}" disabled="{{ assistantBusy }}">应用补充</button>
+        <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#aeb6c6;line-height:1.6;"><input type="checkbox" checked="{{ assistantRemember }}" onChange="{{ onAssistantRemember }}" disabled="{{ assistantBusy }}">记住本次设置。以后同名任务缺少字段时采用；明确写出的新要求仍优先。</label>
+        <sc-if value="{{ assistantHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ assistantError }}</div></sc-if>
+        <sc-if value="{{ storageHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error">{{ storageError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
+        <button class="money-btn money-primary" style="background:{{ btnGrad }};" onClick="{{ applyTaskPlan }}" disabled="{{ !assistantCanApply }}">确认创建 {{ assistantCount }} 项任务</button>
       </div>
     </div>
   </sc-if>
@@ -1038,15 +1089,22 @@ input[type="date"]{color-scheme:dark;}
   <!-- NEW REWARD MODAL -->
   <sc-if value="{{ newRewardOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
-      <div onClick="{{ stopClick }}" style="width:340px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
+      <div onClick="{{ stopClick }}" style="width:380px;max-width:100%;max-height:86vh;overflow-y:auto;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建奖励 // NEW REWARD</div>
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">建好后卡片上可拖入照片。图片直接拖到卡片图上即可更换。</div>
         <label style="display:block;font-size:11px;color:#697084;">奖励名称
           <input id="nr-name" placeholder="例如:燕麦拿铁" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
-        <label style="display:block;font-size:11px;color:#697084;">兑换价格(EXP)
-          <input id="nr-cost" type="number" min="0.01" step="0.01" placeholder="200" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
+        <label style="display:block;font-size:11px;color:#697084;">基础价格(EXP，金额留空时使用)
+          <input id="nr-cost" onInput="{{ quoteNewReward }}" type="number" min="0.01" step="0.01" placeholder="200" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
         </label>
+            <label>奖励分级<select id="nr-risk" class="money-input" defaultValue="{{ 'green' }}" onChange="{{ onNewRewardRisk }}"><option value="green">Green · 正常兑换</option><option value="amber">Amber · 有顾虑，默认冷却7天</option><option value="red">Red · 下架，不兑换</option></select></label>
+            <label>个人顾虑系数<select id="nr-friction" class="money-input" defaultValue="{{ 1 }}" onChange="{{ quoteNewReward }}"><option value="1">1.0 · 无明显负担</option><option value="1.2">1.2 · 有一点顾虑</option><option value="1.5">1.5 · 多次怀疑或兑换后焦虑</option></select></label>
+            <div class="money-hint">系数表达你的个人顾虑。明确不愿承担时选 Red 下架。</div>
+            <label>参考金额（元，可留空）<input id="nr-money" class="money-input" type="number" min="0.01" step="0.01" defaultValue="{{ '' }}" onInput="{{ quoteNewReward }}" placeholder="1元 = 10 EXP"></label>
+            <label>每次兑换后冷却天数<input id="nr-cooldown" class="money-input" type="number" min="0" max="3650" step="1" defaultValue="{{ 0 }}" onInput="{{ quoteNewReward }}"></label>
+            <div class="money-preview">{{ rewardPricingPreview }}</div>
+
         <div style="font-size:10.5px;color:#697084;">兑换限制 · 每 N 日／周／月／年最多兑换 M 次</div>
         <div style="display:grid;grid-template-columns:.8fr 1.15fr .8fr;gap:7px;">
           <label style="font-size:10px;color:#697084;">每<input id="nr-cap-interval" type="number" min="1" max="999" step="1" value="1" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-family:'JetBrains Mono',monospace;"></label>
@@ -1301,7 +1359,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。OPEX 可选择付款目标，STASH 支出会同步生成开销；编辑和删除同步调整余额。新增目标流水、归档恢复，以及自定义类别与所有类别排序。旧余额保留，旧开销不自动关联。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。AI HELP 与新建任务共用新的逐项识别器，预览可编辑，也能补充一句话修正。新增奖励分级、顾虑系数和冷却；生活维护任务每日最多发放 15 EXP，撤销按实际发放回退。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">金额以整数分保存，历史币种不会随切换改变；更新会保留账本和照片。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1509,8 +1567,8 @@ input[type="date"]{color-scheme:dark;}
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">新建任务 // NEW TASK</div>
         <div style="border:1px solid #2a3040;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(10,12,17,.32));border-radius:11px;padding:10px;display:flex;flex-direction:column;gap:8px;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.2px;color:{{ accent }};">✦ AI 识别文字描述</div>
-          <textarea id="nt-ai-desc" placeholder="例如：创建“背单词、听力、阅读”3项任务，放在六级任务集，每周完成3次，每项5 EXP" style="width:100%;box-sizing:border-box;min-height:74px;background:#0b0d12;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;line-height:1.65;font-family:inherit;resize:vertical;"></textarea>
-          <div style="display:flex;align-items:center;gap:8px;"><div onClick="{{ runNewTaskAI }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:7px 12px;">识别并生成</div><sc-if value="{{ newTaskAiMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:{{ newTaskAiMsgColor }};line-height:1.45;">{{ newTaskAiMsg }}</div></sc-if></div>
+          <textarea id="nt-ai-desc" value="{{ newTaskDescription }}" onInput="{{ onNewTaskDescription }}" placeholder="例如：创建“背单词、听力、阅读”3项任务，放在六级任务集，每周完成3次，每项5 EXP" style="width:100%;box-sizing:border-box;min-height:74px;background:#0b0d12;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;line-height:1.65;font-family:inherit;resize:vertical;"></textarea>
+          <div style="display:flex;align-items:center;gap:8px;"><div onClick="{{ runNewTaskAI }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:7px 12px;">识别并预览</div><sc-if value="{{ newTaskAiMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:{{ newTaskAiMsgColor }};line-height:1.45;">{{ newTaskAiMsg }}</div></sc-if></div>
         </div>
         <div style="font-size:10px;color:#535a6a;line-height:1.55;">也可以继续使用下面的手动表单，只新建一项任务。</div>
         <label style="display:block;font-size:11px;color:#697084;">任务名称
@@ -1550,6 +1608,7 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">备注(可留空)
           <textarea id="nt-note" placeholder="补充上下文、标准或提醒…" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
         </label>
+        <label>任务类别<select id="nt-task-kind" class="money-input"><option value="standard">普通任务</option><option value="maintenance">生活维护 · 每日最多15 EXP</option></select></label>
         <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#8b93a4;cursor:pointer;"><input id="nt-core" type="checkbox" style="accent-color:#4ade80;">设为核心微习惯(战时模式显示)</label>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1664,7 +1723,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.10.0';
+const APP_VERSION = 'v1.11.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1750,7 +1809,7 @@ class Component extends DCLogic {
       s.bingoBoards = this.normalizeBingoBoards(s.bingoBoards || {});
       if (s.welcomed == null) s.welcomed = true;
     s.appVersion = APP_VERSION;
-    return ExpMoney.normalize(s);
+    return ExpProgression.normalize(ExpMoney.normalize(s));
   }
   defaults() {
     return {
@@ -1854,83 +1913,104 @@ class Component extends DCLogic {
     return n;
   }
   parseTaskDescription(raw) {
-    const text = String(raw || '').trim(); if (!text) return null;
-    const parseCycle = src => {
-      let cycle = 'once', interval = 1, times = 1;
-      const m = src.match(/每\s*(\d+)?\s*(天|日|周|个?月)\s*(?:完成|做|进行|打卡)?\s*(\d+)?\s*次?/);
-      if (m) {
-        interval = Math.max(1, parseInt(m[1] || '1', 10));
-        cycle = /周/.test(m[2]) ? 'weekly' : /月/.test(m[2]) ? 'monthly' : 'daily';
-        times = Math.max(1, parseInt(m[3] || '1', 10));
-      } else if (/每天|每日/.test(src)) cycle = 'daily';
-      else if (/每周/.test(src)) cycle = 'weekly';
-      else if (/每月/.test(src)) cycle = 'monthly';
-      else if (/不限次|随时/.test(src)) cycle = 'free';
-      return { cycle, interval, times };
-    };
-    const globalCycle = parseCycle(text);
-    const globalExpMatch = text.match(/(?:每项|每个任务|每个)?\s*(\d+(?:\.\d+)?)\s*(?:EXP|积分)/i);
-    const globalExp = Math.max(0, this.roundExp(globalExpMatch ? parseFloat(globalExpMatch[1]) : 10));
-    const globalPriority = /紧急且重要|P1/i.test(text) ? 'p1' : /紧急不重要|P2/i.test(text) ? 'p2' : /不紧急重要|P3/i.test(text) ? 'p3' : 'p4';
-    let setName = '';
-    const sm = text.match(/(?:放在|加入|归入)\s*(?:一个)?(?:叫|名为)?\s*[「『"“]?([^「」『』"“”，,。；;\n]+?)[」』"”]?\s*(?:的)?任务集/);
-    if (sm) setName = sm[1].trim();
-    if (!setName) { const sm2 = text.match(/(?:叫|名为)\s*[「『"“]?([^「」『』"“”\s，,。；;]+)[」』"”]?\s*的?任务集/); if (sm2) setName = sm2[1].trim(); }
-    let names = [];
-    if ((/26/.test(text) && /英文字母|字母/.test(text)) || /A\s*[-~到至]\s*Z/i.test(text)) names = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    const explicit = text.match(/(?:任务(?:名)?(?:为|是)|创建(?:以下|这些)?任务)\s*[：:]?\s*([\s\S]+?)(?=\s*(?:放在|加入|归入|每项|每个任务|每\s*\d*\s*(?:天|日|周|个?月)|$))/);
-    if (!names.length && explicit) names = explicit[1].split(/[\n，,、；;]+/);
-    if (!names.length) {
-      const lines = text.split(/\n+/).map(x => x.trim()).filter(Boolean);
-      if (lines.length >= 2) names = lines;
-    }
-    if (!names.length) {
-      const colon = text.match(/[：:]\s*([^。]+)$/);
-      if (colon && /任务|事项|计划|待办/.test(text.slice(0, text.indexOf(colon[0]) + 1))) names = colon[1].split(/[，,、；;]+/);
-    }
-    if (!names.length) {
-      const one = text.match(/(?:新建|创建|添加|录入)?\s*(?:一个|1个)?\s*任务\s*[：:]?\s*([^，,。；;]+)/);
-      if (one) names = [one[1]];
-    }
-    const cleanName = x => String(x || '')
-      .replace(/^[\s\-•·*\d.、（）()]+/, '')
-      .replace(/(?:放在|加入|归入)[\s\S]*?任务集/g, '')
-      .replace(/(?:每项|每个任务)?\s*\d+(?:\.\d+)?\s*(?:EXP|积分)/ig, '')
-      .replace(/每\s*\d*\s*(?:天|日|周|个?月)\s*(?:完成|做|进行|打卡)?\s*\d*\s*次?/g, '')
-      .replace(/每天|每日|每周|每月|不限次/g, '')
-      .replace(/紧急且重要|紧急不重要|不紧急重要|不重要不紧急|P[1-4]/ig, '')
-      .replace(/[，,；;。\s]+$/g, '').trim();
-    names = [...new Set(names.map(cleanName).filter(x => x && x.length <= 80))].slice(0, 200);
-    if (!names.length) return null;
-    const tasks = names.map(name => {
-      const source = text.includes(name) ? text : name + ' ' + text;
-      const cyc = parseCycle(source);
-      const em = source.match(/(?:每项|每个任务|每个)?\s*(\d+(?:\.\d+)?)\s*(?:EXP|积分)/i);
-      return { name, exp: Math.max(0, this.roundExp(em ? parseFloat(em[1]) : globalExp)), cycle: cyc.cycle || globalCycle.cycle, interval: cyc.interval || globalCycle.interval, times: cyc.times || globalCycle.times, priority: globalPriority };
-    });
-    return { tasks, setName };
+    return ExpTaskAssistant.parse(raw, { tasks:this.state.tasks, preferences:this.state.taskAssistantPrefs });
   }
-  applyTaskPlan(plan, closeNewTask = false) {
-    if (!plan || !plan.tasks || !plan.tasks.length) return false;
-    let nextId = this.state.nextId, sets = this.normalizeHierarchy(this.state.sets || []), setId = null;
-    if (plan.setName) {
-      let set = sets.find(x => x.name === plan.setName);
-      if (!set) { set = { id: nextId++, name: plan.setName, collapsed: false, parentId: null }; sets.push(set); }
-      setId = set.id;
+  openTaskPlan(plan, source) {
+    if (plan.error || !plan.tasks.length) {
+      const key = source === 'new' ? 'newTaskAiMsg' : 'aiHelpMsg';
+      this.setState({ [key]:plan.error, [key + 'Color']:'#fbbf24' }); return false;
     }
-    const tasks = [...this.state.tasks];
-    plan.tasks.forEach(t => tasks.push({ id: nextId++, name: t.name, exp: t.exp, cycle: t.cycle, times: t.times || 1, interval: t.interval || 1, anchorDate: this.todayKey(), core: false, setId, priority: t.priority || 'p4', note: 'AI 文字描述生成', done: {}, completionLog: {} }));
-    const msg = '✓ 已生成 ' + plan.tasks.length + ' 项任务' + (plan.setName ? ' · 归入「' + plan.setName + '」' : '');
-    this.save({ sets, tasks, nextId, ...(closeNewTask ? { newTaskOpen: false } : {}), aiHelpMsg: msg, aiHelpMsgColor: '#4ade80', newTaskAiMsg: msg, newTaskAiMsgColor: '#4ade80', momentumMsg: msg });
-    setTimeout(() => this.setState({ momentumMsg: '' }), 3200);
+    this.setState({ assistantPlan:plan, assistantOrigin:source, assistantOpen:true, assistantRemember:false, assistantCorrection:'', assistantError:'', assistantBusy:false });
     return true;
   }
-  runNewTaskAI() {
-    const raw = this.v('nt-ai-desc'), plan = this.parseTaskDescription(raw);
-    if (!plan) { this.setState({ newTaskAiMsg: '暂时没识别出明确任务。试试“任务名为 A、B、C，每项 5 EXP，放在学习任务集，每周 3 次”。', newTaskAiMsgColor: '#fbbf24' }); return; }
-    const preview = plan.tasks.slice(0, 6).map(x => '• ' + x.name).join('\n') + (plan.tasks.length > 6 ? '\n…共 ' + plan.tasks.length + ' 项' : '');
-    if (!window.confirm('识别到以下任务：\n' + preview + '\n\n' + (plan.setName ? '任务集：' + plan.setName + '\n' : '') + '确认生成？')) return;
-    this.applyTaskPlan(plan, true);
+  closeTaskPlan() { if (!this.state.assistantBusy) this.setState({ assistantOpen:false }); }
+  runNewTaskAI() { return this.openTaskPlan(this.parseTaskDescription(this.state.newTaskDescription || this.v('nt-ai-desc')), 'new'); }
+  updateAssistantTask(index, field, value) {
+    const plan = this.state.assistantPlan; if (!plan || this.state.assistantBusy) return;
+    const numeric = ['exp','times','interval'].includes(field), parsed = numeric && value !== '' ? Number(value) : value;
+    const tasks = plan.tasks.map((t, i) => i === index ? { ...t, [field]:parsed, review:(t.review || []).filter(f => f !== field), explicit:[...new Set([...(t.explicit || []), field])], warnings:field === 'selected' ? t.warnings : ['已手动修正；确认后才创建。'] } : t);
+    this.setState({ assistantPlan:{ ...plan, tasks, error:'' }, assistantError:'' });
+  }
+  refineAssistantPlan() {
+    if (!this.state.assistantPlan || this.state.assistantBusy) return;
+    const plan = ExpTaskAssistant.refine(this.state.assistantPlan, this.state.assistantCorrection);
+    this.setState({ assistantPlan:plan, assistantError:plan.error, assistantCorrection:plan.error ? this.state.assistantCorrection : '' });
+  }
+  async applyTaskPlan(plan = this.state.assistantPlan, closeNewTask = this.state.assistantOrigin === 'new') {
+    if (!plan || this._assistantSubmitting) return false;
+    const selected = plan.tasks.filter(t => t.selected !== false);
+    const errors = selected.flatMap(t => ExpTaskAssistant.valid(t));
+    if (!selected.length || errors.length || plan.error) { this.setState({ assistantError:plan.error || errors[0] || '至少勾选一项任务。' }); return false; }
+    this._assistantSubmitting = true; this.setState({ assistantBusy:true, assistantError:'' });
+    const remember = this.state.assistantRemember;
+    try {
+      const ok = await this.writeState(() => {
+        const current = this.state, tasks = [...current.tasks], sets = [...current.sets]; let nextId = current.nextId;
+        for (const t of selected) {
+          let setId = null; const name = String(t.setName || '').trim();
+          if (name) {
+            let set = sets.find(s => ExpTaskAssistant.key(s.name) === ExpTaskAssistant.key(name));
+            if (!set) { set = { id:nextId++, name, collapsed:false, parentId:null }; sets.push(set); }
+            setId = set.id;
+          }
+          tasks.push({ id:nextId++, name:String(t.name).trim(), exp:Number(t.exp), cycle:t.cycle, times:Number(t.times), interval:Number(t.interval),
+            anchorDate:this.todayKey(), core:false, setId, priority:t.priority, taskKind:t.taskKind, note:String(t.note || ''), sourceDescription:t.source || plan.source,
+            done:{}, completionLog:{} });
+        }
+        return { ...current, tasks, sets, nextId, ...(remember ? { taskAssistantPrefs:ExpTaskAssistant.remember(current.taskAssistantPrefs, selected) } : {}) };
+      }, { assistantOpen:false, assistantPlan:null, ...(closeNewTask ? { newTaskOpen:false } : {}),
+        aiHelpMsg:'✓ 已创建 ' + selected.length + ' 项任务', aiHelpMsgColor:'#4ade80', newTaskAiMsg:'✓ 已创建 ' + selected.length + ' 项任务', newTaskAiMsgColor:'#4ade80' });
+      if (!ok) this.setState({ assistantError:this.state.storageError || '保存失败，预览与输入已保留。' });
+      return ok;
+    } finally { this._assistantSubmitting = false; this.setState({ assistantBusy:false }); }
+  }
+  openMaintenancePlan() {
+    const plan = this.parseTaskDescription('每天洗贴身衣物，每次3EXP，维护任务；随时运动后及时换干衣，每次3EXP，维护任务；每周换床品一次，每次5EXP，维护任务；单次送洗冬衣，每次5EXP，维护任务；放在生活维护任务集');
+    this.openTaskPlan(plan, 'maintenance');
+  }
+  assistantViewProps(st) {
+    const plan = st.assistantPlan || { tasks:[] }, selected = plan.tasks.filter(t => t.selected !== false);
+    return {
+      assistantOpen:!!st.assistantOpen, assistantBusy:!!st.assistantBusy, assistantCount:selected.length,
+      assistantCanApply:!!selected.length && !st.assistantBusy && !plan.error && selected.every(t => !ExpTaskAssistant.valid(t).length),
+      assistantError:st.assistantError || plan.error || '', assistantHasError:!!(st.assistantError || plan.error),
+      assistantRemember:!!st.assistantRemember, assistantCorrection:st.assistantCorrection || '',
+      onAssistantCorrection:e => this.setState({ assistantCorrection:e.target.value }), onAssistantRemember:e => this.setState({ assistantRemember:e.target.checked }),
+      refineAssistantPlan:() => this.refineAssistantPlan(), closeTaskPlan:() => this.closeTaskPlan(), applyTaskPlan:() => this.applyTaskPlan(),
+      assistantRows:plan.tasks.map((t, index) => ({
+        ...t, key:index, indexLabel:index + 1, summary:(t.taskKind === 'maintenance' ? '生活维护' : '普通任务') + ' · ' + t.exp + ' EXP · ' + ({ daily:'每日', weekly:'每周', monthly:'每月', once:'单次', free:'不限次' }[t.cycle] || '请选择') + ' · 跨度 ' + t.interval + ' / 次数 ' + t.times,
+        warning:(t.warnings || []).join(' '), hasWarning:!!(t.warnings || []).length,
+        errors:ExpTaskAssistant.valid(t).join(' '), hasErrors:!!ExpTaskAssistant.valid(t).length,
+        ...Object.fromEntries(['name','exp','cycle','times','interval','priority','taskKind','setName','note'].map(f => ['on' + f[0].toUpperCase() + f.slice(1), e => this.updateAssistantTask(index, f, e.target.value)])),
+        onSelect:e => this.updateAssistantTask(index, 'selected', e.target.checked)
+      })),
+      aiHelpInput:st.aiHelpInput || '', onAiHelpInput:e => this.setState({ aiHelpInput:e.target.value }),
+      newTaskDescription:st.newTaskDescription || '', onNewTaskDescription:e => this.setState({ newTaskDescription:e.target.value }),
+      openMaintenancePlan:() => this.openMaintenancePlan(),
+      maintenanceSummary:'生活维护 · 今日 ' + this.fmtExp(ExpProgression.maintenanceUsed(st, this.todayKey())) + ' / 15 EXP',
+      rewardPricingPreview:st.rewardPricingPreview || '参考金额 × 10 × 顾虑系数；留空金额则使用基础 EXP。',
+      editRewardPricingPreview:st.editRewardPricingPreview || '',
+      editTaskKind:st.editing && st.editing.type === 'task' ? (st.tasks.find(t=>t.id===st.editing.id) || {}).taskKind || 'standard' : 'standard',
+      editRiskBand:st.editing && st.editing.type === 'reward' ? (st.rewards.find(r=>r.id===st.editing.id) || {}).riskBand || 'green' : 'green',
+      editFrictionFactor:st.editing && st.editing.type === 'reward' ? (st.rewards.find(r=>r.id===st.editing.id) || {}).frictionFactor || 1 : 1,
+      editBaseMoney:st.editing && st.editing.type === 'reward' ? (st.rewards.find(r=>r.id===st.editing.id) || {}).baseMoney ?? '' : '',
+      editCooldownDays:st.editing && st.editing.type === 'reward' ? (st.rewards.find(r=>r.id===st.editing.id) || {}).cooldownDays || 0 : 0,
+      quoteNewReward:() => this.quoteReward('nr'), quoteEditReward:() => this.quoteReward('ed'),
+      onNewRewardRisk:e => { const el = document.getElementById('nr-cooldown'); if (el) el.value = e.target.value === 'amber' ? '7' : '0'; this.quoteReward('nr'); },
+      onEditRewardRisk:e => { const el = document.getElementById('ed-cooldown'); if (el) el.value = e.target.value === 'amber' ? '7' : '0'; this.quoteReward('ed'); }
+    };
+  }
+  readRewardRule(prefix, old = null) {
+    return ExpProgression.rewardRule({ riskBand:this.v(prefix + '-risk') || (old && old.riskBand) || 'green',
+      frictionFactor:this.v(prefix + '-friction') || (old && old.frictionFactor) || 1,
+      baseMoney:this.v(prefix + '-money'), baseCost:this.readExp(prefix + '-cost', old ? old.baseCost ?? old.cost : 100),
+      cooldownDays:this.v(prefix + '-cooldown') === '' ? undefined : Number(this.v(prefix + '-cooldown')) }, old);
+  }
+  quoteReward(prefix) {
+    const old = prefix === 'ed' && this.state.editing ? this.state.rewards.find(r=>r.id===this.state.editing.id) : null;
+    const key = prefix === 'ed' ? 'editRewardPricingPreview' : 'rewardPricingPreview';
+    try { const rule = this.readRewardRule(prefix, old); this.setState({ [key]:rule.riskBand === 'red' ? 'Red：下架，不可兑换；可通过编辑恢复。' : '实际兑换 ' + this.fmtExp(rule.cost) + ' EXP · 冷却 ' + rule.cooldownDays + ' 天' }); }
+    catch (e) { this.setState({ [key]:e.message }); }
   }
   rewardCapRule(r) {
     return { cycle: ['daily','weekly','monthly','yearly'].includes(r && r.capCycle) ? r.capCycle : 'daily', interval: Math.max(1, Math.min(999, parseInt(r && r.capInterval, 10) || 1)), times: Math.max(1, Math.min(999, parseInt(r && r.capTimes, 10) || 1)), anchor: (r && r.capAnchorDate) || this.todayKey() };
@@ -1977,9 +2057,9 @@ class Component extends DCLogic {
       const channel = new MessageChannel();
       const timer = setTimeout(() => { channel.port1.close(); reject(new Error('新版保存保护尚未就绪，请检查更新后重试。')); }, 2500);
       channel.port1.onmessage = e => { clearTimeout(timer); channel.port1.close(); resolve(e.data); };
-      worker.postMessage({ type: 'CHECK_MONEY_CLIENTS', protocol: 1 }, [channel.port2]);
+      worker.postMessage({ type: 'CHECK_MONEY_CLIENTS', protocol: 2 }, [channel.port2]);
     });
-    if (!result || result.protocol !== 1) throw new Error('新版保存保护尚未就绪，请检查更新后重试。');
+    if (!result || result.protocol !== 2) throw new Error('新版保存保护尚未就绪，请检查更新后重试。');
     if (result.legacyCount) throw new Error('检测到旧版窗口。请关闭或刷新其他 EXP BANK 窗口，再同步最新数据；本次操作未提交。');
   }
   writeState(build, ui = {}, replace = false, allowBlocked = false) {
@@ -1993,7 +2073,7 @@ class Component extends DCLogic {
             this.setState({ moneyConflict: true });
             throw new Error('另一页已保存新数据。当前操作未提交，请同步最新数据后重试');
           }
-          const candidate = ExpMoney.normalize(build());
+          const candidate = ExpProgression.normalize(ExpMoney.normalize(build()));
           const json = JSON.stringify(this.persistentState(candidate));
           localStorage.setItem('exp-bank-v1', json);
           this._persistedRaw = json;
@@ -2253,7 +2333,7 @@ class Component extends DCLogic {
   closeQuadrant() { this.setState({ quadrantOpen: false }); }
   openNewTask() { this.setState({ newTaskOpen: true }); }
   openNewSet() { this.setState({ newSetOpen: true }); }
-  openNewReward() { this.setState({ newRewardOpen: true }); }
+  openNewReward() { this.setState({ newRewardOpen: true, rewardPricingPreview:'' }); }
   openNewCountdown() { this.setState({ newCountdownOpen: true }); }
   openNewMilestone() { this.setState({ newMilestoneOpen: true }); }
   openNewMilestoneSet() { this.setState({ newMilestoneSetOpen: true }); }
@@ -2391,7 +2471,7 @@ class Component extends DCLogic {
       const raw = reader.result;
       const img = new Image();
       img.onerror = () => alert('此浏览器无法解码这张图片(可能是 HEIC 格式)。请在相册里把它「存为 JPG / 分享为照片」后再上传。');
-      img.onload = () => {
+      img.onload = async () => {
         if (!img.naturalWidth) { alert('这张图片无法解码(可能是 HEIC 格式)。请把它转成 JPG 再上传。'); return; }
         let data = '';
         try {
@@ -2403,18 +2483,19 @@ class Component extends DCLogic {
           if (out && out.length > 100 && out.indexOf('data:image/jpeg') === 0) data = out;
         } catch (e) { data = ''; }
         if (!data) { alert('图片压缩失败,当前浏览器不支持。建议用手机相册分享成 JPG 后再试。'); return; }
-        try {
-          const next = this.state.rewards.map(r => r.id === id ? { ...r, img: data } : r);
-          const { editing, pending, selectedDate, vw, backupOpen, backupMsg, copyLabel, backupMsgColor, ...probe } = this.state;
-          localStorage.setItem('exp-bank-v1', JSON.stringify({ ...probe, rewards: next }));
-          this.setState({ rewards: next });
-        } catch (e) { alert('保存失败:手机本地存储空间已满。请先在「时间轴/账本」清理,或给奖励换用更小的图片。'); }
+        await this.saveRewardImage(id, data);
       };
       img.src = raw;
     };
     reader.readAsDataURL(file);
   }
-  clearRewardImage(id) { this.save({ rewards: this.state.rewards.map(r => r.id === id ? { ...r, img: '' } : r), imgEditId: null }); }
+  saveRewardImage(id, data) {
+    return this.writeState(() => {
+      if (!this.state.rewards.some(r=>r.id===id)) throw new Error('奖励已不存在，本次图片未保存。');
+      return { ...this.state, rewards:this.state.rewards.map(r=>r.id===id ? { ...r, img:data } : r) };
+    });
+  }
+  clearRewardImage(id) { return this.saveRewardImage(id, ''); }
   askRewardImage(id) { this.setState({ imgEditId: id }); }
   closeImgEdit() { this.setState({ imgEditId: null }); }
   roDown(id, e) {
@@ -2481,9 +2562,9 @@ class Component extends DCLogic {
       const p = this.state.pending; if (!p) return;
       const rm = arr => arr.filter(e => p.ledgerCommandId ? e.commandId !== p.ledgerCommandId : e.ts !== p.ledgerTs);
       let ok = false;
-      if (p.kind === 'complete') { ok = await this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const cl = { ...(x.completionLog || {}) }; if (p.completionDate && cl[p.completionDate]) { cl[p.completionDate] = Math.max(0, cl[p.completionDate] - 1); if (!cl[p.completionDate]) delete cl[p.completionDate]; } return { ...x, done: { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) }, completionLog: cl, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) }; }), exp: this.roundExp(this.state.exp - p.exp), ledger: rm(this.state.ledger), pending: null }); }
+      if (p.kind === 'complete') { ok = await this.writeState(() => { const base = p.maintenance ? ExpProgression.reverse(this.state, p.completionDate, p.ledgerCommandId) : this.state; return { ...base, tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const cl = { ...(x.completionLog || {}) }; if (p.completionDate && cl[p.completionDate]) { cl[p.completionDate] = Math.max(0, cl[p.completionDate] - 1); if (!cl[p.completionDate]) delete cl[p.completionDate]; } return { ...x, done: p.k ? { ...x.done, [p.k]: Math.max(0, (x.done[p.k] || 1) - 1) } : x.done, completionLog: cl, ...(p.streakChanged ? { streak: p.prevStreak, lastPeriod: p.prevPeriod, lastDone: p.prevLastDone } : {}) }; }), exp: this.roundExp(this.state.exp - p.exp), ledger: rm(this.state.ledger), pending: null }; }); }
       else if (p.kind === 'abandon') ok = await this.save({ tasks: this.state.tasks.map(x => { if (x.id !== p.id) return x; const a = { ...(x.abandoned || {}) }; delete a[p.k]; return { ...x, abandoned: a }; }), pending: null });
-      else if (p.kind === 'redeem') ok = await this.save({ exp: this.roundExp(this.state.exp + p.cost), rewards: this.state.rewards.map(x => x.id === p.id ? { ...x, redeems: (x.redeems || []).filter(t => t !== p.rts) } : x), ledger: rm(this.state.ledger), pending: null });
+      else if (p.kind === 'redeem') ok = await this.save({ exp: this.roundExp(this.state.exp + p.cost), rewards: this.state.rewards.map(x => x.id === p.id ? { ...x, redeems: (x.redeems || []).filter(t => t !== p.rts), cooldownUntil: p.prevCooldownUntil || 0 } : x), ledger: rm(this.state.ledger), pending: null });
       else if (p.kind === 'msPlus') ok = await this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, cur: p.prev } : x), pending: null });
       else if (p.kind === 'msClaim') ok = await this.save({ milestones: this.state.milestones.map(x => x.id === p.id ? { ...x, claimed: false } : x), exp: this.roundExp(this.state.exp - p.bonus), ledger: rm(this.state.ledger), pending: null });
       if (ok) { clearTimeout(this._pt); if (p.kind === 'complete') this.cancelBingoDraw(p.bingoTimerKey); }
@@ -2719,7 +2800,7 @@ class Component extends DCLogic {
     this.setState({ editing: { type, id, confirmed: false }, expenseEditDraft: draft, expenseCommandId: this.newCommandId(), stashDetailId: null, moneyError: '' });
   }
   confirmEdit() { this.setState({ editing: { ...this.state.editing, confirmed: true } }); }
-  closeEdit() { this.setState({ editing: null, moneyError: '' }); }
+  closeEdit() { this.setState({ editing: null, moneyError: '', editRewardPricingPreview:'' }); }
   openBackup() { this.setState({ backupOpen: true, backupMsg: '', copyLabel: '复制备份码' }); }
   openTierCfg() { this.setState({ tierCfgOpen: true }); }
   closeTierCfg() { this.setState({ tierCfgOpen: false }); }
@@ -2876,7 +2957,7 @@ class Component extends DCLogic {
         const updated = { ...x, name: name || x.name, exp: Math.max(0, expNum('ed-exp', x.exp)), times: Math.max(1, num('ed-times', x.times || 1)),
           setId, cycle: newCycle, interval: newInterval, anchorDate: ruleChanged ? anchor : (x.anchorDate || anchor),
           ...(ruleChanged ? { streak: 0, lastPeriod: '' } : {}),
-          priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', note: this.v('ed-note') };
+          priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', taskKind:this.v('ed-task-kind') || x.taskKind || 'standard', note: this.v('ed-note') };
         if (ruleChanged) {
           const currentKey = this.periodKey(updated);
           if (currentKey) {
@@ -2891,9 +2972,9 @@ class Component extends DCLogic {
       const cycleEl = document.getElementById('ed-cap-cycle'), capCycle = cycleEl ? cycleEl.value : 'daily';
       const capInterval = Math.max(1, Math.min(999, num('ed-cap-interval', 1)));
       const capTimes = Math.max(1, Math.min(999, num('ed-cap-times', 1)));
-      this.save({ editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, cost: Math.max(0.01, expNum('ed-cost', x.cost)), capCycle, capInterval, capTimes,
-        capAnchorDate: (x.capCycle !== capCycle || Number(x.capInterval || 1) !== capInterval) ? this.todayKey() : (x.capAnchorDate || this.todayKey()) } : x) });
+      return this.writeState(() => ({ ...this.state, editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
+        name: name || x.name, ...this.readRewardRule('ed', x), capCycle, capInterval, capTimes,
+        capAnchorDate: (x.capCycle !== capCycle || Number(x.capInterval || 1) !== capInterval) ? this.todayKey() : (x.capAnchorDate || this.todayKey()) } : x) }));
     } else if (ed.type === 'countdown') {
       const old = this.state.countdowns.find(x => x.id === ed.id); const time = this.read24h('ed-hour', 'ed-minute', old ? (old.time || '00:00') : '00:00');
       this.save({ editing: null, countdowns: this.state.countdowns.map(x => x.id === ed.id ? { ...x,
@@ -2963,42 +3044,53 @@ class Component extends DCLogic {
   log(name, delta) { return [{ ts: Date.now(), name, delta }, ...this.state.ledger].slice(0, 200); }
   complete(id) {
     return this.pointAction(async () => {
-      const t = this.state.tasks.find(x => x.id === id), k = this.periodKey(t);
-      const cnt = k ? (t.done[k] || 0) : 0;
-      if (k && cnt >= (t.times || 1)) return;
-      const commandId = this.newCommandId();
-      const ts = Date.now(), key = 'task:' + id;
-      const curK = k, prevK = this.previousPeriodKey(t), times = t.times || 1;
-      const prevStreak = t.streak || 0, prevPeriod = (t.lastPeriod != null ? t.lastPeriod : t.lastDone) || '';
-      const streakCycle = ['daily','weekly','monthly'].includes(t.cycle);
-      const periodCompleteAfter = !!k && (cnt + 1) >= times;
-      const streakChanged = streakCycle && periodCompleteAfter && prevPeriod !== curK;
-      const newStreak = streakChanged ? ((prevPeriod === prevK ? prevStreak : 0) + 1) : prevStreak;
-      const newLastPeriod = streakChanged ? curK : prevPeriod;
-      const completionDate = this.todayKey();
-      const completionLog = { ...(t.completionLog || {}), [completionDate]: ((t.completionLog || {})[completionDate] || 0) + 1 };
-      const tasks = this.state.tasks.map(x => (x.id === id && k) ? { ...x, done: { ...x.done, [k]: cnt + 1 }, completionLog, streak: newStreak, lastPeriod: newLastPeriod, lastDone: completionDate } : x);
-      const bingoTimerKey = key + ':' + ts;
-      const ok = await this.save({ tasks, exp: this.roundExp(this.state.exp + t.exp), ledger: [{ ts, commandId, name: t.name, delta: t.exp }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'complete', id, k, exp: t.exp, ledgerTs: ts, ledgerCommandId: commandId, streakChanged, prevStreak, prevPeriod, prevLastDone: t.lastDone || '', completionDate, bingoTimerKey }, reflectionOpen: true, reflectionTarget: { kind: 'task', id, name: t.name, ts }, reflectionBlob: null, reflectionPreview: '' });
-      if (ok) { this.armTimer(key); this.scheduleBingoDraw(bingoTimerKey, { id: t.id, name: t.name, exp: t.exp });
-      const unit = this.taskInterval(t) > 1 ? '轮' : ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle] || '');
-      if (streakChanged && newStreak === 7 && unit) { clearTimeout(this._mmT); setTimeout(() => { this.setState({ momentumMsg: '「' + t.name + '」已连续 7 ' + unit + ',MOMENTUM 达成!势头已成,继续保持 ✦' }); this._mmT = setTimeout(() => this.setState({ momentumMsg: '' }), 6000); }, 60); }
+      const commandId = this.newCommandId(), ts = Date.now(), key = 'task:' + id, bingoTimerKey = key + ':' + ts;
+      let outcome;
+      const ok = await this.writeState(() => {
+        const current = this.state, t = current.tasks.find(x=>x.id===id);
+        if (!t) throw new Error('任务已不存在，请刷新列表。');
+        const k = this.periodKey(t), cnt = k ? (t.done[k] || 0) : 0, times = t.times || 1;
+        if (k && cnt >= times) throw new Error('本周期已完成。');
+        const prevStreak = t.streak || 0, prevPeriod = (t.lastPeriod != null ? t.lastPeriod : t.lastDone) || '';
+        const streakChanged = ['daily','weekly','monthly'].includes(t.cycle) && !!k && cnt + 1 >= times && prevPeriod !== k;
+        const newStreak = streakChanged ? ((prevPeriod === this.previousPeriodKey(t) ? prevStreak : 0) + 1) : prevStreak;
+        const completionDate = this.todayKey(), grant = ExpProgression.award(current, t, commandId, completionDate, ts);
+        const completionLog = { ...(t.completionLog || {}), [completionDate]:((t.completionLog || {})[completionDate] || 0) + 1 };
+        const tasks = current.tasks.map(x=>x.id===id ? { ...x, ...(k ? { done:{ ...x.done, [k]:cnt + 1 } } : {}), completionLog, streak:newStreak, lastPeriod:streakChanged ? k : prevPeriod, lastDone:completionDate } : x);
+        outcome = { task:t, actual:grant.actual, newStreak, streakChanged };
+        return { ...grant.state, tasks, exp:this.roundExp(current.exp + grant.actual),
+          ledger:[{ ts, commandId, name:t.name + (t.taskKind === 'maintenance' && grant.actual < t.exp ? ' · 维护限额' : ''), delta:grant.actual }, ...current.ledger].slice(0,200),
+          pending:{ key, kind:'complete', id, k, exp:grant.actual, maintenance:t.taskKind === 'maintenance', ledgerTs:ts, ledgerCommandId:commandId,
+            streakChanged, prevStreak, prevPeriod, prevLastDone:t.lastDone || '', completionDate, bingoTimerKey },
+          reflectionOpen:true, reflectionTarget:{ kind:'task', id, name:t.name, ts }, reflectionBlob:null, reflectionPreview:'' };
+      });
+      if (ok) {
+        this.armTimer(key);
+        if (outcome.actual > 0) this.scheduleBingoDraw(bingoTimerKey, { id, name:outcome.task.name, exp:outcome.actual });
+        const unit = this.taskInterval(outcome.task) > 1 ? '轮' : ({ daily:'天', weekly:'周', monthly:'月' }[outcome.task.cycle] || '');
+        if (outcome.streakChanged && outcome.newStreak === 7 && unit) this.setState({ momentumMsg:'「' + outcome.task.name + '」已连续 7 ' + unit + '，MOMENTUM 达成！' });
       }
       return ok;
-
     });
   }
   redeem(id) {
     return this.pointAction(async () => {
-      const r = this.state.rewards.find(x => x.id === id); if (!r) return;
-      if (this.state.exp < r.cost) return;
-      if (this.rewardRedeemCount(r) >= this.rewardCapRule(r).times) return;
-      const commandId = this.newCommandId();
-      const ts = Date.now(), key = 'reward:' + id;
-      const ok = await this.save({ exp: this.roundExp(this.state.exp - r.cost), rewards: this.state.rewards.map(x => x.id === id ? { ...x, redeems: [...(x.redeems || []), ts].slice(-500) } : x), ledger: [{ ts, commandId, name: '兑换 · ' + r.name, delta: -r.cost }, ...this.state.ledger].slice(0, 200), pending: { key, kind: 'redeem', id, cost: r.cost, ledgerTs: ts, ledgerCommandId: commandId, rts: ts }, reflectionOpen: true, reflectionTarget: { kind: 'reward', id, name: r.name, ts }, reflectionBlob: null, reflectionPreview: '' });
+      const commandId = this.newCommandId(), key = 'reward:' + id;
+      const ok = await this.writeState(() => {
+        const current = this.state, r = current.rewards.find(x=>x.id===id);
+        if (!r) throw new Error('奖励已不存在。');
+        if (ExpProgression.blocked(r)) throw new Error(ExpProgression.blocked(r));
+        if (current.exp < r.cost) throw new Error('EXP 不足。');
+        if (this.rewardRedeemCount(r) >= this.rewardCapRule(r).times) throw new Error('本期兑换次数已用完。');
+        const ts = Math.max(Date.now(), (r.redeems || []).reduce((max, n)=>Math.max(max, Number(n) || 0),0) + 1);
+        const updated = ExpProgression.redeemed(r, ts);
+        return { ...current, exp:this.roundExp(current.exp - r.cost), rewards:current.rewards.map(x=>x.id===id ? updated : x),
+          ledger:[{ ts, commandId, name:'兑换 · ' + r.name, delta:-r.cost }, ...current.ledger].slice(0,200),
+          pending:{ key, kind:'redeem', id, cost:r.cost, ledgerTs:ts, ledgerCommandId:commandId, rts:ts, prevCooldownUntil:r.cooldownUntil || 0 },
+          reflectionOpen:true, reflectionTarget:{ kind:'reward', id, name:r.name, ts }, reflectionBlob:null, reflectionPreview:'' };
+      });
       if (ok) this.armTimer(key);
       return ok;
-
     });
   }
   toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
@@ -3018,7 +3110,7 @@ class Component extends DCLogic {
   closeUpdateNote() { this.setState({ updateNoteOpen: false }); }
   async checkUpdate() {
     if (this.state.updateBusy) return;
-    if (['newOpexOpen','newStashOpen','editing','categoryOpen','stashDetailId','newTaskOpen','newSetOpen','newRewardOpen','newMilestoneOpen','newCountdownOpen','newDaylineOpen','reflectionOpen','galleryEdit','backupOpen','reorderOpen'].some(k => this.state[k])) {
+    if (['newOpexOpen','newStashOpen','editing','categoryOpen','stashDetailId','newTaskOpen','newSetOpen','newRewardOpen','newMilestoneOpen','newCountdownOpen','newDaylineOpen','reflectionOpen','galleryEdit','backupOpen','reorderOpen','aiHelpOpen','assistantOpen'].some(k => this.state[k])) {
       this.setState({ updateMessage: '请先完成或关闭当前操作窗口，再检查更新；当前输入已保留。' }); return;
     }
     this.setState({ updateBusy: true, updateMessage: '正在检查更新，账本和照片保留…' });
@@ -3193,39 +3285,23 @@ class Component extends DCLogic {
   fmtExp(v) { const n = this.roundExp(v); return Number.isInteger(n) ? String(n) : n.toFixed(2).replace(/0+$/, '').replace(/\.$/, ''); }
   openAiHelp() { this.setState({ aiHelpOpen: true, aiHelpMsg: '', aiHelpMsgColor: '#8b93a4' }); }
   closeAiHelp() { this.setState({ aiHelpOpen: false, aiHelpMsg: '' }); }
-  runAiHelp() {
-    const raw = this.v('ai-help-input'); if (!raw) { this.setState({ aiHelpMsg: '先告诉我你想批量做什么。', aiHelpMsgColor: '#fbbf24' }); return; }
-    if (/删除|清空|移除/.test(raw)) { this.setState({ aiHelpMsg: '当前安全版 AI HELP 不执行批量删除。请使用页面里的删除确认流程。', aiHelpMsgColor: '#fbbf24' }); return; }
-    const plan = this.parseTaskDescription(raw);
-    if (!plan) { this.setState({ aiHelpMsg: '这条指令暂时没识别成明确任务。可以直接写任务清单、循环、EXP 和任务集名称。', aiHelpMsgColor: '#f87171' }); return; }
-    const preview = plan.tasks.slice(0, 8).map(x => '• ' + x.name).join('\n') + (plan.tasks.length > 8 ? '\n…共 ' + plan.tasks.length + ' 项' : '');
-    if (!window.confirm('AI HELP 将生成：\n' + preview + '\n\n' + (plan.setName ? '任务集：' + plan.setName + '\n' : '') + '确认执行？')) return;
-    this.applyTaskPlan(plan, false);
-  }
+  runAiHelp() { return this.openTaskPlan(this.parseTaskDescription(this.state.aiHelpInput || this.v('ai-help-input')), 'help'); }
 
-  addTask() {
-    const name = this.v('nt-name'); if (!name) return;
-    const exp = Math.max(0, this.readExp('nt-exp', 10));
-    const cycle = document.getElementById('nt-cycle').value;
-    const times = Math.max(1, parseInt(this.v('nt-times')) || 1);
-    const interval = ['daily','weekly','monthly'].includes(cycle) ? this.readTaskInterval('nt-interval') : 1;
-    const core = document.getElementById('nt-core').checked;
-    const priorityEl = document.getElementById('nt-priority');
-    const priority = priorityEl ? priorityEl.value : 'p4';
-    const note = this.v('nt-note');
-    const setSel = document.getElementById('nt-set');
-    const setId = setSel && setSel.value ? parseInt(setSel.value) : null;
-    this.save({ tasks: [...this.state.tasks, { id: this.state.nextId, name, exp, cycle, times, interval, anchorDate: this.todayKey(), core, setId, priority, note, done: {}, completionLog: {} }], nextId: this.state.nextId + 1, newTaskOpen: false });
-    this.clear(['nt-name', 'nt-exp', 'nt-times', 'nt-note']); const it = document.getElementById('nt-interval'); if (it) it.value = '1'; const cb = document.getElementById('nt-core'); if (cb) cb.checked = false; if (setSel) setSel.value = '';
+  async addTask() {
+    const name = this.v('nt-name'); if (!name) return false;
+    const draft = { name, exp:this.readExp('nt-exp',10), cycle:this.v('nt-cycle') || 'daily', times:Number(this.v('nt-times') || 1),
+      interval:Number(this.v('nt-interval') || 1), priority:this.v('nt-priority') || 'p4', taskKind:this.v('nt-task-kind') || 'standard', note:this.v('nt-note'), setName:'' };
+    const errors = ExpTaskAssistant.valid(draft); if (errors.length) { this.setState({ newTaskAiMsg:errors[0], newTaskAiMsgColor:'#fbbf24' }); return false; }
+    const setId = this.v('nt-set') ? Number(this.v('nt-set')) : null, core = !!(document.getElementById('nt-core') || {}).checked;
+    return this.writeState(() => ({ ...this.state, tasks:[...this.state.tasks, { ...draft, id:this.state.nextId, core, setId, anchorDate:this.todayKey(), done:{}, completionLog:{} }], nextId:this.state.nextId+1 }), { newTaskOpen:false });
   }
-  addReward() {
-    const name = this.v('nr-name'); if (!name) return;
-    const cost = Math.max(0.01, this.readExp('nr-cost', 100));
-    const cycleEl = document.getElementById('nr-cap-cycle'), capCycle = cycleEl ? cycleEl.value : 'daily';
-    const capInterval = Math.max(1, Math.min(999, parseInt(this.v('nr-cap-interval'), 10) || 1));
-    const capTimes = Math.max(1, Math.min(999, parseInt(this.v('nr-cap-times'), 10) || 1));
-    this.save({ rewards: [...this.state.rewards, { id: this.state.nextId, name, cost, capCycle, capInterval, capTimes, capAnchorDate: this.todayKey(), redeems: [] }], nextId: this.state.nextId + 1, newRewardOpen: false });
-    this.clear(['nr-name', 'nr-cost', 'nr-cap-interval', 'nr-cap-times']);
+  async addReward() {
+    const name = this.v('nr-name'); if (!name) return false;
+    try {
+      const rule = this.readRewardRule('nr');
+      const capCycle = this.v('nr-cap-cycle') || 'daily', capInterval = Math.max(1,Math.min(999,Number(this.v('nr-cap-interval') || 1))), capTimes = Math.max(1,Math.min(999,Number(this.v('nr-cap-times') || 1)));
+      return await this.writeState(() => ({ ...this.state, rewards:[...this.state.rewards, { id:this.state.nextId, name, ...rule, capCycle, capInterval, capTimes, capAnchorDate:this.todayKey(), redeems:[] }], nextId:this.state.nextId+1 }), { newRewardOpen:false });
+    } catch (e) { this.setState({ rewardPricingPreview:e.message }); return false; }
   }
   addMilestone() {
     const name = this.v('nm-name'); if (!name) return;
@@ -3423,11 +3499,15 @@ class Component extends DCLogic {
       const abandonPending = pk === 'abandon';
       const showActions = !doneNow && !abandonedNow && !tp && !abandonPending;
       const pmeta = ({ p1: { label: '紧急且重要', color: '#f87171', bg: 'rgba(248,113,113,0.10)' }, p2: { label: '紧急不重要', color: '#fb923c', bg: 'rgba(251,146,60,0.10)' }, p3: { label: '不紧急重要', color: '#fbbf24', bg: 'rgba(251,191,36,0.10)' }, p4: { label: '不重要不紧急', color: '#60a5fa', bg: 'rgba(96,165,250,0.10)' } })[t.priority || 'p4'];
-      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + this.fmtExp(t.exp),
+      const maintenance = t.taskKind === 'maintenance';
+      const entries = maintenance ? ((st.maintenanceDays[this.todayKey()] || {}).entries || []).filter(e=>e.taskId===t.id && !e.reversed) : [];
+      const actual = entries.length ? entries[entries.length-1].awardedMinor / 100 : null;
+      const shownExp = maintenance ? ((doneNow || tp) && actual != null ? actual : Math.min(t.exp,Math.max(0,15-ExpProgression.maintenanceUsed(st,this.todayKey())))) : t.exp;
+      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: (maintenance && (doneNow || tp) && actual != null ? '实发 +' : '+') + this.fmtExp(shownExp),
         hasNote: !!(t.note || '').trim(), noteText: t.note || '', priorityLabel: pmeta.label, priorityColor: pmeta.color, priorityBg: pmeta.bg,
         abandonedNow, abandonPending, showAbandonUndo: abandonPending, showAbandonLabel: abandonedNow && !abandonPending,
         isFormed, hasStreak: liveStreak > 0 && !isFormed && !!_unit, streakLabel: interval > 1 ? '连 ' + liveStreak + ' 轮' : '连 ' + liveStreak + ' ' + _unit, formedLabel: interval > 1 ? 'MOMENTUM · 连 ' + liveStreak + ' 轮' : 'MOMENTUM · ' + liveStreak + ' 连' + _unit,
-        cycleLabel: k ? `${interval > 1 ? ('每 ' + interval + ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle])) : cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle],
+        cycleLabel: (t.taskKind === 'maintenance' ? '维护 · ' : '') + (k ? `${interval > 1 ? ('每 ' + interval + ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle])) : cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle]),
         hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
         starColor: t.core ? '#fbbf24' : '#2b3040',
@@ -3547,13 +3627,13 @@ class Component extends DCLogic {
     const reorderTitle = roKind === 'sets' ? '任务集排序 // REORDER SETS' : roKind === 'milestoneSets' ? '里程碑集排序 // REORDER SETS' : roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
       const capCount = this.rewardRedeemCount(r), capRule = this.rewardCapRule(r), capped = capCount >= capRule.times;
-      const capLabelTop = capped ? '本期已兑满' : ('本期 ' + capCount + '/' + capRule.times), capLabelBottom = capped ? '下期可兑' : '仍可兑换';
+      const blocked = ExpProgression.blocked(r), capLabelTop = blocked || (capped ? '本期已兑满' : ('本期 ' + capCount + '/' + capRule.times)), capLabelBottom = blocked ? '编辑可调整规则' : capped ? '下期可兑' : '仍可兑换';
       const capHint = this.rewardCapLabel(r, capCount), capUnit = { daily: '日', weekly: '周', monthly: '月', yearly: '年' }[capRule.cycle] || '日';
       const capPeriodLabel = '每 ' + capRule.interval + ' ' + capUnit + ' · ' + capRule.times + ' 次';
       const capUsageLabel = capCount + ' / ' + capRule.times;
       return { ...r,
-      canAfford: st.exp >= r.cost && !rp && !capped, cannot: st.exp < r.cost && !rp && !capped, pending: rp,
-      capped: capped && !rp, capLabelTop, capLabelBottom, hasCapHint: !!capHint, capHint, capPeriodLabel, capUsageLabel, capUsageColor: capped ? '#b7777f' : accent,
+      riskLabel:({green:'Green · 正常',amber:'Amber · 有顾虑',red:'Red · 已下架'}[r.riskBand]), riskColor:({green:'#4ade80',amber:'#fbbf24',red:'#f87171'}[r.riskBand]), canAfford: st.exp >= r.cost && !rp && !capped && !blocked, cannot: st.exp < r.cost && !rp && !capped && !blocked, pending: rp,
+      capped: (capped || !!blocked) && !rp, capLabelTop, capLabelBottom, hasCapHint: !!capHint, capHint, capPeriodLabel, capUsageLabel, capUsageColor: capped ? '#b7777f' : accent,
       costValue: this.fmtExp(r.cost), costStr: this.fmtExp(r.cost) + ' EXP', hasImg: !!r.img, noImg: !r.img, img: r.img || '', imgPos: (r.imgPos != null ? r.imgPos : 50) + '%',
       imgBgStyle: r.img ? { position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'none', backgroundImage: 'url("' + r.img + '")', backgroundSize: 'cover', backgroundPosition: 'center ' + (r.imgPos != null ? r.imgPos : 50) + '%' } : {},
       onRedeem: e => { e.stopPropagation(); this.redeem(r.id); },
@@ -3790,6 +3870,7 @@ class Component extends DCLogic {
       welcomeOpen: st.welcomed === false, closeWelcome: () => this.closeWelcome(),
       ...opexProps,
       ...this.moneyViewProps(st),
+      ...this.assistantViewProps(st),
       newRewardOpen: !!st.newRewardOpen, newMilestoneOpen: !!st.newMilestoneOpen, newMilestoneSetOpen: !!st.newMilestoneSetOpen, newFundOpen: !!st.newFundOpen,
       openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewMilestoneSet: () => this.openNewMilestoneSet(), openNewFund: () => this.openNewFund(),
       addFund: () => this.addFund(),
@@ -3887,7 +3968,7 @@ class Component extends DCLogic {
       editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '', editInterval: editItem ? this.taskInterval(editItem) : 1,
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
       editPriority: editItem ? (editItem.priority || 'p4') : 'p4', editNote: editItem ? (editItem.note || '') : '',
-      editCost: editItem ? (editItem.cost ?? '') : '',
+      editCost: editItem ? (editItem.baseCost ?? editItem.cost ?? '') : '',
       editCapCycle: editItem ? (editItem.capCycle || 'daily') : 'daily', editCapInterval: editItem ? (editItem.capInterval || 1) : 1, editCapTimes: editItem ? (editItem.capTimes || 1) : 1,
       editCode: editItem ? (editItem.code ?? '') : '', editBase: editItem ? (editItem.base ?? '') : '',
       editTarget: editItem ? (editItem.target ?? '') : '', editStep: editItem ? (editItem.step ?? '') : '',

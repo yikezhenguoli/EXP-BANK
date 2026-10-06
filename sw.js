@@ -1,8 +1,8 @@
 /* EXP BANK service worker — coherent versioned assets; user data is never cleared. */
-const VERSION = 'v1.10.0';
+const VERSION = 'v1.11.0';
 const CACHE = 'exp-bank-' + VERSION;
 const ASSETS = [
-  './', './index.html', './support.js', './money.js', './image-slot.js',
+  './', './index.html', './support.js', './money.js', './progression.js', './task-assistant.js', './image-slot.js',
   './vendor/react.production.min.js', './vendor/react-dom.production.min.js',
   './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'
 ];
@@ -25,7 +25,7 @@ self.addEventListener('install', event => {
         const html = await response.clone().text();
         if (!html.includes("const APP_VERSION = '" + VERSION + "'")) throw new Error('Page and worker versions differ');
       }
-      if (path === './money.js' && !(await response.clone().text()).includes('EXP BANK ' + VERSION)) throw new Error('Money module version differs');
+      if (['./money.js','./progression.js','./task-assistant.js'].includes(path) && !(await response.clone().text()).includes('EXP BANK ' + VERSION)) throw new Error('Money module version differs');
       return [request, response];
     }));
     const cache = await caches.open(CACHE);
@@ -47,7 +47,7 @@ self.addEventListener('message', event => {
       try { client.postMessage({ type: 'EXP_BANK_CLIENT_PROTOCOL' }, [channel.port2]); }
       catch (_) { clearTimeout(timer); channel.port1.close(); resolve(0); }
     })));
-    event.ports[0].postMessage({ protocol: 1, legacyCount: protocols.filter(p => p !== 1).length });
+    event.ports[0].postMessage({ protocol: 2, legacyCount: protocols.filter(p => p !== 2).length });
   })());
 });
 

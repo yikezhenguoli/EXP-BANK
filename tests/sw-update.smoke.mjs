@@ -22,8 +22,11 @@ function worker(options = {}) {
       fetched++; if (options.offline || options.missing && new URL(req.url).pathname.endsWith(options.missing)) throw new Error('offline');
       const p = new URL(req.url).pathname;
       if (options.status404 && p.endsWith(options.status404)) return new Response('not found', { status: 404 });
-      if (p.endsWith('index.html') || p.endsWith('/')) return new Response(options.oldHtml ? html.replace("APP_VERSION = 'v1.10.0'", "APP_VERSION = 'v1.9.2'") : html, { headers: { 'Content-Type': 'text/html' } });
-      if (p.endsWith('money.js')) return new Response(money, { headers: { 'Content-Type': options.htmlForJs ? 'text/html' : 'text/javascript' } });
+      if (p.endsWith('index.html') || p.endsWith('/')) return new Response(options.oldHtml ? html.replace("APP_VERSION = 'v1.11.0'", "APP_VERSION = 'v1.9.2'") : html, { headers: { 'Content-Type': 'text/html' } });
+      if (['money.js','progression.js','task-assistant.js'].some(name=>p.endsWith(name))) {
+        const name = p.split('/').at(-1), source = fs.readFileSync(new URL('../'+name, import.meta.url), 'utf8');
+        return new Response(source, { headers: { 'Content-Type': options.htmlForJs ? 'text/html' : 'text/javascript' } });
+      }
       return new Response('fixture', { headers: { 'Content-Type': p.endsWith('.js') ? 'text/javascript' : 'image/png' } });
     }
   });
@@ -34,21 +37,21 @@ function worker(options = {}) {
 let count = 0;
 async function test(name, fn) { await fn(); count++; console.log('PASS ' + name); }
 await test('完整预缓存后才可激活，仅删除本应用旧缓存', async () => {
-  const w = worker(); await w.dispatch('install'); assert.equal(w.skips(), 0); assert.equal(w.maps.get('exp-bank-v1.10.0').size, 11);
+  const w = worker(); await w.dispatch('install'); assert.equal(w.skips(), 0); assert.equal(w.maps.get('exp-bank-v1.11.0').size, 13);
   await w.dispatch('activate'); assert.equal(w.maps.has('exp-bank-v1.9.2'), false); assert.equal(w.maps.has('other-app-cache'), true); assert.equal(w.claims(), 1);
 });
 await test('缺文件、404、HTML误作JS、版本不一致、写入失败均拒绝安装，旧缓存保留', async () => {
-  for (const opts of [{ missing: 'money.js' }, { status404: 'support.js' }, { htmlForJs: true }, { oldHtml: true }, { failPut: true }]) {
+  for (const opts of [{ missing: 'money.js' }, { missing:'progression.js' }, { missing:'task-assistant.js' }, { status404: 'support.js' }, { htmlForJs: true }, { oldHtml: true }, { failPut: true }]) {
     const w = worker(opts); await assert.rejects(w.dispatch('install')); assert.equal(w.maps.has('exp-bank-v1.9.2'), true); assert.equal(w.skips(), 0); assert.equal(w.claims(), 0);
   }
 });
 await test('导航和脚本离线从同版本资源读取，不发起混版网络请求', async () => {
   const w = worker(); await w.dispatch('install'); await w.dispatch('activate'); w.options.offline = true; const before = w.fetched();
-  const nav = await w.dispatch('fetch', { request: { method: 'GET', url: scope, mode: 'navigate' } }); assert.match(await nav.text(), /APP_VERSION = 'v1.10.0'/);
+  const nav = await w.dispatch('fetch', { request: { method: 'GET', url: scope, mode: 'navigate' } }); assert.match(await nav.text(), /APP_VERSION = 'v1.11.0'/);
   const js = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.match(await js.text(), /integer money/); assert.equal(w.fetched(), before);
 });
 await test('缺JS离线返回错误，联网404仍返回404，不能回退HTML', async () => {
-  const w = worker(); await w.dispatch('install'); w.maps.get('exp-bank-v1.10.0').delete(scope + 'money.js'); w.options.offline = true;
+  const w = worker(); await w.dispatch('install'); w.maps.get('exp-bank-v1.11.0').delete(scope + 'money.js'); w.options.offline = true;
   const error = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.equal(error.type, 'error'); assert.equal(await error.text(), '');
   w.options.offline = false; w.options.status404 = 'money.js'; const res = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.equal(res.status, 404);
 });
