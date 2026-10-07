@@ -1,4 +1,4 @@
-/* EXP BANK v1.11.0 — reward rules and durable Maintenance EXP settlement. */
+/* EXP BANK v1.12.0 — reward rules and durable Maintenance EXP settlement. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
@@ -84,5 +84,6 @@
     if (blocked(r, ts)) fail(blocked(r, ts));
     return { ...r, redeems:[...(r.redeems || []), ts], cooldownUntil:ts + Number(r.cooldownDays || 0) * 86400000 };
   }
-  return { normalize, rewardRule, award, reverse, maintenanceUsed, blocked, redeemed, MAINTENANCE_CAP, FACTORS, round };
+  function inWarMode(task) { return task.lifeType === 'CORE' || (task.lifeType === 'GROWTH' && task.warImportant === true); }
+  return { inWarMode, normalize, rewardRule, award, reverse, maintenanceUsed, blocked, redeemed, MAINTENANCE_CAP, FACTORS, round };
 });
