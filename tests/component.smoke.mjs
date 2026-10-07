@@ -21,14 +21,14 @@ function create(seed = null, shared = sharedStorage(seed)) {
     localStorage: { getItem: k => shared.map.get(k) ?? null, setItem: (k, v) => { if (flags.failWrite) { const e = new Error('QuotaExceededError'); e.name = 'QuotaExceededError'; throw e; } shared.map.set(k, v); } },
     sessionStorage: { getItem: k => session.get(k) ?? null, setItem: (k, v) => session.set(k, v), removeItem: k => session.delete(k) },
     btoa: s => Buffer.from(s, 'binary').toString('base64'), atob: s => Buffer.from(s, 'base64').toString('binary'), escape, unescape, encodeURIComponent, decodeURIComponent });
-  vm.runInContext(money, context); for (const name of ['progression.js','task-assistant.js']) vm.runInContext(fs.readFileSync(new URL('../'+name, import.meta.url),'utf8'), context); vm.runInContext(source + '\nglobalThis.TestComponent = Component;', context);
+  vm.runInContext(money, context); for (const name of ['progression.js','life-architecture.js','task-assistant.js']) vm.runInContext(fs.readFileSync(new URL('../'+name, import.meta.url),'utf8'), context); vm.runInContext(source + '\nglobalThis.TestComponent = Component;', context);
   const c = new context.TestComponent({ goldAt: 300, diamondAt: 900, interestRate: 5, coreQuota: 3 });
-  return { c, flags, shared, context, input: (id, value) => { elements[id] = { value: String(value) }; }, stored: () => JSON.parse(shared.map.get('exp-bank-v1')) };
+  return { c, flags, shared, context, check:(id,checked)=>{ elements[id]={checked}; }, input: (id, value) => { elements[id] = { value: String(value) }; }, stored: () => JSON.parse(shared.map.get('exp-bank-v1')) };
 }
 const seed = saved => ({ appVersion: 'v1.9.2', tasks: [], rewards: [], ledger: [], exp: 10, nextId: 500, stash: [{ id: 41, name: '旅游', target: 1000, saved, claimed: true }], opex: [] });
 async function test(name, fn) { await fn(); results.push(name); console.log('PASS ' + name); }
 await test('新用户及旧用户启动完成schema，余额、EXP和达成保持', async () => {
-  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.11.0'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
+  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.12.0'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
   await t.c.save({}); assert.equal(t.stored().stash[0].saved, 800); assert.equal(t.stored().updateNoteOpen, undefined);
   assert.equal(create().c.state.opexCategories.length, 6);
 });
@@ -146,4 +146,57 @@ await test('奖励图片与维护/资金并行保存不绕过写入队列，失�
  assert.equal(t.stored().exp,20); assert.equal(t.stored().maintenanceDays[t.c.todayKey()].awardedMinor,1000); assert.equal(t.stored().rewards[0].img,'new-image');
  t.flags.failWrite=true; assert.equal(await t.c.saveRewardImage(21,'failed-image'),false); assert.equal(t.stored().rewards[0].img,'new-image');
 });
+await test('Life新用户四层完整、手动创建推荐分类且不改变积分',async()=>{
+ const t=create();const v=t.c.renderVals();assert.equal(v.lifeGroups.length,4);assert.equal(v.lifeGroups.reduce((n,g)=>n+g.count,0),t.c.state.tasks.length);
+ t.input('nt-name','跑步1km');t.input('nt-exp',50);t.input('nt-cycle','daily');t.input('nt-times',1);t.input('nt-interval',1);
+ const before=t.c.state.exp;await t.c.addTask();const x=t.stored().tasks.at(-1);assert.equal(x.lifeType,'CORE');assert.equal(x.exp,50);assert.equal(x.taskKind,'standard');assert.equal(t.stored().exp,before);
+});
+await test('Life老用户迁移完整保留category、EXP、周期、完成记录和已完成单次任务',async()=>{
+ const data=seed(800);data.appVersion='v1.11.0';data.tasks=[{id:1,name:'六级单词',category:'微习惯',exp:50,cycle:'weekly',times:3,interval:2,anchorDate:'2026-08-01',priority:'p1',core:true,done:{x:3},completionLog:{'2026-10-01':3}},{id:2,name:'电影',cycle:'once',times:1,exp:20,done:{once:1},lastDone:'2026-09-01'}];
+ const t=create(data);t.c.pruneOnce();await t.c.save({});assert.equal(t.stored().tasks.length,2);
+ for(const [i,old]of data.tasks.entries())for(const[k,value]of Object.entries(old))assert.deepEqual(t.stored().tasks[i][k],value);
+ assert.equal(t.stored().exp,10);assert.equal(t.stored().tasks[0].lifeType,'GROWTH');assert.equal(t.stored().tasks[0].warImportant,true);
+ assert.equal(t.stored().tasks[1].lifeType,'EXPLORATION');assert.equal(create(t.stored()).c.state.tasks.length,2);
+});
+await test('Life逐层排序并行完成不丢记录，保存失败维持原顺序',async()=>{
+ const data=seed(0);data.tasks=[1,2,3].map(id=>({id,name:'跑步'+id,exp:10,cycle:'daily',done:{}}));const t=create(data);
+ await Promise.all([t.c.moveLifeTask(3,-1),t.c.complete(1)]);let v=t.c.renderVals();assert.deepEqual(Array.from(v.lifeGroups[0].tasks,x=>x.id),[1,3,2]);assert.equal(t.stored().exp,20);assert.equal(t.stored().tasks[0].done[t.c.todayKey()],1);
+ const before=t.shared.map.get('exp-bank-v1');t.flags.failWrite=true;assert.equal(await t.c.moveLifeTask(3,-1),false);assert.equal(t.shared.map.get('exp-bank-v1'),before);
+});
+await test('Life修改分类与关键标记保留原周期和分类字段，重载继续生效',async()=>{
+ const data=seed(0);data.tasks=[{id:1,name:'阅读',category:'自定义旧分类',exp:10,cycle:'weekly',times:2,interval:1,anchorDate:'2026-10-01',done:{'2026-W40':2},priority:'p3',core:true}];const t=create(data);
+ t.c.openEdit('task',1);t.input('ed-name','阅读');t.input('ed-cycle','weekly');t.input('ed-times',2);t.input('ed-interval',1);t.input('ed-exp',10);t.input('ed-life-type','GROWTH');t.check('ed-war-important',true);
+ await t.c.saveEdit();const x=t.stored().tasks[0];assert.equal(x.lifeType,'GROWTH');assert.equal(x.warImportant,true);assert.deepEqual(x.done,{'2026-W40':2});assert.equal(x.category,'自定义旧分类');assert.equal(x.core,true);assert.equal(x.priority,'p3');assert.equal(x.lifeOrder,0);assert.equal(create(t.stored()).c.state.tasks[0].warImportant,true);
+});
+await test('WAR 2.0保留全部CORE及关键GROWTH，无旧三项截断，其他层隐藏且不删除',async()=>{
+ const types=['CORE','CORE','CORE','CORE','GROWTH','GROWTH','MAINTENANCE','EXPLORATION'];const data=seed(0);data.tasks=types.map((lifeType,i)=>({id:i+1,name:'项目'+i,lifeType,warImportant:i===4,core:true,exp:1,cycle:'daily',done:{}}));const t=create(data);
+ await t.c.save({warMode:true});let v=t.c.renderVals();assert.deepEqual(Array.from(v.taskRows,x=>x.id),[1,2,3,4,5]);assert.equal(v.coreTotal,5);assert.equal(v.lifeGroups.length,2);assert.equal(t.stored().tasks.length,8);
+ await t.c.toggleCore(6);assert.equal(t.c.renderVals().taskRows.length,6);assert.equal(t.stored().tasks[5].core,true);
+ await t.c.save({warMode:false});assert.equal(t.c.renderVals().tasks.length,8);assert.equal(t.c.renderVals().lifeGroups.length,4);
+});
+await test('Life今日与周统计在完成、撤销、周期跨年后正确更新',async()=>{
+ const data=seed(0);data.tasks=[{id:1,name:'吃饭',exp:10,cycle:'daily',times:2,done:{}}];const t=create(data);
+ await t.c.complete(1);assert.equal(t.c.renderVals().lifeGroups[0].todayLabel,'今日完成 0/1');assert.equal(t.c.renderVals().lifeGroups[0].weekLabel,'本周完成率 50%');
+ await t.c.complete(1);assert.equal(t.c.renderVals().lifeGroups[0].todayLabel,'今日完成 1/1');await t.c.undo();assert.equal(t.c.renderVals().lifeGroups[0].weekLabel,'本周完成率 50%');
+ const x={cycle:'weekly',interval:1,times:2,lifeStatsFrom:'2026-12-28',done:{'2026-W53':1}};
+ const st=t.context.ExpLife.stats([x],new Date('2027-01-01T12:00:00'),(a,d)=>t.c.periodKey(a,d));assert.equal(st.weekTotal,2);assert.equal(st.weekDone,1);
+});
+await test('Life备份往返保留分类排序，旧备份自动迁移且不混入旧任务',async()=>{
+ const data=seed(0);data.tasks=[{id:1,name:'跑步',exp:10,cycle:'daily',done:{}},{id:2,name:'吃饭',exp:10,cycle:'daily',done:{}}];const a=create(data);await a.c.moveLifeTask(2,-1);
+ const code=a.c.makeBackupCode(),b=create();b.input('bk-import',code);await b.c.importBackup();assert.deepEqual(b.stored().tasks,a.stored().tasks);assert.equal(b.stored().lifeSchemaVersion,1);
+ b.input('bk-import',JSON.stringify({tasks:[{id:30,name:'测试',cycle:'once',done:{}}],exp:77,nextId:100}));await b.c.importBackup();assert.equal(b.stored().tasks.length,1);assert.equal(b.stored().tasks[0].lifeType,'EXPLORATION');assert.equal(b.stored().exp,77);
+});
+await test('未来Life schema启动和导入都保留原文，不覆盖默认状态',async()=>{
+ const raw={...seed(800),lifeSchemaVersion:99};const t=create(raw),before=t.shared.map.get('exp-bank-v1');assert.equal(await t.c.save({}),false);assert.equal(t.shared.map.get('exp-bank-v1'),before);assert.equal(Buffer.from(t.c.makeBackupCode(),'base64').toString('utf8'),before);
+ const good=create(seed(800));await good.c.save({});const old=good.shared.map.get('exp-bank-v1');good.input('bk-import',JSON.stringify(raw));assert.equal(await good.c.importBackup(),false);assert.equal(good.shared.map.get('exp-bank-v1'),old);
+});
+await test('Life两页排序与完成冲突拒绝旧快照，同步后保持两边数据',async()=>{
+ const data=seed(0);data.tasks=[1,2].map(id=>({id,name:'跑步'+id,exp:10,cycle:'daily',done:{}}));const shared=sharedStorage(data),a=create(null,shared),b=create(null,shared);await a.c.moveLifeTask(2,-1);assert.equal(await b.c.complete(1),false);
+ await b.c.syncLatestMoney();await b.c.complete(1);assert.equal(b.stored().exp,20);assert.deepEqual(Array.from(b.c.renderVals().lifeGroups[0].tasks,t=>t.id),[2,1]);
+});
+await test('Life AI候选人工调整后的分类与关键GROWTH随确认保存',async()=>{
+ const t=create(seed(0));const plan=t.c.parseTaskDescription('每天阅读5EXP');t.c.openTaskPlan(plan,'help');t.c.updateAssistantTask(0,'lifeType','GROWTH');t.c.updateAssistantTask(0,'warImportant',true);await t.c.applyTaskPlan();
+ assert.equal(t.stored().tasks[0].lifeType,'GROWTH');assert.equal(t.stored().tasks[0].warImportant,true);assert.equal(t.stored().tasks[0].taskKind,'standard');assert.equal(t.stored().exp,10);
+});
+
 console.log('Component checks passed: ' + results.length);

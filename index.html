@@ -7,6 +7,7 @@
 <script src="./vendor/react-dom.production.min.js"></script>
 <script src="./money.js"></script>
 <script src="./progression.js"></script>
+<script src="./life-architecture.js"></script>
 <script src="./task-assistant.js"></script>
 <script src="./support.js"></script>
 <link rel="manifest" href="./manifest.json">
@@ -19,7 +20,7 @@
 <link rel="icon" type="image/png" href="./icon-192.png">
 <script>
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='EXP_BANK_CLIENT_PROTOCOL'&&e.ports[0])e.ports[0].postMessage({protocol:2});});
+  navigator.serviceWorker.addEventListener('message',function(e){if(e.data&&e.data.type==='EXP_BANK_CLIENT_PROTOCOL'&&e.ports[0])e.ports[0].postMessage({protocol:3});});
   window.expBankRegistration=navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(function(){return null;});
 }
 </script>
@@ -58,6 +59,31 @@ input[type="date"]{color-scheme:dark;}
 .money-title{font-size:15px;font-weight:700;color:#eef1f7;letter-spacing:1px;}
 .money-category{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid #2a2f3a;border-radius:9px;background:#0d0f14;}
 @media(max-width:420px){.money-opex-title{flex-basis:calc(100% - 14px)!important;}.money-overlay{padding:12px;}.money-panel{padding:15px;}.money-title{font-size:14px;}.money-btn{min-height:44px;}.money-entry{margin-left:16px!important;flex-wrap:wrap;}.money-entry-note{flex-basis:calc(100% - 90px);}.money-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;}.money-stats>div:last-child{grid-column:span 2;}}
+
+  .life-panel{width:min(960px,100%);max-width:960px!important;}
+  .life-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+  .life-group{min-width:0;padding:14px;border:1px solid #2a2e3a;border-radius:12px;background:rgba(13,15,20,.6);}
+  .life-heading{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;letter-spacing:1px;overflow-wrap:anywhere;}
+  .life-count{margin-left:auto;color:#aeb6c6;font-size:11px;white-space:nowrap;}
+  .life-subtitle{font-size:15px;color:#eef1f7;margin-top:6px;font-weight:700;}
+  .life-stats{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:#c8cedb;margin:10px 0 4px;}
+  .life-task{padding:11px 0;border-top:1px solid #262b36;margin-top:9px;}
+  .life-task-name{display:block;background:transparent;border:0;padding:0;text-align:left;font-family:inherit;font-size:13px;line-height:1.5;font-weight:600;color:#e6e9f0;cursor:pointer;overflow-wrap:anywhere;width:100%;}
+  .life-task-meta{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0;font-size:11px;color:#aeb6c6;}
+  .life-task-status{font-size:11px;color:#aeb6c6;}
+  .life-move{display:flex;gap:8px;margin-top:8px;}
+  .life-empty{padding:24px 0;font-size:12px;color:#8b93a4;}
+  .life-filters{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;}
+  .life-filter{padding:7px 9px;border:1px solid #2a2e3a;border-radius:8px;background:transparent;color:#aeb6c6;font-family:inherit;font-size:11px;cursor:pointer;}
+  .life-filter[aria-pressed=true]{color:#e6e9f0;background:#292233;border-color:#76628f;}
+  .life-war{padding:12px;border:1px solid #354357;border-radius:11px;color:#c8cedb;background:rgba(121,170,245,.06);font-size:12px;line-height:1.65;}
+  .life-war strong{color:#79aaf5;font:700 11px 'JetBrains Mono',monospace;letter-spacing:1px;}
+  .life-war p{margin:5px 0;color:#aeb6c6;}
+  .life-check{display:flex;align-items:flex-start;gap:9px;font-size:12px;color:#aeb6c6;line-height:1.55;}
+  .life-check input{width:auto!important;flex:0 0 auto;margin:4px 0 0;}
+  .life-check small{font-size:10px;color:#8b93a4;}
+  .life-panel button:focus-visible,.life-filter:focus-visible{outline:2px solid #b99ae5;outline-offset:2px;}
+  @media(max-width:640px){.life-grid{grid-template-columns:minmax(0,1fr)}.life-group{padding:12px}.life-panel{padding:14px!important;}}
 </style>
 </helmet>
 <div style="min-height:100vh;background:{{ pageBg }};color:#e6e9f0;font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;padding-bottom:96px;">
@@ -126,11 +152,11 @@ input[type="date"]{color-scheme:dark;}
             <div style="width:34px;height:18px;border-radius:99px;background:#262b36;position:relative;"><div style="position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#6b7385;"></div></div>
           </sc-if>
           <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}">
-            <div style="width:34px;height:18px;border-radius:99px;background:#7f1d1d;position:relative;"><div style="position:absolute;top:2px;left:18px;width:14px;height:14px;border-radius:50%;background:#f87171;"></div></div>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;">{{ coreDone }}/{{ coreTotal }}</span>
+            <div style="width:34px;height:18px;border-radius:99px;background:#284967;position:relative;"><div style="position:absolute;top:2px;left:18px;width:14px;height:14px;border-radius:50%;background:#79aaf5;"></div></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#79aaf5;">{{ coreDone }}/{{ coreTotal }}</span>
           </sc-if>
           <sc-if value="{{ fullDone }}" hint-placeholder-val="{{ false }}">
-            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4ade80;">✦ 当日满勤</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4ade80;">✦ 最低目标已达成</span>
           </sc-if>
         </div>
         </div>
@@ -174,8 +200,8 @@ input[type="date"]{color-scheme:dark;}
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;">
         <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">任务 // EARN</div></div>
-        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;">仅核心微习惯</div></sc-if>
-        <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}"><div onClick="{{ openQuadrant }}" title="按紧急度 × 重要度总览全部任务" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;background:rgba(12,14,20,0.35);border-radius:8px;padding:5px 9px;white-space:nowrap;" style-hover="border-color:{{ accent }};color:#eef1f7;">⌗ 四象限</div></sc-if>
+        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f87171;">今日最低目标</div></sc-if>
+        <div onClick="{{ openQuadrant }}" title="Life Architecture · 四层人生总览" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;background:rgba(12,14,20,0.35);border-radius:8px;padding:5px 9px;white-space:nowrap;" style-hover="border-color:{{ accent }};color:#eef1f7;">⌗ 四象限</div>
       </div>
       <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px;">
@@ -187,6 +213,8 @@ input[type="date"]{color-scheme:dark;}
       </div>
       </sc-if>
       <div class="money-line" style="padding:8px 0;flex-wrap:wrap;"><div class="money-hint" style="flex:1;">{{ maintenanceSummary }}</div><button class="money-btn" onClick="{{ openMaintenancePlan }}">+ 维护任务</button></div>
+      <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}"><div class="life-filters" role="group" aria-label="人生分类筛选"><sc-for list="{{ lifeFilters }}" as="f" hint-placeholder-count="5"><button class="life-filter" aria-pressed="{{ f.active }}" onClick="{{ f.onClick }}">{{ f.label }}</button></sc-for></div></sc-if>
+      <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div class="life-war" role="status"><strong>WAR MODE ACTIVE</strong><div>今日最低目标 · {{ coreDone }}/{{ coreTotal }}</div><p>CORE + 关键 GROWTH。每日事项按今天，其余按各自周期；不限次事项不计入目标数。</p><sc-if value="{{ fullDone }}" hint-placeholder-val="{{ false }}"><p>最低目标已达成，可以停在这里。</p></sc-if><sc-if value="{{ warEmpty }}" hint-placeholder-val="{{ false }}"><p>还没有最低目标。关闭 WAR MODE 后，将必要事项归入 CORE，或为 GROWTH 标星。</p></sc-if></div></sc-if>
       <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="4">
         <sc-if value="{{ t.isDivider }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:10px;margin:13px 2px 5px;min-height:22px;">
@@ -205,8 +233,8 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </sc-if>
         <sc-if value="{{ t.isTask }}" hint-placeholder-val="{{ true }}">
-        <div onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;flex-wrap:{{ rowWrap }};justify-content:{{ rowJustify }};align-items:center;gap:8px;padding:{{ rowPad }};margin-left:{{ t.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
-          <div onClick="{{ t.onToggleCore }}" title="设为核心微习惯(战时模式)" style="cursor:pointer;font-size:13px;color:{{ t.starColor }};width:16px;flex-shrink:0;text-align:center;">★</div>
+        <div data-task-id="{{ t.id }}" onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;flex-wrap:{{ rowWrap }};justify-content:{{ rowJustify }};align-items:center;gap:8px;padding:{{ rowPad }};margin-left:{{ t.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
+          <sc-if value="{{ t.canStar }}" hint-placeholder-val="{{ false }}"><button onClick="{{ t.onToggleCore }}" aria-label="{{ t.warStarLabel }}" title="{{ t.warStarLabel }}" style="cursor:pointer;background:transparent;border:0;font-size:16px;color:{{ t.starColor }};width:32px;min-height:36px;flex-shrink:0;text-align:center;">★</button></sc-if>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div style="width:3px;align-self:stretch;flex-shrink:0;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
           </sc-if>
@@ -777,37 +805,25 @@ input[type="date"]{color-scheme:dark;}
 
   <!-- FOUR QUADRANTS MODAL -->
   <sc-if value="{{ quadrantOpen }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ closeQuadrant }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.78);backdrop-filter:blur(7px);z-index:70;display:flex;align-items:center;justify-content:center;padding:14px;">
-      <div onClick="{{ stopClick }}" style="width:820px;max-width:100%;max-height:90vh;overflow:auto;background:linear-gradient(180deg,#151820,#0e1016);border:1px solid #2a2f3a;border-radius:18px;padding:16px;box-shadow:0 30px 80px rgba(0,0,0,0.76);">
-        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;">
-          <div style="width:3px;height:17px;margin-top:2px;border-radius:2px;background:{{ tierGrad }};"></div>
-          <div style="flex:1;"><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;">四象限 // PRIORITY MATRIX</div><div style="font-size:11px;color:#697084;margin-top:4px;">同一份任务数据的另一种视图 · 横轴越右越重要，纵轴越上越紧急</div></div>
-          <div onClick="{{ closeQuadrant }}" style="cursor:pointer;color:#8b93a4;font-size:21px;line-height:1;">×</div>
-        </div>
-        <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.2px;color:#8b93a4;margin-bottom:7px;">紧急 / URGENCY ↑</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;grid-template-rows:minmax(180px,auto) minmax(180px,auto);border:1px solid #2a303c;border-radius:14px;overflow:hidden;background:#0b0d12;">
-          <div style="padding:11px;border-right:1px solid #343945;border-bottom:1px solid #343945;background:linear-gradient(160deg,rgba(251,146,60,0.09),rgba(15,17,23,0.35));">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#fb923c;border:1px solid rgba(251,146,60,0.6);border-radius:99px;padding:2px 7px;">P2</div><div style="font-size:12px;font-weight:700;color:#f3c09b;">紧急 · 不重要</div><div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ quadrantP2Count }}</div></div>
-            <sc-if value="{{ quadrantP2Empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#535a6a;padding:18px 4px;text-align:center;">暂无任务</div></sc-if>
-            <sc-for list="{{ quadrantP2 }}" as="q" hint-placeholder-count="0"><div onClick="{{ q.onEdit }}" style="cursor:pointer;margin-top:6px;border:1px solid rgba(251,146,60,0.28);border-radius:9px;background:rgba(13,15,20,0.7);padding:8px 9px;" style-hover="border-color:#fb923c;"><div style="font-size:12px;font-weight:700;color:#eef1f7;line-height:1.4;">{{ q.name }}</div><sc-if value="{{ q.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#7f8796;margin-top:3px;line-height:1.4;">{{ q.noteText }}</div></sc-if><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;"><span>{{ q.cycleLabel }}</span><span style="color:#fb923c;">{{ q.expStr }}</span></div></div></sc-for>
-          </div>
-          <div style="padding:11px;border-bottom:1px solid #343945;background:linear-gradient(200deg,rgba(248,113,113,0.10),rgba(15,17,23,0.35));">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#f87171;border:1px solid rgba(248,113,113,0.6);border-radius:99px;padding:2px 7px;">P1</div><div style="font-size:12px;font-weight:700;color:#f4aaaa;">紧急 · 重要</div><div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ quadrantP1Count }}</div></div>
-            <sc-if value="{{ quadrantP1Empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#535a6a;padding:18px 4px;text-align:center;">暂无任务</div></sc-if>
-            <sc-for list="{{ quadrantP1 }}" as="q" hint-placeholder-count="0"><div onClick="{{ q.onEdit }}" style="cursor:pointer;margin-top:6px;border:1px solid rgba(248,113,113,0.30);border-radius:9px;background:rgba(13,15,20,0.7);padding:8px 9px;" style-hover="border-color:#f87171;"><div style="font-size:12px;font-weight:700;color:#eef1f7;line-height:1.4;">{{ q.name }}</div><sc-if value="{{ q.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#7f8796;margin-top:3px;line-height:1.4;">{{ q.noteText }}</div></sc-if><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;"><span>{{ q.cycleLabel }}</span><span style="color:#f87171;">{{ q.expStr }}</span></div></div></sc-for>
-          </div>
-          <div style="padding:11px;border-right:1px solid #343945;background:linear-gradient(20deg,rgba(96,165,250,0.08),rgba(15,17,23,0.35));">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#60a5fa;border:1px solid rgba(96,165,250,0.6);border-radius:99px;padding:2px 7px;">P4</div><div style="font-size:12px;font-weight:700;color:#9ac3f5;">不紧急 · 不重要</div><div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ quadrantP4Count }}</div></div>
-            <sc-if value="{{ quadrantP4Empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#535a6a;padding:18px 4px;text-align:center;">暂无任务</div></sc-if>
-            <sc-for list="{{ quadrantP4 }}" as="q" hint-placeholder-count="0"><div onClick="{{ q.onEdit }}" style="cursor:pointer;margin-top:6px;border:1px solid rgba(96,165,250,0.27);border-radius:9px;background:rgba(13,15,20,0.7);padding:8px 9px;" style-hover="border-color:#60a5fa;"><div style="font-size:12px;font-weight:700;color:#eef1f7;line-height:1.4;">{{ q.name }}</div><sc-if value="{{ q.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#7f8796;margin-top:3px;line-height:1.4;">{{ q.noteText }}</div></sc-if><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;"><span>{{ q.cycleLabel }}</span><span style="color:#60a5fa;">{{ q.expStr }}</span></div></div></sc-for>
-          </div>
-          <div style="padding:11px;background:linear-gradient(340deg,rgba(251,191,36,0.08),rgba(15,17,23,0.35));">
-            <div style="display:flex;align-items:center;gap:7px;margin-bottom:8px;"><div style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#fbbf24;border:1px solid rgba(251,191,36,0.6);border-radius:99px;padding:2px 7px;">P3</div><div style="font-size:12px;font-weight:700;color:#ead48d;">不紧急 · 重要</div><div style="flex:1;"></div><div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ quadrantP3Count }}</div></div>
-            <sc-if value="{{ quadrantP3Empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#535a6a;padding:18px 4px;text-align:center;">暂无任务</div></sc-if>
-            <sc-for list="{{ quadrantP3 }}" as="q" hint-placeholder-count="0"><div onClick="{{ q.onEdit }}" style="cursor:pointer;margin-top:6px;border:1px solid rgba(251,191,36,0.27);border-radius:9px;background:rgba(13,15,20,0.7);padding:8px 9px;" style-hover="border-color:#fbbf24;"><div style="font-size:12px;font-weight:700;color:#eef1f7;line-height:1.4;">{{ q.name }}</div><sc-if value="{{ q.hasNote }}" hint-placeholder-val="{{ false }}"><div style="font-size:10px;color:#7f8796;margin-top:3px;line-height:1.4;">{{ q.noteText }}</div></sc-if><div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#697084;"><span>{{ q.cycleLabel }}</span><span style="color:#fbbf24;">{{ q.expStr }}</span></div></div></sc-for>
-          </div>
-        </div>
-        <div style="display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;"><span>不重要</span><span>重要 / IMPORTANCE →</span></div>
+    <div class="money-overlay" style="z-index:70;" onClick="{{ closeQuadrant }}">
+      <div class="money-panel life-panel" role="dialog" aria-label="Life Architecture Overview" aria-modal="true" onClick="{{ stopClick }}">
+        <div class="money-line"><div style="flex:1;"><div class="money-title">LIFE ARCHITECTURE</div><div class="money-hint">四层人生总览 · 分类不改变 EXP 规则</div></div><button class="money-btn" onClick="{{ closeQuadrant }}" aria-label="关闭人生总览">关闭</button></div>
+        <div class="money-line"><div class="money-hint" style="flex:1;">按自己的节奏安排，不必每天完成所有层。</div><button class="money-btn" onClick="{{ toggleLifeSort }}">{{ lifeSortLabel }}</button></div>
+        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div class="money-hint">WAR MODE ACTIVE · 仅显示 CORE 和关键 GROWTH</div></sc-if>
+        <sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
+        <div class="life-grid"><sc-for list="{{ lifeGroups }}" as="g" hint-placeholder-count="4"><section class="life-group" aria-label="{{ g.type }}" data-life-type="{{ g.type }}">
+          <div class="money-line"><div class="life-heading" style="color:{{ g.color }};">{{ g.type }}</div><div class="life-count">{{ g.count }} 项</div></div>
+          <div class="life-subtitle">{{ g.label }}</div><p class="money-hint">{{ g.description }}</p>
+          <div class="life-stats"><span>{{ g.todayLabel }}</span><span>{{ g.weekLabel }}</span></div><div class="money-hint">{{ g.weekDetail }}</div>
+          <sc-if value="{{ g.empty }}" hint-placeholder-val="{{ false }}"><div class="life-empty">这一层暂时留白也可以。</div></sc-if>
+          <sc-for list="{{ g.tasks }}" as="q" hint-placeholder-count="0"><div class="life-task" data-life-task="{{ q.id }}">
+            <button class="life-task-name" onClick="{{ q.onEdit }}">{{ q.name }}</button>
+            <div class="life-task-meta"><span>{{ q.expStr }} EXP</span><span>{{ q.cycleLabel }}</span></div>
+            <div class="money-line"><span class="life-task-status">{{ q.statusLabel }}</span><div style="flex:1;"></div><sc-if value="{{ q.showDone }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ q.onDone }}">完成</button></sc-if><sc-if value="{{ q.pending }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ q.onUndo }}">撤销</button></sc-if></div>
+            <sc-if value="{{ lifeReorder }}" hint-placeholder-val="{{ false }}"><div class="life-move"><button class="money-btn" onClick="{{ q.onUp }}" disabled="{{ q.upDisabled }}" aria-label="{{ q.upLabel }}">↑ 上移</button><button class="money-btn" onClick="{{ q.onDown }}" disabled="{{ q.downDisabled }}" aria-label="{{ q.downLabel }}">↓ 下移</button></div></sc-if>
+          </div></sc-for>
+        </section></sc-for></div>
+        <details class="money-hint"><summary>统计如何计算</summary><p>今日完成只统计每天重复的任务，达到当日次数算 1 项。本周完成率按日／周任务的目标次数计算，同一周期只计一次，截至今天，不计未来日期；单次、月度和不限次任务展示进度，不计入比率。新统计从升级或新建当日开始；更改周期后从当天重新统计，原历史保留。更改分类后按当前分类汇总。</p></details>
       </div>
     </div>
   </sc-if>
@@ -866,13 +882,9 @@ input[type="date"]{color-scheme:dark;}
                 <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
               </select>
             </label>
-            <label style="display:block;font-size:11px;color:#697084;">优先级
-              <select id="ed-priority" defaultValue="{{ editPriority }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
-                <option value="p1">紧急且重要</option><option value="p2">紧急不重要</option><option value="p3">不紧急重要</option><option value="p4">不重要不紧急</option>
-              </select>
-            </label>
-            <label style="display:block;font-size:11px;color:#697084;">任务类别
-              <select id="ed-task-kind" class="money-input" defaultValue="{{ editTaskKind }}" aria-label="任务类别"><option value="standard">普通任务</option><option value="maintenance">生活维护 · 每日最多15 EXP</option></select>
+            <label style="display:block;font-size:12px;color:#aeb6c6;">人生分类<select id="ed-life-type" class="money-input" defaultValue="{{ editLifeType }}"><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label><label class="life-check"><input id="ed-war-important" type="checkbox" defaultChecked="{{ editWarImportant }}"><span>关键 GROWTH · WAR MODE 保留<br><small>仅成长类生效；CORE 自动保留。</small></span></label>
+            <label style="display:block;font-size:11px;color:#697084;">积分规则
+              <select id="ed-task-kind" class="money-input" defaultValue="{{ editTaskKind }}" aria-label="积分规则"><option value="standard">普通积分 · 不限维护额度</option><option value="maintenance">维护积分 · 每日最多15 EXP</option></select>
             </label>
             <label style="display:block;font-size:11px;color:#697084;">备注(可留空)
               <textarea id="ed-note" defaultValue="{{ editNote }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
@@ -1028,8 +1040,8 @@ input[type="date"]{color-scheme:dark;}
             <div class="money-hint">跨度 2、周期“每周”、次数 3，表示每两周完成三次。单次／不限次的跨度不生效。</div>
             <label>任务集<input class="money-input" list="assistant-set-options" value="{{ t.setName }}" onInput="{{ t.onSetName }}" maxlength="80" disabled="{{ assistantBusy }}" aria-label="任务集" placeholder="留空为不分组；不存在的任务集会创建"></label>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
-              <label>类别<select class="money-input" value="{{ t.taskKind }}" onChange="{{ t.onTaskKind }}" disabled="{{ assistantBusy }}" aria-label="任务类别"><option value="standard">普通任务</option><option value="maintenance">生活维护 · 每日封顶</option></select></label>
-              <label>优先级<select class="money-input" value="{{ t.priority }}" onChange="{{ t.onPriority }}" disabled="{{ assistantBusy }}" aria-label="优先级"><option value="p1">紧急且重要</option><option value="p2">紧急不重要</option><option value="p3">不紧急重要</option><option value="p4">不重要不紧急</option></select></label>
+              <label>积分规则<select class="money-input" value="{{ t.taskKind }}" onChange="{{ t.onTaskKind }}" disabled="{{ assistantBusy }}" aria-label="积分规则"><option value="standard">普通积分 · 不限维护额度</option><option value="maintenance">维护积分 · 每日封顶</option></select></label>
+              <label>人生分类<select class="money-input" value="{{ t.lifeType }}" onChange="{{ t.onLifeType }}" disabled="{{ assistantBusy }}" aria-label="人生分类"><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label><label class="life-check"><input type="checkbox" checked="{{ t.warImportant }}" onChange="{{ t.onWarImportant }}" disabled="{{ assistantBusy }}"><span>关键 GROWTH · WAR MODE 保留<br><small>仅成长类生效；CORE 自动保留。</small></span></label>
             </div>
             <label>备注<textarea class="money-input" value="{{ t.note }}" onInput="{{ t.onNote }}" maxlength="2000" disabled="{{ assistantBusy }}" aria-label="备注" style="min-height:50px;resize:vertical;"></textarea></label>
             <sc-if value="{{ t.hasWarning }}" hint-placeholder-val="{{ false }}"><div class="money-hint" style="color:#d3b574;">{{ t.warning }}</div></sc-if>
@@ -1359,7 +1371,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。AI HELP 与新建任务共用新的逐项识别器，预览可编辑，也能补充一句话修正。新增奖励分级、顾虑系数和冷却；生活维护任务每日最多发放 15 EXP，撤销按实际发放回退。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。Life Architecture 将任务分为核心维持、成长推进、系统维护和探索体验。四象限入口可查看四层列表、调整顺序；WAR MODE 只保留 CORE 与标星的关键 GROWTH。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">金额以整数分保存，历史币种不会随切换改变；更新会保留账本和照片。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1600,16 +1612,12 @@ input[type="date"]{color-scheme:dark;}
           <span style="display:block;margin-top:4px;font-size:10px;line-height:1.55;color:#697084;">例如：选“每周”、跨度 2、次数 3 = 每 2 周完成 3 次。单次／不限次忽略跨度。</span>
         </label>
 
-        <label style="display:block;font-size:11px;color:#697084;">优先级
-          <select id="nt-priority" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 8px;color:#aeb6c6;font-size:12px;">
-            <option value="p1">紧急且重要</option><option value="p2">紧急不重要</option><option value="p3">不紧急重要</option><option value="p4" selected>不重要不紧急</option>
-          </select>
-        </label>
+        <label style="display:block;font-size:12px;color:#aeb6c6;">人生分类<select id="nt-life-type" class="money-input"><option value="auto">自动推荐，可自行选择</option><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label><label class="life-check"><input id="nt-war-important" type="checkbox"><span>关键 GROWTH · WAR MODE 保留<br><small>仅成长类生效；CORE 自动保留。</small></span></label>
         <label style="display:block;font-size:11px;color:#697084;">备注(可留空)
           <textarea id="nt-note" placeholder="补充上下文、标准或提醒…" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
         </label>
-        <label>任务类别<select id="nt-task-kind" class="money-input"><option value="standard">普通任务</option><option value="maintenance">生活维护 · 每日最多15 EXP</option></select></label>
-        <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#8b93a4;cursor:pointer;"><input id="nt-core" type="checkbox" style="accent-color:#4ade80;">设为核心微习惯(战时模式显示)</label>
+        <label>积分规则<select id="nt-task-kind" class="money-input"><option value="standard">普通积分 · 不限维护额度</option><option value="maintenance">维护积分 · 每日最多15 EXP</option></select></label>
+
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addTask }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">添加任务</div>
@@ -1654,7 +1662,7 @@ input[type="date"]{color-scheme:dark;}
         <sc-if value="{{ reorderIsTasks }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;align-items:center;gap:8px;border:1px solid #202530;background:#0d0f14;border-radius:9px;padding:9px 10px;">
             <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#8b93a4;">当前: {{ taskSortLabel }}</div>
-            <div onClick="{{ restoreTaskSort }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2f3542;border-radius:7px;padding:5px 9px;" style-hover="border-color:{{ accent }};">按优先级排序</div>
+            <div onClick="{{ restoreTaskSort }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2f3542;border-radius:7px;padding:5px 9px;" style-hover="border-color:{{ accent }};">按人生分类排序</div>
           </div>
         </sc-if>
         <sc-if value="{{ reorderIsOpex }}" hint-placeholder-val="{{ false }}">
@@ -1723,7 +1731,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.11.0';
+const APP_VERSION = 'v1.12.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1789,7 +1797,7 @@ class Component extends DCLogic {
       if (!s.noisePreset) s.noisePreset = '咖啡馆';
       if (s.noiseVol == null) s.noiseVol = 0.5;
       if (!s.milestoneSortMode) s.milestoneSortMode = 'deadline';
-      if (!s.taskSortMode) s.taskSortMode = 'priority';
+      if (!s.taskSortMode) s.taskSortMode = 'life';
       if (!s.taskView) s.taskView = 'list';
       if (!Array.isArray(s.galleryEntries)) s.galleryEntries = [];
       if (!Array.isArray(s.opex)) s.opex = [];
@@ -1809,7 +1817,7 @@ class Component extends DCLogic {
       s.bingoBoards = this.normalizeBingoBoards(s.bingoBoards || {});
       if (s.welcomed == null) s.welcomed = true;
     s.appVersion = APP_VERSION;
-    return ExpProgression.normalize(ExpMoney.normalize(s));
+    return ExpLife.normalize(ExpProgression.normalize(ExpMoney.normalize(s)), this.todayKey());
   }
   defaults() {
     return {
@@ -1860,7 +1868,7 @@ class Component extends DCLogic {
       ],
       tab: 'lists', countdowns: this.defaultCountdowns(),
       pomoPreset: '25', pomoCustomMin: 30, pomoTaskName: '番茄专注', pomoRewardExp: 0, noisePreset: '咖啡馆', noiseVol: 0.5,
-      milestoneSortMode: 'deadline', taskSortMode: 'priority', taskView: 'list', milestoneSets: [], galleryEntries: [],
+      milestoneSortMode: 'deadline', taskSortMode: 'life', taskView: 'list', milestoneSets: [], galleryEntries: [],
     };
   }
   defaultFundCfg() { return { dipA: 0.92, dipB: 0.89, dipC: 0.85, tpA: 1.10, tpB: 1.15, tpC: 1.20, tpD: 1.50, tpE: 1.60, tpF: 1.75 }; }
@@ -1954,7 +1962,7 @@ class Component extends DCLogic {
             setId = set.id;
           }
           tasks.push({ id:nextId++, name:String(t.name).trim(), exp:Number(t.exp), cycle:t.cycle, times:Number(t.times), interval:Number(t.interval),
-            anchorDate:this.todayKey(), core:false, setId, priority:t.priority, taskKind:t.taskKind, note:String(t.note || ''), sourceDescription:t.source || plan.source,
+            anchorDate:this.todayKey(), core:false, setId, priority:t.priority, taskKind:t.taskKind, lifeType:t.lifeType, warImportant:!!t.warImportant, note:String(t.note || ''), sourceDescription:t.source || plan.source,
             done:{}, completionLog:{} });
         }
         return { ...current, tasks, sets, nextId, ...(remember ? { taskAssistantPrefs:ExpTaskAssistant.remember(current.taskAssistantPrefs, selected) } : {}) };
@@ -1978,10 +1986,11 @@ class Component extends DCLogic {
       onAssistantCorrection:e => this.setState({ assistantCorrection:e.target.value }), onAssistantRemember:e => this.setState({ assistantRemember:e.target.checked }),
       refineAssistantPlan:() => this.refineAssistantPlan(), closeTaskPlan:() => this.closeTaskPlan(), applyTaskPlan:() => this.applyTaskPlan(),
       assistantRows:plan.tasks.map((t, index) => ({
-        ...t, key:index, indexLabel:index + 1, summary:(t.taskKind === 'maintenance' ? '生活维护' : '普通任务') + ' · ' + t.exp + ' EXP · ' + ({ daily:'每日', weekly:'每周', monthly:'每月', once:'单次', free:'不限次' }[t.cycle] || '请选择') + ' · 跨度 ' + t.interval + ' / 次数 ' + t.times,
+        ...t, key:index, indexLabel:index + 1, summary:t.lifeType + ' · ' + (t.taskKind === 'maintenance' ? '限额积分' : '普通积分') + ' · ' + t.exp + ' EXP · ' + ({ daily:'每日', weekly:'每周', monthly:'每月', once:'单次', free:'不限次' }[t.cycle] || '请选择') + ' · 跨度 ' + t.interval + ' / 次数 ' + t.times,
         warning:(t.warnings || []).join(' '), hasWarning:!!(t.warnings || []).length,
         errors:ExpTaskAssistant.valid(t).join(' '), hasErrors:!!ExpTaskAssistant.valid(t).length,
-        ...Object.fromEntries(['name','exp','cycle','times','interval','priority','taskKind','setName','note'].map(f => ['on' + f[0].toUpperCase() + f.slice(1), e => this.updateAssistantTask(index, f, e.target.value)])),
+        ...Object.fromEntries(['name','exp','cycle','times','interval','priority','taskKind','setName','note','lifeType'].map(f => ['on' + f[0].toUpperCase() + f.slice(1), e => this.updateAssistantTask(index, f, e.target.value)])),
+        onWarImportant:e => this.updateAssistantTask(index, 'warImportant', e.target.checked),
         onSelect:e => this.updateAssistantTask(index, 'selected', e.target.checked)
       })),
       aiHelpInput:st.aiHelpInput || '', onAiHelpInput:e => this.setState({ aiHelpInput:e.target.value }),
@@ -2057,9 +2066,9 @@ class Component extends DCLogic {
       const channel = new MessageChannel();
       const timer = setTimeout(() => { channel.port1.close(); reject(new Error('新版保存保护尚未就绪，请检查更新后重试。')); }, 2500);
       channel.port1.onmessage = e => { clearTimeout(timer); channel.port1.close(); resolve(e.data); };
-      worker.postMessage({ type: 'CHECK_MONEY_CLIENTS', protocol: 2 }, [channel.port2]);
+      worker.postMessage({ type: 'CHECK_MONEY_CLIENTS', protocol: 3 }, [channel.port2]);
     });
-    if (!result || result.protocol !== 2) throw new Error('新版保存保护尚未就绪，请检查更新后重试。');
+    if (!result || result.protocol !== 3) throw new Error('新版保存保护尚未就绪，请检查更新后重试。');
     if (result.legacyCount) throw new Error('检测到旧版窗口。请关闭或刷新其他 EXP BANK 窗口，再同步最新数据；本次操作未提交。');
   }
   writeState(build, ui = {}, replace = false, allowBlocked = false) {
@@ -2073,7 +2082,7 @@ class Component extends DCLogic {
             this.setState({ moneyConflict: true });
             throw new Error('另一页已保存新数据。当前操作未提交，请同步最新数据后重试');
           }
-          const candidate = ExpProgression.normalize(ExpMoney.normalize(build()));
+          const candidate = ExpLife.normalize(ExpProgression.normalize(ExpMoney.normalize(build())), this.todayKey());
           const json = JSON.stringify(this.persistentState(candidate));
           localStorage.setItem('exp-bank-v1', json);
           this._persistedRaw = json;
@@ -2330,7 +2339,12 @@ class Component extends DCLogic {
     if (el) el.value = ''; if (p) p.value = '';
   }
   openQuadrant() { this.setState({ quadrantOpen: true }); }
-  closeQuadrant() { this.setState({ quadrantOpen: false }); }
+  closeQuadrant() { this.setState({ quadrantOpen: false, lifeReorder:false }); }
+  moveLifeTask(id, direction) { return this.writeState(() => ExpLife.move(this.state, id, direction)); }
+  editLifeTask(id) { this.setState({ quadrantOpen:false, lifeReorder:false }); this.openEdit('task',id); }
+  completeLifeTask(id) { this.setState({ quadrantOpen:false, lifeReorder:false }); this.openTaskFocus(id); }
+  setLifeFilter(type) { this.setState({ lifeFilter:ExpLife.isType(type) ? type : 'ALL' }); }
+
   openNewTask() { this.setState({ newTaskOpen: true }); }
   openNewSet() { this.setState({ newSetOpen: true }); }
   openNewReward() { this.setState({ newRewardOpen: true, rewardPricingPreview:'' }); }
@@ -2425,9 +2439,8 @@ class Component extends DCLogic {
     });
   }
   restoreMilestoneSort() { this.save({ milestoneSortMode: 'deadline' }); }
-  priorityRank(p) { return ({ p1: 1, p2: 2, p3: 3, p4: 4 })[p] || 4; }
-  sortTasksByPriority(list) { return [...(list || [])].sort((a, b) => this.priorityRank(a.priority) - this.priorityRank(b.priority)); }
-  restoreTaskSort() { this.save({ taskSortMode: 'priority' }); }
+  sortTasksByPriority(list) { return ExpLife.sorted(list); }
+  restoreTaskSort() { this.save({ taskSortMode: 'life' }); }
   sortOpexByDate(list) { return [...(list || [])].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts || 0) - (a.ts || 0))); }
   restoreOpexSort() { this.save({ opexSortMode: 'date' }); }
   startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null, batchSel: [], roMode: 'drag' }); }
@@ -2526,7 +2539,7 @@ class Component extends DCLogic {
     if (!targetEl) return;
     const arr = (kind === 'milestones' && (this.state.milestoneSortMode || 'deadline') === 'deadline')
       ? this.sortMilestonesByDeadline(this.state.milestones)
-      : (kind === 'tasks' && (this.state.taskSortMode || 'priority') === 'priority')
+      : (kind === 'tasks' && (this.state.taskSortMode || 'life') !== 'manual')
         ? this.sortTasksByPriority(this.state.tasks)
         : (kind === 'opex' && (this.state.opexSortMode || 'date') === 'date')
           ? this.sortOpexByDate(this.state.opex)
@@ -2770,11 +2783,7 @@ class Component extends DCLogic {
   onNoiseFile(e) { const file = e.target.files && e.target.files[0]; if (!file) return; const url = URL.createObjectURL(file); this.stopNoiseNodes(); const el = new Audio(url); el.loop = true; el.volume = this.state.noiseVol ?? 0.5; el.play(); this.ensureAudio().mediaEl = el; this.setState({ noisePreset: 'custom', noiseOn: true, noiseFileName: file.name }); }
   setNoiseVol(v) { const vol = parseFloat(v); this.setState({ noiseVol: vol }); if (this._au) { if (this._au.gain) this._au.gain.gain.value = vol; if (this._au.mediaEl) this._au.mediaEl.volume = vol; } }
   sevenAM(t) { const d = new Date(t); d.setHours(7, 0, 0, 0); return d.getTime(); }
-  pruneOnce() {
-    const today = this.todayKey();
-    const keep = this.state.tasks.filter(t => !(t.cycle === 'once' && (t.done && t.done['once']) && t.lastDone && t.lastDone < today));
-    if (keep.length !== this.state.tasks.length) this.save({ tasks: keep });
-  }
+  pruneOnce() { /* v1.12 keeps completed one-off tasks and their history; only explicit deletion removes them. */ }
   applyInterest() {
     const rate = (this.state.cfgRate ?? this.props.interestRate ?? 5) / 100;
     const st = this.state, now = Date.now();
@@ -2951,12 +2960,13 @@ class Component extends DCLogic {
       const newCycle = document.getElementById('ed-cycle').value;
       const newInterval = ['daily','weekly','monthly'].includes(newCycle) ? this.readTaskInterval('ed-interval') : 1;
       const anchor = this.todayKey();
-      this.save({ editing: null, tasks: this.state.tasks.map(x => {
+      return this.save({ editing: null, tasks: this.state.tasks.map(x => {
         if (x.id !== ed.id) return x;
         const ruleChanged = x.cycle !== newCycle || this.taskInterval(x) !== newInterval;
-        const updated = { ...x, name: name || x.name, exp: Math.max(0, expNum('ed-exp', x.exp)), times: Math.max(1, num('ed-times', x.times || 1)),
+        const updated = { ...ExpLife.changed(x, this.v('ed-life-type') || x.lifeType, this.state.tasks), warImportant:!!(document.getElementById('ed-war-important') || {}).checked, name: name || x.name, exp: Math.max(0, expNum('ed-exp', x.exp)), times: Math.max(1, num('ed-times', x.times || 1)),
           setId, cycle: newCycle, interval: newInterval, anchorDate: ruleChanged ? anchor : (x.anchorDate || anchor),
           ...(ruleChanged ? { streak: 0, lastPeriod: '' } : {}),
+          ...(ruleChanged || num('ed-times', x.times || 1) !== x.times ? { lifeStatsFrom:anchor } : {}),
           priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', taskKind:this.v('ed-task-kind') || x.taskKind || 'standard', note: this.v('ed-note') };
         if (ruleChanged) {
           const currentKey = this.periodKey(updated);
@@ -3093,7 +3103,7 @@ class Component extends DCLogic {
       return ok;
     });
   }
-  toggleCore(id) { this.save({ tasks: this.state.tasks.map(x => x.id === id ? { ...x, core: !x.core } : x) }); }
+  toggleCore(id) { return this.writeState(() => ({ ...this.state, tasks:this.state.tasks.map(x => x.id === id && x.lifeType === 'GROWTH' ? { ...x, warImportant:!x.warImportant } : x) })); }
   abandon(id) {
     const t = this.state.tasks.find(x => x.id === id), k = this.periodKey(t); if (!k) return;
     if (t.abandoned && t.abandoned[k]) return;
@@ -3110,7 +3120,7 @@ class Component extends DCLogic {
   closeUpdateNote() { this.setState({ updateNoteOpen: false }); }
   async checkUpdate() {
     if (this.state.updateBusy) return;
-    if (['newOpexOpen','newStashOpen','editing','categoryOpen','stashDetailId','newTaskOpen','newSetOpen','newRewardOpen','newMilestoneOpen','newCountdownOpen','newDaylineOpen','reflectionOpen','galleryEdit','backupOpen','reorderOpen','aiHelpOpen','assistantOpen'].some(k => this.state[k])) {
+    if (['newOpexOpen','newStashOpen','editing','categoryOpen','stashDetailId','newTaskOpen','newSetOpen','newRewardOpen','newMilestoneOpen','newCountdownOpen','newDaylineOpen','reflectionOpen','galleryEdit','backupOpen','reorderOpen','aiHelpOpen','assistantOpen','quadrantOpen'].some(k => this.state[k])) {
       this.setState({ updateMessage: '请先完成或关闭当前操作窗口，再检查更新；当前输入已保留。' }); return;
     }
     this.setState({ updateBusy: true, updateMessage: '正在检查更新，账本和照片保留…' });
@@ -3291,8 +3301,10 @@ class Component extends DCLogic {
     const name = this.v('nt-name'); if (!name) return false;
     const draft = { name, exp:this.readExp('nt-exp',10), cycle:this.v('nt-cycle') || 'daily', times:Number(this.v('nt-times') || 1),
       interval:Number(this.v('nt-interval') || 1), priority:this.v('nt-priority') || 'p4', taskKind:this.v('nt-task-kind') || 'standard', note:this.v('nt-note'), setName:'' };
+    draft.lifeType = ExpLife.isType(this.v('nt-life-type')) ? this.v('nt-life-type') : ExpLife.infer({ ...draft, setName:(this.state.sets.find(s=>String(s.id)===this.v('nt-set')) || {}).name });
+    draft.warImportant = !!(document.getElementById('nt-war-important') || {}).checked;
     const errors = ExpTaskAssistant.valid(draft); if (errors.length) { this.setState({ newTaskAiMsg:errors[0], newTaskAiMsgColor:'#fbbf24' }); return false; }
-    const setId = this.v('nt-set') ? Number(this.v('nt-set')) : null, core = !!(document.getElementById('nt-core') || {}).checked;
+    const setId = this.v('nt-set') ? Number(this.v('nt-set')) : null, core = false;
     return this.writeState(() => ({ ...this.state, tasks:[...this.state.tasks, { ...draft, id:this.state.nextId, core, setId, anchorDate:this.todayKey(), done:{}, completionLog:{} }], nextId:this.state.nextId+1 }), { newTaskOpen:false });
   }
   async addReward() {
@@ -3451,7 +3463,6 @@ class Component extends DCLogic {
     const cardTop = skin ? skin.cardTop : tier.cardTop, cardBot = skin ? skin.cardBot : tier.cardBot;
     const rowTop = skin ? skin.rowTop : tier.rowTop, rowBot = skin ? skin.rowBot : tier.rowBot;
     const pageBg = skin ? skin.pageBg : 'radial-gradient(1100px 480px at 75% -8%,rgba(139,92,246,0.10),transparent 62%),radial-gradient(900px 420px at 8% 4%,rgba(96,165,250,0.07),transparent 60%),radial-gradient(1400px 700px at 50% 115%,rgba(139,92,246,0.05),transparent 65%),linear-gradient(180deg,#0d0e14 0%,#0a0b10 55%,#0b0c12 100%)';
-    const quota = this.props.coreQuota ?? 3;
     const st = this.state;
     const pend = st.pending;
     const bingoMinExp = st.bingoMinExp || { day: 80, week: 150, month: 300 };
@@ -3498,7 +3509,7 @@ class Component extends DCLogic {
       const abandonedNow = k ? !!(t.abandoned && t.abandoned[k]) : false;
       const abandonPending = pk === 'abandon';
       const showActions = !doneNow && !abandonedNow && !tp && !abandonPending;
-      const pmeta = ({ p1: { label: '紧急且重要', color: '#f87171', bg: 'rgba(248,113,113,0.10)' }, p2: { label: '紧急不重要', color: '#fb923c', bg: 'rgba(251,146,60,0.10)' }, p3: { label: '不紧急重要', color: '#fbbf24', bg: 'rgba(251,191,36,0.10)' }, p4: { label: '不重要不紧急', color: '#60a5fa', bg: 'rgba(96,165,250,0.10)' } })[t.priority || 'p4'];
+      const pmeta = { ...ExpLife.META[t.lifeType], label:t.lifeType };
       const maintenance = t.taskKind === 'maintenance';
       const entries = maintenance ? ((st.maintenanceDays[this.todayKey()] || {}).entries || []).filter(e=>e.taskId===t.id && !e.reversed) : [];
       const actual = entries.length ? entries[entries.length-1].awardedMinor / 100 : null;
@@ -3510,7 +3521,7 @@ class Component extends DCLogic {
         cycleLabel: (t.taskKind === 'maintenance' ? '维护 · ' : '') + (k ? `${interval > 1 ? ('每 ' + interval + ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle])) : cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle]),
         hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
-        starColor: t.core ? '#fbbf24' : '#2b3040',
+        canStar:t.lifeType === 'GROWTH', starColor: t.warImportant ? '#b99ae5' : '#6b7385', warStarLabel:(t.warImportant ? '取消关键成长：' : '设为关键成长：') + t.name,
         onDone: e => { e.stopPropagation(); this.openTaskFocus(t.id); },
         onAbandon: e => { e.stopPropagation(); this.abandon(t.id); },
         onUnabandon: e => { e.stopPropagation(); this.undo(); },
@@ -3519,18 +3530,31 @@ class Component extends DCLogic {
         onEdit: () => this.openEdit('task', t.id), onCalendar: e => { e.stopPropagation(); this.openTaskCalendar(t.id); }, onUndo: e => { e.stopPropagation(); this.undo(); },
         stop: e => e.stopPropagation(), isHeader: false, isTask: true };
     };
-    const taskBase = (st.taskSortMode || 'priority') === 'manual' ? st.tasks : this.sortTasksByPriority(st.tasks);
+    const taskBase = (st.taskSortMode || 'life') === 'manual' ? st.tasks : this.sortTasksByPriority(st.tasks);
     const all = taskBase.map(dec);
-    const coreAll = all.filter(t => t.core);
-    const coreDone = coreAll.filter(t => t.doneNow).length;
+    const coreAll = ExpLife.sorted(all).filter(t => ExpProgression.inWarMode(t) && !(t.cycle === 'once' && t.doneNow && t.lastDone !== this.todayKey()));
+    const minimumTasks = coreAll.filter(t=>t.cycle !== 'free');
+    const coreDone = minimumTasks.filter(t => t.doneNow).length;
+    const lifeFilter = ExpLife.isType(st.lifeFilter) ? st.lifeFilter : 'ALL';
+    const shown = lifeFilter === 'ALL' ? all : all.filter(t=>t.lifeType===lifeFilter);
+    const lifeGroups = ExpLife.TYPES.map(type => {
+      const members = ExpLife.sorted(all,type), visible=st.warMode ? members.filter(t=>coreAll.some(x=>x.id===t.id)) : members;
+      const stats=ExpLife.stats(visible,new Date(),(t,d)=>this.periodKey(t,d));
+      return { type, ...ExpLife.META[type], count:visible.length, empty:!visible.length,
+        todayLabel:stats.todayTotal ? '今日完成 ' + stats.todayDone + '/' + stats.todayTotal : '今日无每日任务',
+        weekLabel:stats.weekRate == null ? '本周完成率 —' : '本周完成率 ' + stats.weekRate + '%',
+        weekDetail:'日／周目标 ' + stats.weekDone + '/' + stats.weekTotal + ' 次',
+        tasks:visible.map(t=>({ ...t, statusLabel:t.doneNow ? '已完成本周期' : t.abandonedNow ? '已放弃本周期' : t.cycle==='free' ? '自由打卡' : '待完成',
+          onEdit:()=>this.editLifeTask(t.id), onDone:()=>this.completeLifeTask(t.id),
+          upDisabled:members[0]?.id===t.id, downDisabled:members.at(-1)?.id===t.id,
+          upLabel:t.name + ' 上移', downLabel:t.name + ' 下移', onUp:()=>this.moveLifeTask(t.id,-1), onDown:()=>this.moveLifeTask(t.id,1) })) };
+    }).filter(g=>!st.warMode || g.type==='CORE' || g.type==='GROWTH');
+    const lifeFilters = ['ALL',...ExpLife.TYPES].map(type=>({type,label:type==='ALL' ? '全部' : ExpLife.META[type].label,active:type===lifeFilter, onClick:()=>this.setLifeFilter(type)}));
+
     const setsArr = this.normalizeHierarchy(st.sets || []);
     const milestoneSetsArr = this.normalizeHierarchy(st.milestoneSets || []);
     const setOptions = this.hierarchyOptions(setsArr);
     const milestoneSetOptions = this.hierarchyOptions(milestoneSetsArr);
-    const quadrantP1 = all.filter(t => (t.priority || 'p4') === 'p1');
-    const quadrantP2 = all.filter(t => (t.priority || 'p4') === 'p2');
-    const quadrantP3 = all.filter(t => (t.priority || 'p4') === 'p3');
-    const quadrantP4 = all.filter(t => (t.priority || 'p4') === 'p4');
     const setChildren = (list, pid) => list.filter(x => (x.parentId ?? null) === (pid ?? null));
     const setSubtreeIds = (list, id) => { const out = new Set([id]); this.hierarchyDescendants(list, id).forEach(x => out.add(x)); return out; };
     let taskRows;
@@ -3540,9 +3564,10 @@ class Component extends DCLogic {
       taskRows = [];
       const grouped = {}; setsArr.forEach(x => grouped[x.id] = []);
       const ungrouped = [];
-      all.forEach(t => { if (t.setId != null && grouped[t.setId]) grouped[t.setId].push(t); else ungrouped.push(t); });
+      shown.forEach(t => { if (t.setId != null && grouped[t.setId]) grouped[t.setId].push(t); else ungrouped.push(t); });
       const walkSets = (pid, depth) => setChildren(setsArr, pid).forEach(set => {
-        const ids = setSubtreeIds(setsArr, set.id), members = all.filter(t => ids.has(t.setId)), done = members.filter(m => m.doneNow).length;
+        const ids = setSubtreeIds(setsArr, set.id), members = shown.filter(t => ids.has(t.setId)), done = members.filter(m => m.doneNow).length;
+        if (lifeFilter !== 'ALL' && !members.length) return;
         taskRows.push({ rowKey: 'set-' + set.id, isHeader: true, isTask: false, id: set.id, name: set.name, indent: (depth * 14) + 'px',
           countLabel: done + '/' + members.length, collapsed: !!set.collapsed, chevron: set.collapsed ? '›' : '‹',
           onToggle: e => { e.stopPropagation(); this.toggleSet(set.id); },
@@ -3803,9 +3828,10 @@ class Component extends DCLogic {
     const editOpen = !!editItem;
     return { accent, exp: st.exp, warMode: st.warMode, warOff: !st.warMode,
       toggleWar: () => this.save({ warMode: !st.warMode }),
-      tasks: st.warMode ? coreAll : all, taskRows, setOptions, milestoneSetOptions, setParentOptions: this.hierarchyOptions(setsArr), milestoneSetParentOptions: this.hierarchyOptions(milestoneSetsArr), coreDone, coreTotal: coreAll.length,
+      tasks: st.warMode ? coreAll : shown, taskRows, setOptions, milestoneSetOptions, setParentOptions: this.hierarchyOptions(setsArr), milestoneSetParentOptions: this.hierarchyOptions(milestoneSetsArr), coreDone, coreTotal: minimumTasks.length,
       quadrantOpen: !!st.quadrantOpen, openQuadrant: () => this.openQuadrant(), closeQuadrant: () => this.closeQuadrant(),
-      quadrantP1, quadrantP2, quadrantP3, quadrantP4, quadrantP1Count: quadrantP1.length, quadrantP2Count: quadrantP2.length, quadrantP3Count: quadrantP3.length, quadrantP4Count: quadrantP4.length, quadrantP1Empty: quadrantP1.length === 0, quadrantP2Empty: quadrantP2.length === 0, quadrantP3Empty: quadrantP3.length === 0, quadrantP4Empty: quadrantP4.length === 0,
+      lifeGroups, lifeFilters, lifeReorder:!!st.lifeReorder, lifeSortLabel:st.lifeReorder ? '完成排序' : '调整顺序', toggleLifeSort:()=>this.setState({lifeReorder:!st.lifeReorder}), warEmpty:st.warMode && !coreAll.length,
+
       addSet: () => this.addSet(), addMilestoneSet: () => this.addMilestoneSet(),
       momentumMsg: st.momentumMsg || '', momentumShow: !!st.momentumMsg,
       aiHelpOpen: !!st.aiHelpOpen, aiHelpMsg: st.aiHelpMsg || '', aiHelpMsgShow: !!st.aiHelpMsg, aiHelpMsgColor: st.aiHelpMsgColor || '#8b93a4', openAiHelp: () => this.openAiHelp(), closeAiHelp: () => this.closeAiHelp(), runAiHelp: () => this.runAiHelp(), newTaskAiMsg: st.newTaskAiMsg || '', newTaskAiMsgShow: !!st.newTaskAiMsg, newTaskAiMsgColor: st.newTaskAiMsgColor || '#8b93a4', runNewTaskAI: () => this.runNewTaskAI(),
@@ -3816,7 +3842,7 @@ class Component extends DCLogic {
       reorderIsOpex: (st.reorderKind || 'tasks') === 'opex', opexSortLabel: (st.opexSortMode || 'date') === 'manual' ? '手动排序' : '日期优先', restoreOpexSort: () => this.restoreOpexSort(),
       reorderIsMilestones: (st.reorderKind || 'tasks') === 'milestones', milestoneSortLabel: (st.milestoneSortMode || 'deadline') === 'manual' ? '手动排序' : '截止日期优先',
       restoreMilestoneSort: () => this.restoreMilestoneSort(),
-      taskSortLabel: (st.taskSortMode || 'priority') === 'manual' ? '手动排序' : '优先级优先', restoreTaskSort: () => this.restoreTaskSort(),
+      taskSortLabel: (st.taskSortMode || 'life') === 'manual' ? '手动排序' : '人生分类排序', restoreTaskSort: () => this.restoreTaskSort(),
       roMode: st.roMode || 'drag', roDragMode: (st.roMode || 'drag') === 'drag', roSelectMode: (st.roMode || 'drag') === 'select',
       setRoDrag: () => this.setRoMode('drag'), setRoSelect: () => this.setRoMode('select'),
       roDragBg: (st.roMode || 'drag') === 'drag' ? btnGrad : '#161a22',
@@ -3834,7 +3860,7 @@ class Component extends DCLogic {
       batchSetOptions: ((st.reorderKind || 'tasks') === 'milestones' ? this.hierarchyOptions(milestoneSetsArr) : this.hierarchyOptions(setsArr)).map(s => ({ id: s.id, name: s.name })),
       batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
       startReorder: () => this.startReorder('tasks'), startReorderSets: () => this.startReorder('sets'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderMilestoneSets: () => this.startReorder('milestoneSets'), startReorderFunds: () => this.startReorder('funds'), startReorderOpex: () => this.startReorder('opex'), startReorderStash: () => this.startReorder('stash'), closeReorder: () => this.closeReorder(),
-      fullDone: st.warMode && coreAll.length > 0 && coreDone === coreAll.length,
+      fullDone: st.warMode && minimumTasks.length > 0 && coreDone === minimumTasks.length,
       rewards, milestones, milestoneRows, ledger, showLedger: this.props.showLedger ?? true,
       reflectionOpen: !!st.reflectionOpen, reflectionTargetName: st.reflectionTarget ? st.reflectionTarget.name : '', reflectionTitle: st.reflectionTarget && st.reflectionTarget.kind === 'reward' ? '兑换 · 留下这一刻 // REWARD MEMORY' : '完成 · 留下这一刻 // REFLECTION', reflectionHint: st.reflectionTarget && st.reflectionTarget.kind === 'reward' ? '奖励已经兑换，EXP 已正常扣除。这里完全可选：记两句话，或留一张照片给未来的自己。' : 'EXP 已经正常入账。这里完全可选：记两句话，或留一张照片给未来的自己。', reflectionHasImage: !!st.reflectionPreview, reflectionNoImage: !st.reflectionPreview, reflectionPreview: st.reflectionPreview || '',
       pickReflectionImage: () => this.pickReflectionImage(), skipReflection: () => this.skipReflection(), saveReflection: () => this.saveReflection(),
@@ -3967,6 +3993,7 @@ class Component extends DCLogic {
       editName: editItem ? editItem.name : '',
       editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '', editInterval: editItem ? this.taskInterval(editItem) : 1,
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
+      editLifeType:editItem && editItem.lifeType || 'EXPLORATION', editWarImportant:!!(editItem && editItem.warImportant),
       editPriority: editItem ? (editItem.priority || 'p4') : 'p4', editNote: editItem ? (editItem.note || '') : '',
       editCost: editItem ? (editItem.baseCost ?? editItem.cost ?? '') : '',
       editCapCycle: editItem ? (editItem.capCycle || 'daily') : 'daily', editCapInterval: editItem ? (editItem.capInterval || 1) : 1, editCapTimes: editItem ? (editItem.capTimes || 1) : 1,

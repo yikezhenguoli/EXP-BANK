@@ -59,7 +59,7 @@ try {
   await page.getByText('识别并预览',{exact:true}).click(); rows=page.locator('.assistant-row');
   assert.equal(await rows.nth(0).getByLabel('周期跨度',{exact:true}).inputValue(),'2');
   assert.equal(await rows.nth(1).getByLabel('每次 EXP',{exact:true}).inputValue(),'6');
-  assert.equal(await rows.nth(1).locator('input[type=checkbox]').isChecked(),false);
+  assert.equal(await rows.nth(1).getByRole('checkbox',{name:/^创建第/}).isChecked(),false);
   await page.getByRole('button',{name:'返回修改描述',exact:true}).click();
   assert.equal(await page.locator('#nt-name').inputValue(),'手动表单未提交的草稿');
   await page.getByText('识别并预览',{exact:true}).click();
