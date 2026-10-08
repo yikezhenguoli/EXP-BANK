@@ -212,9 +212,8 @@ input[type="date"]{color-scheme:dark;}
         <div onClick="{{ startReorder }}" title="批量编辑任务与任务集：排序 + 归集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:7px 12px;" style-hover="border-color:{{ accent }};">批量编辑</div>
       </div>
       </sc-if>
-      <div class="money-line" style="padding:8px 0;flex-wrap:wrap;"><div class="money-hint" style="flex:1;">{{ maintenanceSummary }}</div><button class="money-btn" onClick="{{ openMaintenancePlan }}">+ 维护任务</button></div>
       <sc-if value="{{ warOff }}" hint-placeholder-val="{{ true }}"><div class="life-filters" role="group" aria-label="人生分类筛选"><sc-for list="{{ lifeFilters }}" as="f" hint-placeholder-count="5"><button class="life-filter" aria-pressed="{{ f.active }}" onClick="{{ f.onClick }}">{{ f.label }}</button></sc-for></div></sc-if>
-      <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div class="life-war" role="status"><strong>WAR MODE ACTIVE</strong><div>今日最低目标 · {{ coreDone }}/{{ coreTotal }}</div><p>CORE + 关键 GROWTH。每日事项按今天，其余按各自周期；不限次事项不计入目标数。</p><sc-if value="{{ fullDone }}" hint-placeholder-val="{{ false }}"><p>最低目标已达成，可以停在这里。</p></sc-if><sc-if value="{{ warEmpty }}" hint-placeholder-val="{{ false }}"><p>还没有最低目标。关闭 WAR MODE 后，将必要事项归入 CORE，或为 GROWTH 标星。</p></sc-if></div></sc-if>
+      <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div class="life-war" role="status"><strong>WAR MODE ACTIVE</strong><div>今日最低目标 · {{ coreDone }}/{{ coreTotal }}</div><p>只显示 CORE。每日事项按今天，其余按各自周期；不限次事项不计入目标数。</p><sc-if value="{{ fullDone }}" hint-placeholder-val="{{ false }}"><p>最低目标已达成，可以停在这里。</p></sc-if><sc-if value="{{ warEmpty }}" hint-placeholder-val="{{ false }}"><p>还没有最低目标。关闭 WAR MODE 后，把真正不可缺少的事项归入 CORE。</p></sc-if></div></sc-if>
       <sc-for list="{{ taskRows }}" as="t" hint-placeholder-count="4">
         <sc-if value="{{ t.isDivider }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;align-items:center;gap:10px;margin:13px 2px 5px;min-height:22px;">
@@ -234,7 +233,6 @@ input[type="date"]{color-scheme:dark;}
         </sc-if>
         <sc-if value="{{ t.isTask }}" hint-placeholder-val="{{ true }}">
         <div data-task-id="{{ t.id }}" onClick="{{ t.onEdit }}" title="点击编辑此任务" style="cursor:pointer;display:flex;flex-wrap:{{ rowWrap }};justify-content:{{ rowJustify }};align-items:center;gap:8px;padding:{{ rowPad }};margin-left:{{ t.indent }};border:1px solid transparent;border-radius:11px;background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.18),rgba(255,255,255,0.04) 45%,rgba(255,255,255,0.02)) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05);" style-hover="box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 0 0 1px {{ accent }},0 10px 26px rgba(0,0,0,0.5);">
-          <sc-if value="{{ t.canStar }}" hint-placeholder-val="{{ false }}"><button onClick="{{ t.onToggleCore }}" aria-label="{{ t.warStarLabel }}" title="{{ t.warStarLabel }}" style="cursor:pointer;background:transparent;border:0;font-size:16px;color:{{ t.starColor }};width:32px;min-height:36px;flex-shrink:0;text-align:center;">★</button></sc-if>
           <sc-if value="{{ t.isFormed }}" hint-placeholder-val="{{ false }}">
             <div style="width:3px;align-self:stretch;flex-shrink:0;border-radius:2px;background:{{ tierGrad }};box-shadow:0 0 12px {{ accent }};"></div>
           </sc-if>
@@ -809,7 +807,7 @@ input[type="date"]{color-scheme:dark;}
       <div class="money-panel life-panel" role="dialog" aria-label="Life Architecture Overview" aria-modal="true" onClick="{{ stopClick }}">
         <div class="money-line"><div style="flex:1;"><div class="money-title">LIFE ARCHITECTURE</div><div class="money-hint">四层人生总览 · 分类不改变 EXP 规则</div></div><button class="money-btn" onClick="{{ closeQuadrant }}" aria-label="关闭人生总览">关闭</button></div>
         <div class="money-line"><div class="money-hint" style="flex:1;">按自己的节奏安排，不必每天完成所有层。</div><button class="money-btn" onClick="{{ toggleLifeSort }}">{{ lifeSortLabel }}</button></div>
-        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div class="money-hint">WAR MODE ACTIVE · 仅显示 CORE 和关键 GROWTH</div></sc-if>
+        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div class="money-hint">WAR MODE ACTIVE · 仅显示 CORE 最低运行目标</div></sc-if>
         <sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
         <div class="life-grid"><sc-for list="{{ lifeGroups }}" as="g" hint-placeholder-count="4"><section class="life-group" aria-label="{{ g.type }}" data-life-type="{{ g.type }}">
           <div class="money-line"><div class="life-heading" style="color:{{ g.color }};">{{ g.type }}</div><div class="life-count">{{ g.count }} 项</div></div>
@@ -882,10 +880,7 @@ input[type="date"]{color-scheme:dark;}
                 <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
               </select>
             </label>
-            <label style="display:block;font-size:12px;color:#aeb6c6;">人生分类<select id="ed-life-type" class="money-input" defaultValue="{{ editLifeType }}"><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label><label class="life-check"><input id="ed-war-important" type="checkbox" defaultChecked="{{ editWarImportant }}"><span>关键 GROWTH · WAR MODE 保留<br><small>仅成长类生效；CORE 自动保留。</small></span></label>
-            <label style="display:block;font-size:11px;color:#697084;">积分规则
-              <select id="ed-task-kind" class="money-input" defaultValue="{{ editTaskKind }}" aria-label="积分规则"><option value="standard">普通积分 · 不限维护额度</option><option value="maintenance">维护积分 · 每日最多15 EXP</option></select>
-            </label>
+            <label style="display:block;font-size:12px;color:#aeb6c6;">人生分类<select id="ed-life-type" class="money-input" defaultValue="{{ editLifeType }}"><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label>
             <label style="display:block;font-size:11px;color:#697084;">备注(可留空)
               <textarea id="ed-note" defaultValue="{{ editNote }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 10px;color:#e6e9f0;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
             </label>
@@ -1039,10 +1034,7 @@ input[type="date"]{color-scheme:dark;}
             </div>
             <div class="money-hint">跨度 2、周期“每周”、次数 3，表示每两周完成三次。单次／不限次的跨度不生效。</div>
             <label>任务集<input class="money-input" list="assistant-set-options" value="{{ t.setName }}" onInput="{{ t.onSetName }}" maxlength="80" disabled="{{ assistantBusy }}" aria-label="任务集" placeholder="留空为不分组；不存在的任务集会创建"></label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
-              <label>积分规则<select class="money-input" value="{{ t.taskKind }}" onChange="{{ t.onTaskKind }}" disabled="{{ assistantBusy }}" aria-label="积分规则"><option value="standard">普通积分 · 不限维护额度</option><option value="maintenance">维护积分 · 每日封顶</option></select></label>
-              <label>人生分类<select class="money-input" value="{{ t.lifeType }}" onChange="{{ t.onLifeType }}" disabled="{{ assistantBusy }}" aria-label="人生分类"><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label><label class="life-check"><input type="checkbox" checked="{{ t.warImportant }}" onChange="{{ t.onWarImportant }}" disabled="{{ assistantBusy }}"><span>关键 GROWTH · WAR MODE 保留<br><small>仅成长类生效；CORE 自动保留。</small></span></label>
-            </div>
+            <label>人生分类<select class="money-input" value="{{ t.lifeType }}" onChange="{{ t.onLifeType }}" disabled="{{ assistantBusy }}" aria-label="人生分类"><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label>
             <label>备注<textarea class="money-input" value="{{ t.note }}" onInput="{{ t.onNote }}" maxlength="2000" disabled="{{ assistantBusy }}" aria-label="备注" style="min-height:50px;resize:vertical;"></textarea></label>
             <sc-if value="{{ t.hasWarning }}" hint-placeholder-val="{{ false }}"><div class="money-hint" style="color:#d3b574;">{{ t.warning }}</div></sc-if>
             <sc-if value="{{ t.hasErrors }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ t.errors }}</div></sc-if>
@@ -1371,7 +1363,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。Life Architecture 将任务分为核心维持、成长推进、系统维护和探索体验。四象限入口可查看四层列表、调整顺序；WAR MODE 只保留 CORE 与标星的关键 GROWTH。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。Life Architecture 将任务分为核心维持、成长推进、系统维护和探索体验。四象限入口可查看四层列表、调整顺序；WAR MODE 聚焦 CORE 最低运行目标。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">金额以整数分保存，历史币种不会随切换改变；更新会保留账本和照片。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1612,11 +1604,10 @@ input[type="date"]{color-scheme:dark;}
           <span style="display:block;margin-top:4px;font-size:10px;line-height:1.55;color:#697084;">例如：选“每周”、跨度 2、次数 3 = 每 2 周完成 3 次。单次／不限次忽略跨度。</span>
         </label>
 
-        <label style="display:block;font-size:12px;color:#aeb6c6;">人生分类<select id="nt-life-type" class="money-input"><option value="auto">自动推荐，可自行选择</option><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label><label class="life-check"><input id="nt-war-important" type="checkbox"><span>关键 GROWTH · WAR MODE 保留<br><small>仅成长类生效；CORE 自动保留。</small></span></label>
+        <label style="display:block;font-size:12px;color:#aeb6c6;">人生分类<select id="nt-life-type" class="money-input"><option value="auto">自动推荐，可自行选择</option><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label>
         <label style="display:block;font-size:11px;color:#697084;">备注(可留空)
           <textarea id="nt-note" placeholder="补充上下文、标准或提醒…" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;min-height:64px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;font-family:inherit;resize:vertical;"></textarea>
         </label>
-        <label>积分规则<select id="nt-task-kind" class="money-input"><option value="standard">普通积分 · 不限维护额度</option><option value="maintenance">维护积分 · 每日最多15 EXP</option></select></label>
 
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:2px;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1962,7 +1953,7 @@ class Component extends DCLogic {
             setId = set.id;
           }
           tasks.push({ id:nextId++, name:String(t.name).trim(), exp:Number(t.exp), cycle:t.cycle, times:Number(t.times), interval:Number(t.interval),
-            anchorDate:this.todayKey(), core:false, setId, priority:t.priority, taskKind:t.taskKind, lifeType:t.lifeType, warImportant:!!t.warImportant, note:String(t.note || ''), sourceDescription:t.source || plan.source,
+            anchorDate:this.todayKey(), core:false, setId, priority:t.priority, taskKind:'standard', lifeType:t.lifeType, warImportant:false, note:String(t.note || ''), sourceDescription:t.source || plan.source,
             done:{}, completionLog:{} });
         }
         return { ...current, tasks, sets, nextId, ...(remember ? { taskAssistantPrefs:ExpTaskAssistant.remember(current.taskAssistantPrefs, selected) } : {}) };
@@ -1971,10 +1962,6 @@ class Component extends DCLogic {
       if (!ok) this.setState({ assistantError:this.state.storageError || '保存失败，预览与输入已保留。' });
       return ok;
     } finally { this._assistantSubmitting = false; this.setState({ assistantBusy:false }); }
-  }
-  openMaintenancePlan() {
-    const plan = this.parseTaskDescription('每天洗贴身衣物，每次3EXP，维护任务；随时运动后及时换干衣，每次3EXP，维护任务；每周换床品一次，每次5EXP，维护任务；单次送洗冬衣，每次5EXP，维护任务；放在生活维护任务集');
-    this.openTaskPlan(plan, 'maintenance');
   }
   assistantViewProps(st) {
     const plan = st.assistantPlan || { tasks:[] }, selected = plan.tasks.filter(t => t.selected !== false);
@@ -1986,20 +1973,16 @@ class Component extends DCLogic {
       onAssistantCorrection:e => this.setState({ assistantCorrection:e.target.value }), onAssistantRemember:e => this.setState({ assistantRemember:e.target.checked }),
       refineAssistantPlan:() => this.refineAssistantPlan(), closeTaskPlan:() => this.closeTaskPlan(), applyTaskPlan:() => this.applyTaskPlan(),
       assistantRows:plan.tasks.map((t, index) => ({
-        ...t, key:index, indexLabel:index + 1, summary:t.lifeType + ' · ' + (t.taskKind === 'maintenance' ? '限额积分' : '普通积分') + ' · ' + t.exp + ' EXP · ' + ({ daily:'每日', weekly:'每周', monthly:'每月', once:'单次', free:'不限次' }[t.cycle] || '请选择') + ' · 跨度 ' + t.interval + ' / 次数 ' + t.times,
+        ...t, key:index, indexLabel:index + 1, summary:t.lifeType + ' · ' + t.exp + ' EXP · ' + ({ daily:'每日', weekly:'每周', monthly:'每月', once:'单次', free:'不限次' }[t.cycle] || '请选择') + ' · 跨度 ' + t.interval + ' / 次数 ' + t.times,
         warning:(t.warnings || []).join(' '), hasWarning:!!(t.warnings || []).length,
         errors:ExpTaskAssistant.valid(t).join(' '), hasErrors:!!ExpTaskAssistant.valid(t).length,
-        ...Object.fromEntries(['name','exp','cycle','times','interval','priority','taskKind','setName','note','lifeType'].map(f => ['on' + f[0].toUpperCase() + f.slice(1), e => this.updateAssistantTask(index, f, e.target.value)])),
-        onWarImportant:e => this.updateAssistantTask(index, 'warImportant', e.target.checked),
+        ...Object.fromEntries(['name','exp','cycle','times','interval','priority','setName','note','lifeType'].map(f => ['on' + f[0].toUpperCase() + f.slice(1), e => this.updateAssistantTask(index, f, e.target.value)])),
         onSelect:e => this.updateAssistantTask(index, 'selected', e.target.checked)
       })),
       aiHelpInput:st.aiHelpInput || '', onAiHelpInput:e => this.setState({ aiHelpInput:e.target.value }),
       newTaskDescription:st.newTaskDescription || '', onNewTaskDescription:e => this.setState({ newTaskDescription:e.target.value }),
-      openMaintenancePlan:() => this.openMaintenancePlan(),
-      maintenanceSummary:'生活维护 · 今日 ' + this.fmtExp(ExpProgression.maintenanceUsed(st, this.todayKey())) + ' / 15 EXP',
       rewardPricingPreview:st.rewardPricingPreview || '参考金额 × 10 × 顾虑系数；留空金额则使用基础 EXP。',
       editRewardPricingPreview:st.editRewardPricingPreview || '',
-      editTaskKind:st.editing && st.editing.type === 'task' ? (st.tasks.find(t=>t.id===st.editing.id) || {}).taskKind || 'standard' : 'standard',
       editRiskBand:st.editing && st.editing.type === 'reward' ? (st.rewards.find(r=>r.id===st.editing.id) || {}).riskBand || 'green' : 'green',
       editFrictionFactor:st.editing && st.editing.type === 'reward' ? (st.rewards.find(r=>r.id===st.editing.id) || {}).frictionFactor || 1 : 1,
       editBaseMoney:st.editing && st.editing.type === 'reward' ? (st.rewards.find(r=>r.id===st.editing.id) || {}).baseMoney ?? '' : '',
@@ -2963,11 +2946,11 @@ class Component extends DCLogic {
       return this.save({ editing: null, tasks: this.state.tasks.map(x => {
         if (x.id !== ed.id) return x;
         const ruleChanged = x.cycle !== newCycle || this.taskInterval(x) !== newInterval;
-        const updated = { ...ExpLife.changed(x, this.v('ed-life-type') || x.lifeType, this.state.tasks), warImportant:!!(document.getElementById('ed-war-important') || {}).checked, name: name || x.name, exp: Math.max(0, expNum('ed-exp', x.exp)), times: Math.max(1, num('ed-times', x.times || 1)),
+        const updated = { ...ExpLife.changed(x, this.v('ed-life-type') || x.lifeType, this.state.tasks), warImportant:false, name: name || x.name, exp: Math.max(0, expNum('ed-exp', x.exp)), times: Math.max(1, num('ed-times', x.times || 1)),
           setId, cycle: newCycle, interval: newInterval, anchorDate: ruleChanged ? anchor : (x.anchorDate || anchor),
           ...(ruleChanged ? { streak: 0, lastPeriod: '' } : {}),
           ...(ruleChanged || num('ed-times', x.times || 1) !== x.times ? { lifeStatsFrom:anchor } : {}),
-          priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', taskKind:this.v('ed-task-kind') || x.taskKind || 'standard', note: this.v('ed-note') };
+          priority: (document.getElementById('ed-priority') || {}).value || x.priority || 'p4', taskKind:'standard', note: this.v('ed-note') };
         if (ruleChanged) {
           const currentKey = this.periodKey(updated);
           if (currentKey) {
@@ -3069,8 +3052,8 @@ class Component extends DCLogic {
         const tasks = current.tasks.map(x=>x.id===id ? { ...x, ...(k ? { done:{ ...x.done, [k]:cnt + 1 } } : {}), completionLog, streak:newStreak, lastPeriod:streakChanged ? k : prevPeriod, lastDone:completionDate } : x);
         outcome = { task:t, actual:grant.actual, newStreak, streakChanged };
         return { ...grant.state, tasks, exp:this.roundExp(current.exp + grant.actual),
-          ledger:[{ ts, commandId, name:t.name + (t.taskKind === 'maintenance' && grant.actual < t.exp ? ' · 维护限额' : ''), delta:grant.actual }, ...current.ledger].slice(0,200),
-          pending:{ key, kind:'complete', id, k, exp:grant.actual, maintenance:t.taskKind === 'maintenance', ledgerTs:ts, ledgerCommandId:commandId,
+          ledger:[{ ts, commandId, name:t.name, delta:grant.actual }, ...current.ledger].slice(0,200),
+          pending:{ key, kind:'complete', id, k, exp:grant.actual, maintenance:false, ledgerTs:ts, ledgerCommandId:commandId,
             streakChanged, prevStreak, prevPeriod, prevLastDone:t.lastDone || '', completionDate, bingoTimerKey },
           reflectionOpen:true, reflectionTarget:{ kind:'task', id, name:t.name, ts }, reflectionBlob:null, reflectionPreview:'' };
       });
@@ -3103,7 +3086,6 @@ class Component extends DCLogic {
       return ok;
     });
   }
-  toggleCore(id) { return this.writeState(() => ({ ...this.state, tasks:this.state.tasks.map(x => x.id === id && x.lifeType === 'GROWTH' ? { ...x, warImportant:!x.warImportant } : x) })); }
   abandon(id) {
     const t = this.state.tasks.find(x => x.id === id), k = this.periodKey(t); if (!k) return;
     if (t.abandoned && t.abandoned[k]) return;
@@ -3300,9 +3282,8 @@ class Component extends DCLogic {
   async addTask() {
     const name = this.v('nt-name'); if (!name) return false;
     const draft = { name, exp:this.readExp('nt-exp',10), cycle:this.v('nt-cycle') || 'daily', times:Number(this.v('nt-times') || 1),
-      interval:Number(this.v('nt-interval') || 1), priority:this.v('nt-priority') || 'p4', taskKind:this.v('nt-task-kind') || 'standard', note:this.v('nt-note'), setName:'' };
+      interval:Number(this.v('nt-interval') || 1), priority:this.v('nt-priority') || 'p4', taskKind:'standard', warImportant:false, note:this.v('nt-note'), setName:'' };
     draft.lifeType = ExpLife.isType(this.v('nt-life-type')) ? this.v('nt-life-type') : ExpLife.infer({ ...draft, setName:(this.state.sets.find(s=>String(s.id)===this.v('nt-set')) || {}).name });
-    draft.warImportant = !!(document.getElementById('nt-war-important') || {}).checked;
     const errors = ExpTaskAssistant.valid(draft); if (errors.length) { this.setState({ newTaskAiMsg:errors[0], newTaskAiMsgColor:'#fbbf24' }); return false; }
     const setId = this.v('nt-set') ? Number(this.v('nt-set')) : null, core = false;
     return this.writeState(() => ({ ...this.state, tasks:[...this.state.tasks, { ...draft, id:this.state.nextId, core, setId, anchorDate:this.todayKey(), done:{}, completionLog:{} }], nextId:this.state.nextId+1 }), { newTaskOpen:false });
@@ -3510,23 +3491,17 @@ class Component extends DCLogic {
       const abandonPending = pk === 'abandon';
       const showActions = !doneNow && !abandonedNow && !tp && !abandonPending;
       const pmeta = { ...ExpLife.META[t.lifeType], label:t.lifeType };
-      const maintenance = t.taskKind === 'maintenance';
-      const entries = maintenance ? ((st.maintenanceDays[this.todayKey()] || {}).entries || []).filter(e=>e.taskId===t.id && !e.reversed) : [];
-      const actual = entries.length ? entries[entries.length-1].awardedMinor / 100 : null;
-      const shownExp = maintenance ? ((doneNow || tp) && actual != null ? actual : Math.min(t.exp,Math.max(0,15-ExpProgression.maintenanceUsed(st,this.todayKey())))) : t.exp;
-      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: (maintenance && (doneNow || tp) && actual != null ? '实发 +' : '+') + this.fmtExp(shownExp),
+      return { ...t, doneNow, notDone: !doneNow, pending: tp, showDone: showActions, showDoneLabel: doneNow && !tp, expStr: '+' + this.fmtExp(t.exp),
         hasNote: !!(t.note || '').trim(), noteText: t.note || '', priorityLabel: pmeta.label, priorityColor: pmeta.color, priorityBg: pmeta.bg,
         abandonedNow, abandonPending, showAbandonUndo: abandonPending, showAbandonLabel: abandonedNow && !abandonPending,
         isFormed, hasStreak: liveStreak > 0 && !isFormed && !!_unit, streakLabel: interval > 1 ? '连 ' + liveStreak + ' 轮' : '连 ' + liveStreak + ' ' + _unit, formedLabel: interval > 1 ? 'MOMENTUM · 连 ' + liveStreak + ' 轮' : 'MOMENTUM · ' + liveStreak + ' 连' + _unit,
-        cycleLabel: (t.taskKind === 'maintenance' ? '维护 · ' : '') + (k ? `${interval > 1 ? ('每 ' + interval + ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle])) : cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle]),
+        cycleLabel: (k ? `${interval > 1 ? ('每 ' + interval + ({ daily: '天', weekly: '周', monthly: '月' }[t.cycle])) : cyc[t.cycle]} ${cnt}/${times} 次` : cyc[t.cycle]),
         hasRing: !!k && !mob, pctStr: pct + '%',
         ringBg: `conic-gradient(${accent} ${pct}%, #232833 0)`,
-        canStar:t.lifeType === 'GROWTH', starColor: t.warImportant ? '#b99ae5' : '#6b7385', warStarLabel:(t.warImportant ? '取消关键成长：' : '设为关键成长：') + t.name,
         onDone: e => { e.stopPropagation(); this.openTaskFocus(t.id); },
         onAbandon: e => { e.stopPropagation(); this.abandon(t.id); },
         onUnabandon: e => { e.stopPropagation(); this.undo(); },
         onDel: e => { e.stopPropagation(); this.delTask(t.id); },
-        onToggleCore: e => { e.stopPropagation(); this.toggleCore(t.id); },
         onEdit: () => this.openEdit('task', t.id), onCalendar: e => { e.stopPropagation(); this.openTaskCalendar(t.id); }, onUndo: e => { e.stopPropagation(); this.undo(); },
         stop: e => e.stopPropagation(), isHeader: false, isTask: true };
     };
@@ -3548,7 +3523,7 @@ class Component extends DCLogic {
           onEdit:()=>this.editLifeTask(t.id), onDone:()=>this.completeLifeTask(t.id),
           upDisabled:members[0]?.id===t.id, downDisabled:members.at(-1)?.id===t.id,
           upLabel:t.name + ' 上移', downLabel:t.name + ' 下移', onUp:()=>this.moveLifeTask(t.id,-1), onDown:()=>this.moveLifeTask(t.id,1) })) };
-    }).filter(g=>!st.warMode || g.type==='CORE' || g.type==='GROWTH');
+    }).filter(g=>!st.warMode || g.type==='CORE');
     const lifeFilters = ['ALL',...ExpLife.TYPES].map(type=>({type,label:type==='ALL' ? '全部' : ExpLife.META[type].label,active:type===lifeFilter, onClick:()=>this.setLifeFilter(type)}));
 
     const setsArr = this.normalizeHierarchy(st.sets || []);
@@ -3993,7 +3968,7 @@ class Component extends DCLogic {
       editName: editItem ? editItem.name : '',
       editExp: editItem ? (editItem.exp ?? '') : '', editTimes: editItem ? (editItem.times || 1) : '', editInterval: editItem ? this.taskInterval(editItem) : 1,
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
-      editLifeType:editItem && editItem.lifeType || 'EXPLORATION', editWarImportant:!!(editItem && editItem.warImportant),
+      editLifeType:editItem && editItem.lifeType || 'EXPLORATION',
       editPriority: editItem ? (editItem.priority || 'p4') : 'p4', editNote: editItem ? (editItem.note || '') : '',
       editCost: editItem ? (editItem.baseCost ?? editItem.cost ?? '') : '',
       editCapCycle: editItem ? (editItem.capCycle || 'daily') : 'daily', editCapInterval: editItem ? (editItem.capInterval || 1) : 1, editCapTimes: editItem ? (editItem.capTimes || 1) : 1,

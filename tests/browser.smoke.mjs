@@ -115,7 +115,7 @@ try {
     release.version = 'v1.12.1'; release.missing = 'money.js';
     await page.evaluate(async () => { const r = await navigator.serviceWorker.getRegistration(); await r.update(); });
     await page.waitForFunction(async () => !(await navigator.serviceWorker.getRegistration()).installing);
-    assert.ok((await page.evaluate(() => caches.keys())).includes('exp-bank-v1.12.0')); assert.deepEqual(await stored(page), before);
+    assert.ok((await page.evaluate(() => caches.keys())).includes('exp-bank-v1.12.0-simplify-20261008')); assert.deepEqual(await stored(page), before);
     await context.setOffline(true); await page.reload(); await page.locator('#stash-in-41').waitFor(); assert.equal((await stored(page)).appVersion, 'v1.12.0');
     await context.setOffline(false); release.missing = null;
     await page.getByText('↻ 更新', { exact: true }).click(); await page.waitForFunction(() => document.body.innerText.includes('v1.12.1'));

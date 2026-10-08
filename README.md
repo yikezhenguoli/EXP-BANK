@@ -1,6 +1,6 @@
 # EXP BANK
 
-本地优先的 EXP 积分与生活记录 PWA。当前版本 **v1.12.0 — Life Architecture Update**：以 CORE、GROWTH、MAINTENANCE、EXPLORATION 四层组织任务，支持独立排序与完成统计。WAR MODE 2.0 显示核心维持与关键成长，帮助确定每日最低目标。旧任务、EXP、周期和历史保留；保留此前的奖励、维护积分、目标资金联动与 OPEX 类别排序。
+本地优先的 EXP 积分与生活记录 PWA。当前版本 **v1.12.0 — Life Architecture Update**：以 CORE、GROWTH、MAINTENANCE、EXPLORATION 四层组织任务，支持独立排序与完成统计。WAR MODE 聚焦 CORE，作为人生最低运行模式。旧任务、EXP、周期和历史保留；此前的奖励、目标资金联动与 OPEX 类别排序继续保留。
 
 ## 启动与部署
 
@@ -24,6 +24,6 @@ node tests/life.smoke.mjs
 
 浏览器脚本需要 Playwright 与 Chromium；已配置 Playwright 的环境可运行 `node tests/browser.smoke.mjs` 、`node tests/assistant-browser.smoke.mjs` 和 `node tests/life-browser.smoke.mjs`。需要指定已有浏览器时设置 `EXP_BANK_CHROME` 为其绝对路径。脚本使用临时本地服务与合成数据，不读取日常账本。
 
-人生分类不会改变积分规则：MAINTENANCE 分类与每日 15 EXP 封顶的维护积分规则相互独立。本周完成率从任务迁移或创建日起计算，统计截至今天的每日／每周目标。AI 目前为本地解析与分类推荐，可在预览中纠正，尚未接入云端模型。
+人生分类只负责组织生活结构，不再叠加第二套任务积分规则：CORE / GROWTH / MAINTENANCE / EXPLORATION 都按任务自身 EXP 正常结算。本周完成率从任务迁移或创建日起计算，统计截至今天的每日／每周目标。AI 目前为本地解析与分类推荐，可在预览中纠正，尚未接入云端模型。
 
 `support.js` 和 `image-slot.js` 为既有运行时，本次不修改。React 与 ReactDOM 18.3.1 的本地分发及许可证放在 `vendor/`。

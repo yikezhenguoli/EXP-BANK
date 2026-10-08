@@ -7,7 +7,7 @@
   'use strict';
   const NUM = '[零〇一二两三四五六七八九十百千\\d]+(?:[.点][零〇一二两三四五六七八九\\d]+)?';
   const CYCLES = ['once', 'daily', 'weekly', 'monthly', 'free'];
-  const FIELDS = ['exp', 'cycle', 'interval', 'times', 'priority', 'taskKind', 'setName', 'lifeType', 'warImportant'];
+  const FIELDS = ['exp', 'cycle', 'interval', 'times', 'priority', 'setName', 'lifeType'];
   const key = s => String(s || '').normalize('NFKC').trim().toLocaleLowerCase().replace(/\s+/g, ' ');
   const round = n => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
   function number(raw) {
@@ -83,13 +83,18 @@
       explicit.push('priority'); text = text.replace(pm[0], '');
     }
     const lifeNames = { CORE:'CORE', GROWTH:'GROWTH', MAINTENANCE:'MAINTENANCE', EXPLORATION:'EXPLORATION', 核心维持:'CORE', 成长推进:'GROWTH', 系统维护:'MAINTENANCE', 探索体验:'EXPLORATION' };
-    if (/取消关键成长|非关键成长/.test(text)) { values.warImportant=false; explicit.push('warImportant'); text=text.replace(/取消关键成长|非关键成长/g,''); }
-    else if (/关键成长|关键\s*GROWTH|WAR必做/i.test(text)) { values.warImportant=true; values.lifeType='GROWTH'; explicit.push('warImportant','lifeType'); text=text.replace(/关键成长|关键\s*GROWTH|WAR必做/ig,''); }
+    if (/取消关键成长|非关键成长|关键成长|关键\s*GROWTH|WAR必做/i.test(text)) {
+      text=text.replace(/取消关键成长|非关键成长|关键成长|关键\s*GROWTH|WAR必做/ig,'');
+    }
     const lifeMatches=[];
     text=text.replace(/(?:(?:人生分类|lifeType|类型)\s*[:：]?\s*)?(CORE\b|GROWTH\b|MAINTENANCE\b|EXPLORATION\b|核心维持|成长推进|系统维护|探索体验)/gi, (_m,type)=>{ lifeMatches.push(lifeNames[type.toUpperCase()] || lifeNames[type]); return ''; });
     if (lifeMatches.length) { values.lifeType=lifeMatches.at(-1); explicit.push('lifeType'); if (new Set(lifeMatches).size>1) { review.push('lifeType'); warnings.push('有多个人生分类，请选择一个。'); } }
-    if (/普通任务|非维护/.test(text)) { values.taskKind = 'standard'; explicit.push('taskKind'); text = text.replace(/普通任务|非维护/g, ''); }
-    else if (/维护(?:类)?(?:任务)?|Maintenance/i.test(text)) { values.taskKind = 'maintenance'; explicit.push('taskKind'); text = text.replace(/(?:生活)?维护(?:类)?(?:任务)?|Maintenance/ig, ''); }
+    if (/普通任务|非维护/.test(text)) text = text.replace(/普通任务|非维护/g, '');
+    if (/维护(?:类)?(?:任务)?|Maintenance/i.test(text)) {
+      values.lifeType = values.lifeType || 'MAINTENANCE';
+      explicit.push('lifeType');
+      text = text.replace(/(?:生活)?维护(?:类)?(?:任务)?|Maintenance/ig, '');
+    }
     const set = extractSet(text); text = set.text;
     if (set.setName) { values.setName = set.setName; explicit.push('setName'); }
     text = text.replace(/每项|每个任务|每个|全部|所有任务|统一|都(?:是|给)?|完成后|做完后|完成一次|每次|各自|各|一样|分别/g, '');
@@ -110,9 +115,7 @@
     if (!CYCLES.includes(task.cycle)) errors.push('请选择有效周期。');
     for (const f of ['interval','times']) if (!Number.isInteger(Number(task[f])) || Number(task[f]) < 1 || Number(task[f]) > 999) errors.push('跨度和次数须为 1–999 的整数。');
     if (!['p1','p2','p3','p4'].includes(task.priority)) errors.push('请选择有效优先级。');
-    if (!['standard','maintenance'].includes(task.taskKind)) errors.push('请选择有效任务类别。');
     if (task.lifeType != null && !Life.isType(task.lifeType)) errors.push('请选择有效人生分类。');
-    if (task.warImportant != null && typeof task.warImportant !== 'boolean') errors.push('关键成长标记无效。');
     if (String(task.setName || '').length > 80) errors.push('任务集名称最多 80 字。');
     if (String(task.note || '').length > 2000) errors.push('备注最多 2000 字。');
     if ((task.review || []).length) errors.push('请确认歧义字段：' + task.review.map(f=>({cycle:'周期',exp:'每次EXP',interval:'周期跨度',times:'每周期次数',lifeType:'人生分类'}[f] || f)).join(' / '));
@@ -120,18 +123,15 @@
   }
   function decorate(name, row, shared, options) {
     const explicit = [...new Set([...shared.explicit, ...row.explicit])];
-    const inferredMaintenance = /洗(?:贴身|内衣|衣物)|换(?:床品|床单|干衣)|送洗冬衣|运动后.*换|生活维护/.test(name);
-    const base = { cycle:'once', interval:1, times:1, exp:inferredMaintenance ? 3 : 10, priority:'p4', taskKind:inferredMaintenance ? 'maintenance' : 'standard', setName:'', note:'' };
+    const base = { cycle:'once', interval:1, times:1, exp:10, priority:'p4', setName:'', note:'' };
     const remembered = options.preferences && options.preferences[key(name)];
     if (remembered) for (const f of FIELDS) if (!explicit.includes(f) && remembered[f] != null) base[f] = remembered[f];
     const task = { ...base, ...shared.values, ...row.values, name, source:options.source, selected:true, explicit,
       warnings:[...shared.warnings, ...row.warnings], review:[...new Set([...shared.review, ...row.review])] };
     if (task.lifeType == null) task.lifeType=Life.infer(task);
-    if (task.warImportant == null) task.warImportant=task.lifeType === 'GROWTH' && task.priority === 'p1';
     if (!explicit.includes('lifeType')) task.warnings.push('人生分类建议 ' + task.lifeType + '，可在预览中调整。');
     if (!explicit.includes('exp')) task.warnings.push(remembered && remembered.exp != null ? '采用你记住的同名任务积分。' : '未写积分，预填建议 ' + task.exp + ' EXP，可修改。');
     if (!explicit.includes('cycle')) task.warnings.push(remembered && remembered.cycle ? '采用你记住的同名任务周期。' : '未写频率，暂按单次，可修改。');
-    if (inferredMaintenance && !explicit.includes('taskKind') && !remembered) task.warnings.push('建议标为生活维护，受每日 15 EXP 上限控制。');
     if (/(明天|后天|下周|[12]\d{3}[-/年]\d)/.test(name)) task.warnings.push('日期保留在名称；本版任务助手不自动设置日程提醒。');
     if ((options.tasks || []).some(t => key(t.name) === key(name))) { task.selected = false; task.warnings.push('已有同名任务，默认不重复创建；如确需新增可勾选。'); }
     task.errors = valid(task); return task;
@@ -146,7 +146,7 @@
       try {
         const data = JSON.parse(source), arr = Array.isArray(data) ? data : data.tasks;
         if (!Array.isArray(arr) || !arr.length || arr.length > 100) return failure('结构化任务需要 1–100 项。');
-        const allowed = ['name','exp','cycle','interval','times','priority','taskKind','setName','note','lifeType','warImportant'];
+        const allowed = ['name','exp','cycle','interval','times','priority','setName','note','lifeType'];
         if (!Array.isArray(data) && Object.keys(data).some(k => !['tasks','setName'].includes(k))) return failure('这里只接受任务草稿，不接受操作命令或整包数据。');
         const tasks = arr.map(item => {
           if (!item || typeof item !== 'object' || Object.keys(item).some(k => !allowed.includes(k))) throw new Error('结构化任务包含不支持的字段。');

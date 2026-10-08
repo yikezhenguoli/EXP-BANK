@@ -43,10 +43,10 @@ try{
   await panel.getByRole('button',{name:'关闭人生总览',exact:true}).click();await page.getByRole('group',{name:'人生分类筛选'}).getByRole('button',{name:'系统维护',exact:true}).click();assert.deepEqual(await ids(page.locator('[data-task-id]')),[5]);
   await page.getByRole('group',{name:'人生分类筛选'}).getByRole('button',{name:'全部',exact:true}).click();panel=await overview(page);
   await panel.getByRole('button',{name:'整理电脑文件',exact:true}).click();await page.getByText('编辑',{exact:true}).click();
-  await page.locator('#ed-life-type').selectOption('GROWTH');await page.locator('#ed-war-important').check();await page.getByText('保存',{exact:true}).click();await page.locator('#ed-life-type').waitFor({state:'detached'});
-  data=await stored(page);assert.equal(data.tasks[4].lifeType,'GROWTH');assert.equal(data.tasks[4].warImportant,true);assert.equal(data.tasks[4].lifeOrder,2);assert.equal(data.tasks[4].exp,50);assert.equal(data.tasks[4].cycle,'weekly');
-  await page.getByText('WAR MODE',{exact:true}).click();await page.getByText('WAR MODE ACTIVE',{exact:true}).waitFor();assert.deepEqual(await ids(page.locator('[data-task-id]')),[2,1,3,5]);await noOverflow(page);
-  await page.screenshot({path:path.join(qa,'war-'+width+'.png'),fullPage:true});panel=await overview(page);assert.equal(await panel.locator('.life-group').count(),2);assert.equal(await panel.locator('[data-life-type="EXPLORATION"]').count(),0);
+  await page.locator('#ed-life-type').selectOption('GROWTH');assert.equal(await page.locator('#ed-war-important').count(),0);await page.getByText('保存',{exact:true}).click();await page.locator('#ed-life-type').waitFor({state:'detached'});
+  data=await stored(page);assert.equal(data.tasks[4].lifeType,'GROWTH');assert.equal(data.tasks[4].warImportant,false);assert.equal(data.tasks[4].lifeOrder,2);assert.equal(data.tasks[4].exp,50);assert.equal(data.tasks[4].cycle,'weekly');
+  await page.getByText('WAR MODE',{exact:true}).click();await page.getByText('WAR MODE ACTIVE',{exact:true}).waitFor();assert.deepEqual(await ids(page.locator('[data-task-id]')),[2,1]);await noOverflow(page);
+  await page.screenshot({path:path.join(qa,'war-'+width+'.png'),fullPage:true});panel=await overview(page);assert.equal(await panel.locator('.life-group').count(),1);assert.equal(await panel.locator('[data-life-type="EXPLORATION"]').count(),0);
   await panel.getByRole('button',{name:'关闭人生总览'}).click();await page.getByText('WAR MODE',{exact:true}).click();await page.getByText('+ 新建任务',{exact:true}).waitFor();assert.equal(await page.locator('[data-task-id]').count(),7);
   await context.setOffline(true);await page.reload();await page.getByText('⌗ 四象限',{exact:true}).waitFor();panel=await overview(page);assert.deepEqual(await ids(panel.locator('[data-life-type="CORE"] .life-task')),[2,1]);assert.equal((await stored(page)).exp,1000);await context.close();
   results.push(width+'px：迁移、完整历史、四层排序、刷新与离线、分类编辑、WAR筛选和退出恢复');
