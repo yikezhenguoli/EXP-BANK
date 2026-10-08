@@ -59,14 +59,10 @@
   }
   function maintenanceUsed(state, date) { return (state.maintenanceDays && state.maintenanceDays[date] && state.maintenanceDays[date].awardedMinor || 0) / 100; }
   function award(state, task, commandId, date, ts) {
+    // v1.12 simplification: every task now awards its configured EXP directly.
+    // Legacy maintenanceDays remain readable only for backup / old pending undo compatibility.
     const requestedMinor = minor(task.exp);
-    if (task.taskKind !== 'maintenance') return { state, actual:requestedMinor / 100, remaining:MAINTENANCE_CAP - maintenanceUsed(state, date) };
-    const days = { ...(state.maintenanceDays || {}) }, day = days[date] || { awardedMinor:0, entries:[] };
-    if (day.entries.some(e => e.commandId === commandId)) fail('这笔完成记录已结算，请勿重复提交。');
-    const awardedMinor = Math.min(requestedMinor, Math.max(0, MAINTENANCE_CAP * 100 - day.awardedMinor));
-    const record = { commandId, taskId:task.id, requestedMinor, awardedMinor, ts, reversed:false };
-    days[date] = { awardedMinor:day.awardedMinor + awardedMinor, entries:[...day.entries, record] };
-    return { state:{ ...state, maintenanceDays:days }, actual:awardedMinor / 100, remaining:(MAINTENANCE_CAP * 100 - days[date].awardedMinor) / 100 };
+    return { state, actual:requestedMinor / 100, remaining:null };
   }
   function reverse(state, date, commandId) {
     const day = state.maintenanceDays && state.maintenanceDays[date];
@@ -84,6 +80,6 @@
     if (blocked(r, ts)) fail(blocked(r, ts));
     return { ...r, redeems:[...(r.redeems || []), ts], cooldownUntil:ts + Number(r.cooldownDays || 0) * 86400000 };
   }
-  function inWarMode(task) { return task.lifeType === 'CORE' || (task.lifeType === 'GROWTH' && task.warImportant === true); }
+  function inWarMode(task) { return task.lifeType === 'CORE'; }
   return { inWarMode, normalize, rewardRule, award, reverse, maintenanceUsed, blocked, redeemed, MAINTENANCE_CAP, FACTORS, round };
 });
