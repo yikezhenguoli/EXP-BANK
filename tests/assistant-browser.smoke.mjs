@@ -81,16 +81,15 @@ try {
  {
   const seed={...base,tasks:[1,2,3].map(id=>({id,name:'维护测试'+id,exp:10,taskKind:'maintenance',cycle:'daily',times:1,done:{}}))};
   const {context,page}=await open(390,seed);
-  for(const exp of [1010,1015,1015]){
+  for(const exp of [1010,1020,1030]){
    await page.getByText('完成',{exact:true}).first().click(); await page.getByText('直接完成',{exact:true}).click();
    await page.getByText('跳过',{exact:true}).click(); await page.waitForFunction(n=>JSON.parse(localStorage.getItem('exp-bank-v1')).exp===n,exp);
   }
-  assert.equal((await stored(page)).maintenanceDays[new Date().toLocaleDateString('en-CA')].awardedMinor,1500);
-  await page.getByText(/生活维护 · 今日 15 \/ 15 EXP/).waitFor();
-  await page.getByText('实发 +10',{exact:true}).waitFor(); await page.getByText('实发 +5',{exact:true}).waitFor(); await page.getByText('实发 +0',{exact:true}).waitFor();
-  await page.screenshot({path:path.join(qa,'maintenance-390.png')});
-  await page.reload(); assert.equal((await stored(page)).exp,1015); await context.close();
-  results.push('维护真实完成流程：10/5/0 实发、超限仍完成、刷新后保留日结');
+  assert.deepEqual((await stored(page)).maintenanceDays,{});
+  assert.equal(await page.getByText(/生活维护 · 今日/).count(),0);
+  assert.equal(await page.getByText('+ 维护任务',{exact:true}).count(),0);
+  await page.reload(); assert.equal((await stored(page)).exp,1030); await context.close();
+  results.push('旧maintenance标记按普通EXP结算，维护额度入口已移除');
  }
  {
   const {context,page}=await open(390);
