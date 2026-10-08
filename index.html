@@ -807,7 +807,7 @@ input[type="date"]{color-scheme:dark;}
       <div class="money-panel life-panel" role="dialog" aria-label="Life Architecture Overview" aria-modal="true" onClick="{{ stopClick }}">
         <div class="money-line"><div style="flex:1;"><div class="money-title">LIFE ARCHITECTURE</div><div class="money-hint">四层人生总览 · 分类不改变 EXP 规则</div></div><button class="money-btn" onClick="{{ closeQuadrant }}" aria-label="关闭人生总览">关闭</button></div>
         <div class="money-line"><div class="money-hint" style="flex:1;">按自己的节奏安排，不必每天完成所有层。</div><button class="money-btn" onClick="{{ toggleLifeSort }}">{{ lifeSortLabel }}</button></div>
-        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div class="money-hint">WAR MODE ACTIVE · 仅显示 CORE 和关键 GROWTH</div></sc-if>
+        <sc-if value="{{ warMode }}" hint-placeholder-val="{{ false }}"><div class="money-hint">WAR MODE ACTIVE · 仅显示 CORE 最低运行目标</div></sc-if>
         <sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
         <div class="life-grid"><sc-for list="{{ lifeGroups }}" as="g" hint-placeholder-count="4"><section class="life-group" aria-label="{{ g.type }}" data-life-type="{{ g.type }}">
           <div class="money-line"><div class="life-heading" style="color:{{ g.color }};">{{ g.type }}</div><div class="life-count">{{ g.count }} 项</div></div>
