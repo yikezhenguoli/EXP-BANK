@@ -27,10 +27,10 @@ test('未知schema或非法显式分类拒绝，不静默覆盖',()=>{
  assert.throws(()=>L.normalize({tasks:[],lifeSchemaVersion:2},today));assert.throws(()=>norm([{name:'跑步',lifeType:'OTHER'}]));
  assert.throws(()=>norm([{name:'刷题',warImportant:'false'}]));
 });
-test('旧星标和p1成长任务迁为关键GROWTH，其余不强制加入',()=>{
+test('WAR MODE只保留CORE；旧关键成长字段不再影响筛选',()=>{
  const s=norm([{name:'编程',core:true},{name:'备考',priority:'p1'},{name:'跑步',core:false},{name:'旅行',core:true},{name:'听力'}]);
- assert.deepEqual(s.tasks.map(t=>t.warImportant),[true,true,false,false,false]);
- assert.deepEqual(s.tasks.filter(P.inWarMode).map(t=>t.name),['编程','备考','跑步']);
+ assert.deepEqual(s.tasks.filter(P.inWarMode).map(t=>t.name),['跑步']);
+ assert.equal(P.inWarMode({lifeType:'GROWTH',warImportant:true}),false);
 });
 test('四类独立顺序、越界移动和重复序号都稳定',()=>{
  let s=norm([{id:1,name:'吃饭'},{id:2,name:'学习'},{id:3,name:'睡觉'},{id:4,name:'跑步',lifeOrder:0}]);
@@ -75,12 +75,12 @@ test('AI本地推荐分类、不编造时间或积分，显式分类可覆盖',(
  assert.equal(A.parse('每天阅读5EXP，类型CORE').tasks[0].lifeType,'CORE');
 });
 test('AI预览分类可补充修改、记住且明确新描述优先',()=>{
- const plan=A.parse('每天阅读5EXP');const next=A.refine(plan,'阅读改为成长推进，关键成长');assert.equal(next.tasks[0].lifeType,'GROWTH');assert.equal(next.tasks[0].warImportant,true);
+ const plan=A.parse('每天阅读5EXP');const next=A.refine(plan,'阅读改为成长推进');assert.equal(next.tasks[0].lifeType,'GROWTH');
  const prefs=A.remember({},next.tasks);assert.equal(A.parse('阅读',{preferences:prefs}).tasks[0].lifeType,'GROWTH');
  assert.equal(A.parse('CORE 阅读',{preferences:prefs}).tasks[0].lifeType,'CORE');
 });
 test('AI结构化草稿支持lifeType但拒绝非法类型及排序注入',()=>{
- const task={name:'复习',exp:5,lifeType:'GROWTH',warImportant:true};let p=A.parse(JSON.stringify({tasks:[task]}));assert.equal(p.error,'');assert.equal(p.tasks[0].warImportant,true);
+ const task={name:'复习',exp:5,lifeType:'GROWTH'};let p=A.parse(JSON.stringify({tasks:[task]}));assert.equal(p.error,'');assert.equal(p.tasks[0].lifeType,'GROWTH');
  p=A.parse(JSON.stringify({tasks:[{...task,lifeType:'UNKNOWN'}]}));assert.ok(A.valid(p.tasks[0]).length);
  assert.ok(A.parse(JSON.stringify({tasks:[{...task,lifeOrder:0}]})).error);
 });
