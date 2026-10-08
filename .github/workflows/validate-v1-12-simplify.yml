@@ -34,6 +34,15 @@ jobs:
           node tests/life.smoke.mjs
           node tests/component.smoke.mjs
           node tests/sw-update.smoke.mjs
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Run browser smoke suites
+        run: |
+          node tests/browser.smoke.mjs
+          node tests/assistant-browser.smoke.mjs
+          node tests/life-browser.smoke.mjs
       - name: Validate removed UI and CORE-only WAR
         run: |
           ! grep -q "生活维护 · 今日" index.html
