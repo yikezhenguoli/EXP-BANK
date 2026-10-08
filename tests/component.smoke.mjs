@@ -98,22 +98,20 @@ await test('未来schema启动只保留原文，不能写入默认数据，短�
   const raw = { ...seed(800), moneySchemaVersion: 99 }; const t = create(raw), before = t.shared.map.get('exp-bank-v1');
   assert.equal(await t.c.save({ exp: 999 }), false); assert.equal(t.shared.map.get('exp-bank-v1'), before); assert.equal(Buffer.from(t.c.makeBackupCode(), 'base64').toString('utf8'), before);
 });
-await test('维护积分实际发放10/5/0；撤销部分积分、免费打卡及Bingo按实际额', async()=>{
+await test('旧maintenance标记不再限额，完成与撤销都按任务EXP', async()=>{
  const data=seed(0); data.tasks=[1,2,3].map(id=>({id,name:'维护'+id,taskKind:'maintenance',exp:10,cycle:'daily',times:1,done:{}}));
- const t=create(data), draws=[]; t.c.scheduleBingoDraw=(_key,task)=>draws.push(task.exp);
- await t.c.complete(1); assert.equal(t.stored().exp,20);
- await t.c.complete(2); assert.equal(t.stored().exp,25); assert.equal(t.c.state.pending.exp,5);
- await t.c.undo(); assert.equal(t.stored().exp,20); assert.equal(t.stored().maintenanceDays[t.c.todayKey()].awardedMinor,1000);
- await t.c.complete(2); await t.c.complete(3); assert.equal(t.stored().exp,25); assert.equal(t.c.state.pending.exp,0); assert.equal(t.stored().tasks[2].completionLog[t.c.todayKey()],1);
- assert.deepEqual(draws,[10,5,5]); await t.c.undo(); assert.equal(t.stored().exp,25); assert.equal(t.stored().tasks[2].done[t.c.todayKey()],0);
- await t.c.save({ledger:[]}); await t.c.complete(3); assert.equal(t.stored().exp,25); assert.equal(t.stored().maintenanceDays[t.c.todayKey()].awardedMinor,1500);
+ const t=create(data);
+ await t.c.complete(1); assert.equal(t.stored().exp,20); assert.equal(t.c.state.pending.exp,10);
+ await t.c.complete(2); assert.equal(t.stored().exp,30); await t.c.undo(); assert.equal(t.stored().exp,20);
+ await t.c.complete(2); await t.c.complete(3); assert.equal(t.stored().exp,40); assert.equal(t.stored().tasks[2].completionLog[t.c.todayKey()],1);
+ assert.deepEqual(t.stored().maintenanceDays,{});
 });
-await test('维护与资金奖励共用保存队列，维护记录不能因EXP账本截断失效', async()=>{
+await test('任务与资金奖励共用保存队列，保存失败不会重复发EXP', async()=>{
  const data=seed(0); data.stash[0].claimed=false; data.tasks=[{id:1,name:'维护',taskKind:'maintenance',exp:10,cycle:'free',done:{}}];
  const t=create(data); t.input('stash-in-41',1000); await Promise.all([t.c.stashDeposit(41),t.c.complete(1)]);
- assert.equal(t.stored().exp,120); assert.equal(t.stored().maintenanceDays[t.c.todayKey()].awardedMinor,1000);
- await t.c.save({ledger:[]}); await t.c.complete(1); assert.equal(t.stored().exp,125); assert.equal(t.stored().tasks[0].completionLog[t.c.todayKey()],2);
- t.flags.failWrite=true; const before=t.shared.map.get('exp-bank-v1'); assert.equal(await t.c.complete(1),false); assert.equal(t.shared.map.get('exp-bank-v1'),before); assert.equal(t.c.state.exp,125);
+ assert.equal(t.stored().exp,120);
+ await t.c.save({ledger:[]}); await t.c.complete(1); assert.equal(t.stored().exp,130); assert.equal(t.stored().tasks[0].completionLog[t.c.todayKey()],2);
+ t.flags.failWrite=true; const before=t.shared.map.get('exp-bank-v1'); assert.equal(await t.c.complete(1),false); assert.equal(t.shared.map.get('exp-bank-v1'),before); assert.equal(t.c.state.exp,130);
 });
 await test('奖励冷却/下架在提交时检查，撤销退回原价及之前的冷却状态', async()=>{
  const data=seed(0); data.exp=1000; data.rewards=[{id:21,name:'Amber',cost:200,baseCost:200,baseMoney:20,frictionFactor:1.2,riskBand:'amber',cooldownDays:7,cooldownUntil:1,capTimes:10,capCycle:'daily',redeems:[]}];
@@ -134,16 +132,16 @@ await test('解析歧义需要编辑确认；保存失败保留草稿并允许�
  t.flags.failWrite=true; assert.equal(await t.c.applyTaskPlan(),false); assert.equal(t.c.state.assistantOpen,true); assert.equal(t.c.state.assistantPlan.tasks[0].cycle,'weekly'); assert.equal(t.stored().tasks.length,0);
  t.flags.failWrite=false; assert.equal(await t.c.applyTaskPlan(),true); assert.equal(t.stored().tasks.length,1); assert.equal(t.stored().tasks[0].cycle,'weekly');
 });
-await test('新备份恢复维护日结与任务偏好，旧备份清空新字段，未来积分schema保留原文', async()=>{
- const data=seed(0); data.tasks=[{id:1,name:'维护',taskKind:'maintenance',exp:10,cycle:'free',done:{}}]; const a=create(data); await a.c.complete(1);
- const b=create(); b.input('bk-import',a.c.makeBackupCode()); assert.equal(await b.c.importBackup(),true); assert.equal(b.stored().maintenanceDays[b.c.todayKey()].awardedMinor,1000);
+await test('新备份恢复任务偏好，旧备份清空新增状态，未来积分schema保留原文', async()=>{
+ const data=seed(0); data.taskAssistantPrefs={跑步:{exp:6,cycle:'daily',interval:1,times:1,priority:'p4',setName:'',lifeType:'CORE'}}; const a=create(data);
+ const b=create(); b.input('bk-import',a.c.makeBackupCode()); assert.equal(await b.c.importBackup(),true); assert.equal(b.stored().taskAssistantPrefs['跑步'].exp,6);
  b.input('bk-import',JSON.stringify({tasks:[],exp:7,nextId:2})); await b.c.importBackup(); assert.deepEqual(b.stored().maintenanceDays,{});
  const raw={...data,progressionSchemaVersion:99}, future=create(raw); assert.equal(await future.c.save({exp:100}),false); assert.equal(Buffer.from(future.c.makeBackupCode(),'base64').toString('utf8'),JSON.stringify(raw));
 });
-await test('奖励图片与维护/资金并行保存不绕过写入队列，失败保留旧图片',async()=>{
+await test('奖励图片与任务/资金并行保存不绕过写入队列，失败保留旧图片',async()=>{
  const data=seed(0); data.tasks=[{id:1,name:'维护',taskKind:'maintenance',exp:10,cycle:'daily',done:{}}]; data.rewards=[{id:21,name:'图片奖励',cost:100,img:'old-image',redeems:[]}];
  const t=create(data); await Promise.all([t.c.complete(1),t.c.saveRewardImage(21,'new-image')]);
- assert.equal(t.stored().exp,20); assert.equal(t.stored().maintenanceDays[t.c.todayKey()].awardedMinor,1000); assert.equal(t.stored().rewards[0].img,'new-image');
+ assert.equal(t.stored().exp,20); assert.deepEqual(t.stored().maintenanceDays,{}); assert.equal(t.stored().rewards[0].img,'new-image');
  t.flags.failWrite=true; assert.equal(await t.c.saveRewardImage(21,'failed-image'),false); assert.equal(t.stored().rewards[0].img,'new-image');
 });
 await test('Life新用户四层完整、手动创建推荐分类且不改变积分',async()=>{
@@ -163,15 +161,14 @@ await test('Life逐层排序并行完成不丢记录，保存失败维持原顺�
  await Promise.all([t.c.moveLifeTask(3,-1),t.c.complete(1)]);let v=t.c.renderVals();assert.deepEqual(Array.from(v.lifeGroups[0].tasks,x=>x.id),[1,3,2]);assert.equal(t.stored().exp,20);assert.equal(t.stored().tasks[0].done[t.c.todayKey()],1);
  const before=t.shared.map.get('exp-bank-v1');t.flags.failWrite=true;assert.equal(await t.c.moveLifeTask(3,-1),false);assert.equal(t.shared.map.get('exp-bank-v1'),before);
 });
-await test('Life修改分类与关键标记保留原周期和分类字段，重载继续生效',async()=>{
- const data=seed(0);data.tasks=[{id:1,name:'阅读',category:'自定义旧分类',exp:10,cycle:'weekly',times:2,interval:1,anchorDate:'2026-10-01',done:{'2026-W40':2},priority:'p3',core:true}];const t=create(data);
- t.c.openEdit('task',1);t.input('ed-name','阅读');t.input('ed-cycle','weekly');t.input('ed-times',2);t.input('ed-interval',1);t.input('ed-exp',10);t.input('ed-life-type','GROWTH');t.check('ed-war-important',true);
- await t.c.saveEdit();const x=t.stored().tasks[0];assert.equal(x.lifeType,'GROWTH');assert.equal(x.warImportant,true);assert.deepEqual(x.done,{'2026-W40':2});assert.equal(x.category,'自定义旧分类');assert.equal(x.core,true);assert.equal(x.priority,'p3');assert.equal(x.lifeOrder,0);assert.equal(create(t.stored()).c.state.tasks[0].warImportant,true);
+await test('Life修改分类保留原周期和旧字段，不再提供关键成长开关',async()=>{
+ const data=seed(0);data.tasks=[{id:1,name:'阅读',category:'自定义旧分类',exp:10,cycle:'weekly',times:2,interval:1,anchorDate:'2026-10-01',done:{'2026-W40':2},priority:'p3',core:true,warImportant:true}];const t=create(data);
+ t.c.openEdit('task',1);t.input('ed-name','阅读');t.input('ed-cycle','weekly');t.input('ed-times',2);t.input('ed-interval',1);t.input('ed-exp',10);t.input('ed-life-type','GROWTH');
+ await t.c.saveEdit();const x=t.stored().tasks[0];assert.equal(x.lifeType,'GROWTH');assert.equal(x.warImportant,false);assert.deepEqual(x.done,{'2026-W40':2});assert.equal(x.category,'自定义旧分类');assert.equal(x.core,true);assert.equal(x.priority,'p3');assert.equal(x.lifeOrder,0);
 });
-await test('WAR 2.0保留全部CORE及关键GROWTH，无旧三项截断，其他层隐藏且不删除',async()=>{
+await test('WAR MODE只保留全部CORE，其他层隐藏且不删除',async()=>{
  const types=['CORE','CORE','CORE','CORE','GROWTH','GROWTH','MAINTENANCE','EXPLORATION'];const data=seed(0);data.tasks=types.map((lifeType,i)=>({id:i+1,name:'项目'+i,lifeType,warImportant:i===4,core:true,exp:1,cycle:'daily',done:{}}));const t=create(data);
- await t.c.save({warMode:true});let v=t.c.renderVals();assert.deepEqual(Array.from(v.taskRows,x=>x.id),[1,2,3,4,5]);assert.equal(v.coreTotal,5);assert.equal(v.lifeGroups.length,2);assert.equal(t.stored().tasks.length,8);
- await t.c.toggleCore(6);assert.equal(t.c.renderVals().taskRows.length,6);assert.equal(t.stored().tasks[5].core,true);
+ await t.c.save({warMode:true});let v=t.c.renderVals();assert.deepEqual(Array.from(v.taskRows,x=>x.id),[1,2,3,4]);assert.equal(v.coreTotal,4);assert.equal(v.lifeGroups.length,1);assert.equal(t.stored().tasks.length,8);
  await t.c.save({warMode:false});assert.equal(t.c.renderVals().tasks.length,8);assert.equal(t.c.renderVals().lifeGroups.length,4);
 });
 await test('Life今日与周统计在完成、撤销、周期跨年后正确更新',async()=>{
@@ -194,9 +191,9 @@ await test('Life两页排序与完成冲突拒绝旧快照，同步后保持两�
  const data=seed(0);data.tasks=[1,2].map(id=>({id,name:'跑步'+id,exp:10,cycle:'daily',done:{}}));const shared=sharedStorage(data),a=create(null,shared),b=create(null,shared);await a.c.moveLifeTask(2,-1);assert.equal(await b.c.complete(1),false);
  await b.c.syncLatestMoney();await b.c.complete(1);assert.equal(b.stored().exp,20);assert.deepEqual(Array.from(b.c.renderVals().lifeGroups[0].tasks,t=>t.id),[2,1]);
 });
-await test('Life AI候选人工调整后的分类与关键GROWTH随确认保存',async()=>{
- const t=create(seed(0));const plan=t.c.parseTaskDescription('每天阅读5EXP');t.c.openTaskPlan(plan,'help');t.c.updateAssistantTask(0,'lifeType','GROWTH');t.c.updateAssistantTask(0,'warImportant',true);await t.c.applyTaskPlan();
- assert.equal(t.stored().tasks[0].lifeType,'GROWTH');assert.equal(t.stored().tasks[0].warImportant,true);assert.equal(t.stored().tasks[0].taskKind,'standard');assert.equal(t.stored().exp,10);
+await test('Life AI候选人工调整后的分类随确认保存',async()=>{
+ const t=create(seed(0));const plan=t.c.parseTaskDescription('每天阅读5EXP');t.c.openTaskPlan(plan,'help');t.c.updateAssistantTask(0,'lifeType','GROWTH');await t.c.applyTaskPlan();
+ assert.equal(t.stored().tasks[0].lifeType,'GROWTH');assert.equal(t.stored().tasks[0].warImportant,false);assert.equal(t.stored().tasks[0].taskKind,'standard');assert.equal(t.stored().exp,10);
 });
 
 console.log('Component checks passed: ' + results.length);
