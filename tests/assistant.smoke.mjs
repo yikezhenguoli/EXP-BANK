@@ -45,10 +45,10 @@ test('冲突周期和积分需人工确认，非法值不能生成',()=>{
  const [t]=parse('跑步每天或每周，5EXP或8EXP'); assert.ok(t.review.includes('cycle')); assert.ok(t.review.includes('exp')); assert.ok(A.valid(t).length);
  for(const raw of ['跑步 -5EXP','跑步 1.234EXP','跑步 1000001EXP']) assert.ok(A.valid(parse(raw)[0]).length,raw);
 });
-test('优先级、维护推断可由明确规则覆盖',()=>{
+test('优先级与维护语义映射到人生分类',()=>{
  assert.equal(parse('重要但不紧急阅读，每天5EXP')[0].priority,'p3');
- assert.equal(parse('每天洗贴身衣物，3EXP')[0].taskKind,'maintenance');
- assert.equal(parse('每天洗贴身衣物，普通任务，3EXP')[0].taskKind,'standard');
+ assert.equal(parse('每天洗贴身衣物，3EXP')[0].lifeType,'MAINTENANCE');
+ assert.equal(parse('每天整理文件，系统维护，3EXP')[0].lifeType,'MAINTENANCE');
 });
 test('补充说明按任务定向修正，也可明确共同修改',()=>{
  const original=A.parse('每天阅读5EXP；每周跑步三次8EXP');
@@ -72,7 +72,7 @@ test('破坏性命令不执行，作为任务内容的清理动作可创建',()=
  assert.ok(A.parse('{"action":"delete","tasks":[]}').error);
 });
 test('结构化草稿严格校验白名单，不能注入状态或操作',()=>{
- assert.equal(parse('{"tasks":[{"name":"阅读","exp":5,"cycle":"daily","times":1,"interval":1,"priority":"p3","taskKind":"standard"}],"setName":"学习"}')[0].setName,'学习');
+ assert.equal(parse('{"tasks":[{"name":"阅读","exp":5,"cycle":"daily","times":1,"interval":1,"priority":"p3"}],"setName":"学习"}')[0].setName,'学习');
  assert.ok(A.parse('{"tasks":[{"name":"阅读","id":999,"exp":100}]}').error);
  assert.ok(A.valid(parse('[{"name":"阅读","exp":"NaN"}]')[0]).length);
 });
@@ -94,19 +94,18 @@ test('Amber默认7天冷却，期满恢复；已有兑换历史不截断',()=>{
  const ts=1000000000, rule=P.rewardRule({riskBand:'amber'}), r=P.redeemed({...rule,redeems:Array.from({length:600},(_,i)=>i)},ts);
  assert.equal(r.redeems.length,601); assert.equal(r.cooldownUntil,ts+7*864e5); assert.ok(P.blocked(r,ts+1)); assert.equal(P.blocked(r,r.cooldownUntil),'');
 });
-test('维护15封顶，部分发放和0发放可审计；普通周期任务另算',()=>{
- let s=P.normalize({tasks:[],rewards:[]}), result;
- for(const [i,expect] of [[1,10],[2,5],[3,0]]) { result=P.award(s,{id:i,exp:10,taskKind:'maintenance'},'c'+i,'2026-10-06',i); assert.equal(result.actual,expect); s=result.state; }
- assert.equal(P.maintenanceUsed(s,'2026-10-06'),15); assert.equal(s.maintenanceDays['2026-10-06'].entries.length,3);
- assert.equal(P.award(s,{exp:100,taskKind:'standard'},'normal','2026-10-06',4).actual,100);
- assert.equal(P.award(s,{exp:10,taskKind:'maintenance'},'tomorrow','2026-10-07',5).actual,10);
-});
-test('维护撤销只回退实际发放额；不依赖EXP账本，可再发剩余额度',()=>{
+test('所有任务按配置EXP直接发放，旧maintenance标记不再限额',()=>{
  let s=P.normalize({tasks:[],rewards:[]});
- s=P.award(s,{id:1,exp:10,taskKind:'maintenance'},'one','2026-10-06',1).state;
- s=P.award(s,{id:2,exp:10,taskKind:'maintenance'},'two','2026-10-06',2).state;
- s={...s,ledger:[]}; s=P.reverse(s,'2026-10-06','two'); assert.equal(P.maintenanceUsed(s,'2026-10-06'),10);
- assert.throws(()=>P.reverse(s,'2026-10-06','two')); assert.throws(()=>P.award(s,{exp:10,taskKind:'maintenance'},'one','2026-10-06',3));
- assert.equal(P.award(s,{exp:10,taskKind:'maintenance'},'three','2026-10-06',3).actual,5);
+ for(const id of [1,2,3]) {
+  const result=P.award(s,{id,exp:10,taskKind:'maintenance'},'c'+id,'2026-10-06',id);
+  assert.equal(result.actual,10); s=result.state;
+ }
+ assert.equal(P.maintenanceUsed(s,'2026-10-06'),0);
+ assert.equal(P.award(s,{exp:100,taskKind:'standard'},'normal','2026-10-06',4).actual,100);
+});
+test('WAR MODE 只保留CORE，不依赖关键GROWTH标记',()=>{
+ assert.equal(P.inWarMode({lifeType:'CORE'}),true);
+ assert.equal(P.inWarMode({lifeType:'GROWTH',warImportant:true}),false);
+ assert.equal(P.inWarMode({lifeType:'MAINTENANCE'}),false);
 });
 console.log('Assistant and progression checks passed: '+count);
