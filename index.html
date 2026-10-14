@@ -660,12 +660,11 @@ input[type="date"]{color-scheme:dark;}
         <div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div>
         <div class="money-opex-title" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">开销记录 // OPEX</div>
         <div onClick="{{ cycleCurrency }}" title="切换新记录的默认币种及统计币种；历史记录不变" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 11px;" style-hover="border-color:{{ accent }};">{{ opexCurrency }}</div>
-        <button class="money-btn" onClick="{{ openCategories }}">类别排序</button>
+        <button class="money-btn" onClick="{{ openCategories }}">类别管理</button>
         <div onClick="{{ startReorderOpex }}" title="长按拖动排序开销记录" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div>
         <div onClick="{{ openNewOpex }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 记一笔</div>
       </div>
 
-      <label style="font-size:11px;color:#8b93a4;">按付款目标筛选<select id="opex-goal-filter" class="money-input" style="margin-top:5px;" value="{{ opexGoalFilter }}" onChange="{{ onOpexGoalFilter }}"><option value="">全部目标</option><option value="unlinked">未关联目标</option><sc-for list="{{ opexFilterGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}">{{ g.name }}</option></sc-for></select></label>
       <div class="money-hint">统计币种：{{ opexCurrency }} · 切换只影响新记录与统计，历史开销和目标币种保持原值。</div>
       <sc-if value="{{ moneyMigrationVisible }}" hint-placeholder-val="{{ false }}"><div class="money-preview">{{ moneyMigrationNotice }}<button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ confirmMoneyMigration }}">已核对历史币种</button></div></sc-if>
       <sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
@@ -727,7 +726,7 @@ input[type="date"]{color-scheme:dark;}
       <div class="money-line"><button class="money-btn" onClick="{{ toggleStashArchived }}">{{ stashArchiveLabel }}</button><div class="money-hint">归档保留余额与流水，可随时恢复。</div></div>
       <sc-for list="{{ stashRows }}" as="s" hint-placeholder-count="0"><div style="display:flex;flex-direction:column;gap:10px;padding:13px;border:1px solid #302c39;border-radius:12px;background:linear-gradient(180deg,{{ rowTop }},{{ rowBot }});">
         <div class="money-line"><div style="flex:1;min-width:0;font-size:14px;font-weight:700;color:#eef1f7;overflow-wrap:anywhere;">{{ s.name }}</div><button class="money-btn" onClick="{{ s.onEdit }}" aria-label="编辑目标">✎</button><sc-if value="{{ s.active }}" hint-placeholder-val="{{ true }}"><button class="money-btn" onClick="{{ s.onDel }}">归档</button></sc-if><sc-if value="{{ s.archived }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ s.onRestore }}">恢复</button></sc-if></div>
-        <div class="money-line"><div style="font-size:11px;color:#8b93a4;">可用余额</div><sc-if value="{{ s.claimed }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#4ade80;">✦ 曾达成</span></sc-if><sc-if value="{{ s.archived }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#8b93a4;">已归档</span></sc-if></div><div style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;color:{{ accent }};">{{ s.savedStr }}</div><div style="height:8px;border-radius:4px;background:#161a22;overflow:hidden;"><div style="height:100%;width:{{ s.pct }};background:{{ tierGrad }};"></div></div><div class="money-hint">目标 {{ s.targetStr }} · 当前 {{ s.pct }}</div>
+        <div class="money-line"><div style="font-size:11px;color:#8b93a4;">可用余额</div><sc-if value="{{ s.claimed }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#4ade80;">✦ 曾达成</span></sc-if><sc-if value="{{ s.archived }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:#8b93a4;">已归档</span></sc-if></div><div class="money-line" style="justify-content:space-between;"><div style="font-family:'JetBrains Mono',monospace;font-size:21px;font-weight:700;color:{{ accent }};">{{ s.savedStr }}</div><sc-if value="{{ s.active }}" hint-placeholder-val="{{ true }}"><button class="money-btn" onClick="{{ s.onAdjust }}" aria-label="直接调整存钱罐余额">✎ 调整余额</button></sc-if></div><div style="height:8px;border-radius:4px;background:#161a22;overflow:hidden;"><div style="height:100%;width:{{ s.pct }};background:{{ tierGrad }};"></div></div><div class="money-hint">目标 {{ s.targetStr }} · 当前 {{ s.pct }}</div>
         <sc-if value="{{ s.active }}" hint-placeholder-val="{{ true }}"><div class="money-line" style="flex-wrap:nowrap;"><input id="stash-in-{{ s.id }}" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="存入金额" style="flex:1;"><button class="money-btn money-primary" style="background:{{ btnGrad }};min-width:80px;" onClick="{{ s.onSave }}" disabled="{{ moneyBusy }}">存入</button></div><div class="money-line" style="flex-wrap:nowrap;"><input id="stash-out-{{ s.id }}" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="支出金额" style="flex:1;"><button class="money-btn" style="min-width:80px;color:#f0b6b6;border-color:#51303c;" onClick="{{ s.onWithdraw }}">支出</button></div></sc-if>
         <button class="money-btn" onClick="{{ s.onDetail }}">流水 / 取出 / 调整</button>
       </div></sc-for>
@@ -1339,12 +1338,13 @@ input[type="date"]{color-scheme:dark;}
 
   <!-- CATEGORY MANAGEMENT -->
   <sc-if value="{{ categoryOpen }}" hint-placeholder-val="{{ false }}"><div class="money-overlay" style="z-index:75;" onClick="{{ closeCategories }}"><div class="money-panel" role="dialog" aria-modal="true" aria-label="OPEX 类别" onClick="{{ stopClick }}">
-    <div class="money-line"><div class="money-title" style="flex:1;">OPEX 类别</div><button class="money-btn" onClick="{{ closeCategories }}">完成</button></div>
+    <div class="money-line"><div class="money-title" style="flex:1;">OPEX 类别</div><button class="money-btn" onClick="{{ toggleCategoryDeleteMode }}">{{ categoryDeleteModeLabel }}</button><button class="money-btn" onClick="{{ closeCategories }}">完成</button></div>
     <label>自定义类别<input id="category-name" class="money-input" maxlength="24" placeholder="例如：学习 / 医疗 / 房租" value="{{ categoryNameDraft }}" onInput="{{ onCategoryName }}"></label>
-    <button class="money-btn money-primary" style="background:{{ btnGrad }};" onClick="{{ addOpexCategory }}" disabled="{{ moneyBusy }}">+ 新增自定义类别</button>
-    <div class="money-hint">内置和自定义类别都可排序。使用 ↑ ↓ 调整，实时保存；新增、编辑和分类统计同步使用此顺序。</div>
+    <div class="money-line"><label style="flex:1;">类别颜色<input id="category-color" class="money-input" style="height:36px;padding:3px 8px;" type="color" value="{{ categoryColorDraft }}" onInput="{{ onCategoryColor }}" aria-label="新类别颜色"></label><button class="money-btn money-primary" style="background:{{ btnGrad }};align-self:flex-end;" onClick="{{ addOpexCategory }}" disabled="{{ moneyBusy }}">+ 新增类别</button></div>
+    <div class="money-hint">点色块可修改已有类别颜色。批量删除只移除可选项，历史开销和流水原样保留；同名重建将恢复原类别。</div>
+    <sc-if value="{{ categoryDeleteMode }}" hint-placeholder-val="{{ false }}"><div class="money-line"><div class="money-hint" style="flex:1;">已选择 {{ categoryDeleteCount }} 项，至少保留一个可用类别。</div><button class="money-btn" style="color:#f0b6b6;border-color:#51303c;" disabled="{{ categoryDeleteDisabled }}" onClick="{{ deleteSelectedOpexCategories }}">删除选中</button></div></sc-if>
     <sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
-    <sc-for list="{{ categoryRows }}" as="c" hint-placeholder-count="0"><div class="money-category"><span style="width:8px;height:8px;flex-shrink:0;border-radius:50%;background:{{ c.color }};"></span><div style="flex:1;min-width:0;overflow-wrap:anywhere;font-size:13px;color:#e6e9f0;">{{ c.name }}<div style="font-size:10px;color:#697084;">{{ c.hint }}</div></div><button class="money-btn" disabled="{{ c.upDisabled }}" onClick="{{ c.onUp }}" aria-label="{{ c.upLabel }}">↑</button><button class="money-btn" disabled="{{ c.downDisabled }}" onClick="{{ c.onDown }}" aria-label="{{ c.downLabel }}">↓</button></div></sc-for>
+    <sc-for list="{{ categoryRows }}" as="c" hint-placeholder-count="0"><div class="money-category"><sc-if value="{{ categoryDeleteMode }}" hint-placeholder-val="{{ false }}"><button class="money-btn" onClick="{{ c.onToggleSelected }}" aria-label="{{ c.selectedLabel }}">{{ c.selectedMark }}</button></sc-if><input type="color" value="{{ c.color }}" onChange="{{ c.onColorChange }}" aria-label="修改{{ c.name }}的类别颜色" style="width:34px;height:34px;border:1px solid #353947;border-radius:7px;background:transparent;padding:2px;flex-shrink:0;cursor:pointer;"><div style="flex:1;min-width:0;overflow-wrap:anywhere;font-size:13px;color:#e6e9f0;">{{ c.name }}<div style="font-size:10px;color:#697084;">{{ c.hint }}</div></div><button class="money-btn" disabled="{{ c.upDisabled }}" onClick="{{ c.onUp }}" aria-label="{{ c.upLabel }}">↑</button><button class="money-btn" disabled="{{ c.downDisabled }}" onClick="{{ c.onDown }}" aria-label="{{ c.downLabel }}">↓</button></div></sc-for>
   </div></div></sc-if>
   <!-- GOAL LEDGER -->
   <sc-if value="{{ stashDetailOpen }}" hint-placeholder-val="{{ false }}"><div class="money-overlay" onClick="{{ closeStashDetail }}"><div class="money-panel" style="width:470px;" role="dialog" aria-modal="true" aria-label="目标流水" onClick="{{ stopClick }}">
@@ -1722,7 +1722,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.12.0';
+const APP_VERSION = 'v1.13.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1747,7 +1747,7 @@ class Component extends DCLogic {
     try {
       const draft = JSON.parse(sessionStorage.getItem('exp-bank-pending-expense') || 'null');
       if (draft && ExpMoney.CURRENCIES.some(c => c.code === draft.currencyCode)) {
-        if (!this.state.opexCategories.some(c => c.id === draft.categoryId)) draft.categoryId = this.state.opexCategories[0].id;
+        if (!this.state.opexCategories.some(c => c.id === draft.categoryId && !c.archived)) draft.categoryId = this.state.opexCategories.find(c => !c.archived).id;
         this.state.expenseDraft = draft;
       }
       sessionStorage.removeItem('exp-bank-pending-expense');
@@ -2154,12 +2154,13 @@ class Component extends DCLogic {
     } catch (e) { this.setState({ storageError: e.message, moneyError: e.message }); }
   }
   blankExpense(currencyCode = this.state.defaultCurrencyCode) {
-    return { amount: '', categoryId: this.state.opexCategories[0].id, note: '', date: this.todayKey(), currencyCode, stashId: '' };
+    return { amount: '', categoryId: this.state.opexCategories.find(c => !c.archived).id, note: '', date: this.todayKey(), currencyCode, stashId: '' };
   }
   openNewOpex(stashId = null, amount = '') {
     const goal = stashId == null ? null : (this.state.stash || []).find(s => s.id === stashId && !s.archivedAt);
     if (stashId != null && !goal) return;
-    const draft = goal ? { ...this.blankExpense(goal.currencyCode), stashId: String(goal.id), amount: String(amount || '') } : this.state.expenseDraft || this.blankExpense();
+    let draft = goal ? { ...this.blankExpense(goal.currencyCode), stashId: String(goal.id), amount: String(amount || '') } : this.state.expenseDraft || this.blankExpense();
+    if (!this.state.opexCategories.some(c => c.id === draft.categoryId && !c.archived)) draft = { ...draft, categoryId: this.state.opexCategories.find(c => !c.archived).id };
     this.setState({ newOpexOpen: true, expenseDraft: draft, expenseCommandId: this.newCommandId(), moneyError: '', stashDetailId: null });
   }
   openNewStash() { this.setState({ newStashOpen: true, moneyError: '' }); }
@@ -2219,7 +2220,7 @@ class Component extends DCLogic {
       return result;
     } catch (e) { this.setState({ moneyError: e.message }); return false; }
   }
-  openStashDetail(id) { this.setState({ stashDetailId: id, stashTimelineLimit: 80, stashTxnType: 'withdraw', stashTxnAmount: '', stashTxnNote: '', stashTxnCommandId: this.newCommandId(), moneyError: '' }); }
+  openStashDetail(id, mode = 'withdraw') { const goal = (this.state.stash || []).find(s => s.id === id); if (!goal) return; this.setState({ stashDetailId: id, stashTimelineLimit: 80, stashTxnType: mode, stashTxnAmount: mode === 'adjustBalance' ? (ExpMoney.balance(this.state, id) / 100).toFixed(2) : '', stashTxnNote: '', stashTxnCommandId: this.newCommandId(), moneyError: '' }); }
   closeStashDetail() { this.setState({ stashDetailId: null }); }
   async saveStashTransaction() {
     try {
@@ -2228,13 +2229,32 @@ class Component extends DCLogic {
     } catch (e) { this.setState({ moneyError: e.message }); return false; }
   }
   async cycleCurrency() { const codes = ExpMoney.CURRENCIES.map(c => c.code), i = codes.indexOf(this.state.defaultCurrencyCode); return this.runMoney({ type: 'setCurrency', currencyCode: codes[(i + 1) % codes.length], commandId: this.newCommandId() }); }
-  setOpexGoalFilter(text) { this.setState({ opexGoalFilter: text, opexVisibleLimit: 120 }); }
-  openCategories(from = '') { this.setState({ categoryOpen: true, categoryReturn: from, categoryNameDraft: '', categoryCommandId: this.newCommandId(), moneyError: '' }); }
-  closeCategories() { this.setState({ categoryOpen: false, categoryNameDraft: '', moneyError: '' }); }
+  openCategories(from = '') { this.setState({ categoryOpen: true, categoryReturn: from, categoryNameDraft: '', categoryColorDraft: '#22d3ee', categoryDeleteMode: false, categorySelectedIds: [], categoryCommandId: this.newCommandId(), moneyError: '' }); }
+  closeCategories() { this.setState({ categoryOpen: false, categoryNameDraft: '', categoryDeleteMode: false, categorySelectedIds: [], moneyError: '' }); }
+  toggleCategoryDeleteMode() { this.setState({ categoryDeleteMode: !this.state.categoryDeleteMode, categorySelectedIds: [], moneyError: '' }); }
+  toggleCategorySelected(id) {
+    const selected = new Set(this.state.categorySelectedIds || []);
+    if (selected.has(id)) selected.delete(id); else selected.add(id);
+    this.setState({ categorySelectedIds: [...selected] });
+  }
+  async setOpexCategoryColor(id, color) {
+    return this.runMoney({ type: 'setCategoryColor', id, color, commandId: this.newCommandId() });
+  }
+  async deleteSelectedOpexCategories() {
+    const ids = this.state.categorySelectedIds || [];
+    if (!ids.length) return false;
+    const names = (this.state.opexCategories || []).filter(c => ids.includes(c.id)).map(c => c.name);
+    if (!window.confirm('移除 ' + ids.length + ' 个类别（' + names.join('、') + '）？\n历史开销与金额不会删除；旧记录仍显示原分类。')) return false;
+    const remaining = this.state.opexCategories.find(c => !c.archived && !ids.includes(c.id));
+    const ui = { categoryDeleteMode: false, categorySelectedIds: [] };
+    const draft = this.state.expenseDraft;
+    if (remaining && draft && ids.includes(draft.categoryId)) ui.expenseDraft = { ...draft, categoryId: remaining.id };
+    return this.runMoney({ type: 'archiveCategories', ids, commandId: this.newCommandId() }, ui);
+  }
   async addOpexCategory() {
     const name = String(this.state.categoryNameDraft || '').trim();
     const from = this.state.categoryReturn;
-    const ok = await this.runMoney({ type: 'addCategory', name, commandId: this.state.categoryCommandId }, { categoryNameDraft: '', categoryCommandId: this.newCommandId() });
+    const ok = await this.runMoney({ type: 'addCategory', name, color: this.state.categoryColorDraft || '#22d3ee', commandId: this.state.categoryCommandId }, { categoryNameDraft: '', categoryCommandId: this.newCommandId() });
     if (ok) {
       const c = this.state.opexCategories.find(c => c.name === name);
       if (c && (from === 'new' || from === 'edit')) {
@@ -2245,8 +2265,8 @@ class Component extends DCLogic {
     return ok;
   }
   async moveOpexCategory(id, direction) {
-    const ids = this.state.opexCategories.map(c => c.id), i = ids.indexOf(id), j = i + direction;
-    if (i < 0 || j < 0 || j >= ids.length) return;
+    const active = this.state.opexCategories.filter(c => !c.archived).map(c => c.id), hidden = this.state.opexCategories.filter(c => c.archived).map(c => c.id), ids = [...active, ...hidden], i = active.indexOf(id), j = i + direction;
+    if (i < 0 || j < 0 || j >= active.length) return;
     [ids[i], ids[j]] = [ids[j], ids[i]];
     return this.runMoney({ type: 'reorderCategories', ids, commandId: this.newCommandId() });
   }
@@ -2287,7 +2307,7 @@ class Component extends DCLogic {
       syncLatestMoney: () => this.syncLatestMoney(), exportRawMoneyBackup: () => this.exportRawMoneyBackup(),
       moneyMigrationNotice: st.moneyMigrationNotice || '', moneyMigrationVisible: !!st.moneyMigrationNotice, confirmMoneyMigration: () => this.confirmMoneyMigration(),
       currencyOptions: ExpMoney.CURRENCIES.map(c => ({ key: c.code, ...c })), defaultCurrencyCode: st.defaultCurrencyCode,
-      categoryOptions: st.opexCategories.map(c => ({ key: c.id, ...c })),
+      categoryOptions: st.opexCategories.filter(c => !c.archived || c.id === editDraft.categoryId).map(c => ({ key: c.id, ...c })),
       expenseAmount: draft.amount, expenseCategoryId: draft.categoryId, expenseNote: draft.note, expenseDate: draft.date, expenseCurrency: draft.currencyCode, expenseStashId: draft.stashId,
       expenseCurrencySymbol: ExpMoney.CURRENCIES.find(c => c.code === draft.currencyCode).symbol,
       onExpenseAmount: e => this.updateExpenseDraft('amount', e.target.value), onExpenseCategory: e => this.updateExpenseDraft('categoryId', e.target.value), onExpenseNote: e => this.updateExpenseDraft('note', e.target.value), onExpenseDate: e => this.updateExpenseDraft('date', e.target.value), onExpenseCurrency: e => this.updateExpenseDraft('currencyCode', e.target.value), onExpenseStash: e => this.updateExpenseDraft('stashId', e.target.value),
@@ -2297,9 +2317,9 @@ class Component extends DCLogic {
       onEditExpenseAmount: e => this.updateExpenseDraft('amount', e.target.value, true), onEditExpenseCategory: e => this.updateExpenseDraft('categoryId', e.target.value, true), onEditExpenseNote: e => this.updateExpenseDraft('note', e.target.value, true), onEditExpenseDate: e => this.updateExpenseDraft('date', e.target.value, true), onEditExpenseCurrency: e => this.updateExpenseDraft('currencyCode', e.target.value, true), onEditExpenseStash: e => this.updateExpenseDraft('stashId', e.target.value, true),
       editExpenseGoals: options(editDraft, editing), editExpensePreview: editPreview,
       editExpenseLegacyLink: !!(editing && editing.currencyInferred && editing.stashId == null && editDraft.stashId),
-      categoryOpen: !!st.categoryOpen, openCategories: () => this.openCategories(), openNewCategory: () => this.openCategories('new'), openEditCategory: () => this.openCategories('edit'), closeCategories: () => this.closeCategories(), categoryNameDraft: st.categoryNameDraft || '', onCategoryName: e => this.setState({ categoryNameDraft: e.target.value }), addOpexCategory: () => this.addOpexCategory(),
-      categoryRows: st.opexCategories.map((c, i, list) => ({ key: c.id, ...c, hint: c.builtin ? '内置' : '自定义', upDisabled: i === 0 || !!st.moneyBusy, downDisabled: i === list.length - 1 || !!st.moneyBusy, upLabel: '上移' + c.name, downLabel: '下移' + c.name, onUp: () => this.moveOpexCategory(c.id, -1), onDown: () => this.moveOpexCategory(c.id, 1) })),
-      opexGoalFilter: st.opexGoalFilter || '', onOpexGoalFilter: e => this.setOpexGoalFilter(e.target.value), opexFilterGoals: st.stash.map(s => ({ key: s.id, idStr: String(s.id), name: s.name + (s.archivedAt ? '（已归档）' : '') })),
+      categoryOpen: !!st.categoryOpen, openCategories: () => this.openCategories(), openNewCategory: () => this.openCategories('new'), openEditCategory: () => this.openCategories('edit'), closeCategories: () => this.closeCategories(), categoryNameDraft: st.categoryNameDraft || '', onCategoryName: e => this.setState({ categoryNameDraft: e.target.value }), categoryColorDraft: st.categoryColorDraft || '#22d3ee', onCategoryColor: e => this.setState({ categoryColorDraft: e.target.value }), addOpexCategory: () => this.addOpexCategory(),
+      categoryDeleteMode: !!st.categoryDeleteMode, categoryDeleteModeLabel: st.categoryDeleteMode ? '取消选择' : '批量删除', toggleCategoryDeleteMode: () => this.toggleCategoryDeleteMode(), categoryDeleteCount: (st.categorySelectedIds || []).length, categoryDeleteDisabled: !(st.categorySelectedIds || []).length || !!st.moneyBusy, deleteSelectedOpexCategories: () => this.deleteSelectedOpexCategories(),
+      categoryRows: st.opexCategories.filter(c => !c.archived).map((c, i, list) => ({ key: c.id, ...c, hint: c.builtin ? '内置' : '自定义', upDisabled: i === 0 || !!st.moneyBusy || !!st.categoryDeleteMode, downDisabled: i === list.length - 1 || !!st.moneyBusy || !!st.categoryDeleteMode, upLabel: '上移' + c.name, downLabel: '下移' + c.name, onUp: () => this.moveOpexCategory(c.id, -1), onDown: () => this.moveOpexCategory(c.id, 1), onColorChange: e => this.setOpexCategoryColor(c.id, e.target.value), onToggleSelected: () => this.toggleCategorySelected(c.id), selectedMark: (st.categorySelectedIds || []).includes(c.id) ? '☑' : '□', selectedLabel: '选择删除' + c.name })),
       stashDetailOpen: !!detail, stashDetailName: detail ? detail.name : '', stashDetailBalance: detail ? ExpMoney.format(ExpMoney.balance(st, detail.id), detail.currencyCode) : '', stashDetailArchived: !!(detail && detail.archivedAt), stashDetailActive: !!detail && !detail.archivedAt, closeStashDetail: () => this.closeStashDetail(), restoreDetailStash: () => detail && this.restoreStash(detail.id),
       stashHistoryRows: history.slice(0, limit).map(r => ({ key: r.id, kind: r.kindLabel, date: r.date || '升级前', note: r.note, amount: (r.deltaMinor > 0 ? '+' : r.deltaMinor < 0 ? '−' : '') + ExpMoney.format(Math.abs(r.deltaMinor), r.currencyCode), balance: ExpMoney.format(r.balanceMinor, r.currencyCode), color: r.deltaMinor < 0 ? '#f0b6b6' : '#4ade80', isExpense: r.expenseId != null, onEdit: () => { if (r.expenseId != null) this.openEdit('opex', r.expenseId); } })),
       stashHistoryMore: history.length > limit, moreStashHistory: () => this.setState({ stashTimelineLimit: limit + 80 }), stashHistoryEmpty: history.length === 0,
@@ -3735,8 +3755,7 @@ class Component extends DCLogic {
     }).sort((a, b) => a.targetTs - b.targetTs);
     const opexProps = (() => {
       const cur = st.defaultCurrencyCode, symbol = ExpMoney.CURRENCIES.find(c => c.code === cur).symbol;
-      const filter = st.opexGoalFilter || '';
-      const list = opexBase.filter(o => o.currencyCode === cur && (!filter || (filter === 'unlinked' ? o.stashId == null : String(o.stashId) === filter)));
+      const list = opexBase.filter(o => o.currencyCode === cur);
       const now = new Date();
       const mk = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
       const todayK = this.todayKey();
@@ -3779,7 +3798,7 @@ class Component extends DCLogic {
         const minor = ExpMoney.balance(st, s.id), pct = Math.min(100, Math.round(minor / s.targetMinor * 100));
       return { key: s.id, id: s.id, name: s.name, pct: pct + '%', reached: minor >= s.targetMinor, claimed: s.claimed, active: !s.archivedAt, archived: !!s.archivedAt,
           savedStr: ExpMoney.format(minor, s.currencyCode), targetStr: ExpMoney.format(s.targetMinor, s.currencyCode),
-          onSave: () => this.stashDeposit(s.id), onWithdraw: () => this.stashWithdraw(s.id), onEdit: () => this.openEdit('stash', s.id), onDel: () => this.delStash(s.id), onDetail: () => this.openStashDetail(s.id), onRestore: () => this.restoreStash(s.id) };
+          onSave: () => this.stashDeposit(s.id), onWithdraw: () => this.stashWithdraw(s.id), onEdit: () => this.openEdit('stash', s.id), onDel: () => this.delStash(s.id), onDetail: () => this.openStashDetail(s.id), onAdjust: () => this.openStashDetail(s.id, 'adjustBalance'), onRestore: () => this.restoreStash(s.id) };
       });
       const limit = st.opexVisibleLimit || 120;
       let entriesSeen = 0;
