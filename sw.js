@@ -1,11 +1,20 @@
 /* EXP BANK service worker — coherent versioned assets; user data is never cleared. */
-const VERSION = 'v1.13.0';
-const CACHE = 'exp-bank-' + VERSION + '-opex-stash-20261014';
+const VERSION = 'v1.13.1';
+const CACHE = 'exp-bank-' + VERSION + '-asset-compat-20261014';
 const ASSETS = [
   './', './index.html', './support.js', './money.js', './progression.js', './life-architecture.js', './task-assistant.js', './image-slot.js',
   './vendor/react.production.min.js', './vendor/react-dom.production.min.js',
   './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'
 ];
+// Module headers describe the version in which each file LAST changed, not the
+// app release. Unchanged modules legitimately retain earlier headers.
+// Keep explicit checks for each deployed module to catch mixed release assets.
+const MODULE_VERSIONS = {
+  './money.js': 'v1.13.0',
+  './progression.js': 'v1.12.0',
+  './life-architecture.js': 'v1.12.0',
+  './task-assistant.js': 'v1.12.0'
+};
 const scope = self.registration.scope;
 const assetPaths = new Set(ASSETS.map(path => new URL(path, scope).pathname));
 
@@ -25,11 +34,17 @@ self.addEventListener('install', event => {
         const html = await response.clone().text();
         if (!html.includes("const APP_VERSION = '" + VERSION + "'")) throw new Error('Page and worker versions differ');
       }
-      if (['./money.js','./progression.js','./life-architecture.js','./task-assistant.js'].includes(path) && !(await response.clone().text()).includes('EXP BANK ' + VERSION)) throw new Error('Money module version differs');
+      if (MODULE_VERSIONS[path] && !(await response.clone().text()).includes('EXP BANK ' + MODULE_VERSIONS[path])) throw new Error('Module release differs: ' + path);
       return [request, response];
     }));
-    const cache = await caches.open(CACHE);
-    for (const [request, response] of fetched) await cache.put(request, response);
+    try {
+      const cache = await caches.open(CACHE);
+      for (const [request, response] of fetched) await cache.put(request, response);
+    } catch (error) {
+      // Failed installs must not leave a misleading partial release cache.
+      await caches.delete(CACHE);
+      throw error;
+    }
     // Waiting workers activate only after the user requests an update or old tabs close.
   })());
 });
