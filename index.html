@@ -939,7 +939,7 @@ input[type="date"]{color-scheme:dark;}
           </sc-if>
           <sc-if value="{{ editIsOpex }}" hint-placeholder-val="{{ false }}"><label>币种<select id="ed-opex-currency" class="money-input" value="{{ editExpenseCurrency }}" onChange="{{ onEditExpenseCurrency }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}">{{ c.label }}</option></sc-for></select></label>
 <label>金额（{{ editExpenseCurrencySymbol }}）<input id="ed-opex-amount" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="如：28.50" value="{{ editExpenseAmount }}" onInput="{{ onEditExpenseAmount }}"></label>
-<label>类别<select id="ed-opex-cat" class="money-input" value="{{ editExpenseCategoryId }}" onChange="{{ onEditExpenseCategory }}"><sc-for list="{{ categoryOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.id }}">{{ c.name }}</option></sc-for></select></label>
+<label>类别<select id="ed-opex-cat" class="money-input" value="{{ editExpenseCategoryId }}" onChange="{{ onEditExpenseCategory }}"><sc-for list="{{ editCategoryOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.id }}">{{ c.name }}</option></sc-for></select></label>
 <div class="money-line"><button class="money-btn" onClick="{{ openEditCategory }}">+ 自定义类别</button></div>
 <label>付款目标<select id="ed-opex-stash" class="money-input" value="{{ editExpenseStashId }}" onChange="{{ onEditExpenseStash }}"><option value="">不关联目标</option><sc-for list="{{ editExpenseGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}" disabled="{{ g.disabled }}">{{ g.name }}</option></sc-for></select></label>
 <div class="money-preview" aria-live="polite">{{ editExpensePreview }}</div>
@@ -2307,7 +2307,8 @@ class Component extends DCLogic {
       syncLatestMoney: () => this.syncLatestMoney(), exportRawMoneyBackup: () => this.exportRawMoneyBackup(),
       moneyMigrationNotice: st.moneyMigrationNotice || '', moneyMigrationVisible: !!st.moneyMigrationNotice, confirmMoneyMigration: () => this.confirmMoneyMigration(),
       currencyOptions: ExpMoney.CURRENCIES.map(c => ({ key: c.code, ...c })), defaultCurrencyCode: st.defaultCurrencyCode,
-      categoryOptions: st.opexCategories.filter(c => !c.archived || c.id === editDraft.categoryId).map(c => ({ key: c.id, ...c })),
+      categoryOptions: st.opexCategories.filter(c => !c.archived).map(c => ({ key: c.id, ...c })),
+      editCategoryOptions: st.opexCategories.filter(c => !c.archived || c.id === editDraft.categoryId).map(c => ({ key: c.id, ...c })),
       expenseAmount: draft.amount, expenseCategoryId: draft.categoryId, expenseNote: draft.note, expenseDate: draft.date, expenseCurrency: draft.currencyCode, expenseStashId: draft.stashId,
       expenseCurrencySymbol: ExpMoney.CURRENCIES.find(c => c.code === draft.currencyCode).symbol,
       onExpenseAmount: e => this.updateExpenseDraft('amount', e.target.value), onExpenseCategory: e => this.updateExpenseDraft('categoryId', e.target.value), onExpenseNote: e => this.updateExpenseDraft('note', e.target.value), onExpenseDate: e => this.updateExpenseDraft('date', e.target.value), onExpenseCurrency: e => this.updateExpenseDraft('currencyCode', e.target.value), onExpenseStash: e => this.updateExpenseDraft('stashId', e.target.value),
