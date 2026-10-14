@@ -111,4 +111,38 @@ test('200次随机存入和支出符合独立整数余额模型', () => {
     assert.equal(M.balance(s, 41), expected); assert.equal(s.stash[0].saved, expected / 100);
   }
 });
+
+test('类别颜色创建与修改支持内置和自定义，输入格式严格校验', () => {
+  let s = command(seed(), 'addCategory', { name: '医疗', color: '#AABBCC' });
+  const c = s.opexCategories.find(x => x.name === '医疗');
+  assert.equal(c.color, '#aabbcc');
+  s = command(s, 'setCategoryColor', { id: 'cat-food', color: '#123456' });
+  assert.equal(s.opexCategories.find(x => x.id === 'cat-food').color, '#123456');
+  assert.throws(() => command(s, 'setCategoryColor', { id: 'cat-food', color: 'red' }), /颜色/);
+});
+test('批量移除类别只归档元数据，不删除历史开销', () => {
+  let s = command(seed(), 'addCategory', { name: '医疗', color: '#336699' });
+  const c = s.opexCategories.find(x => x.name === '医疗');
+  s = command(s, 'addExpense', { ...expense({ categoryId: c.id, stashId: null }) });
+  const original = JSON.stringify(s.opex);
+  s = command(s, 'archiveCategories', { ids: ['cat-food', c.id] });
+  assert.equal(JSON.stringify(s.opex), original);
+  assert.equal(M.normalize(s).opex[0].cat, '医疗');
+  assert.equal(s.opexCategories.find(x => x.id === c.id).archived, true);
+  assert.throws(() => command(s, 'addExpense', { ...expense({ categoryId: c.id, stashId: null }) }), /类别/);
+  assert.throws(() => command(s, 'archiveCategories', { ids: s.opexCategories.filter(x => !x.archived).map(x => x.id) }), /至少保留/);
+});
+test('重建同名归档类别恢复旧ID和历史颜色兼容', () => {
+  let s = command(seed(), 'addCategory', { name: '医疗', color: '#336699' });
+  const c = s.opexCategories.find(x => x.name === '医疗');
+  s = command(s, 'archiveCategories', { ids: [c.id] });
+  s = command(s, 'addCategory', { name: '医疗', color: '#aabbcc' });
+  const restored = s.opexCategories.filter(x => x.name === '医疗');
+  assert.equal(restored.length, 1);
+  assert.equal(restored[0].id, c.id);
+  assert.equal(restored[0].color, '#aabbcc');
+  assert.equal(restored[0].archived, false);
+  assert.deepEqual(M.normalize(s), s);
+});
+
 console.log('Money checks passed: ' + passed);

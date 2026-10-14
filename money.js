@@ -1,4 +1,4 @@
-/* EXP BANK v1.12.0 — integer money, migrations and atomic business commands. */
+/* EXP BANK v1.13.0 — integer money, safe category lifecycle and atomic business commands. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === 'object' && module.exports) module.exports = api;
@@ -56,8 +56,9 @@
     if (!n || n.length > 24) fail('类别名称需为 1–24 个字');
     return n;
   }
+  function categoryColor(value) { const color = String(value || '').trim(); if (!/^#[0-9a-f]{6}$/i.test(color)) fail('请选择有效的六位十六进制类别颜色'); return color.toLowerCase(); }
   function categories(input, expenses) {
-    const rows = Array.isArray(input) ? input.map(c => ({ ...c, name: categoryName(c.name) })) : BUILTINS.map(c => ({ ...c }));
+    const rows = Array.isArray(input) ? input.map(c => ({ ...c, name: categoryName(c.name), archived: !!c.archived })) : BUILTINS.map(c => ({ ...c, archived: false }));
     unique(rows, '类别');
     const names = new Set();
     rows.forEach(c => {
@@ -139,7 +140,7 @@
   function expenseFields(state, command, old, today) {
     const amountMinor = safe(command.amountMinor);
     if (amountMinor <= 0) fail('金额必须大于 0');
-    const c = state.opexCategories.find(c => c.id === command.categoryId); if (!c) fail('请选择类别');
+    const c = state.opexCategories.find(c => c.id === command.categoryId); if (!c || (c.archived && (!old || old.categoryId !== c.id))) fail('请选择有效的类别');
     const currencyCode = command.currencyCode || (old && old.currencyCode) || state.defaultCurrencyCode; currency(currencyCode);
     const stashId = command.stashId == null || command.stashId === '' ? null : command.stashId;
     const goal = stashId == null ? null : goalById(state, stashId, !(old && old.stashId === stashId));
@@ -198,9 +199,23 @@
         award(100, '存钱罐达成 · ' + goal.name);
       }
     } else if (type === 'addCategory') {
-      const name = categoryName(command.name);
-      if (state.opexCategories.some(c => nameKey(c.name) === nameKey(name))) fail('已有同名类别');
-      state.opexCategories = [...state.opexCategories, { id: 'cat-' + allocate(), name, color: COLORS[state.opexCategories.length % COLORS.length], builtin: false }];
+      const name = categoryName(command.name), match = state.opexCategories.find(c => nameKey(c.name) === nameKey(name));
+      if (match && !match.archived) fail('已有同名类别');
+      const color = command.color == null ? COLORS[state.opexCategories.length % COLORS.length] : categoryColor(command.color);
+      if (match) state.opexCategories = state.opexCategories.map(c => c.id === match.id ? { ...c, archived: false, color } : c);
+      else state.opexCategories = [...state.opexCategories, { id: 'cat-' + allocate(), name, color, builtin: false, archived: false }];
+    } else if (type === 'setCategoryColor') {
+      const color = categoryColor(command.color);
+      if (!state.opexCategories.some(c => c.id === command.id && !c.archived)) fail('类别不存在或已移除');
+      state.opexCategories = state.opexCategories.map(c => c.id === command.id ? { ...c, color } : c);
+    } else if (type === 'archiveCategories') {
+      const ids = command.ids;
+      if (!Array.isArray(ids) || !ids.length || new Set(ids).size !== ids.length ||
+          ids.some(id => !state.opexCategories.some(c => c.id === id && !c.archived))) fail('请选择有效的待删除类别');
+      const selected = new Set(ids);
+      if (!state.opexCategories.some(c => !c.archived && !selected.has(c.id))) fail('至少保留一个可用类别');
+      // Hide categories without erasing expense snapshots, category colors, or goal balances.
+      state.opexCategories = state.opexCategories.map(c => selected.has(c.id) ? { ...c, archived: true } : c);
     } else if (type === 'reorderCategories') {
       const ids = command.ids;
       if (!Array.isArray(ids) || ids.length !== state.opexCategories.length || new Set(ids).size !== ids.length || ids.some(id => !state.opexCategories.some(c => c.id === id))) fail('类别排序不完整，请重试');
@@ -223,7 +238,7 @@
     rows.forEach(r => { remaining = add(remaining, r.deltaMinor); r.balanceMinor = remaining; });
     return rows.reverse();
   }
-  const TRANSIENT = new Set(('editing pending selectedDate pomoRunning pomoEndTs pomoRemaining pomoTotal noiseOn noiseFileName backupOpen backupMsg backupMsgColor copyLabel reorderOpen reorderKind roMode batchSel batchMsg momentumMsg tierCfgOpen dragId vw newTaskOpen newSetOpen newRewardOpen newMilestoneOpen newMilestoneSetOpen newFundOpen newCountdownOpen quadrantOpen imgEditId fundSettingsOpen notionMsg notionMsgColor notionBusy notionResultOpen notionResultOk notionResultMsg expEditing newOpexOpen newStashOpen updateNoteOpen prevVersion reflectionOpen reflectionTarget reflectionBlob reflectionPreview galleryOpen galleryImageUrls galleryEdit galleryEditBlob galleryEditPreview galleryEditRemoveImage gallerySearch aiHelpOpen aiHelpMsg aiHelpMsgColor newTaskAiMsg newTaskAiMsgColor taskFocusId taskFocusMin pomoLinkedTaskId pomoCfgOpen bingoCfgOpen bingoCelebration calendarTaskId calendarMonthOffset newDaylineOpen editingDaylineId daylineMsg backupFullCode taskCalendarOpen moneyError storageError moneyBusy categoryOpen categoryReturn categoryNameDraft expenseDraft expenseEditDraft expenseCommandId categoryCommandId stashDetailId stashTxnType stashTxnAmount stashTxnNote stashTxnCommandId moneyConflict updateBusy updateMessage assistantPlan assistantOrigin assistantOpen assistantRemember assistantCorrection assistantError assistantBusy aiHelpInput newTaskDescription rewardPricingPreview editRewardPricingPreview lifeReorder lifeFilter lifeFilterDraft').split(' '));
+  const TRANSIENT = new Set(('editing pending selectedDate pomoRunning pomoEndTs pomoRemaining pomoTotal noiseOn noiseFileName backupOpen backupMsg backupMsgColor copyLabel reorderOpen reorderKind roMode batchSel batchMsg momentumMsg tierCfgOpen dragId vw newTaskOpen newSetOpen newRewardOpen newMilestoneOpen newMilestoneSetOpen newFundOpen newCountdownOpen quadrantOpen imgEditId fundSettingsOpen notionMsg notionMsgColor notionBusy notionResultOpen notionResultOk notionResultMsg expEditing newOpexOpen newStashOpen updateNoteOpen prevVersion reflectionOpen reflectionTarget reflectionBlob reflectionPreview galleryOpen galleryImageUrls galleryEdit galleryEditBlob galleryEditPreview galleryEditRemoveImage gallerySearch aiHelpOpen aiHelpMsg aiHelpMsgColor newTaskAiMsg newTaskAiMsgColor taskFocusId taskFocusMin pomoLinkedTaskId pomoCfgOpen bingoCfgOpen bingoCelebration calendarTaskId calendarMonthOffset newDaylineOpen editingDaylineId daylineMsg backupFullCode taskCalendarOpen moneyError storageError moneyBusy categoryOpen categoryReturn categoryNameDraft categoryColorDraft categoryDeleteMode categorySelectedIds expenseDraft expenseEditDraft expenseCommandId categoryCommandId stashDetailId stashTxnType stashTxnAmount stashTxnNote stashTxnCommandId moneyConflict updateBusy updateMessage assistantPlan assistantOrigin assistantOpen assistantRemember assistantCorrection assistantError assistantBusy aiHelpInput newTaskDescription rewardPricingPreview editRewardPricingPreview lifeReorder lifeFilter lifeFilterDraft').split(' '));
   function persistent(state) { return Object.fromEntries(Object.entries(state).filter(([k]) => !TRANSIENT.has(k))); }
   // Both backends serialize every writer across tabs. IDB's readwrite transaction is the fallback mutex.
   async function withWriteLock(work, globals) {

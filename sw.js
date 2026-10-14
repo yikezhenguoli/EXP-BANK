@@ -1,6 +1,6 @@
 /* EXP BANK service worker — coherent versioned assets; user data is never cleared. */
-const VERSION = 'v1.12.0';
-const CACHE = 'exp-bank-' + VERSION + '-simplify-20261008';
+const VERSION = 'v1.13.0';
+const CACHE = 'exp-bank-' + VERSION + '-opex-stash-20261014';
 const ASSETS = [
   './', './index.html', './support.js', './money.js', './progression.js', './life-architecture.js', './task-assistant.js', './image-slot.js',
   './vendor/react.production.min.js', './vendor/react-dom.production.min.js',
