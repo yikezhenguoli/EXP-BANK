@@ -221,7 +221,7 @@ await test('编辑奖励可更换类型；删除类型只移出分组，不删�
   const data=seed(0); data.rewardCategories=[{id:500,name:'体验'},{id:502,name:'影音'}]; data.rewards=[{id:501,name:'周末电影',cost:80,categoryId:500,img:'data:image/jpeg;base64,abc',redeems:[1760000000000],capCycle:'daily'}]; data.nextId=503;
   const t=create(data); t.c.openEdit('reward',501); t.c.confirmEdit(); t.input('ed-name','周末电影'); t.input('ed-reward-category','502'); await t.c.saveEdit();
   assert.equal(t.stored().rewards[0].categoryId,502);
-  t.c.delRewardCategory(502); assert.equal(t.stored().rewardCategories.length,1);
+  await t.c.delRewardCategory(502); assert.equal(t.stored().rewardCategories.length,1);
   assert.equal(t.stored().rewards[0].categoryId,null);
   assert.equal(t.stored().rewards[0].name,'周末电影'); assert.equal(t.stored().rewards[0].img,data.rewards[0].img);
   assert.deepEqual(Array.from(t.stored().rewards[0].redeems),data.rewards[0].redeems);
