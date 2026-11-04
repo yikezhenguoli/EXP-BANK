@@ -351,58 +351,72 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- STORE -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">SHOPPING MALL // REDEEM</div><div onClick="{{ startReorderRewards }}" title="长按拖动排序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建奖励</div></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <sc-for list="{{ rewards }}" as="r" hint-placeholder-count="4">
-          <div style="background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05) 42%,rgba(255,255,255,0.02)) border-box;border:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 28px rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;position:relative;">
-            <div onClick="{{ r.onDel }}" style="cursor:pointer;position:absolute;top:6px;right:8px;z-index:2;color:rgba(230,233,240,0.55);font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,0.8);" style-hover="color:#f87171;">×</div>
-            <div style="position:relative;height:104px;">
-              <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ false }}">
-                <div onClick="{{ r.onAskImg }}" title="点击调整照片" style="{{ r.imgBgStyle }}"></div>
-              </sc-if>
-              <sc-if value="{{ r.noImg }}" hint-placeholder-val="{{ true }}">
-                <div onClick="{{ r.onPickImg }}" title="点击上传照片" style="cursor:pointer;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#0d0f14;color:#535a6a;" style-hover="color:#8b93a4;">
-                  <div style="font-size:20px;line-height:1;">▦</div>
-                  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;">点击上传照片</div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">SHOPPING MALL // REDEEM</div><div onClick="{{ openRewardCategoryManager }}" title="管理奖励类型" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 8px;" style-hover="border-color:{{ accent }};color:{{ accent }};">▤ 类型</div><div onClick="{{ startReorderRewards }}" title="长按拖动排序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建奖励</div></div>
+      <sc-if value="{{ rewardsEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px 8px;text-align:center;color:#697084;font-size:12px;">还没有奖励，先创建一项属于自己的现实奖励。</div></sc-if>
+      <sc-for list="{{ rewardGroups }}" as="rg" hint-placeholder-count="1">
+        <div style="border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(7,9,13,.22);overflow:hidden;">
+          <div onClick="{{ rg.onToggle }}" style="cursor:pointer;display:flex;align-items:center;gap:9px;padding:11px 12px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(10,12,17,.2));">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:{{ accent }};width:14px;">{{ rg.chevron }}</div>
+            <div style="font-size:12.5px;font-weight:700;color:#dce1eb;letter-spacing:.3px;flex:1;">{{ rg.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#8b93a4;">{{ rg.countLabel }}</div>
+          </div>
+          <sc-if value="{{ rg.open }}" hint-placeholder-val="{{ true }}">
+            <sc-if value="{{ rg.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:13px 12px;color:#697084;font-size:11px;">这个类型还没有奖励，可以在新建奖励时归入这里。</div></sc-if>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 10px 10px;">
+              <sc-for list="{{ rg.rewards }}" as="r" hint-placeholder-count="2">
+              <div style="background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05) 42%,rgba(255,255,255,0.02)) border-box;border:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 28px rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;position:relative;">
+                <div onClick="{{ r.onDel }}" style="cursor:pointer;position:absolute;top:6px;right:8px;z-index:2;color:rgba(230,233,240,0.55);font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,0.8);" style-hover="color:#f87171;">×</div>
+                <div style="position:relative;height:104px;">
+                  <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ r.onAskImg }}" title="点击调整照片" style="{{ r.imgBgStyle }}"></div>
+                  </sc-if>
+                  <sc-if value="{{ r.noImg }}" hint-placeholder-val="{{ true }}">
+                    <div onClick="{{ r.onPickImg }}" title="点击上传照片" style="cursor:pointer;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#0d0f14;color:#535a6a;" style-hover="color:#8b93a4;">
+                      <div style="font-size:20px;line-height:1;">▦</div>
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;">点击上传照片</div>
+                    </div>
+                  </sc-if>
                 </div>
-              </sc-if>
-            </div>
-            <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;"><div style="font-size:10px;color:{{ r.riskColor }};">{{ r.riskLabel }}</div>
-              <div style="display:flex;flex-direction:column;gap:3px;">
-                <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;min-height:61px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere;">{{ r.name }}</div>
-                <div style="display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:10px;">
-                  <div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;min-width:48px;line-height:1;">
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:800;letter-spacing:-0.5px;color:{{ accent }};white-space:nowrap;">{{ r.costValue }}</div>
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.2px;color:#8b93a4;margin-top:4px;">EXP</div>
-                  </div>
-                  <div style="min-width:0;border-left:1px solid #2a303a;padding-left:9px;display:flex;flex-direction:column;gap:4px;">
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:9.6px;color:#a6adba;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.capPeriodLabel }}</div>
-                    <div style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.2px;line-height:1.2;">
-                      <span style="color:#697084;">本期</span>
-                      <span style="font-weight:700;color:{{ r.capUsageColor }};white-space:nowrap;">{{ r.capUsageLabel }}</span>
+                <div onClick="{{ r.onEdit }}" title="点击编辑此奖励" style="cursor:pointer;padding:10px 12px;display:flex;flex-direction:column;gap:8px;"><div style="font-size:10px;color:{{ r.riskColor }};">{{ r.riskLabel }}</div>
+                  <div style="display:flex;flex-direction:column;gap:3px;">
+                    <div style="font-size:14px;font-weight:700;letter-spacing:0.2px;line-height:1.45;color:#eef1f7;min-height:61px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;overflow-wrap:anywhere;">{{ r.name }}</div>
+                    <div style="display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:10px;">
+                      <div style="display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;min-width:48px;line-height:1;">
+                        <div style="font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:800;letter-spacing:-0.5px;color:{{ accent }};white-space:nowrap;">{{ r.costValue }}</div>
+                        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:1.2px;color:#8b93a4;margin-top:4px;">EXP</div>
+                      </div>
+                      <div style="min-width:0;border-left:1px solid #2a303a;padding-left:9px;display:flex;flex-direction:column;gap:4px;">
+                        <div style="font-family:'JetBrains Mono',monospace;font-size:9.6px;color:#a6adba;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.capPeriodLabel }}</div>
+                        <div style="display:flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:9.2px;line-height:1.2;">
+                          <span style="color:#697084;">本期</span>
+                          <span style="font-weight:700;color:{{ r.capUsageColor }};white-space:nowrap;">{{ r.capUsageLabel }}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
+                  <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ false }}">
+                    <div onClick="{{ r.onUndo }}" title="已兑换 · 点一下可撤销(几秒后自动确认)" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 0;" style-hover="filter:brightness(1.15);">✓ 已兑换</div>
+                  </sc-if>
+                  <sc-if value="{{ r.canAfford }}" hint-placeholder-val="{{ true }}">
+                    <div onClick="{{ r.onRedeem }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 0;" style-hover="filter:brightness(1.12);">兑换</div>
+                  </sc-if>
+                  <sc-if value="{{ r.cannot }}" hint-placeholder-val="{{ false }}">
+                    <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px dashed #262b36;border-radius:8px;padding:6px 0;">余额不足</div>
+                  </sc-if>
+                  <sc-if value="{{ r.capped }}" hint-placeholder-val="{{ false }}">
+                    <div title="{{ r.capHint }}" style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#9f6a70;border:1px solid #4a2b30;background:#1a1315;border-radius:8px;padding:7px 0;display:flex;flex-direction:column;gap:2px;">
+                      <div style="font-size:11.5px;">✓ {{ r.capLabelTop }}</div>
+                      <div style="font-size:9.5px;font-weight:500;color:#765158;letter-spacing:.5px;">{{ r.capLabelBottom }}</div>
+                    </div>
+                  </sc-if>
                 </div>
               </div>
-              <sc-if value="{{ r.pending }}" hint-placeholder-val="{{ false }}">
-                <div onClick="{{ r.onUndo }}" title="已兑换 · 点一下可撤销(几秒后自动确认)" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 0;" style-hover="filter:brightness(1.15);">✓ 已兑换</div>
-              </sc-if>
-              <sc-if value="{{ r.canAfford }}" hint-placeholder-val="{{ true }}">
-                <div onClick="{{ r.onRedeem }}" style="cursor:pointer;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35),0 4px 14px rgba(0,0,0,0.4);text-shadow:0 1px 0 rgba(255,255,255,0.25);border-radius:8px;padding:6px 0;" style-hover="filter:brightness(1.12);">兑换</div>
-              </sc-if>
-              <sc-if value="{{ r.cannot }}" hint-placeholder-val="{{ false }}">
-                <div style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:#535a6a;border:1px dashed #262b36;border-radius:8px;padding:6px 0;">余额不足</div>
-              </sc-if>
-              <sc-if value="{{ r.capped }}" hint-placeholder-val="{{ false }}">
-                <div title="{{ r.capHint }}" style="text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;color:#9f6a70;border:1px solid #4a2b30;background:#1a1315;border-radius:8px;padding:7px 0;display:flex;flex-direction:column;gap:2px;">
-                  <div style="font-size:11.5px;">✓ {{ r.capLabelTop }}</div>
-                  <div style="font-size:9.5px;font-weight:500;color:#765158;letter-spacing:.5px;">{{ r.capLabelBottom }}</div>
-                </div>
-              </sc-if>
+
+              </sc-for>
             </div>
-          </div>
-        </sc-for>
-      </div>
+          </sc-if>
+        </div>
+      </sc-for>
     </div>
 
     <!-- MILESTONES -->
@@ -885,6 +899,11 @@ input[type="date"]{color-scheme:dark;}
             </label>
           </sc-if>
           <sc-if value="{{ editIsReward }}" hint-placeholder-val="{{ false }}">
+            <label style="display:block;font-size:11px;color:#697084;">奖励类型
+              <select id="ed-reward-category" defaultValue="{{ editRewardCategoryId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:12px;">
+                <sc-for list="{{ editRewardCategoryOptions }}" as="c" hint-placeholder-count="1"><option value="{{ c.idStr }}">{{ c.name }}</option></sc-for>
+              </select>
+            </label>
             <label style="display:block;font-size:11px;color:#697084;">基础价格(EXP)
               <input id="ed-cost" onInput="{{ quoteEditReward }}" type="number" min="0.01" step="0.01" defaultValue="{{ editCost }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
             </label>
@@ -1089,6 +1108,32 @@ input[type="date"]{color-scheme:dark;}
     </div>
   </sc-if>
 
+  <!-- REWARD CATEGORY MANAGER -->
+  <sc-if value="{{ rewardCategoryManagerOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeRewardCategoryManager }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.7);backdrop-filter:blur(5px);z-index:52;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:380px;max-width:100%;max-height:84vh;overflow-y:auto;background:#101218;border:1px solid #34303a;border-radius:15px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 26px 68px rgba(0,0,0,.72);">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#d7c18a;">奖励类型 // COLLECTIONS</div>
+        <div style="font-size:11.5px;color:#8b93a4;line-height:1.65;">创建自己的奖励分类。删除类型时，里面的奖励会自动移至「未分类」，不会删除奖励或兑换记录。</div>
+        <div style="display:flex;gap:7px;">
+          <input id="rc-name" maxlength="32" placeholder="例如：日常饮品 / 旅行体验" style="flex:1;min-width:0;box-sizing:border-box;background:#0d0f14;border:1px solid #303643;border-radius:8px;padding:10px;color:#e6e9f0;font-size:12px;font-family:inherit;">
+          <div onClick="{{ addRewardCategory }}" style="cursor:pointer;white-space:nowrap;font-size:11.5px;font-weight:700;color:#171820;background:{{ btnGrad }};border-radius:8px;padding:10px 12px;">＋ 创建</div>
+        </div>
+        <sc-if value="{{ rewardCategoryMsg }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#aeb6c6;">{{ rewardCategoryMsg }}</div></sc-if>
+        <sc-if value="{{ rewardCategoryEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:16px;text-align:center;border:1px dashed #303643;border-radius:10px;color:#697084;font-size:11px;">还没有自定义奖励类型。</div></sc-if>
+        <sc-for list="{{ rewardCategoryRows }}" as="rc" hint-placeholder-count="1">
+          <div style="border:1px solid #292f3a;border-radius:10px;background:#0d1016;padding:10px;display:flex;flex-direction:column;gap:8px;">
+            <sc-if value="{{ rc.editing }}" hint-placeholder-val="{{ false }}">
+              <input id="rc-edit-name" maxlength="32" defaultValue="{{ rc.name }}" style="width:100%;box-sizing:border-box;background:#090b10;border:1px solid #3a4050;border-radius:7px;padding:9px;color:#e6e9f0;font-size:12px;">
+              <div style="display:flex;justify-content:flex-end;gap:7px;"><div onClick="{{ rc.onCancel }}" style="cursor:pointer;color:#8b93a4;border:1px solid #303643;border-radius:7px;padding:6px 10px;font-size:10.5px;">取消</div><div onClick="{{ rc.onSave }}" style="cursor:pointer;color:#171820;background:{{ btnGrad }};border-radius:7px;padding:6px 11px;font-size:10.5px;font-weight:700;">保存名称</div></div>
+            </sc-if>
+            <sc-if value="{{ rc.editing }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:center;gap:8px;"><div style="font-size:12px;color:#e6e9f0;font-weight:650;flex:1;">{{ rc.name }}</div><div style="font-size:10px;color:#697084;">{{ rc.count }} 项</div><div onClick="{{ rc.onEdit }}" style="cursor:pointer;color:#aeb6c6;border:1px solid #303643;border-radius:7px;padding:5px 8px;font-size:10px;">重命名</div><div onClick="{{ rc.onDelete }}" style="cursor:pointer;color:#a8757b;border:1px solid #4a2b30;border-radius:7px;padding:5px 8px;font-size:10px;">删除</div></div></sc-if>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:flex-end;"><div onClick="{{ closeRewardCategoryManager }}" style="cursor:pointer;color:#8b93a4;border:1px solid #303643;border-radius:8px;padding:8px 15px;font-size:11.5px;">完成</div></div>
+      </div>
+    </div>
+  </sc-if>
+
   <!-- NEW REWARD MODAL -->
   <sc-if value="{{ newRewardOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
@@ -1097,6 +1142,11 @@ input[type="date"]{color-scheme:dark;}
         <div style="font-size:12px;color:#8b93a4;line-height:1.6;">建好后卡片上可拖入照片。图片直接拖到卡片图上即可更换。</div>
         <label style="display:block;font-size:11px;color:#697084;">奖励名称
           <input id="nr-name" placeholder="例如:燕麦拿铁" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
+        </label>
+        <label style="display:block;font-size:11px;color:#697084;">奖励类型
+          <select id="nr-category" defaultValue="" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:12px;">
+            <sc-for list="{{ rewardCategoryOptions }}" as="c" hint-placeholder-count="1"><option value="{{ c.idStr }}">{{ c.name }}</option></sc-for>
+          </select>
         </label>
         <label style="display:block;font-size:11px;color:#697084;">基础价格(EXP，金额留空时使用)
           <input id="nr-cost" onInput="{{ quoteNewReward }}" type="number" min="0.01" step="0.01" placeholder="200" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#e6e9f0;font-size:13px;font-family:'JetBrains Mono',monospace;">
@@ -1722,7 +1772,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.13.1';
+const APP_VERSION = 'v1.14.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1757,19 +1807,25 @@ class Component extends DCLogic {
   normalizeLoadedState(input) {
     if (!input || !Array.isArray(input.tasks)) throw new Error('备份内容无效：缺少任务数组');
     let s = { ...this.defaults(), ...input };
-    for (const key of ['tasks','sets','rewards','milestones','milestoneSets','funds','countdowns','ledger','opex','stash','galleryEntries','dayline']) {
+    for (const key of ['tasks','sets','rewards','rewardCategories','milestones','milestoneSets','funds','countdowns','ledger','opex','stash','galleryEntries','dayline']) {
       s[key] = Array.isArray(input[key]) ? input[key] : [];
     }
       s.tasks = s.tasks.map(t => ({ ...t, times: t.times || 1, interval: Math.max(1, Math.min(999, parseInt(t.interval, 10) || 1)), anchorDate: t.anchorDate || this.todayKey(), streak: t.streak || 0, lastDone: t.lastDone || '', setId: t.setId ?? null,
         priority: t.priority || 'p4', note: t.note || '',
         completionLog: t.completionLog || (t.cycle === 'daily' ? Object.fromEntries(Object.entries(t.done || {}).filter(([kk, vv]) => /^\d{4}-\d{2}-\d{2}$/.test(kk) && Number(vv) > 0).map(([kk, vv]) => [kk, Number(vv) || 1])) : {}),
         done: Object.fromEntries(Object.entries(t.done || {}).map(([k, v]) => [k, v === true ? 1 : v])) }));
+      s.rewardCategories = (s.rewardCategories || []).filter(c => c && Number.isSafeInteger(Number(c.id)) && Number(c.id) > 0)
+        .map(c => ({ ...c, id: Number(c.id), name: String(c.name || '').trim().slice(0, 32) }))
+        .filter((c, i, all) => c.name && all.findIndex(x => x.id === c.id) === i);
+      const rewardCategoryIds = new Set(s.rewardCategories.map(c => c.id));
       s.rewards = (s.rewards || []).map(r => ({ ...r,
+        categoryId: r.categoryId == null || r.categoryId === '' ? null : (rewardCategoryIds.has(Number(r.categoryId)) ? Number(r.categoryId) : null),
         capCycle: ['daily','weekly','monthly','yearly'].includes(r.capCycle) ? r.capCycle : 'daily',
         capInterval: Math.max(1, Math.min(999, parseInt(r.capInterval, 10) || 1)),
         capTimes: Math.max(1, Math.min(999, parseInt(r.capTimes, 10) || 1)),
         capAnchorDate: r.capAnchorDate || this.todayKey(),
         redeems: Array.isArray(r.redeems) ? r.redeems : [] }));
+      if (!s.rewardFold || typeof s.rewardFold !== 'object' || Array.isArray(s.rewardFold)) s.rewardFold = {};
       s.countdowns = (s.countdowns || []).map(c => ({ ...c, time: c.time || '00:00' }));
       s.milestones = (s.milestones || []).map(m => ({ ...m, setId: m.setId ?? null }));
       if (!s.sets) s.sets = [];
@@ -1813,6 +1869,7 @@ class Component extends DCLogic {
   defaults() {
     return {
       exp: 0, warMode: false, nextId: 500,
+      rewardCategories: [], rewardFold: {},
       appVersion: APP_VERSION, welcomed: false, uiMode: 'auto', uiTheme: 'minimal', holidayCountry: 'cn', bingoView: 'day', bingoRewards: { day: 88, week: 288, month: 888 }, bingoMinExp: { day: 80, week: 150, month: 300 }, bingoBoards: this.defaultBingoBoards(), dayline: [], daylineDate: this.todayKey(),
       sets: [
         { id: 11, name: '日常 · 每天的小事', collapsed: false, parentId: null },
@@ -2101,7 +2158,7 @@ class Component extends DCLogic {
         next.ledger = [...additions, ...(current.ledger || []).filter(row => !removals.has(key(row)))].slice(0, 200);
       }
       const offset = 'nextId' in patch ? current.nextId - base.nextId : 0;
-      for (const name of ['tasks','sets','rewards','milestones','milestoneSets','funds','countdowns','dayline','galleryEntries','opex','stash']) {
+      for (const name of ['tasks','sets','rewards','rewardCategories','milestones','milestoneSets','funds','countdowns','dayline','galleryEntries','opex','stash']) {
         if (!Array.isArray(patch[name])) continue;
         const original = base[name] || [], rows = current[name] || [], intended = patch[name];
         if (name === 'opex' || name === 'stash') {
@@ -2115,7 +2172,7 @@ class Component extends DCLogic {
           const old = original.find(o => o.id === row.id), latest = rows.find(r => r.id === row.id);
           if (!old) {
             const remap = n => typeof n === 'number' && n >= base.nextId ? n + offset : n;
-            return offset ? { ...row, id: remap(row.id), ...(row.setId != null ? { setId: remap(row.setId) } : {}), ...(row.parentId != null ? { parentId: remap(row.parentId) } : {}) } : row;
+            return offset ? { ...row, id: remap(row.id), ...(row.setId != null ? { setId: remap(row.setId) } : {}), ...(row.parentId != null ? { parentId: remap(row.parentId) } : {}), ...(row.categoryId != null ? { categoryId: remap(row.categoryId) } : {}) } : row;
           }
           if (!latest) return null;
           if (JSON.stringify(row) === JSON.stringify(old)) return latest;
@@ -2352,6 +2409,43 @@ class Component extends DCLogic {
   openNewTask() { this.setState({ newTaskOpen: true }); }
   openNewSet() { this.setState({ newSetOpen: true }); }
   openNewReward() { this.setState({ newRewardOpen: true, rewardPricingPreview:'' }); }
+  openRewardCategoryManager() { this.setState({ rewardCategoryManagerOpen:true, rewardCategoryEditingId:null, rewardCategoryMsg:'' }); }
+  closeRewardCategoryManager() { this.setState({ rewardCategoryManagerOpen:false, rewardCategoryEditingId:null, rewardCategoryMsg:'' }); }
+  async addRewardCategory() {
+    const name = this.v('rc-name').slice(0, 32);
+    if (!name) { this.setState({ rewardCategoryMsg:'请输入奖励类型名称。' }); return false; }
+    if ((this.state.rewardCategories || []).some(c => c.name.toLocaleLowerCase() === name.toLocaleLowerCase())) { this.setState({ rewardCategoryMsg:'这个类型已经存在。' }); return false; }
+    if (this._rewardCategorySaving) return false;
+    this._rewardCategorySaving = true;
+    try {
+      const ok = await this.writeState(() => {
+        const current = this.state;
+        if ((current.rewardCategories || []).some(c => c.name.toLocaleLowerCase() === name.toLocaleLowerCase())) throw new Error('这个类型已经存在。');
+        return { ...current, rewardCategories:[...(current.rewardCategories || []), { id:current.nextId, name }], nextId:current.nextId + 1 };
+      }, { rewardCategoryMsg:'✓ 类型已创建。' });
+      if (ok) { const el = document.getElementById('rc-name'); if (el) el.value = ''; }
+      return ok;
+    } finally { this._rewardCategorySaving = false; }
+  }
+  editRewardCategory(id) { this.setState({ rewardCategoryEditingId:id, rewardCategoryMsg:'' }); }
+  cancelRewardCategoryEdit() { this.setState({ rewardCategoryEditingId:null, rewardCategoryMsg:'' }); }
+  saveRewardCategoryName(id) {
+    const name = this.v('rc-edit-name').slice(0, 32);
+    if (!name) { this.setState({ rewardCategoryMsg:'类型名称不能为空。' }); return false; }
+    if ((this.state.rewardCategories || []).some(c => c.id !== id && c.name.toLocaleLowerCase() === name.toLocaleLowerCase())) { this.setState({ rewardCategoryMsg:'另一个类型已经使用了这个名称。' }); return false; }
+    return this.save({ rewardCategories:(this.state.rewardCategories || []).map(c => c.id === id ? { ...c, name } : c), rewardCategoryEditingId:null, rewardCategoryMsg:'✓ 类型名称已更新。' });
+  }
+  delRewardCategory(id) {
+    const item = (this.state.rewardCategories || []).find(c => c.id === id);
+    if (!item || !this.confirmRemoval('奖励类型', item.name, '该类型下的奖励会移至「未分类」；奖励卡片、图片、EXP 兑换记录均会保留。')) return false;
+    const fold = { ...(this.state.rewardFold || {}) }; delete fold[String(id)];
+    return this.save({ rewardCategories:(this.state.rewardCategories || []).filter(c => c.id !== id),
+      rewards:(this.state.rewards || []).map(r => r.categoryId === id ? { ...r, categoryId:null } : r),
+      rewardFold:fold, rewardCategoryEditingId:null, rewardCategoryMsg:'✓ 类型已删除，原奖励已移至未分类。' });
+  }
+  toggleRewardFold(key) {
+    return this.writeState(() => { const current = this.state, fold = { ...(current.rewardFold || {}) }; fold[key] = !fold[key]; return { ...current, rewardFold:fold }; });
+  }
   openNewCountdown() { this.setState({ newCountdownOpen: true }); }
   openNewMilestone() { this.setState({ newMilestoneOpen: true }); }
   openNewMilestoneSet() { this.setState({ newMilestoneSetOpen: true }); }
@@ -2986,8 +3080,9 @@ class Component extends DCLogic {
       const cycleEl = document.getElementById('ed-cap-cycle'), capCycle = cycleEl ? cycleEl.value : 'daily';
       const capInterval = Math.max(1, Math.min(999, num('ed-cap-interval', 1)));
       const capTimes = Math.max(1, Math.min(999, num('ed-cap-times', 1)));
+      const categoryEl = document.getElementById('ed-reward-category'), categoryValue = categoryEl && categoryEl.value ? Number(categoryEl.value) : null;
       return this.writeState(() => ({ ...this.state, editing: null, rewards: this.state.rewards.map(x => x.id === ed.id ? { ...x,
-        name: name || x.name, ...this.readRewardRule('ed', x), capCycle, capInterval, capTimes,
+        name: name || x.name, categoryId:(this.state.rewardCategories || []).some(c => c.id === categoryValue) ? categoryValue : null, ...this.readRewardRule('ed', x), capCycle, capInterval, capTimes,
         capAnchorDate: (x.capCycle !== capCycle || Number(x.capInterval || 1) !== capInterval) ? this.todayKey() : (x.capAnchorDate || this.todayKey()) } : x) }));
     } else if (ed.type === 'countdown') {
       const old = this.state.countdowns.find(x => x.id === ed.id); const time = this.read24h('ed-hour', 'ed-minute', old ? (old.time || '00:00') : '00:00');
@@ -3123,7 +3218,7 @@ class Component extends DCLogic {
   closeUpdateNote() { this.setState({ updateNoteOpen: false }); }
   async checkUpdate() {
     if (this.state.updateBusy) return;
-    if (['newOpexOpen','newStashOpen','editing','categoryOpen','stashDetailId','newTaskOpen','newSetOpen','newRewardOpen','newMilestoneOpen','newCountdownOpen','newDaylineOpen','reflectionOpen','galleryEdit','backupOpen','reorderOpen','aiHelpOpen','assistantOpen','quadrantOpen'].some(k => this.state[k])) {
+    if (['newOpexOpen','newStashOpen','rewardCategoryManagerOpen','editing','categoryOpen','stashDetailId','newTaskOpen','newSetOpen','newRewardOpen','newMilestoneOpen','newCountdownOpen','newDaylineOpen','reflectionOpen','galleryEdit','backupOpen','reorderOpen','aiHelpOpen','assistantOpen','quadrantOpen'].some(k => this.state[k])) {
       this.setState({ updateMessage: '请先完成或关闭当前操作窗口，再检查更新；当前输入已保留。' }); return;
     }
     this.setState({ updateBusy: true, updateMessage: '正在检查更新，账本和照片保留…' });
@@ -3314,7 +3409,10 @@ class Component extends DCLogic {
     try {
       const rule = this.readRewardRule('nr');
       const capCycle = this.v('nr-cap-cycle') || 'daily', capInterval = Math.max(1,Math.min(999,Number(this.v('nr-cap-interval') || 1))), capTimes = Math.max(1,Math.min(999,Number(this.v('nr-cap-times') || 1)));
-      return await this.writeState(() => ({ ...this.state, rewards:[...this.state.rewards, { id:this.state.nextId, name, ...rule, capCycle, capInterval, capTimes, capAnchorDate:this.todayKey(), redeems:[] }], nextId:this.state.nextId+1 }), { newRewardOpen:false });
+      const categoryValue = this.v('nr-category'), selectedCategoryId = categoryValue ? Number(categoryValue) : null;
+      return await this.writeState(() => { const current = this.state, categoryId = (current.rewardCategories || []).some(c => c.id === selectedCategoryId) ? selectedCategoryId : null;
+        return { ...current, rewards:[...current.rewards, { id:current.nextId, name, ...rule, categoryId, capCycle, capInterval, capTimes, capAnchorDate:this.todayKey(), redeems:[] }], nextId:current.nextId+1 };
+      }, { newRewardOpen:false });
     } catch (e) { this.setState({ rewardPricingPreview:e.message }); return false; }
   }
   addMilestone() {
@@ -3665,6 +3763,21 @@ class Component extends DCLogic {
       onImgDown: e => this.rewardImgDown(r.id, e),
       onAskImg: e => { e.stopPropagation(); this.askRewardImage(r.id); },
       onEdit: () => this.openEdit('reward', r.id) }; });
+    const rewardCategoryOptions = [{ idStr:'', name:'未分类' }, ...(st.rewardCategories || []).map(c => ({ idStr:String(c.id), name:c.name }))];
+    const rewardCategoryRows = (st.rewardCategories || []).map(c => ({ id:c.id, name:c.name,
+      count:(st.rewards || []).filter(r => r.categoryId === c.id).length,
+      editing:st.rewardCategoryEditingId === c.id,
+      onEdit:() => this.editRewardCategory(c.id), onSave:() => this.saveRewardCategoryName(c.id),
+      onCancel:() => this.cancelRewardCategoryEdit(), onDelete:() => this.delRewardCategory(c.id) }));
+    const rewardGroups = (st.rewardCategories || []).map(c => {
+      const key = String(c.id), rows = rewards.filter(r => r.categoryId === c.id), folded = !!(st.rewardFold || {})[key];
+      return { key, name:c.name, count:rows.length, countLabel:rows.length + ' 项', empty:rows.length === 0, open:!folded, chevron:folded ? '▸' : '▾', rewards:rows, onToggle:() => this.toggleRewardFold(key) };
+    });
+    const unclassifiedRewards = rewards.filter(r => r.categoryId == null);
+    if (unclassifiedRewards.length) { const folded = !!(st.rewardFold || {}).uncategorized;
+      rewardGroups.push({ key:'uncategorized', name:'未分类', count:unclassifiedRewards.length, countLabel:unclassifiedRewards.length + ' 项',
+        empty:false, open:!folded, chevron:folded ? '▸' : '▾', rewards:unclassifiedRewards, onToggle:() => this.toggleRewardFold('uncategorized') });
+    }
     const imgEditItem = st.imgEditId != null ? st.rewards.find(r => r.id === st.imgEditId) : null;
     const milestones = milestoneBase.map(m => {
       const pct = Math.min(100, Math.round(m.cur / m.target * 100));
@@ -3856,7 +3969,7 @@ class Component extends DCLogic {
       batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
       startReorder: () => this.startReorder('tasks'), startReorderSets: () => this.startReorder('sets'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderMilestoneSets: () => this.startReorder('milestoneSets'), startReorderFunds: () => this.startReorder('funds'), startReorderOpex: () => this.startReorder('opex'), startReorderStash: () => this.startReorder('stash'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && minimumTasks.length > 0 && coreDone === minimumTasks.length,
-      rewards, milestones, milestoneRows, ledger, showLedger: this.props.showLedger ?? true,
+      rewards, rewardGroups, milestones, milestoneRows, ledger, showLedger: this.props.showLedger ?? true,
       reflectionOpen: !!st.reflectionOpen, reflectionTargetName: st.reflectionTarget ? st.reflectionTarget.name : '', reflectionTitle: st.reflectionTarget && st.reflectionTarget.kind === 'reward' ? '兑换 · 留下这一刻 // REWARD MEMORY' : '完成 · 留下这一刻 // REFLECTION', reflectionHint: st.reflectionTarget && st.reflectionTarget.kind === 'reward' ? '奖励已经兑换，EXP 已正常扣除。这里完全可选：记两句话，或留一张照片给未来的自己。' : 'EXP 已经正常入账。这里完全可选：记两句话，或留一张照片给未来的自己。', reflectionHasImage: !!st.reflectionPreview, reflectionNoImage: !st.reflectionPreview, reflectionPreview: st.reflectionPreview || '',
       pickReflectionImage: () => this.pickReflectionImage(), skipReflection: () => this.skipReflection(), saveReflection: () => this.saveReflection(),
       galleryOpen: !!st.galleryOpen, galleryEntries, galleryEmpty: galleryAll.length === 0, gallerySearchEmpty: galleryAll.length > 0 && galleryEntries.length === 0, gallerySearch: st.gallerySearch || '', gallerySearchOn: !!galleryQuery, galleryCountLabel: galleryQuery ? (galleryEntries.length + ' / ' + galleryAll.length + ' 条') : (galleryAll.length + ' 条'), onGallerySearch: e => this.setState({ gallerySearch: (e && e.target ? e.target.value : '') || '' }), clearGallerySearch: () => this.setState({ gallerySearch: '' }), openGallery: () => this.openGallery(), closeGallery: () => this.closeGallery(),
@@ -3892,7 +4005,9 @@ class Component extends DCLogic {
       ...opexProps,
       ...this.moneyViewProps(st),
       ...this.assistantViewProps(st),
-      newRewardOpen: !!st.newRewardOpen, newMilestoneOpen: !!st.newMilestoneOpen, newMilestoneSetOpen: !!st.newMilestoneSetOpen, newFundOpen: !!st.newFundOpen,
+      newRewardOpen: !!st.newRewardOpen, rewardCategoryManagerOpen:!!st.rewardCategoryManagerOpen, rewardCategoryRows, rewardCategoryEmpty:rewardCategoryRows.length === 0, rewardCategoryMsg:st.rewardCategoryMsg || '', rewardCategoryOptions, rewardsEmpty:!st.rewards.length,
+      openRewardCategoryManager:() => this.openRewardCategoryManager(), closeRewardCategoryManager:() => this.closeRewardCategoryManager(), addRewardCategory:() => this.addRewardCategory(),
+      newMilestoneOpen: !!st.newMilestoneOpen, newMilestoneSetOpen: !!st.newMilestoneSetOpen, newFundOpen: !!st.newFundOpen,
       openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewMilestoneSet: () => this.openNewMilestoneSet(), openNewFund: () => this.openNewFund(),
       addFund: () => this.addFund(),
       fundSettingsOpen: !!st.fundSettingsOpen, openFundSettings: () => this.openFundSettings(), closeFundSettings: () => this.closeFundSettings(), saveFundSettings: () => this.saveFundSettings(),
@@ -3990,7 +4105,8 @@ class Component extends DCLogic {
       editCycle: editItem ? (editItem.cycle || 'daily') : 'daily',
       editLifeType:editItem && editItem.lifeType || 'EXPLORATION',
       editPriority: editItem ? (editItem.priority || 'p4') : 'p4', editNote: editItem ? (editItem.note || '') : '',
-      editCost: editItem ? (editItem.baseCost ?? editItem.cost ?? '') : '',
+      editCost: editItem ? (editItem.baseCost ?? editItem.cost ?? '') : '', editRewardCategoryId:editItem && editItem.categoryId != null ? String(editItem.categoryId) : '',
+      editRewardCategoryOptions:rewardCategoryOptions,
       editCapCycle: editItem ? (editItem.capCycle || 'daily') : 'daily', editCapInterval: editItem ? (editItem.capInterval || 1) : 1, editCapTimes: editItem ? (editItem.capTimes || 1) : 1,
       editCode: editItem ? (editItem.code ?? '') : '', editBase: editItem ? (editItem.base ?? '') : '',
       editTarget: editItem ? (editItem.target ?? '') : '', editStep: editItem ? (editItem.step ?? '') : '',
