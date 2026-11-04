@@ -208,10 +208,12 @@ await test('旧奖励迁移到未分类且图片、兑换历史完整保留', as
 await test('奖励类型创建、归类、重命名与折叠状态持久化', async () => {
   const t = create(seed(0)); t.input('rc-name','日常饮品'); await t.c.addRewardCategory();
   const category = t.stored().rewardCategories[0]; assert.equal(category.name,'日常饮品');
+  assert.equal(t.c.renderVals().rewardCategoryRows[0].notEditing,true);
   t.input('nr-name','燕麦拿铁'); t.input('nr-cost',120); t.input('nr-category',String(category.id));
   await t.c.addReward();
   const reward = t.stored().rewards[0]; assert.equal(reward.categoryId,category.id); assert.equal(reward.name,'燕麦拿铁');
-  t.c.editRewardCategory(category.id); t.input('rc-edit-name','饮品与零食'); await t.c.saveRewardCategoryName(category.id);
+  t.c.editRewardCategory(category.id); assert.equal(t.c.renderVals().rewardCategoryRows[0].notEditing,false);
+  t.input('rc-edit-name','饮品与零食'); await t.c.saveRewardCategoryName(category.id);
   assert.equal(t.stored().rewardCategories[0].name,'饮品与零食');
   await t.c.toggleRewardFold(String(category.id)); assert.equal(t.stored().rewardFold[String(category.id)],true);
   assert.equal(t.c.renderVals().rewardGroups[0].open,false);
