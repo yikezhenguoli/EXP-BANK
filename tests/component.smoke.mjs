@@ -28,7 +28,7 @@ function create(seed = null, shared = sharedStorage(seed)) {
 const seed = saved => ({ appVersion: 'v1.9.2', tasks: [], rewards: [], ledger: [], exp: 10, nextId: 500, stash: [{ id: 41, name: '旅游', target: 1000, saved, claimed: true }], opex: [] });
 async function test(name, fn) { await fn(); results.push(name); console.log('PASS ' + name); }
 await test('新用户及旧用户启动完成schema，余额、EXP和达成保持', async () => {
-  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.12.0'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
+  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.14.0'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
   await t.c.save({}); assert.equal(t.stored().stash[0].saved, 800); assert.equal(t.stored().updateNoteOpen, undefined);
   assert.equal(create().c.state.opexCategories.length, 6);
 });
@@ -196,4 +196,42 @@ await test('Life AI候选人工调整后的分类随确认保存',async()=>{
  assert.equal(t.stored().tasks[0].lifeType,'GROWTH');assert.equal(t.stored().tasks[0].warImportant,false);assert.equal(t.stored().tasks[0].taskKind,'standard');assert.equal(t.stored().exp,10);
 });
 
+await test('旧奖励迁移到未分类且图片、兑换历史完整保留', async () => {
+  const data = seed(0); data.rewards = [{ id:21, name:'旧奖励', cost:100, img:'data:image/jpeg;base64,abc', redeems:[1760000000000], capCycle:'daily' }];
+  const t = create(data), reward = t.c.state.rewards[0];
+  assert.deepEqual(Array.from(t.c.state.rewardCategories), []);
+  assert.equal(reward.categoryId, null); assert.equal(reward.img, data.rewards[0].img);
+  assert.deepEqual(Array.from(reward.redeems), data.rewards[0].redeems);
+  const group = t.c.renderVals().rewardGroups.find(x => x.key === 'uncategorized');
+  assert.equal(group.count, 1); assert.equal(group.rewards[0].id, 21);
+});
+await test('奖励类型创建、归类、重命名与折叠状态持久化', async () => {
+  const t = create(seed(0)); t.input('rc-name','日常饮品'); await t.c.addRewardCategory();
+  const category = t.stored().rewardCategories[0]; assert.equal(category.name,'日常饮品');
+  assert.equal(t.c.renderVals().rewardCategoryRows[0].notEditing,true);
+  t.input('nr-name','燕麦拿铁'); t.input('nr-cost',120); t.input('nr-category',String(category.id));
+  await t.c.addReward();
+  const reward = t.stored().rewards[0]; assert.equal(reward.categoryId,category.id); assert.equal(reward.name,'燕麦拿铁');
+  t.c.editRewardCategory(category.id); assert.equal(t.c.renderVals().rewardCategoryRows[0].notEditing,false);
+  t.input('rc-edit-name','饮品与零食'); await t.c.saveRewardCategoryName(category.id);
+  assert.equal(t.stored().rewardCategories[0].name,'饮品与零食');
+  await t.c.toggleRewardFold(String(category.id)); assert.equal(t.stored().rewardFold[String(category.id)],true);
+  assert.equal(t.c.renderVals().rewardGroups[0].open,false);
+  assert.equal(t.stored().rewardCategoryManagerOpen,undefined);
+});
+await test('编辑奖励可更换类型；删除类型只移出分组，不删除奖励资产', async () => {
+  const data=seed(0); data.rewardCategories=[{id:500,name:'体验'},{id:502,name:'影音'}]; data.rewards=[{id:501,name:'周末电影',cost:80,categoryId:500,img:'data:image/jpeg;base64,abc',redeems:[1760000000000],capCycle:'daily'}]; data.nextId=503;
+  const t=create(data); t.c.openEdit('reward',501); t.c.confirmEdit(); t.input('ed-name','周末电影'); t.input('ed-reward-category','502'); await t.c.saveEdit();
+  assert.equal(t.stored().rewards[0].categoryId,502);
+  await t.c.delRewardCategory(502); assert.equal(t.stored().rewardCategories.length,1);
+  assert.equal(t.stored().rewards[0].categoryId,null);
+  assert.equal(t.stored().rewards[0].name,'周末电影'); assert.equal(t.stored().rewards[0].img,data.rewards[0].img);
+  assert.deepEqual(Array.from(t.stored().rewards[0].redeems),data.rewards[0].redeems);
+  assert.equal(t.stored().rewardFold['502'],undefined);
+});
+await test('奖励类型与归属可通过普通备份码往返', async () => {
+  const data=seed(0); data.rewardCategories=[{id:500,name:'旅行'}]; data.rewards=[{id:501,name:'短途旅行',cost:200,categoryId:500,redeems:[]}]; data.nextId=502;
+  const a=create(data), code=a.c.makeBackupCode(), b=create(); b.input('bk-import',code); await b.c.importBackup();
+  assert.deepEqual(b.stored().rewardCategories,data.rewardCategories); assert.equal(b.stored().rewards[0].categoryId,500);
+});
 console.log('Component checks passed: ' + results.length);

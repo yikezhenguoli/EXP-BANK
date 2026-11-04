@@ -1,6 +1,6 @@
 /* EXP BANK service worker — coherent versioned assets; user data is never cleared. */
-const VERSION = 'v1.13.1';
-const CACHE = 'exp-bank-' + VERSION + '-asset-compat-20261014';
+const VERSION = 'v1.14.0';
+const CACHE = 'exp-bank-' + VERSION + '-reward-collections-20261104';
 const ASSETS = [
   './', './index.html', './support.js', './money.js', './progression.js', './life-architecture.js', './task-assistant.js', './image-slot.js',
   './vendor/react.production.min.js', './vendor/react-dom.production.min.js',
@@ -10,7 +10,7 @@ const ASSETS = [
 // app release. Unchanged modules legitimately retain earlier headers.
 // Keep explicit checks for each deployed module to catch mixed release assets.
 const MODULE_VERSIONS = {
-  './money.js': 'v1.13.0',
+  './money.js': 'v1.14.0',
   './progression.js': 'v1.12.0',
   './life-architecture.js': 'v1.12.0',
   './task-assistant.js': 'v1.12.0'
