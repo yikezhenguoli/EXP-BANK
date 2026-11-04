@@ -6,7 +6,7 @@ const html = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const money = fs.readFileSync(new URL('../money.js', import.meta.url), 'utf8');
 const scope = 'https://example.test/EXP-BANK/';
 function worker(options = {}) {
-  const listeners = {}, maps = new Map([['exp-bank-v1.13.1-asset-compat-20261014', new Map([['old', new Response('old')]])], ['other-app-cache', new Map([['other', new Response('other')]])]]);
+  const listeners = {}, maps = new Map([['exp-bank-v1.14.0-reward-collections-20261104', new Map([['old', new Response('old')]])], ['other-app-cache', new Map([['other', new Response('other')]])]]);
   const key = r => typeof r === 'string' ? new URL(r, scope).href : r instanceof URL ? r.href : r.url;
   let claims = 0, skips = 0, fetched = 0;
   const caches = {
@@ -39,11 +39,11 @@ let count = 0;
 async function test(name, fn) { await fn(); count++; console.log('PASS ' + name); }
 await test('完整预缓存后才可激活，仅删除本应用旧缓存', async () => {
   const w = worker(); await w.dispatch('install'); assert.equal(w.skips(), 0); assert.equal(w.maps.get('exp-bank-v1.14.0-reward-collections-20261104').size, 14);
-  await w.dispatch('activate'); assert.equal(w.maps.has('exp-bank-v1.13.1-asset-compat-20261014'), false); assert.equal(w.maps.has('other-app-cache'), true); assert.equal(w.claims(), 1);
+  await w.dispatch('activate'); assert.equal(w.maps.has('exp-bank-v1.14.0-reward-collections-20261104'), false); assert.equal(w.maps.has('other-app-cache'), true); assert.equal(w.claims(), 1);
 });
 await test('缺文件、404、HTML误作JS、版本不一致、写入失败均拒绝安装，旧缓存保留', async () => {
   for (const opts of [{ invalidVersion: 'money.js' }, { invalidVersion: 'progression.js' }, { invalidVersion: 'life-architecture.js' }, { invalidVersion: 'task-assistant.js' }, { missing: 'money.js' }, { missing:'progression.js' }, { missing:'task-assistant.js' }, { missing:'life-architecture.js' }, { status404: 'support.js' }, { htmlForJs: true }, { oldHtml: true }, { failPut: true }]) {
-    const w = worker(opts); await assert.rejects(w.dispatch('install')); assert.equal(w.maps.has('exp-bank-v1.13.1-asset-compat-20261014'), true); assert.equal(w.skips(), 0); assert.equal(w.claims(), 0);
+    const w = worker(opts); await assert.rejects(w.dispatch('install')); assert.equal(w.maps.has('exp-bank-v1.14.0-reward-collections-20261104'), true); assert.equal(w.skips(), 0); assert.equal(w.claims(), 0);
   }
 });
 await test('未修改的 v1.12.0 模块可与 v1.14.0 资金模块构成完整 v1.14.0 发布', async () => {
