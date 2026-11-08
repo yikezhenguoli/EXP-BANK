@@ -47,7 +47,7 @@ await test('缺文件、404、HTML误作JS、版本不一致、写入失败均�
   }
 });
 await test('旧版模块可与 v1.15.0 新增模块构成完整 v1.15.0 发布', async () => {
-  const markers = [['money.js','v1.14.0'], ['progression.js','v1.12.0'], ['life-architecture.js','v1.12.0'], ['task-assistant.js','v1.12.0'], ['reward-order.js','v1.15.0'], ['agent-client.js','v1.15.0']];
+  const markers = [['money.js','v1.15.0'], ['progression.js','v1.12.0'], ['life-architecture.js','v1.12.0'], ['task-assistant.js','v1.12.0'], ['reward-order.js','v1.15.0'], ['agent-client.js','v1.15.0']];
   for (const [name, marker] of markers) assert.match(fs.readFileSync(new URL('../'+name, import.meta.url), 'utf8'), new RegExp('EXP BANK '+marker.replaceAll('.', '\\.')));
   const w = worker(); await w.dispatch('install'); assert.equal(w.maps.get('exp-bank-v1.15.0-ai-agent-reward-sort-20261108').size, 16);
 });
