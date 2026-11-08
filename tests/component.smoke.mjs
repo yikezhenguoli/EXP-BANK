@@ -28,7 +28,7 @@ function create(seed = null, shared = sharedStorage(seed)) {
 const seed = saved => ({ appVersion: 'v1.9.2', tasks: [], rewards: [], ledger: [], exp: 10, nextId: 500, stash: [{ id: 41, name: '旅游', target: 1000, saved, claimed: true }], opex: [] });
 async function test(name, fn) { await fn(); results.push(name); console.log('PASS ' + name); }
 await test('新用户及旧用户启动完成schema，余额、EXP和达成保持', async () => {
-  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.1'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
+  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.2'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
   await t.c.save({}); assert.equal(t.stored().stash[0].saved, 800); assert.equal(t.stored().updateNoteOpen, undefined);
   assert.equal(create().c.state.opexCategories.length, 6);
 });
@@ -362,6 +362,24 @@ await test('奖励排序面板提供可靠的单击上下移备用操作', async
   assert.deepEqual(t.stored().rewards.filter(x=>x.categoryId===501).map(x=>x.id),[505,503]);
   const first=view.reorderRows.find(row=>row.id===503);
   assert.equal(first.canMoveUp,false);
+  assert.deepEqual(Array.from(t.c.state.rewardReorderDraft,x=>x.id).filter(id=>id===503 || id===505),[505,503]);
+  view=t.c.renderVals();
+  assert.deepEqual(Array.from(view.reorderRows.filter(row=>row.isRow),row=>row.id),[504,505,503]);
+
+  // 每项提供独立的奖励集选择器；无需拖拽即可跨组移动。
+  const coffee=view.reorderRows.find(row=>row.id===504);
+  assert.equal(coffee.moveSelectId,'ro-move-504');
+  assert.equal(coffee.categoryValue,'500');
+  assert.deepEqual(Array.from(coffee.categoryOptions,o=>o.value),['501','502','none']);
+  t.input(coffee.moveSelectId,'501');
+  await coffee.onMoveCategory();
+  assert.equal(t.stored().rewards.find(x=>x.id===504).categoryId,501);
+  assert.equal(t.c.state.rewardReorderDraft.find(x=>x.id===504).categoryId,501);
+  view=t.c.renderVals();
+  const movedCoffee=view.reorderRows.find(row=>row.id===504);
+  assert.equal(movedCoffee.categoryValue,'501');
+  assert.equal(movedCoffee.categoryLabel,'当前：学习');
+  assert.equal(movedCoffee.canMoveUp,true);
 });
 await test('Agent 地址和访问令牌使用独立本机配置，不进入主数据备份', async () => {
   const t=create(seed(0));
