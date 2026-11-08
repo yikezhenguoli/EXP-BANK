@@ -1759,8 +1759,8 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ setRoSelect }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roSelTextColor }};background:{{ roSelBg }};border:1px solid {{ roSelBorder }};box-shadow:{{ roSelShadow }};">勾选归集</div>
           </div>
         </sc-if>
-        <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">抓住每项左侧的 <b style="color:#c3c9d6;">⠿ 把手</b>上下拖动；也可点右侧 ↑↓ 微调组内顺序。把奖励拖到其他<b style="color:#c3c9d6;">奖励集标题</b>即可移动归类。松手自动保存。</div></sc-if>
-        <sc-if value="{{ reorderRewardCategoriesMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">抓住每个奖励集左侧的 <b style="color:#c3c9d6;">⠿ 把手</b>直接拖动；也可使用右侧 ↑↓ 调整顺序。完成后自动保存。</div></sc-if>
+        <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">不必拖拽也能完成排序：点每项右侧的“上移 / 下移”调整本奖励集内顺序；要换奖励集，在下方选择目标后点“移动”。左侧 ⠿ 把手仍可用于快速拖动。每次操作自动保存。</div></sc-if>
+        <sc-if value="{{ reorderRewardCategoriesMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">点每个奖励集右侧的“上移 / 下移”即可调整商城分组顺序；也可以使用左侧 ⠿ 把手拖动。每次操作自动保存。</div></sc-if>
         <sc-if value="{{ roDragMode }}" hint-placeholder-val="{{ true }}">
           <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在任意一条{{ reorderItemName }}上<b style="color:#c3c9d6;">长按并上下拖动</b>整条即可调整顺序,松手完成,保存生效。</div>
         </sc-if>
@@ -1782,14 +1782,23 @@ input[type="date"]{color-scheme:dark;}
                 <sc-if value="{{ roShowCheck }}" hint-placeholder-val="{{ false }}">
                   <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:22px;height:22px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:13px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
                 </sc-if>
-                <div style="flex:1;min-width:0;pointer-events:none;">
+                <div style="flex:1;min-width:110px;">
                   <div style="font-size:14px;font-weight:700;color:#eef1f7;">{{ row.name }}</div>
                   <sc-if value="{{ row.subShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#7c8494;margin-top:3px;">{{ row.sub }}</div></sc-if>
+                  <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;align-items:center;gap:6px;margin-top:8px;min-width:0;">
+                      <select id="{{ row.moveSelectId }}" style="flex:1;min-width:0;max-width:190px;background:#0d0f14;border:1px solid #303747;border-radius:7px;padding:7px 6px;color:#c8cedb;font-size:11px;">
+                        <option value="{{ row.categoryValue }}">{{ row.categoryLabel }}</option>
+                        <sc-for list="{{ row.categoryOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.value }}">{{ o.name }}</option></sc-for>
+                      </select>
+                      <div onClick="{{ row.onMoveCategory }}" style="flex-shrink:0;cursor:pointer;border:1px solid #3b4659;border-radius:7px;background:#1a2230;color:#dce5f4;padding:7px 10px;font-size:11px;font-weight:700;">移动</div>
+                    </div>
+                  </sc-if>
                 </div>
                 <sc-if value="{{ reorderRewardFamily }}" hint-placeholder-val="{{ false }}">
                   <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
-                    <div onClick="{{ row.onMoveUp }}" style="width:30px;height:25px;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:6px;background:#171c26;color:#c8cedb;font-size:14px;font-weight:700;opacity:{{ row.canMoveUp ? 1 : 0.28 }};pointer-events:{{ row.canMoveUp ? 'auto' : 'none' }};">↑</div>
-                    <div onClick="{{ row.onMoveDown }}" style="width:30px;height:25px;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:6px;background:#171c26;color:#c8cedb;font-size:14px;font-weight:700;opacity:{{ row.canMoveDown ? 1 : 0.28 }};pointer-events:{{ row.canMoveDown ? 'auto' : 'none' }};">↓</div>
+                    <div onClick="{{ row.onMoveUp }}" title="上移一位" style="width:48px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:7px;background:#171c26;color:#c8cedb;font-size:10.5px;font-weight:700;opacity:{{ row.canMoveUp ? 1 : 0.28 }};pointer-events:{{ row.canMoveUp ? 'auto' : 'none' }};">↑ 上移</div>
+                    <div onClick="{{ row.onMoveDown }}" title="下移一位" style="width:48px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:7px;background:#171c26;color:#c8cedb;font-size:10.5px;font-weight:700;opacity:{{ row.canMoveDown ? 1 : 0.28 }};pointer-events:{{ row.canMoveDown ? 'auto' : 'none' }};">↓ 下移</div>
                   </div>
                 </sc-if>
               </div>
@@ -1822,7 +1831,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.15.1';
+const APP_VERSION = 'v1.15.2';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -2637,30 +2646,6 @@ class Component extends DCLogic {
     }
     return false;
   }
-  moveRewardOrder(id, direction) {
-    const dir = direction < 0 ? -1 : 1;
-    const kind = this.state.reorderKind || 'tasks';
-    if (kind === 'rewardCategories') {
-      const list = [...(this.state.rewardCategories || [])];
-      const from = list.findIndex(item => String(item.id) === String(id));
-      const to = from + dir;
-      if (from < 0 || to < 0 || to >= list.length) return false;
-      return this.save({ rewardCategories:ExpRewardOrder.move(list, id, list[to].id, dir > 0) });
-    }
-    if (kind === 'rewards') {
-      const list = this.state.rewards || [];
-      const item = list.find(entry => String(entry.id) === String(id));
-      if (!item) return false;
-      const peers = list.filter(entry => item.categoryId == null
-        ? entry.categoryId == null
-        : entry.categoryId != null && String(entry.categoryId) === String(item.categoryId));
-      const from = peers.findIndex(entry => String(entry.id) === String(id));
-      const target = peers[from + dir];
-      if (from < 0 || !target) return false;
-      return this.save({ rewards:ExpRewardOrder.moveReward(list, id, target.id, dir > 0) });
-    }
-    return false;
-  }
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
   groupBatch() {
     const sel = this.state.batchSel || []; if (!sel.length) return;
@@ -2736,6 +2721,18 @@ class Component extends DCLogic {
   clearRewardImage(id) { return this.saveRewardImage(id, ''); }
   askRewardImage(id) { this.setState({ imgEditId: id }); }
   closeImgEdit() { this.setState({ imgEditId: null }); }
+  moveRewardToCategory(id) {
+    const selected = this.v('ro-move-' + id);
+    if (selected === '') return false;
+    const categoryId = selected === 'none' ? null : Number(selected);
+    if (categoryId !== null && (!Number.isSafeInteger(categoryId) || !(this.state.rewardCategories || []).some(c => c.id === categoryId))) return false;
+    const list = [...(this.state.rewardReorderDraft || this.state.rewards || [])];
+    const current = list.find(r => String(r.id) === String(id));
+    if (!current || (current.categoryId ?? null) === categoryId) return false;
+    const next = ExpRewardOrder.moveToCategory(list, id, categoryId);
+    this.setState({ rewardReorderDraft:next });
+    return this.save({ rewards:next });
+  }
   roDown(id, e) {
     if (this.state.dragId != null) return;
     if (e && e.button != null && e.button !== 0) return;
@@ -3979,6 +3976,13 @@ class Component extends DCLogic {
           batchBorder:'#2f3542', batchBg:'transparent', batchTick:'',
           canMoveUp:index > 0, canMoveDown:index >= 0 && index < peers.length - 1,
           onMoveUp:() => this.moveRewardOrder(r.id,-1), onMoveDown:() => this.moveRewardOrder(r.id,1),
+          moveSelectId:'ro-move-' + r.id, categoryValue:r.categoryId == null ? 'none' : String(r.categoryId),
+          categoryLabel:'当前：' + ((st.rewardCategories || []).find(c => c.id === r.categoryId)?.name || '未分类'),
+          categoryOptions:[
+            ...((st.rewardCategories || []).filter(c => String(c.id) !== String(r.categoryId)).map(c => ({ value:String(c.id), name:'移至：' + c.name }))),
+            ...(r.categoryId == null ? [] : [{ value:'none', name:'移至：未分类' }])
+          ],
+          onMoveCategory:() => this.moveRewardToCategory(r.id),
           dragging:String(st.dragId) === String(r.id),
           dragBorder:String(st.dragId) === String(r.id) ? accent : '#262b36',
           dragBg:String(st.dragId) === String(r.id) ? '#1a1f2b' : '#0d0f14',
