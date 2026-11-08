@@ -49,7 +49,7 @@ await test('缺文件、404、HTML误作JS、版本不一致、写入失败均�
 await test('旧版模块可与 v1.15.0 新增模块构成完整 v1.15.0 发布', async () => {
   const markers = [['money.js','v1.14.0'], ['progression.js','v1.12.0'], ['life-architecture.js','v1.12.0'], ['task-assistant.js','v1.12.0'], ['reward-order.js','v1.15.0'], ['agent-client.js','v1.15.0']];
   for (const [name, marker] of markers) assert.match(fs.readFileSync(new URL('../'+name, import.meta.url), 'utf8'), new RegExp('EXP BANK '+marker.replaceAll('.', '\\.')));
-  const w = worker(); await w.dispatch('install'); assert.equal(w.maps.get('exp-bank-v1.14.0-reward-collections-20261104').size, 14);
+  const w = worker(); await w.dispatch('install'); assert.equal(w.maps.get('exp-bank-v1.15.0-ai-agent-reward-sort-20261108').size, 16);
 });
 await test('导航和脚本离线从同版本资源读取，不发起混版网络请求', async () => {
   const w = worker(); await w.dispatch('install'); await w.dispatch('activate'); w.options.offline = true; const before = w.fetched();
@@ -57,7 +57,7 @@ await test('导航和脚本离线从同版本资源读取，不发起混版网�
   const js = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.match(await js.text(), /integer money/); assert.equal(w.fetched(), before);
 });
 await test('缺JS离线返回错误，联网404仍返回404，不能回退HTML', async () => {
-  const w = worker(); await w.dispatch('install'); w.maps.get('exp-bank-v1.14.0-reward-collections-20261104').delete(scope + 'money.js'); w.options.offline = true;
+  const w = worker(); await w.dispatch('install'); w.maps.get('exp-bank-v1.15.0-ai-agent-reward-sort-20261108').delete(scope + 'money.js'); w.options.offline = true;
   const error = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.equal(error.type, 'error'); assert.equal(await error.text(), '');
   w.options.offline = false; w.options.status404 = 'money.js'; const res = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.equal(res.status, 404);
 });
