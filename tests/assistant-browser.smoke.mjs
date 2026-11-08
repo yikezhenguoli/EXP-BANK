@@ -56,13 +56,13 @@ try {
   await page.getByText('关闭',{exact:true}).click(); await page.getByText('+ 新建任务',{exact:true}).click();
   await page.locator('#nt-name').fill('手动表单未提交的草稿');
   await page.locator('#nt-ai-desc').fill('每两周听力三次，每次0.5EXP；阅读20页书');
-  await page.getByText('识别并预览',{exact:true}).click(); rows=page.locator('.assistant-row');
+  await page.getByText('本地识别',{exact:true}).click(); rows=page.locator('.assistant-row');
   assert.equal(await rows.nth(0).getByLabel('周期跨度',{exact:true}).inputValue(),'2');
   assert.equal(await rows.nth(1).getByLabel('每次 EXP',{exact:true}).inputValue(),'6');
   assert.equal(await rows.nth(1).getByRole('checkbox',{name:/^创建第/}).isChecked(),false);
   await page.getByRole('button',{name:'返回修改描述',exact:true}).click();
   assert.equal(await page.locator('#nt-name').inputValue(),'手动表单未提交的草稿');
-  await page.getByText('识别并预览',{exact:true}).click();
+  await page.getByText('本地识别',{exact:true}).click();
   await page.evaluate(()=>{window.__expOriginalSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='exp-bank-v1')throw new DOMException('quota','QuotaExceededError');return window.__expOriginalSet.call(this,k,v);};});
   await page.getByRole('button',{name:'确认创建 1 项任务',exact:true}).click();
   await page.getByRole('dialog',{name:'确认任务草稿'}).getByText(/本机存储空间不足/).first().waitFor();
