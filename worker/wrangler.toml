@@ -1,0 +1,8 @@
+name = "exp-bank-agent"
+main = "index.mjs"
+compatibility_date = "2026-11-08"
+
+[vars]
+DEEPSEEK_MODEL = "deepseek-flash"
+# Replace with the exact HTTPS origin serving EXP BANK, e.g. https://your-name.github.io
+ALLOWED_ORIGINS = "https://REPLACE-WITH-YOUR-PAGES-ORIGIN"
