@@ -10,7 +10,7 @@ const ASSETS = [
 // app release. Unchanged modules legitimately retain earlier headers.
 // Keep explicit checks for each deployed module to catch mixed release assets.
 const MODULE_VERSIONS = {
-  './money.js': 'v1.14.0',
+  './money.js': 'v1.15.0',
   './progression.js': 'v1.12.0',
   './life-architecture.js': 'v1.12.0',
   './task-assistant.js': 'v1.12.0',
