@@ -9,6 +9,8 @@
 <script src="./progression.js"></script>
 <script src="./life-architecture.js"></script>
 <script src="./task-assistant.js"></script>
+<script src="./reward-order.js"></script>
+<script src="./agent-client.js"></script>
 <script src="./support.js"></script>
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0a0b10">
@@ -351,7 +353,7 @@ input[type="date"]{color-scheme:dark;}
 
     <!-- STORE -->
     <div style="background:linear-gradient(180deg,{{ cardTop }} 0%,{{ cardBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.24),rgba(255,255,255,0.06) 38%,rgba(255,255,255,0.02) 72%,rgba(255,255,255,0.07)) border-box;border:1.5px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.07),0 18px 46px rgba(0,0,0,0.42);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">SHOPPING MALL // REDEEM</div><div onClick="{{ openRewardCategoryManager }}" title="管理奖励类型" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 8px;" style-hover="border-color:{{ accent }};color:{{ accent }};">▤ 类型</div><div onClick="{{ startReorderRewards }}" title="长按拖动排序" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建奖励</div></div>
+      <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">SHOPPING MALL // REDEEM</div><div onClick="{{ openRewardCategoryManager }}" title="管理奖励类型" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 8px;" style-hover="border-color:{{ accent }};color:{{ accent }};">▤ 类型</div><div onClick="{{ startReorderRewards }}" title="拖动排序奖励，或切换排序奖励集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建奖励</div></div>
       <sc-if value="{{ rewardsEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px 8px;text-align:center;color:#697084;font-size:12px;">还没有奖励，先创建一项属于自己的现实奖励。</div></sc-if>
       <sc-for list="{{ rewardGroups }}" as="rg" hint-placeholder-count="1">
         <div style="border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(7,9,13,.22);overflow:hidden;">
@@ -1025,11 +1027,41 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeAiHelp }}" style="position:fixed;inset:0;background:rgba(6,7,10,.78);backdrop-filter:blur(7px);z-index:88;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:540px;max-width:100%;max-height:85vh;overflow-y:auto;background:linear-gradient(180deg,#151820,#0e1016);border:1px solid #2f3542;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:13px;box-shadow:0 30px 82px rgba(0,0,0,.78);">
         <div style="display:flex;align-items:center;gap:9px;"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};flex:1;">✦ AI HELP // 任务助手</div><div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:20px;color:#8b93a4;">×</div></div>
-        <div style="font-size:12px;color:#8b93a4;line-height:1.75;">直接描述你想做的事情，可以写一句话或一份清单。先识别成可修改的草稿，确认后才创建；本机处理，断网也可使用。</div>
+        <div style="font-size:12px;color:#8b93a4;line-height:1.75;">直接描述你想做的事情，可以写一句话或一份清单。本地规则助手可离线使用；在线智能规划会调用你配置的 Agent 服务。两种方式都会先生成可修改草稿，确认后才创建。</div>
         <textarea id="ai-help-input" value="{{ aiHelpInput }}" onInput="{{ onAiHelpInput }}" placeholder="每天读20页书，每次5积分；每周跑步三次，每次8积分。放在学习与健康任务集。" style="width:100%;box-sizing:border-box;min-height:112px;background:#0b0d12;border:1px solid #2a303c;border-radius:11px;padding:12px;color:#eef1f7;font-size:13px;line-height:1.7;font-family:inherit;resize:vertical;"></textarea>
         <div style="font-size:10.5px;color:#697084;line-height:1.7;">支持中文数字、不同任务各自的积分和频率、换行／逗号清单、A–Z，以及任务集。识别不准时可编辑字段或补充一句话；同名任务默认不重复创建。</div>
         <sc-if value="{{ aiHelpMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:{{ aiHelpMsgColor }};line-height:1.65;border:1px solid #252b36;border-radius:9px;padding:9px 10px;background:#0d0f14;white-space:pre-wrap;">{{ aiHelpMsg }}</div></sc-if>
-        <div style="display:flex;gap:8px;justify-content:flex-end;"><div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:12px;color:#8b93a4;border:1px solid #2a2f3a;border-radius:8px;padding:8px 14px;">关闭</div><div onClick="{{ runAiHelp }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 18px;">识别并预览</div></div>
+        <sc-if value="{{ agentStatusShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:{{ agentStatusColor }};line-height:1.6;border:1px solid #252b36;border-radius:9px;padding:8px 10px;background:#0d0f14;">{{ agentStatus }}</div></sc-if>
+        <div style="display:flex;gap:7px;justify-content:flex-end;flex-wrap:wrap;">
+          <div onClick="{{ openAgentSettings }}" style="cursor:pointer;font-size:11px;color:#aeb6c6;border:1px solid #2a2f3a;border-radius:8px;padding:8px 10px;">⚙ Agent 设置</div>
+          <div onClick="{{ closeAiHelp }}" style="cursor:pointer;font-size:11px;color:#8b93a4;border:1px solid #2a2f3a;border-radius:8px;padding:8px 10px;">关闭</div>
+          <div onClick="{{ runAiHelp }}" style="cursor:pointer;font-size:11px;font-weight:700;color:#c8cedb;border:1px solid #3a4050;border-radius:8px;padding:8px 10px;">本地识别</div>
+          <div onClick="{{ runAiHelpAgent }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 12px;opacity:{{ agentBusy ? 0.6 : 1 }};">{{ agentBusy ? '正在规划…' : '✦ 在线智能规划' }}</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- AI AGENT LOCAL SETTINGS -->
+  <sc-if value="{{ agentSettingsOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeAgentSettings }}" style="position:fixed;inset:0;background:rgba(4,6,10,.82);backdrop-filter:blur(7px);z-index:120;display:flex;align-items:center;justify-content:center;padding:16px;">
+      <div onClick="{{ stopClick }}" style="width:460px;max-width:100%;background:linear-gradient(180deg,#171b25,#0d1016);border:1px solid #343b4b;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 30px 82px rgba(0,0,0,.8);">
+        <div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1.5px;color:{{ accent }};">AI AGENT // LOCAL SETTINGS</div><div onClick="{{ closeAgentSettings }}" style="cursor:pointer;color:#8b93a4;font-size:20px;">×</div></div>
+        <div style="font-size:11.5px;color:#8b93a4;line-height:1.7;">这里配置的是你自己部署的 Cloudflare Worker。DeepSeek API Key 只放在 Worker Secret，绝不要填在下面或提交到 GitHub。</div>
+        <label style="display:block;font-size:11px;color:#8b93a4;">Worker API 地址
+          <input id="agent-endpoint" type="url" defaultValue="{{ agentEndpoint }}" placeholder="https://你的-worker.workers.dev/api/agent/plan" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#090c12;border:1px solid #30394a;border-radius:8px;padding:10px;color:#e6e9f0;font-size:12px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <label style="display:block;font-size:11px;color:#8b93a4;">Worker 访问令牌
+          <input id="agent-token" type="password" autocomplete="off" placeholder="已保存则留空；输入新令牌可替换" style="display:block;width:100%;box-sizing:border-box;margin-top:5px;background:#090c12;border:1px solid #30394a;border-radius:8px;padding:10px;color:#e6e9f0;font-size:12px;font-family:'JetBrains Mono',monospace;">
+        </label>
+        <div style="font-size:10.5px;color:#697084;line-height:1.6;">当前状态：{{ agentConfigStatus }}。地址和访问令牌保存在本机独立配置中，不进入 EXP BANK 备份码或主账本。</div>
+        <sc-if value="{{ agentSettingsMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:{{ agentSettingsMsgColor }};line-height:1.6;border:1px solid #2a303c;border-radius:8px;padding:8px 10px;">{{ agentSettingsMsg }}</div></sc-if>
+        <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">
+          <div onClick="{{ clearAgentSettings }}" style="cursor:pointer;color:#c08087;border:1px solid #4a3037;border-radius:8px;padding:8px 11px;font-size:11px;">清除本机配置</div>
+          <div onClick="{{ closeAgentSettings }}" style="cursor:pointer;color:#8b93a4;border:1px solid #303643;border-radius:8px;padding:8px 11px;font-size:11px;">取消</div>
+          <div onClick="{{ saveAgentSettings }}" style="cursor:pointer;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:8px 15px;font-size:11px;font-weight:700;">保存配置</div>
+        </div>
+        <div style="font-size:10px;color:#697084;line-height:1.6;">部署步骤见仓库 docs/agent-worker-deploy.md。需要配置 ALLOWED_ORIGINS、DEEPSEEK_API_KEY 和 AGENT_ACCESS_TOKEN。</div>
       </div>
     </div>
   </sc-if>
@@ -1040,6 +1072,8 @@ input[type="date"]{color-scheme:dark;}
       <div class="money-panel" style="width:560px;" role="dialog" aria-modal="true" aria-label="确认任务草稿" onClick="{{ stopClick }}">
         <div class="money-line"><div class="money-title" style="flex:1;">确认任务草稿 · {{ assistantCount }} 项</div><button class="money-btn" onClick="{{ closeTaskPlan }}" disabled="{{ assistantBusy }}">返回修改描述</button></div>
         <div class="money-hint">先核对每项的积分、周期、次数和任务集。预填建议会注明；有歧义的字段需选择确认。勾选后才会创建。</div>
+        <div class="money-hint" style="color:{{ assistantAgentColor }};">{{ assistantAgentLabel }}</div>
+        <sc-if value="{{ assistantHasClarifications }}" hint-placeholder-val="{{ false }}"><div class="money-hint" style="border:1px solid #55452b;background:#1a1711;border-radius:9px;padding:9px 10px;color:#e6c98c;white-space:pre-wrap;">需要留意：{{ assistantClarifications }}</div></sc-if>
         <sc-for list="{{ assistantRows }}" as="t" hint-placeholder-count="0">
           <div class="assistant-row" style="border:1px solid #2d3240;background:#0d0f14;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px;">
             <label style="display:flex;gap:8px;align-items:flex-start;min-height:36px;color:#c8cedb;font-size:12px;line-height:1.7;"><input type="checkbox" checked="{{ t.selected }}" onChange="{{ t.onSelect }}" disabled="{{ assistantBusy }}" style="flex-shrink:0;margin-top:4px;"><span style="flex:1;min-width:0;">创建第 {{ t.indexLabel }} 项 · {{ t.summary }}</span></label>
@@ -1622,7 +1656,13 @@ input[type="date"]{color-scheme:dark;}
         <div style="border:1px solid #2a3040;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(10,12,17,.32));border-radius:11px;padding:10px;display:flex;flex-direction:column;gap:8px;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1.2px;color:{{ accent }};">✦ AI 识别文字描述</div>
           <textarea id="nt-ai-desc" value="{{ newTaskDescription }}" onInput="{{ onNewTaskDescription }}" placeholder="例如：创建“背单词、听力、阅读”3项任务，放在六级任务集，每周完成3次，每项5 EXP" style="width:100%;box-sizing:border-box;min-height:74px;background:#0b0d12;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12px;line-height:1.65;font-family:inherit;resize:vertical;"></textarea>
-          <div style="display:flex;align-items:center;gap:8px;"><div onClick="{{ runNewTaskAI }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:8px;padding:7px 12px;">识别并预览</div><sc-if value="{{ newTaskAiMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:{{ newTaskAiMsgColor }};line-height:1.45;">{{ newTaskAiMsg }}</div></sc-if></div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <div onClick="{{ runNewTaskAI }}" style="cursor:pointer;font-size:10.5px;color:#c8cedb;border:1px solid #3a4050;border-radius:7px;padding:7px 9px;">本地识别</div>
+            <div onClick="{{ runNewTaskAgent }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};border-radius:7px;padding:7px 10px;opacity:{{ agentBusy ? 0.6 : 1 }};">{{ agentBusy ? '正在规划…' : '✦ 在线智能规划' }}</div>
+            <div onClick="{{ openAgentSettings }}" style="cursor:pointer;font-size:10px;color:#8b93a4;border:1px solid #2a2f3a;border-radius:7px;padding:7px 8px;">设置</div>
+            <sc-if value="{{ newTaskAiMsgShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:{{ newTaskAiMsgColor }};line-height:1.45;">{{ newTaskAiMsg }}</div></sc-if>
+          </div>
+          <sc-if value="{{ agentStatusShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:{{ agentStatusColor }};line-height:1.5;">{{ agentStatus }}</div></sc-if>
         </div>
         <div style="font-size:10px;color:#535a6a;line-height:1.55;">也可以继续使用下面的手动表单，只新建一项任务。</div>
         <label style="display:block;font-size:11px;color:#697084;">任务名称
@@ -1692,6 +1732,7 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeReorder }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">{{ reorderTitle }}</div>
+        <sc-if value="{{ reorderRewardFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderRewards }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindRewards ? accent : '#2f3542' }};background:{{ reorderKindRewards ? btnGrad : '#161a22' }};color:{{ reorderKindRewards ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">奖励</div><div onClick="{{ switchReorderRewardCategories }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindRewardCategories ? accent : '#2f3542' }};background:{{ reorderKindRewardCategories ? btnGrad : '#161a22' }};color:{{ reorderKindRewardCategories ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">奖励集</div></div></sc-if>
         <sc-if value="{{ reorderTaskFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderTasks }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindTasks ? accent : '#2f3542' }};background:{{ reorderKindTasks ? btnGrad : '#161a22' }};color:{{ reorderKindTasks ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">任务</div><div onClick="{{ switchReorderSets }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindSets ? accent : '#2f3542' }};background:{{ reorderKindSets ? btnGrad : '#161a22' }};color:{{ reorderKindSets ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">任务集</div></div></sc-if>
         <sc-if value="{{ reorderMilestoneFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderMilestones }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindMilestones ? accent : '#2f3542' }};background:{{ reorderKindMilestones ? btnGrad : '#161a22' }};color:{{ reorderKindMilestones ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">里程碑</div><div onClick="{{ switchReorderMilestoneSets }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindMilestoneSets ? accent : '#2f3542' }};background:{{ reorderKindMilestoneSets ? btnGrad : '#161a22' }};color:{{ reorderKindMilestoneSets ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">里程碑集</div></div></sc-if>
         <sc-if value="{{ reorderIsMilestones }}" hint-placeholder-val="{{ false }}">
@@ -1718,8 +1759,10 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ setRoSelect }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roSelTextColor }};background:{{ roSelBg }};border:1px solid {{ roSelBorder }};box-shadow:{{ roSelShadow }};">勾选归集</div>
           </div>
         </sc-if>
+        <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">长按奖励卡片并上下拖动，可调整奖励集内部顺序；把奖励拖到另一个<b style="color:#c3c9d6;">奖励集标题</b>即可移动归类。松手后统一保存。</div></sc-if>
+        <sc-if value="{{ reorderRewardCategoriesMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">长按并上下拖动奖励集，可调整 Shopping Mall 中各奖励集的显示顺序。奖励本身和兑换记录不会改变。</div></sc-if>
         <sc-if value="{{ roDragMode }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在任意一条{{ reorderItemName }}上<b style="color:#c3c9d6;">长按并上下拖动</b>整条即可调整顺序,松手完成,实时保存。</div>
+          <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在任意一条{{ reorderItemName }}上<b style="color:#c3c9d6;">长按并上下拖动</b>整条即可调整顺序,松手完成,保存生效。</div>
         </sc-if>
         <sc-if value="{{ roSelectMode }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:12px;color:#8b93a4;line-height:1.6;">勾选多条{{ reorderItemName }},在下方<b style="color:#c3c9d6;">归入一个{{ reorderSetName }}</b>。</div>
@@ -1741,6 +1784,7 @@ input[type="date"]{color-scheme:dark;}
                 <div style="font-size:18px;color:#7c8494;line-height:1;">≡</div>
                 <div style="flex:1;min-width:0;">
                   <div style="font-size:14px;font-weight:700;color:#eef1f7;">{{ row.name }}</div>
+                  <sc-if value="{{ row.subShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#7c8494;margin-top:3px;">{{ row.sub }}</div></sc-if>
                 </div>
               </div>
             </sc-if>
@@ -1772,7 +1816,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.14.0';
+const APP_VERSION = 'v1.15.0';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -1981,6 +2025,7 @@ class Component extends DCLogic {
   }
   closeTaskPlan() { if (!this.state.assistantBusy) this.setState({ assistantOpen:false }); }
   runNewTaskAI() { return this.openTaskPlan(this.parseTaskDescription(this.state.newTaskDescription || this.v('nt-ai-desc')), 'new'); }
+  runNewTaskAgent() { return this.runTaskAgent('new', this.state.newTaskDescription || this.v('nt-ai-desc')); }
   updateAssistantTask(index, field, value) {
     const plan = this.state.assistantPlan; if (!plan || this.state.assistantBusy) return;
     const numeric = ['exp','times','interval'].includes(field), parsed = numeric && value !== '' ? Number(value) : value;
@@ -2024,6 +2069,10 @@ class Component extends DCLogic {
     const plan = st.assistantPlan || { tasks:[] }, selected = plan.tasks.filter(t => t.selected !== false);
     return {
       assistantOpen:!!st.assistantOpen, assistantBusy:!!st.assistantBusy, assistantCount:selected.length,
+      assistantAgentLabel:plan.agent ? ('✦ DEEPSEEK ONLINE · ' + plan.agent.model) : plan.agentFallback ? 'LOCAL RULE ASSISTANT · 在线失败后回退' : 'LOCAL RULE ASSISTANT · 本机规则解析',
+      assistantAgentColor:plan.agent ? '#4ade80' : plan.agentFallback ? '#fbbf24' : '#8b93a4',
+      assistantClarifications:(plan.clarifications || []).join('\n'),
+      assistantHasClarifications:Array.isArray(plan.clarifications) && plan.clarifications.length > 0,
       assistantCanApply:!!selected.length && !st.assistantBusy && !plan.error && selected.every(t => !ExpTaskAssistant.valid(t).length),
       assistantError:st.assistantError || plan.error || '', assistantHasError:!!(st.assistantError || plan.error),
       assistantRemember:!!st.assistantRemember, assistantCorrection:st.assistantCorrection || '',
@@ -2093,7 +2142,12 @@ class Component extends DCLogic {
     const unit = { daily:'日', weekly:'周', monthly:'月', yearly:'年' }[rule.cycle];
     return '每 ' + rule.interval + ' ' + unit + ' · 可兑 ' + rule.times + ' 次 · 本期 ' + n + '/' + rule.times;
   }
-  switchReorderKind(kind) { this.setState({ reorderKind: kind, dragId: null, batchSel: [], batchMsg: '', roMode: 'drag' }); }
+  switchReorderKind(kind) {
+    const draft = (kind === 'rewards' || kind === 'rewardCategories')
+      ? (this.state[kind] || []).map(item => ({ ...item })) : null;
+    this._roRewardChanged = false; this._roLastTargetKey = null;
+    this.setState({ reorderKind:kind, dragId:null, rewardReorderDraft:draft, batchSel:[], batchMsg:'', roMode:'drag' });
+  }
 
   persistentState(state = this.state) { return ExpMoney.persistent(state); }
   async assertCompatibleMoneyClients() {
@@ -2541,7 +2595,13 @@ class Component extends DCLogic {
   restoreTaskSort() { this.save({ taskSortMode: 'life' }); }
   sortOpexByDate(list) { return [...(list || [])].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts || 0) - (a.ts || 0))); }
   restoreOpexSort() { this.save({ opexSortMode: 'date' }); }
-  startReorder(kind) { this.setState({ reorderOpen: true, reorderKind: kind || 'tasks', dragId: null, batchSel: [], roMode: 'drag' }); }
+  startReorder(kind) {
+    const target = kind || 'tasks';
+    const draft = (target === 'rewards' || target === 'rewardCategories')
+      ? (this.state[target] || []).map(item => ({ ...item })) : null;
+    this._roRewardChanged = false; this._roLastTargetKey = null;
+    this.setState({ reorderOpen:true, reorderKind:target, dragId:null, rewardReorderDraft:draft, batchSel:[], roMode:'drag' });
+  }
   setRoMode(m) { this.setState({ roMode: m }); }
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
   groupBatch() {
@@ -2560,7 +2620,13 @@ class Component extends DCLogic {
     this.save(patch);
     const el = document.getElementById('batch-set-name'); if (el) el.value = '';
   }
-  closeReorder() { clearTimeout(this._roTimer); this.setState({ reorderOpen: false, dragId: null }); }
+  closeReorder() {
+    clearTimeout(this._roTimer);
+    if (this._roMove) window.removeEventListener('pointermove', this._roMove);
+    if (this._roUp) { window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); }
+    this._roRewardChanged = false; this._roLastTargetKey = null;
+    this.setState({ reorderOpen:false, dragId:null, rewardReorderDraft:null });
+  }
   openFilePicker(accept, onFile) {
     if (this._filePickerEl) { try { this._filePickerEl.remove(); } catch (_) {} this._filePickerEl = null; }
     const inp = document.createElement('input');
@@ -2610,6 +2676,7 @@ class Component extends DCLogic {
   askRewardImage(id) { this.setState({ imgEditId: id }); }
   closeImgEdit() { this.setState({ imgEditId: null }); }
   roDown(id, e) {
+    this._roLastTargetKey = null; this._roRewardChanged = false;
     this._roStart = { y: e.clientY, moved: false, id };
     this._roPointer = e.pointerId; this._roTarget = e.currentTarget;
     clearTimeout(this._roTimer);
@@ -2635,6 +2702,28 @@ class Component extends DCLogic {
     for (const el of items) { const r = el.getBoundingClientRect(); if (y >= r.top && y <= r.bottom) { targetEl = el; break; } }
     if (!targetEl) { const f = items[0].getBoundingClientRect(), l = items[items.length - 1].getBoundingClientRect(); if (y < f.top) targetEl = items[0]; else if (y > l.bottom) targetEl = items[items.length - 1]; }
     if (!targetEl) return;
+    const arr = (kind === 'milestones'    if (kind === 'rewards' || kind === 'rewardCategories') {
+      const draft = this.state.rewardReorderDraft || (this.state[kind] || []).map(item => ({ ...item }));
+      const setAttr = targetEl.getAttribute('data-ro-set');
+      const targetId = targetEl.getAttribute('data-ro-id');
+      const targetKey = setAttr != null ? 'set:' + setAttr : targetId != null ? 'id:' + targetId : '';
+      if (!targetKey || targetKey === 'id:' + this.state.dragId || targetKey === this._roLastTargetKey) return;
+      const rect = targetEl.getBoundingClientRect(), after = y > rect.top + rect.height / 2;
+      let next = draft;
+      if (kind === 'rewardCategories' && targetId != null) {
+        next = ExpRewardOrder.move(draft, this.state.dragId, targetId, after);
+      } else if (kind === 'rewards' && setAttr != null) {
+        next = ExpRewardOrder.moveToCategory(draft, this.state.dragId, setAttr === 'none' ? null : Number(setAttr));
+      } else if (kind === 'rewards' && targetId != null) {
+        next = ExpRewardOrder.moveReward(draft, this.state.dragId, targetId, after);
+      }
+      const changed = !ExpRewardOrder.sameOrder(draft, next, kind === 'rewards');
+      if (changed) {
+        this._roLastTargetKey = targetKey; this._roRewardChanged = true;
+        this.setState({ rewardReorderDraft:next });
+      }
+      return;
+    }
     const arr = (kind === 'milestones' && (this.state.milestoneSortMode || 'deadline') === 'deadline')
       ? this.sortMilestonesByDeadline(this.state.milestones)
       : (kind === 'tasks' && (this.state.taskSortMode || 'life') !== 'manual')
@@ -2666,7 +2755,18 @@ class Component extends DCLogic {
     if (kind === 'opex') patch.opexSortMode = 'manual';
     this.save(patch);
   }
-  roUp() { clearTimeout(this._roTimer); window.removeEventListener('pointermove', this._roMove); window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); if (this.state.dragId != null) this.setState({ dragId: null }); }
+  roUp() {
+    clearTimeout(this._roTimer);
+    window.removeEventListener('pointermove', this._roMove);
+    window.removeEventListener('pointerup', this._roUp);
+    window.removeEventListener('pointercancel', this._roUp);
+    const kind = this.state.reorderKind || 'tasks';
+    const draft = this.state.rewardReorderDraft;
+    const shouldSave = this.state.dragId != null && this._roRewardChanged && Array.isArray(draft);
+    if (shouldSave) this.save(kind === 'rewards' ? { rewards:draft } : { rewardCategories:draft });
+    this._roRewardChanged = false; this._roLastTargetKey = null;
+    if (this.state.dragId != null || this.state.rewardReorderDraft) this.setState({ dragId:null, rewardReorderDraft:null });
+  }
   armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
   undo() {
     return this.pointAction(async () => {
@@ -3394,6 +3494,87 @@ class Component extends DCLogic {
   openAiHelp() { this.setState({ aiHelpOpen: true, aiHelpMsg: '', aiHelpMsgColor: '#8b93a4' }); }
   closeAiHelp() { this.setState({ aiHelpOpen: false, aiHelpMsg: '' }); }
   runAiHelp() { return this.openTaskPlan(this.parseTaskDescription(this.state.aiHelpInput || this.v('ai-help-input')), 'help'); }
+  runAiHelpAgent() { return this.runTaskAgent('help', this.state.aiHelpInput || this.v('ai-help-input')); }
+  openAgentSettings() { this.setState({ agentSettingsOpen:true, agentSettingsMsg:'', agentSettingsMsgColor:'#8b93a4' }); }
+  closeAgentSettings() { this.setState({ agentSettingsOpen:false }); }
+  saveAgentSettings() {
+    try {
+      const config = ExpAgentClient.saveConfig({ endpoint:this.v('agent-endpoint'), token:this.v('agent-token') });
+      this.setState({ agentSettingsOpen:false, agentSettingsMsg:'', agentStatus:'✓ Agent 地址与访问令牌已保存在本机。', agentStatusColor:'#4ade80' });
+      return !!config.configured;
+    } catch (error) {
+      this.setState({ agentSettingsMsg:error.message || '配置保存失败。', agentSettingsMsgColor:'#fbbf24' });
+      return false;
+    }
+  }
+  clearAgentSettings() {
+    try {
+      ExpAgentClient.clearConfig();
+      const endpoint = document.getElementById('agent-endpoint'); if (endpoint) endpoint.value = '';
+      const token = document.getElementById('agent-token'); if (token) token.value = '';
+      this.setState({ agentSettingsMsg:'本机 Agent 配置已清除。', agentSettingsMsgColor:'#4ade80', agentStatus:'Agent 尚未配置。', agentStatusColor:'#fbbf24' });
+      return true;
+    } catch (error) {
+      this.setState({ agentSettingsMsg:error.message || '清除配置失败。', agentSettingsMsgColor:'#fbbf24' });
+      return false;
+    }
+  }
+  async runTaskAgent(source, description) {
+    if (this.state.agentBusy) return false;
+    const input = String(description || '').trim();
+    if (!input) {
+      this.setState({ agentStatus:'先描述你希望规划的目标。', agentStatusColor:'#fbbf24' });
+      return false;
+    }
+    const config = ExpAgentClient.loadConfig();
+    if (!config.endpoint || !config.token) {
+      this.setState({ agentSettingsOpen:true, agentSettingsMsg:'请先配置 Worker API 地址与访问令牌。DeepSeek API Key 只放在 Worker Secret。', agentSettingsMsgColor:'#fbbf24', agentStatus:'在线 Agent 尚未配置。', agentStatusColor:'#fbbf24' });
+      return false;
+    }
+    this.setState({ agentBusy:true, agentStatus:'正在调用在线 Agent，生成任务草稿…', agentStatusColor:'#8b93a4' });
+    try {
+      const result = await ExpAgentClient.plan({
+        config,
+        input,
+        setNames:(this.state.sets || []).map(s => String(s.name || '').trim()).filter(Boolean).slice(0, 100)
+      });
+      const payload = {
+        setName:String(result.setName || ''),
+        tasks:(result.tasks || []).map(t => ({
+          name:t.name, exp:t.exp, cycle:t.cycle, interval:t.interval, times:t.times,
+          priority:t.priority, setName:t.setName || result.setName || '', note:t.note || '', lifeType:t.lifeType
+        }))
+      };
+      const plan = this.parseTaskDescription(JSON.stringify(payload));
+      if (plan.error || !plan.tasks.length) throw new Error(plan.error || '没有生成可用任务。');
+      plan.tasks = plan.tasks.map((task, index) => {
+        const modelTask = result.tasks[index] || {};
+        const review = Array.from(new Set([...(task.review || []), ...(Array.isArray(modelTask.review) ? modelTask.review : [])]));
+        const warnings = Array.from(new Set([...(task.warnings || []), ...(Array.isArray(modelTask.warnings) ? modelTask.warnings : [])]));
+        const next = { ...task, review, warnings };
+        next.errors = ExpTaskAssistant.valid(next);
+        return next;
+      });
+      plan.clarifications = Array.isArray(result.clarifications) ? result.clarifications : [];
+      plan.agent = { model:result.model || 'deepseek-flash' };
+      this.openTaskPlan(plan, source);
+      this.setState({ agentStatus:'✓ 在线规划完成，请检查任务草稿。', agentStatusColor:'#4ade80' });
+      return true;
+    } catch (error) {
+      const fallback = this.parseTaskDescription(input);
+      if (!fallback.error && fallback.tasks.length) {
+        fallback.agentFallback = true;
+        fallback.clarifications = ['在线 Agent 调用失败：' + (error.message || '未知错误'), '以下为本地规则助手生成的草稿，请核对后再创建。'];
+        this.openTaskPlan(fallback, source);
+        this.setState({ agentStatus:'在线服务不可用，已自动回退本地规则助手。', agentStatusColor:'#fbbf24' });
+        return true;
+      }
+      this.setState({ agentStatus:'在线规划失败：' + (error.message || '未知错误') + '。输入已保留，可使用本地识别。', agentStatusColor:'#fbbf24' });
+      return false;
+    } finally {
+      this.setState({ agentBusy:false });
+    }
+  }
 
   async addTask() {
     const name = this.v('nt-name'); if (!name) return false;
@@ -3684,7 +3865,8 @@ class Component extends DCLogic {
     const milestoneSetOrder = this.hierarchyOptions(milestoneSetsArr);
     const roSrc = roKind === 'sets' ? taskSetOrder.map(x => ({ id: x.id, name: x.rawName, sub: '任务集', depth: x.depth }))
       : roKind === 'milestoneSets' ? milestoneSetOrder.map(x => ({ id: x.id, name: x.rawName, sub: '里程碑集', depth: x.depth }))
-      : roKind === 'rewards' ? st.rewards.map(r => ({ id: r.id, name: r.name, sub: this.fmtExp(r.cost) + ' EXP' }))
+      : roKind === 'rewardCategories' ? (st.rewardReorderDraft || st.rewardCategories || []).map(c => ({ id:c.id, name:c.name, sub:(st.rewards || []).filter(r => r.categoryId === c.id).length + ' 项' }))
+      : roKind === 'rewards' ? (st.rewardReorderDraft || st.rewards).map(r => ({ id: r.id, name: r.name, sub: this.fmtExp(r.cost) + ' EXP' }))
       : roKind === 'milestones' ? milestoneBase.map(m => ({ id: m.id, name: m.name, sub: m.cur + '/' + m.target }))
       : roKind === 'funds' ? st.funds.map(f => ({ id: f.id, name: f.name, sub: f.code || '' }))
       : roKind === 'opex' ? opexBase.map(o => ({ id: o.id, name: o.note || o.cat || '开销记录', sub: (o.date || '') + ' · ' + o.amount }))
@@ -3709,8 +3891,32 @@ class Component extends DCLogic {
       dragging: String(st.dragId) === String(m.id), dragBorder: String(st.dragId) === String(m.id) ? accent : '#262b36',
       dragBg: String(st.dragId) === String(m.id) ? '#1a1f2b' : (m.setId != null ? '#0b1017' : '#0d0f14'), dragShadow: String(st.dragId) === String(m.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(m.id, e) });
     let reorderRows;
-    if (roKind === 'sets' || roKind === 'milestoneSets') {
+    if (roKind === 'sets' || roKind === 'milestoneSets' || roKind === 'rewardCategories') {
       reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, hasSet: true, inGroup: false, indent: ((t.depth || 0) * 16) + 'px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
+    } else if (roKind === 'rewards') {
+      const rows = [], rewardItems = st.rewardReorderDraft || st.rewards || [];
+      const mkRewardRow = r => ({
+        isSetHeader:false, isRow:true, id:r.id, roId:String(r.id), name:r.name,
+        sub:this.fmtExp(r.cost) + ' EXP', subShow:true, setName:'', hasSet:false,
+        inGroup:r.categoryId != null, indent:'16px', batchOn:false, onToggleBatch:()=>{},
+        batchBorder:'#2f3542', batchBg:'transparent', batchTick:'',
+        dragging:String(st.dragId) === String(r.id),
+        dragBorder:String(st.dragId) === String(r.id) ? accent : '#262b36',
+        dragBg:String(st.dragId) === String(r.id) ? '#1a1f2b' : '#0d0f14',
+        dragShadow:String(st.dragId) === String(r.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
+        onDown:e => this.roDown(r.id, e)
+      });
+      (st.rewardCategories || []).forEach(category => {
+        const group = rewardItems.filter(r => r.categoryId === category.id);
+        rows.push({ isSetHeader:true, isRow:false, roSet:String(category.id), name:category.name,
+          count:group.length + ' 项', indent:'0px', collapsed:false, chev:'⇣', onToggleSet:()=>{} });
+        group.forEach(reward => rows.push(mkRewardRow(reward)));
+      });
+      const unclassified = rewardItems.filter(r => r.categoryId == null);
+      rows.push({ isSetHeader:true, isRow:false, roSet:'none', name:'未分类',
+        count:unclassified.length + ' 项', indent:'0px', collapsed:false, chev:'⇣', onToggleSet:()=>{} });
+      unclassified.forEach(reward => rows.push(mkRewardRow(reward)));
+      reorderRows = rows;
     } else if (roKind === 'tasks') {
       const decd = taskBase.map(dec), rows = [], grouped = {}; setsArr.forEach(x => grouped[x.id] = []);
       const ungrouped = []; decd.forEach(t => { if (t.setId != null && grouped[t.setId]) grouped[t.setId].push(t); else ungrouped.push(t); });
@@ -3737,13 +3943,13 @@ class Component extends DCLogic {
       ungroupedMs.forEach(m => rows.push(mkMilestoneRoRow(m))); reorderRows = rows;
     } else {
       reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name,
-        setName: t.sub, hasSet: !!t.sub, inGroup: false, indent: '0px',
+        setName: t.sub, sub:t.sub, subShow:!!t.sub, hasSet: !!t.sub, inGroup: false, indent: '0px',
         batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '',
         dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36',
         dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14',
         dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
     }
-    const reorderTitle = roKind === 'sets' ? '任务集排序 // REORDER SETS' : roKind === 'milestoneSets' ? '里程碑集排序 // REORDER SETS' : roKind === 'rewards' ? '奖励排序 // REORDER' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
+    const reorderTitle = roKind === 'sets' ? '任务集排序 // REORDER SETS' : roKind === 'milestoneSets' ? '里程碑集排序 // REORDER SETS' : roKind === 'rewardCategories' ? '奖励集排序 // REORDER COLLECTIONS' : roKind === 'rewards' ? '奖励排序 // REORDER REWARDS' : roKind === 'milestones' ? '里程碑排序 // REORDER' : roKind === 'funds' ? '标的排序 // REORDER' : roKind === 'opex' ? '开销排序 // REORDER' : roKind === 'stash' ? '存钱罐排序 // REORDER' : '任务排序 // REORDER';
     const rewards = st.rewards.map(r => { const rp = !!pend && pend.key === 'reward:' + r.id;
       const capCount = this.rewardRedeemCount(r), capRule = this.rewardCapRule(r), capped = capCount >= capRule.times;
       const blocked = ExpProgression.blocked(r), capLabelTop = blocked || (capped ? '本期已兑满' : ('本期 ' + capCount + '/' + capRule.times)), capLabelBottom = blocked ? '编辑可调整规则' : capped ? '下期可兑' : '仍可兑换';
@@ -3945,13 +4151,18 @@ class Component extends DCLogic {
       aiHelpOpen: !!st.aiHelpOpen, aiHelpMsg: st.aiHelpMsg || '', aiHelpMsgShow: !!st.aiHelpMsg, aiHelpMsgColor: st.aiHelpMsgColor || '#8b93a4', openAiHelp: () => this.openAiHelp(), closeAiHelp: () => this.closeAiHelp(), runAiHelp: () => this.runAiHelp(), newTaskAiMsg: st.newTaskAiMsg || '', newTaskAiMsgShow: !!st.newTaskAiMsg, newTaskAiMsgColor: st.newTaskAiMsgColor || '#8b93a4', runNewTaskAI: () => this.runNewTaskAI(),
       taskFocusOpen: !!taskFocusTask, taskFocusName: taskFocusTask ? taskFocusTask.name : '', taskFocusMin: st.taskFocusMin || 25, closeTaskFocus: () => this.closeTaskFocus(), taskFocusDirect: () => this.taskFocusDirect(), taskFocusStart: () => this.taskFocusStart(),
       daylineAlertOpen: !!st.daylineAlert, daylineAlertTime: st.daylineAlert ? st.daylineAlert.time : '', daylineAlertName: st.daylineAlert ? st.daylineAlert.name : '', closeDaylineAlert: () => this.closeDaylineAlert(),
-      reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle, reorderTaskFamily: ['tasks','sets'].includes(st.reorderKind || 'tasks'), reorderMilestoneFamily: ['milestones','milestoneSets'].includes(st.reorderKind || 'tasks'), reorderKindTasks: (st.reorderKind || 'tasks') === 'tasks', reorderKindSets: (st.reorderKind || 'tasks') === 'sets', reorderKindMilestones: (st.reorderKind || 'tasks') === 'milestones', reorderKindMilestoneSets: (st.reorderKind || 'tasks') === 'milestoneSets', switchReorderTasks: () => this.switchReorderKind('tasks'), switchReorderSets: () => this.switchReorderKind('sets'), switchReorderMilestones: () => this.switchReorderKind('milestones'), switchReorderMilestoneSets: () => this.switchReorderKind('milestoneSets'),
-      reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks',
+      reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle, reorderTaskFamily: ['tasks','sets'].includes(st.reorderKind || 'tasks'), reorderMilestoneFamily: ['milestones','milestoneSets'].includes(st.reorderKind || 'tasks'), reorderRewardFamily: ['rewards','rewardCategories'].includes(st.reorderKind || 'tasks'),
+      reorderKindTasks: (st.reorderKind || 'tasks') === 'tasks', reorderKindSets: (st.reorderKind || 'tasks') === 'sets', reorderKindMilestones: (st.reorderKind || 'tasks') === 'milestones', reorderKindMilestoneSets: (st.reorderKind || 'tasks') === 'milestoneSets',
+      reorderKindRewards: (st.reorderKind || 'tasks') === 'rewards', reorderKindRewardCategories: (st.reorderKind || 'tasks') === 'rewardCategories',
+      switchReorderTasks: () => this.switchReorderKind('tasks'), switchReorderSets: () => this.switchReorderKind('sets'), switchReorderMilestones: () => this.switchReorderKind('milestones'), switchReorderMilestoneSets: () => this.switchReorderKind('milestoneSets'),
+      switchReorderRewards: () => this.switchReorderKind('rewards'), switchReorderRewardCategories: () => this.switchReorderKind('rewardCategories'),
+      reorderIsTasks: (st.reorderKind || 'tasks') === 'tasks', reorderIsRewards: (st.reorderKind || 'tasks') === 'rewards', reorderIsRewardCategories: (st.reorderKind || 'tasks') === 'rewardCategories',
+      reorderRewardsMode: (st.reorderKind || 'tasks') === 'rewards', reorderRewardCategoriesMode: (st.reorderKind || 'tasks') === 'rewardCategories',
       reorderIsOpex: (st.reorderKind || 'tasks') === 'opex', opexSortLabel: (st.opexSortMode || 'date') === 'manual' ? '手动排序' : '日期优先', restoreOpexSort: () => this.restoreOpexSort(),
       reorderIsMilestones: (st.reorderKind || 'tasks') === 'milestones', milestoneSortLabel: (st.milestoneSortMode || 'deadline') === 'manual' ? '手动排序' : '截止日期优先',
       restoreMilestoneSort: () => this.restoreMilestoneSort(),
       taskSortLabel: (st.taskSortMode || 'life') === 'manual' ? '手动排序' : '人生分类排序', restoreTaskSort: () => this.restoreTaskSort(),
-      roMode: st.roMode || 'drag', roDragMode: (st.roMode || 'drag') === 'drag', roSelectMode: (st.roMode || 'drag') === 'select',
+      roMode: st.roMode || 'drag', roDragMode: (st.roMode || 'drag') === 'drag' && !['rewards','rewardCategories'].includes(st.reorderKind || 'tasks'), roSelectMode: (st.roMode || 'drag') === 'select',
       setRoDrag: () => this.setRoMode('drag'), setRoSelect: () => this.setRoMode('select'),
       roDragBg: (st.roMode || 'drag') === 'drag' ? btnGrad : '#161a22',
       roDragBorder: (st.roMode || 'drag') === 'drag' ? 'transparent' : '#2f3542',
@@ -3962,12 +4173,12 @@ class Component extends DCLogic {
       roSelTextColor: (st.roMode || 'drag') === 'select' ? '#14151c' : '#c3c9d6',
       roSelShadow: (st.roMode || 'drag') === 'select' ? 'inset 0 1px 0 rgba(255,255,255,0.6)' : 'none',
       reorderCanGroup: ((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones'),
-      reorderItemName: (st.reorderKind || 'tasks') === 'sets' ? '任务集' : (st.reorderKind || 'tasks') === 'milestoneSets' ? '里程碑集' : (st.reorderKind || 'tasks') === 'milestones' ? '里程碑' : (st.reorderKind || 'tasks') === 'opex' ? '开销记录' : (st.reorderKind || 'tasks') === 'stash' ? '存钱目标' : '任务', reorderSetName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑集' : '任务集',
+      reorderItemName: (st.reorderKind || 'tasks') === 'sets' ? '任务集' : (st.reorderKind || 'tasks') === 'milestoneSets' ? '里程碑集' : (st.reorderKind || 'tasks') === 'rewardCategories' ? '奖励集' : (st.reorderKind || 'tasks') === 'rewards' ? '奖励' : (st.reorderKind || 'tasks') === 'milestones' ? '里程碑' : (st.reorderKind || 'tasks') === 'opex' ? '开销记录' : (st.reorderKind || 'tasks') === 'stash' ? '存钱目标' : '任务', reorderSetName: (st.reorderKind || 'tasks') === 'milestones' ? '里程碑集' : (st.reorderKind || 'tasks') === 'rewards' ? '奖励集' : '任务集',
       roShowCheck: (((st.reorderKind || 'tasks') === 'tasks' || (st.reorderKind || 'tasks') === 'milestones') && (st.roMode || 'drag') === 'select'),
       batchCount: (st.batchSel || []).length, batchHasSel: (st.batchSel || []).length > 0,
       batchSetOptions: ((st.reorderKind || 'tasks') === 'milestones' ? this.hierarchyOptions(milestoneSetsArr) : this.hierarchyOptions(setsArr)).map(s => ({ id: s.id, name: s.name })),
       batchMsg: st.batchMsg || '', groupBatch: () => this.groupBatch(),
-      startReorder: () => this.startReorder('tasks'), startReorderSets: () => this.startReorder('sets'), startReorderRewards: () => this.startReorder('rewards'), startReorderMilestones: () => this.startReorder('milestones'), startReorderMilestoneSets: () => this.startReorder('milestoneSets'), startReorderFunds: () => this.startReorder('funds'), startReorderOpex: () => this.startReorder('opex'), startReorderStash: () => this.startReorder('stash'), closeReorder: () => this.closeReorder(),
+      startReorder: () => this.startReorder('tasks'), startReorderSets: () => this.startReorder('sets'), startReorderRewards: () => this.startReorder('rewards'), startReorderRewardCategories: () => this.startReorder('rewardCategories'), startReorderMilestones: () => this.startReorder('milestones'), startReorderMilestoneSets: () => this.startReorder('milestoneSets'), startReorderFunds: () => this.startReorder('funds'), startReorderOpex: () => this.startReorder('opex'), startReorderStash: () => this.startReorder('stash'), closeReorder: () => this.closeReorder(),
       fullDone: st.warMode && minimumTasks.length > 0 && coreDone === minimumTasks.length,
       rewards, rewardGroups, milestones, milestoneRows, ledger, showLedger: this.props.showLedger ?? true,
       reflectionOpen: !!st.reflectionOpen, reflectionTargetName: st.reflectionTarget ? st.reflectionTarget.name : '', reflectionTitle: st.reflectionTarget && st.reflectionTarget.kind === 'reward' ? '兑换 · 留下这一刻 // REWARD MEMORY' : '完成 · 留下这一刻 // REFLECTION', reflectionHint: st.reflectionTarget && st.reflectionTarget.kind === 'reward' ? '奖励已经兑换，EXP 已正常扣除。这里完全可选：记两句话，或留一张照片给未来的自己。' : 'EXP 已经正常入账。这里完全可选：记两句话，或留一张照片给未来的自己。', reflectionHasImage: !!st.reflectionPreview, reflectionNoImage: !st.reflectionPreview, reflectionPreview: st.reflectionPreview || '',
@@ -4007,6 +4218,10 @@ class Component extends DCLogic {
       ...this.assistantViewProps(st),
       newRewardOpen: !!st.newRewardOpen, rewardCategoryManagerOpen:!!st.rewardCategoryManagerOpen, rewardCategoryRows, rewardCategoryEmpty:rewardCategoryRows.length === 0, rewardCategoryMsg:st.rewardCategoryMsg || '', rewardCategoryOptions, rewardsEmpty:!st.rewards.length,
       openRewardCategoryManager:() => this.openRewardCategoryManager(), closeRewardCategoryManager:() => this.closeRewardCategoryManager(), addRewardCategory:() => this.addRewardCategory(),
+      agentSettingsOpen:!!st.agentSettingsOpen, agentSettingsMsg:st.agentSettingsMsg || '', agentSettingsMsgShow:!!st.agentSettingsMsg, agentSettingsMsgColor:st.agentSettingsMsgColor || '#8b93a4',
+      agentEndpoint:ExpAgentClient.loadConfig().endpoint, agentConfigStatus:ExpAgentClient.loadConfig().endpoint && ExpAgentClient.loadConfig().token ? '已配置' : '未配置',
+      agentBusy:!!st.agentBusy, agentStatus:st.agentStatus || '', agentStatusShow:!!st.agentStatus, agentStatusColor:st.agentStatusColor || '#8b93a4',
+      openAgentSettings:() => this.openAgentSettings(), closeAgentSettings:() => this.closeAgentSettings(), saveAgentSettings:() => this.saveAgentSettings(), clearAgentSettings:() => this.clearAgentSettings(),
       newMilestoneOpen: !!st.newMilestoneOpen, newMilestoneSetOpen: !!st.newMilestoneSetOpen, newFundOpen: !!st.newFundOpen,
       openNewReward: () => this.openNewReward(), openNewMilestone: () => this.openNewMilestone(), openNewMilestoneSet: () => this.openNewMilestoneSet(), openNewFund: () => this.openNewFund(),
       addFund: () => this.addFund(),
