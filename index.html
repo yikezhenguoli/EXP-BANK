@@ -2613,6 +2613,34 @@ class Component extends DCLogic {
     const dir = direction < 0 ? -1 : 1;
     const kind = this.state.reorderKind || 'tasks';
     if (kind === 'rewardCategories') {
+      const list = [...(this.state.rewardReorderDraft || this.state.rewardCategories || [])];
+      const from = list.findIndex(item => String(item.id) === String(id));
+      const to = from + dir;
+      if (from < 0 || to < 0 || to >= list.length) return false;
+      const next = ExpRewardOrder.move(list, id, list[to].id, dir > 0);
+      this.setState({ rewardReorderDraft:next });
+      return this.save({ rewardCategories:next });
+    }
+    if (kind === 'rewards') {
+      const list = this.state.rewardReorderDraft || this.state.rewards || [];
+      const item = list.find(entry => String(entry.id) === String(id));
+      if (!item) return false;
+      const peers = list.filter(entry => item.categoryId == null
+        ? entry.categoryId == null
+        : entry.categoryId != null && String(entry.categoryId) === String(item.categoryId));
+      const from = peers.findIndex(entry => String(entry.id) === String(id));
+      const target = peers[from + dir];
+      if (from < 0 || !target) return false;
+      const next = ExpRewardOrder.moveReward(list, id, target.id, dir > 0);
+      this.setState({ rewardReorderDraft:next });
+      return this.save({ rewards:next });
+    }
+    return false;
+  }
+  moveRewardOrder(id, direction) {
+    const dir = direction < 0 ? -1 : 1;
+    const kind = this.state.reorderKind || 'tasks';
+    if (kind === 'rewardCategories') {
       const list = [...(this.state.rewardCategories || [])];
       const from = list.findIndex(item => String(item.id) === String(id));
       const to = from + dir;
@@ -3936,20 +3964,28 @@ class Component extends DCLogic {
       dragBg: String(st.dragId) === String(m.id) ? '#1a1f2b' : (m.setId != null ? '#0b1017' : '#0d0f14'), dragShadow: String(st.dragId) === String(m.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(m.id, e) });
     let reorderRows;
     if (roKind === 'sets' || roKind === 'milestoneSets' || roKind === 'rewardCategories') {
-      reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, sub:t.sub, subShow:!!t.sub, hasSet: true, inGroup: false, indent: ((t.depth || 0) * 16) + 'px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
+      reorderRows = roSrc.map((t, index) => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, sub:t.sub, subShow:!!t.sub, hasSet: true, inGroup: false, indent: ((t.depth || 0) * 16) + 'px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', canMoveUp:index > 0, canMoveDown:index < roSrc.length - 1, onMoveUp:() => this.moveRewardOrder(t.id,-1), onMoveDown:() => this.moveRewardOrder(t.id,1), dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
     } else if (roKind === 'rewards') {
       const rows = [], rewardItems = st.rewardReorderDraft || st.rewards || [];
-      const mkRewardRow = r => ({
-        isSetHeader:false, isRow:true, id:r.id, roId:String(r.id), name:r.name,
-        sub:this.fmtExp(r.cost) + ' EXP', subShow:true, setName:'', hasSet:false,
-        inGroup:r.categoryId != null, indent:'16px', batchOn:false, onToggleBatch:()=>{},
-        batchBorder:'#2f3542', batchBg:'transparent', batchTick:'',
-        dragging:String(st.dragId) === String(r.id),
-        dragBorder:String(st.dragId) === String(r.id) ? accent : '#262b36',
-        dragBg:String(st.dragId) === String(r.id) ? '#1a1f2b' : '#0d0f14',
-        dragShadow:String(st.dragId) === String(r.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
-        onDown:e => this.roDown(r.id, e)
-      });
+      const mkRewardRow = r => {
+        const peers = rewardItems.filter(item => r.categoryId == null
+          ? item.categoryId == null
+          : item.categoryId != null && String(item.categoryId) === String(r.categoryId));
+        const index = peers.findIndex(item => String(item.id) === String(r.id));
+        return ({
+          isSetHeader:false, isRow:true, id:r.id, roId:String(r.id), name:r.name,
+          sub:this.fmtExp(r.cost) + ' EXP', subShow:true, setName:'', hasSet:false,
+          inGroup:r.categoryId != null, indent:'16px', batchOn:false, onToggleBatch:()=>{},
+          batchBorder:'#2f3542', batchBg:'transparent', batchTick:'',
+          canMoveUp:index > 0, canMoveDown:index >= 0 && index < peers.length - 1,
+          onMoveUp:() => this.moveRewardOrder(r.id,-1), onMoveDown:() => this.moveRewardOrder(r.id,1),
+          dragging:String(st.dragId) === String(r.id),
+          dragBorder:String(st.dragId) === String(r.id) ? accent : '#262b36',
+          dragBg:String(st.dragId) === String(r.id) ? '#1a1f2b' : '#0d0f14',
+          dragShadow:String(st.dragId) === String(r.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
+          onDown:e => this.roDown(r.id, e)
+        });
+      };
       (st.rewardCategories || []).forEach(category => {
         const group = rewardItems.filter(r => r.categoryId === category.id);
         rows.push({ isSetHeader:true, isRow:false, roSet:String(category.id), name:category.name,
