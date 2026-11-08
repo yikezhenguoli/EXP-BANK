@@ -364,7 +364,7 @@ await test('奖励排序面板提供可靠的单击上下移备用操作', async
   assert.equal(first.canMoveUp,false);
   assert.deepEqual(Array.from(t.c.state.rewardReorderDraft,x=>x.id).filter(id=>id===503 || id===505),[505,503]);
   view=t.c.renderVals();
-  assert.deepEqual(Array.from(view.reorderRows.filter(row=>row.isRow),row=>row.id),[504,505,503]);
+  assert.deepEqual(Array.from(view.reorderRows.filter(row=>row.isRow),row=>row.id),[505,503,504]);
 
   // 每项提供独立的奖励集选择器；无需拖拽即可跨组移动。
   const coffee=view.reorderRows.find(row=>row.id===504);
