@@ -4,5 +4,6 @@ compatibility_date = "2026-11-08"
 
 [vars]
 DEEPSEEK_MODEL = "deepseek-flash"
-# Replace with the exact HTTPS origin serving EXP BANK, e.g. https://your-name.github.io
-ALLOWED_ORIGINS = "https://REPLACE-WITH-YOUR-PAGES-ORIGIN"
+# GitHub Pages default origin for https://yikezhenguoli.github.io/EXP-BANK/ (no path).
+# If you use a custom domain, add its exact HTTPS origin separated by a comma.
+ALLOWED_ORIGINS = "https://yikezhenguoli.github.io"
