@@ -33,7 +33,7 @@ async function noOverflow(page){
 }
 async function help(page,description){
  await page.getByText('✦ AI HELP',{exact:true}).click(); await page.locator('#ai-help-input').fill(description);
- await page.getByText('识别并预览',{exact:true}).click(); await page.getByRole('dialog',{name:'确认任务草稿'}).waitFor();
+ await page.getByText('本地识别',{exact:true}).click(); await page.getByRole('dialog',{name:'确认任务草稿'}).waitFor();
 }
 try {
  for(const width of [360,390]){
