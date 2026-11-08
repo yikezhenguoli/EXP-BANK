@@ -253,6 +253,41 @@ await test('奖励排序按奖励集分组展示，奖励集顺序可独立调�
   assert.deepEqual(Array.from(view.reorderRows.filter(x=>x.isRow),x=>x.id),[500,501]);
   assert.equal(view.reorderRewardFamily,true);
 });
+await test('奖励拖放可跨奖励集移动，松手后统一保存且草稿不进入主数据', async () => {
+  const data=seed(0);
+  data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'}];
+  data.rewards=[
+    {id:502,name:'学习卡',cost:20,categoryId:501,redeems:[]},
+    {id:503,name:'咖啡',cost:30,categoryId:500,redeems:[]}
+  ];
+  data.nextId=504;
+  const t=create(data);
+  const el=(attrs,top)=>({getAttribute:key=>Object.prototype.hasOwnProperty.call(attrs,key)?attrs[key]:null,
+    getBoundingClientRect:()=>({top,bottom:top+30,height:30})});
+  t.context.document.querySelectorAll=()=>[
+    el({'data-ro-set':'500'},0),el({'data-ro-id':'503'},32),
+    el({'data-ro-set':'501'},64),el({'data-ro-id':'502'},96),
+    el({'data-ro-set':'none'},128)
+  ];
+  t.c.startReorder('rewards');
+  t.c.setState({dragId:503});
+  t.c.roMove({clientY:70,preventDefault(){}});
+  assert.equal(t.c.state.rewardReorderDraft.find(r=>r.id===503).categoryId,501);
+  t.c.roUp();
+  await t.c.save({});
+  assert.equal(t.stored().rewards.find(r=>r.id===503).categoryId,501);
+  assert.equal(t.stored().rewardReorderDraft,undefined);
+  assert.equal(t.stored().agentStatus,undefined);
+
+  t.c.startReorder('rewardCategories');
+  t.context.document.querySelectorAll=()=>[el({'data-ro-id':'500'},0),el({'data-ro-id':'501'},40)];
+  t.c.setState({dragId:501});
+  t.c.roMove({clientY:10,preventDefault(){}});
+  t.c.roUp();
+  await t.c.save({});
+  assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),[501,500]);
+  assert.equal(t.stored().rewardReorderDraft,undefined);
+});
 await test('Agent 地址和访问令牌使用独立本机配置，不进入主数据备份', async () => {
   const t=create(seed(0));
   t.input('agent-endpoint','https://example.workers.dev');
