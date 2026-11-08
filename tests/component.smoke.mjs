@@ -246,11 +246,11 @@ await test('奖励排序按奖励集分组展示，奖励集顺序可独立调�
   const t=create(data);
   t.c.startReorder('rewards');
   let view=t.c.renderVals();
-  assert.deepEqual(view.reorderRows.filter(x=>x.isSetHeader).map(x=>x.name),['体验','学习','未分类']);
-  assert.deepEqual(view.reorderRows.filter(x=>x.isRow).map(x=>x.id),[503,502,504]);
+  assert.deepEqual(Array.from(view.reorderRows.filter(x=>x.isSetHeader),x=>x.name),['体验','学习','未分类']);
+  assert.deepEqual(Array.from(view.reorderRows.filter(x=>x.isRow),x=>x.id),[503,502,504]);
   t.c.switchReorderKind('rewardCategories');
   view=t.c.renderVals();
-  assert.deepEqual(view.reorderRows.filter(x=>x.isRow).map(x=>x.id),[500,501]);
+  assert.deepEqual(Array.from(view.reorderRows.filter(x=>x.isRow),x=>x.id),[500,501]);
   assert.equal(view.reorderRewardFamily,true);
 });
 await test('Agent 地址和访问令牌使用独立本机配置，不进入主数据备份', async () => {
