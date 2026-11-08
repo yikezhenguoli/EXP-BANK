@@ -18,17 +18,17 @@ function create(seed = null, shared = sharedStorage(seed)) {
     window: { innerWidth: 390, confirm: () => true, addEventListener() {}, removeEventListener() {} },
     navigator: { locks: { request: shared.request } }, crypto: { randomUUID: () => 'cmd-' + Math.random().toString(36).slice(2) },
     document: { getElementById: id => elements[id] || null },
-    localStorage: { getItem: k => shared.map.get(k) ?? null, setItem: (k, v) => { if (flags.failWrite) { const e = new Error('QuotaExceededError'); e.name = 'QuotaExceededError'; throw e; } shared.map.set(k, v); } },
+    localStorage: { getItem: k => shared.map.get(k) ?? null, setItem: (k, v) => { if (flags.failWrite) { const e = new Error('QuotaExceededError'); e.name = 'QuotaExceededError'; throw e; } shared.map.set(k, v); }, removeItem: k => shared.map.delete(k) },
     sessionStorage: { getItem: k => session.get(k) ?? null, setItem: (k, v) => session.set(k, v), removeItem: k => session.delete(k) },
     btoa: s => Buffer.from(s, 'binary').toString('base64'), atob: s => Buffer.from(s, 'base64').toString('binary'), escape, unescape, encodeURIComponent, decodeURIComponent });
-  vm.runInContext(money, context); for (const name of ['progression.js','life-architecture.js','task-assistant.js']) vm.runInContext(fs.readFileSync(new URL('../'+name, import.meta.url),'utf8'), context); vm.runInContext(source + '\nglobalThis.TestComponent = Component;', context);
+  vm.runInContext(money, context); for (const name of ['progression.js','life-architecture.js','task-assistant.js','reward-order.js','agent-client.js']) vm.runInContext(fs.readFileSync(new URL('../'+name, import.meta.url),'utf8'), context); vm.runInContext(source + '\nglobalThis.TestComponent = Component;', context);
   const c = new context.TestComponent({ goldAt: 300, diamondAt: 900, interestRate: 5, coreQuota: 3 });
   return { c, flags, shared, context, check:(id,checked)=>{ elements[id]={checked}; }, input: (id, value) => { elements[id] = { value: String(value) }; }, stored: () => JSON.parse(shared.map.get('exp-bank-v1')) };
 }
 const seed = saved => ({ appVersion: 'v1.9.2', tasks: [], rewards: [], ledger: [], exp: 10, nextId: 500, stash: [{ id: 41, name: '旅游', target: 1000, saved, claimed: true }], opex: [] });
 async function test(name, fn) { await fn(); results.push(name); console.log('PASS ' + name); }
 await test('新用户及旧用户启动完成schema，余额、EXP和达成保持', async () => {
-  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.14.0'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
+  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.0'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
   await t.c.save({}); assert.equal(t.stored().stash[0].saved, 800); assert.equal(t.stored().updateNoteOpen, undefined);
   assert.equal(create().c.state.opexCategories.length, 6);
 });
@@ -233,5 +233,107 @@ await test('奖励类型与归属可通过普通备份码往返', async () => {
   const data=seed(0); data.rewardCategories=[{id:500,name:'旅行'}]; data.rewards=[{id:501,name:'短途旅行',cost:200,categoryId:500,redeems:[]}]; data.nextId=502;
   const a=create(data), code=a.c.makeBackupCode(), b=create(); b.input('bk-import',code); await b.c.importBackup();
   assert.deepEqual(b.stored().rewardCategories,data.rewardCategories); assert.equal(b.stored().rewards[0].categoryId,500);
+});
+await test('奖励排序按奖励集分组展示，奖励集顺序可独立调整', async () => {
+  const data=seed(0);
+  data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'}];
+  data.rewards=[
+    {id:502,name:'学习卡',cost:20,categoryId:501,redeems:[]},
+    {id:503,name:'咖啡',cost:30,categoryId:500,redeems:[]},
+    {id:504,name:'未分类奖励',cost:10,categoryId:null,redeems:[]}
+  ];
+  data.nextId=505;
+  const t=create(data);
+  t.c.startReorder('rewards');
+  let view=t.c.renderVals();
+  assert.deepEqual(Array.from(view.reorderRows.filter(x=>x.isSetHeader),x=>x.name),['体验','学习','未分类']);
+  assert.deepEqual(Array.from(view.reorderRows.filter(x=>x.isRow),x=>x.id),[503,502,504]);
+  t.c.switchReorderKind('rewardCategories');
+  view=t.c.renderVals();
+  assert.deepEqual(Array.from(view.reorderRows.filter(x=>x.isRow),x=>x.id),[500,501]);
+  assert.equal(view.reorderRewardFamily,true);
+});
+await test('奖励拖放、奖励集排序与商城展示顺序在保存和恢复后保持一致', async () => {
+  const data=seed(0);
+  data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'}];
+  data.rewards=[
+    {id:502,name:'学习卡',cost:20,categoryId:501,redeems:[]},
+    {id:503,name:'咖啡',cost:30,baseCost:25,frictionFactor:1.2,riskBand:'amber',cooldownDays:7,categoryId:500,img:'data:image/png;base64,Y29mZmVl',redeems:[1760000000000],cooldownUntil:1800000000000}
+  ];
+  data.nextId=504;
+  const t=create(data);
+  const el=(attrs,top)=>({getAttribute:key=>Object.prototype.hasOwnProperty.call(attrs,key)?attrs[key]:null,
+    getBoundingClientRect:()=>({top,bottom:top+30,height:30})});
+
+  // 先把“咖啡”拖到“学习”奖励集标题，验证归属变更和商城分组视图。
+  t.c.startReorder('rewards');
+  t.context.document.querySelectorAll=()=>[
+    el({'data-ro-set':'500'},0),el({'data-ro-id':'503'},32),
+    el({'data-ro-set':'501'},64),el({'data-ro-id':'502'},96),
+    el({'data-ro-set':'none'},128)
+  ];
+  t.c.setState({dragId:503});
+  t.c.roMove({clientY:70,preventDefault(){}});
+  assert.equal(t.c.state.rewardReorderDraft.find(r=>r.id===503).categoryId,501);
+  t.c.roUp();
+  await t.c.save({});
+  assert.equal(t.stored().rewards.find(r=>r.id===503).categoryId,501);
+  let view=t.c.renderVals();
+  assert.deepEqual(Array.from(view.rewardGroups,x=>x.name),['体验','学习']);
+  assert.deepEqual(Array.from(view.rewardGroups.find(x=>x.name==='学习').rewards,x=>x.name),['学习卡','咖啡']);
+
+  // 独立调整奖励集顺序，商城分组顺序应立即跟随持久化数组。
+  t.c.startReorder('rewardCategories');
+  t.context.document.querySelectorAll=()=>[el({'data-ro-id':'500'},0),el({'data-ro-id':'501'},40)];
+  t.c.setState({dragId:501});
+  t.c.roMove({clientY:10,preventDefault(){}});
+  t.c.roUp();
+  await t.c.save({});
+  assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),[501,500]);
+  view=t.c.renderVals();
+  assert.deepEqual(Array.from(view.rewardGroups,x=>x.name),['学习','体验']);
+
+  // 同一奖励集内调整奖励顺序，商城卡片顺序应与 rewards 数组一致。
+  t.c.startReorder('rewards');
+  t.context.document.querySelectorAll=()=>[
+    el({'data-ro-set':'501'},0),el({'data-ro-id':'502'},32),
+    el({'data-ro-id':'503'},64),el({'data-ro-set':'500'},96),
+    el({'data-ro-set':'none'},128)
+  ];
+  t.c.setState({dragId:503});
+  t.c.roMove({clientY:35,preventDefault(){}});
+  t.c.roUp();
+  await t.c.save({});
+  assert.deepEqual(t.stored().rewards.map(x=>x.id),[503,502]);
+  view=t.c.renderVals();
+  assert.deepEqual(Array.from(view.rewardGroups[0].rewards,x=>x.name),['咖啡','学习卡']);
+
+  // 排序不得改写奖励资产、图片、兑换历史或冷却信息。
+  const coffee=t.stored().rewards.find(r=>r.id===503);
+  assert.equal(coffee.cost,30);
+  assert.equal(coffee.img,data.rewards[1].img);
+  assert.deepEqual(Array.from(coffee.redeems),[1760000000000]);
+  assert.equal(coffee.cooldownUntil,1800000000000);
+
+  // 完整备份恢复后仍保留两级顺序；拖拽草稿和排序面板状态不进入持久数据。
+  const backup=t.c.makeFullBackup(), restored=create();
+  restored.input('bk-import',backup);
+  assert.equal(await restored.c.importBackup(),true);
+  assert.deepEqual(restored.stored().rewardCategories.map(x=>x.id),[501,500]);
+  assert.deepEqual(restored.stored().rewards.map(x=>x.id),[503,502]);
+  assert.equal(restored.stored().rewardReorderDraft,undefined);
+  assert.equal(restored.stored().reorderKind,undefined);
+});
+await test('Agent 地址和访问令牌使用独立本机配置，不进入主数据备份', async () => {
+  const t=create(seed(0));
+  t.input('agent-endpoint','https://example.workers.dev');
+  t.input('agent-token','agent-token-1234567890');
+  assert.equal(t.c.saveAgentSettings(),true);
+  const config=JSON.parse(t.context.localStorage.getItem('exp-bank-agent-config-v1'));
+  assert.equal(config.endpoint,'https://example.workers.dev/api/agent/plan');
+  assert.equal(config.token,'agent-token-1234567890');
+  assert.equal(t.stored().agentConfig,undefined);
+  const backup=JSON.parse(Buffer.from(t.c.makeBackupCode(),'base64').toString('utf8'));
+  assert.equal(backup.agentConfig,undefined);
 });
 console.log('Component checks passed: ' + results.length);

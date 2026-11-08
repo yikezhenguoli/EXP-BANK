@@ -1,0 +1,34 @@
+name: EXP BANK smoke tests
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/**"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run smoke tests
+        run: |
+          node tests/money-state.smoke.mjs
+          node tests/component.smoke.mjs
+          node tests/sw-update.smoke.mjs
+          node tests/assistant.smoke.mjs
+          node tests/life.smoke.mjs
+          node tests/reward-order.smoke.mjs
+          node tests/agent-client.smoke.mjs
+          node tests/agent-worker.smoke.mjs

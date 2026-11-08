@@ -1,8 +1,8 @@
 /* EXP BANK service worker — coherent versioned assets; user data is never cleared. */
-const VERSION = 'v1.14.0';
-const CACHE = 'exp-bank-' + VERSION + '-reward-collections-20261104';
+const VERSION = 'v1.15.0';
+const CACHE = 'exp-bank-' + VERSION + '-ai-agent-reward-sort-20261108';
 const ASSETS = [
-  './', './index.html', './support.js', './money.js', './progression.js', './life-architecture.js', './task-assistant.js', './image-slot.js',
+  './', './index.html', './support.js', './money.js', './progression.js', './life-architecture.js', './task-assistant.js', './reward-order.js', './agent-client.js', './image-slot.js',
   './vendor/react.production.min.js', './vendor/react-dom.production.min.js',
   './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'
 ];
@@ -10,10 +10,12 @@ const ASSETS = [
 // app release. Unchanged modules legitimately retain earlier headers.
 // Keep explicit checks for each deployed module to catch mixed release assets.
 const MODULE_VERSIONS = {
-  './money.js': 'v1.14.0',
+  './money.js': 'v1.15.0',
   './progression.js': 'v1.12.0',
   './life-architecture.js': 'v1.12.0',
-  './task-assistant.js': 'v1.12.0'
+  './task-assistant.js': 'v1.12.0',
+  './reward-order.js': 'v1.15.0',
+  './agent-client.js': 'v1.15.0'
 };
 const scope = self.registration.scope;
 const assetPaths = new Set(ASSETS.map(path => new URL(path, scope).pathname));

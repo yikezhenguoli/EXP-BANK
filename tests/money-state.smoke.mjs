@@ -102,6 +102,32 @@ test('备份包含所有资金和类别字段，移除草稿及错误状态', ()
   const data = JSON.parse(JSON.stringify(M.persistent(s))); assert.equal(data.moneySchemaVersion, 1); assert.equal(data.opex[0].stashId, 41); assert.ok(data.stashMovements.length); assert.equal(data.opexCategories.at(-1).name, '房租');
   assert.equal(data.expenseDraft, undefined); assert.equal(data.moneyError, undefined); assert.equal(data.moneyBusy, undefined); assert.equal(M.balance(M.normalize(data), 41), 80000);
 });
+test('奖励集和奖励顺序在规范化、持久化与备份数据中保持原顺序', () => {
+  const source = {
+    ...seed(0),
+    nextId: 506,
+    rewardCategories: [{ id: 501, name: '学习' }, { id: 500, name: '体验' }],
+    rewards: [
+      { id: 503, name: '咖啡', cost: 30, categoryId: 500, img: 'data:image/png;base64,Y29mZmVl', redeems: [1760000000000] },
+      { id: 502, name: '学习卡', cost: 20, categoryId: 501, img: '', redeems: [] }
+    ],
+    reorderKind: 'rewards',
+    rewardReorderDraft: [{ id: 502 }, { id: 503 }]
+  };
+  const normalized = M.normalize(source);
+  assert.deepEqual(normalized.rewardCategories.map(x => x.id), [501, 500]);
+  assert.deepEqual(normalized.rewards.map(x => x.id), [503, 502]);
+  const persisted = M.persistent(normalized);
+  assert.deepEqual(persisted.rewardCategories.map(x => x.id), [501, 500]);
+  assert.deepEqual(persisted.rewards.map(x => x.id), [503, 502]);
+  assert.equal(persisted.reorderKind, undefined);
+  assert.equal(persisted.rewardReorderDraft, undefined);
+  const restored = M.normalize(JSON.parse(JSON.stringify(persisted)));
+  assert.deepEqual(restored.rewardCategories.map(x => x.id), [501, 500]);
+  assert.deepEqual(restored.rewards.map(x => x.id), [503, 502]);
+  assert.deepEqual(restored.rewards[0].redeems, [1760000000000]);
+  assert.equal(restored.rewards[0].img, source.rewards[0].img);
+});
 test('200次随机存入和支出符合独立整数余额模型', () => {
   let s = M.normalize(seed(0)), expected = 0, rng = 73;
   for (let i = 0; i < 200; i++) {

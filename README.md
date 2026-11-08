@@ -1,14 +1,25 @@
 # EXP BANK
 
-本地优先的 EXP 积分与生活记录 PWA。当前版本 **v1.12.0 — Life Architecture Update**：以 CORE、GROWTH、MAINTENANCE、EXPLORATION 四层组织任务，支持独立排序与完成统计。WAR MODE 聚焦 CORE，作为人生最低运行模式。旧任务、EXP、周期和历史保留；此前的奖励、目标资金联动与 OPEX 类别排序继续保留。
+本地优先的个人成长管理 PWA。当前开发版本 **v1.15.0 — AI Agent & Reward Sorting**。
+
+## 本版更新
+
+- **奖励排序重构**：排序面板可切换“奖励 / 奖励集”；奖励按现有奖励集分组显示；支持调整奖励集顺序、奖励在组内的顺序，以及将奖励拖入其他奖励集或未分类。拖动期间使用临时草稿，松手后一次性保存。
+- **AI Agent MVP**：新增 DeepSeek 在线任务规划 Worker；自然语言输入生成结构化任务草稿，经现有任务助手校验、人工编辑和确认后才创建。在线调用失败时自动回退本地规则助手。
+- **安全边界**：DeepSeek API Key 只保存在 Cloudflare Worker Secret；PWA 不直接持有模型密钥。Worker 地址与访问令牌保存在本机独立配置，不进入主数据备份。
+- **数据兼容**：奖励、奖励集、兑换记录继续使用现有数据结构，不要求清空 localStorage 或重新导入数据。
 
 ## 启动与部署
 
-无需构建。保留整个目录结构，在根目录运行 `python3 -m http.server 8080`，打开 `http://localhost:8080`。正式使用应部署到 HTTPS；GitHub Pages 从仓库根目录发布即可。`money.js`、`progression.js`、`life-architecture.js`、`task-assistant.js` 与 `vendor/` 必须一起部署，单独替换 `index.html` 不足以完成升级。
+无需构建。保留整个目录结构，在根目录运行 `python3 -m http.server 8080`，打开 `http://localhost:8080`。正式使用应部署到 HTTPS；GitHub Pages 从仓库根目录发布即可。以下资源必须一起部署：`index.html`、`support.js`、`money.js`、`progression.js`、`life-architecture.js`、`task-assistant.js`、`reward-order.js`、`agent-client.js` 与 `vendor/`。单独替换 `index.html` 不足以完成升级。
 
-现有 PWA 可使用顶部“↻ 更新”。完整资源就绪后才切换版本，账本和照片保留。更新前可使用“备份”导出完整 TXT；个人账本存在本机，不在此代码仓库中。
+顶部“↻ 更新”会安装完整版本资源；个人账本和奖励图片仍保存在本机。更新前可使用“备份”导出完整 TXT。
 
-[完整版本说明](docs/release-v1.12.0.md)列出交互、数据迁移、涉及文件和验证范围。[AI HELP 的进一步智能化方案](docs/ai-help-next.md)说明本地能力与后端大模型方案的边界。
+## AI Agent 部署
+
+在线 Agent 需要单独部署 Cloudflare Worker，并配置 `DEEPSEEK_API_KEY`、`AGENT_ACCESS_TOKEN` 与 `ALLOWED_ORIGINS`。详细步骤见 [AI Agent Worker 部署说明](docs/agent-worker-deploy.md)。DeepSeek API Key 不要放入前端、GitHub 仓库或 EXP BANK 设置面板。
+
+AI Agent 只负责生成任务草稿；本地校验与人工确认后才写入任务系统。它只接收用户主动提交的目标描述和必要任务集名称，不默认上传完整任务账本、EXP 余额、奖励或财务记录。本地规则助手继续支持离线使用。
 
 ## 验证
 
@@ -20,10 +31,15 @@ node tests/component.smoke.mjs
 node tests/sw-update.smoke.mjs
 node tests/assistant.smoke.mjs
 node tests/life.smoke.mjs
+node tests/reward-order.smoke.mjs
+node tests/agent-client.smoke.mjs
+node tests/agent-worker.smoke.mjs
 ```
 
-浏览器脚本需要 Playwright 与 Chromium；已配置 Playwright 的环境可运行 `node tests/browser.smoke.mjs` 、`node tests/assistant-browser.smoke.mjs` 和 `node tests/life-browser.smoke.mjs`。需要指定已有浏览器时设置 `EXP_BANK_CHROME` 为其绝对路径。脚本使用临时本地服务与合成数据，不读取日常账本。
+浏览器脚本需要 Playwright 与 Chromium；已配置 Playwright 的环境可运行 `node tests/browser.smoke.mjs`、`node tests/assistant-browser.smoke.mjs` 和 `node tests/life-browser.smoke.mjs`。脚本使用合成数据，不读取日常账本。
 
-人生分类只负责组织生活结构，不再叠加第二套任务积分规则：CORE / GROWTH / MAINTENANCE / EXPLORATION 都按任务自身 EXP 正常结算。本周完成率从任务迁移或创建日起计算，统计截至今天的每日／每周目标。AI 目前为本地解析与分类推荐，可在预览中纠正，尚未接入云端模型。
+## 数据与能力边界
 
-`support.js` 和 `image-slot.js` 为既有运行时，本次不修改。React 与 ReactDOM 18.3.1 的本地分发及许可证放在 `vendor/`。
+EXP BANK 是本地优先的 PWA。任务、EXP、奖励、奖励集、兑换历史和个人记录主要保存在浏览器本地；公开仓库不包含用户个人账本。当前在线 Agent 是独立可选服务，不影响本地任务系统和离线规则助手。
+
+奖励集顺序由 `rewardCategories` 数组保存，奖励在各组中的顺序由 `rewards` 数组的相对顺序保存。排序只调整顺序和奖励归属，不修改奖励成本、图片、兑换记录或 EXP。
