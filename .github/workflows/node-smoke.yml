@@ -1,0 +1,33 @@
+name: Node Smoke Tests
+
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run state and component tests
+        run: |
+          node tests/money-state.smoke.mjs
+          node tests/component.smoke.mjs
+          node tests/sw-update.smoke.mjs
+          node tests/assistant.smoke.mjs
+          node tests/life.smoke.mjs
+      - name: Run v1.15.0 feature tests
+        run: |
+          node tests/reward-order.smoke.mjs
+          node tests/agent-client.smoke.mjs
+          node tests/agent-worker.smoke.mjs
