@@ -258,7 +258,7 @@ await test('奖励拖放、奖励集排序与商城展示顺序在保存和恢�
   data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'}];
   data.rewards=[
     {id:502,name:'学习卡',cost:20,categoryId:501,redeems:[]},
-    {id:503,name:'咖啡',cost:30,categoryId:500,img:'data:image/png;base64,Y29mZmVl',redeems:[1760000000000],cooldownUntil:1790000000000}
+    {id:503,name:'咖啡',cost:30,categoryId:500,img:'data:image/png;base64,Y29mZmVl',redeems:[1760000000000],cooldownUntil:1800000000000}
   ];
   data.nextId=504;
   const t=create(data);
@@ -313,7 +313,7 @@ await test('奖励拖放、奖励集排序与商城展示顺序在保存和恢�
   assert.equal(coffee.cost,30);
   assert.equal(coffee.img,data.rewards[1].img);
   assert.deepEqual(Array.from(coffee.redeems),[1760000000000]);
-  assert.equal(coffee.cooldownUntil,1790000000000);
+  assert.equal(coffee.cooldownUntil,1800000000000);
 
   // 完整备份恢复后仍保留两级顺序；拖拽草稿和排序面板状态不进入持久数据。
   const backup=t.c.makeFullBackup(), restored=create();
