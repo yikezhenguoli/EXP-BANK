@@ -1777,7 +1777,7 @@ input[type="date"]{color-scheme:dark;}
               </div>
             </sc-if>
             <sc-if value="{{ row.isRow }}" hint-placeholder-val="{{ true }}">
-              <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" onContextMenu="{{ stopClick }}" style="touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;user-drag:none;-webkit-user-drag:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:14px 14px;margin-left:{{ row.indent }};border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+              <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" onContextMenu="{{ stopClick }}" style="touch-action:{{ reorderRewardFamily ? 'pan-x' : 'pan-y' }};user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;user-drag:none;-webkit-user-drag:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:14px 14px;margin-left:{{ row.indent }};border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
                 <sc-if value="{{ roShowCheck }}" hint-placeholder-val="{{ false }}">
                   <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:22px;height:22px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:13px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
                 </sc-if>
@@ -2706,9 +2706,9 @@ class Component extends DCLogic {
       const draft = this.state.rewardReorderDraft || (this.state[kind] || []).map(item => ({ ...item }));
       const setAttr = targetEl.getAttribute('data-ro-set');
       const targetId = targetEl.getAttribute('data-ro-id');
-      const targetKey = setAttr != null ? 'set:' + setAttr : targetId != null ? 'id:' + targetId : '';
-      if (!targetKey || targetKey === 'id:' + this.state.dragId || targetKey === this._roLastTargetKey) return;
       const rect = targetEl.getBoundingClientRect(), after = y > rect.top + rect.height / 2;
+      const targetKey = setAttr != null ? 'set:' + setAttr : targetId != null ? 'id:' + targetId + ':' + (after ? 'after' : 'before') : '';
+      if (!targetKey || targetKey === 'id:' + this.state.dragId || targetKey === this._roLastTargetKey) return;
       let next = draft;
       if (kind === 'rewardCategories' && targetId != null) {
         next = ExpRewardOrder.move(draft, this.state.dragId, targetId, after);
