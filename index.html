@@ -1759,15 +1759,15 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ setRoSelect }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roSelTextColor }};background:{{ roSelBg }};border:1px solid {{ roSelBorder }};box-shadow:{{ roSelShadow }};">勾选归集</div>
           </div>
         </sc-if>
-        <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">长按奖励卡片并上下拖动，可调整奖励集内部顺序；把奖励拖到另一个<b style="color:#c3c9d6;">奖励集标题</b>即可移动归类。松手后统一保存。</div></sc-if>
-        <sc-if value="{{ reorderRewardCategoriesMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">长按并上下拖动奖励集，可调整 Shopping Mall 中各奖励集的显示顺序。奖励本身和兑换记录不会改变。</div></sc-if>
+        <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">抓住每项左侧的 <b style="color:#c3c9d6;">⠿ 把手</b>上下拖动；也可点右侧 ↑↓ 微调组内顺序。把奖励拖到其他<b style="color:#c3c9d6;">奖励集标题</b>即可移动归类。松手自动保存。</div></sc-if>
+        <sc-if value="{{ reorderRewardCategoriesMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">抓住每个奖励集左侧的 <b style="color:#c3c9d6;">⠿ 把手</b>直接拖动；也可使用右侧 ↑↓ 调整顺序。完成后自动保存。</div></sc-if>
         <sc-if value="{{ roDragMode }}" hint-placeholder-val="{{ true }}">
           <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在任意一条{{ reorderItemName }}上<b style="color:#c3c9d6;">长按并上下拖动</b>整条即可调整顺序,松手完成,保存生效。</div>
         </sc-if>
         <sc-if value="{{ roSelectMode }}" hint-placeholder-val="{{ false }}">
           <div style="font-size:12px;color:#8b93a4;line-height:1.6;">勾选多条{{ reorderItemName }},在下方<b style="color:#c3c9d6;">归入一个{{ reorderSetName }}</b>。</div>
         </sc-if>
-        <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px;">
+        <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1;min-height:0;padding:2px;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;">
           <sc-for list="{{ reorderRows }}" as="row" hint-placeholder-count="3">
             <sc-if value="{{ row.isSetHeader }}" hint-placeholder-val="{{ false }}">
               <div data-ro-set="{{ row.roSet }}" onClick="{{ row.onToggleSet }}" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:11px 12px;margin-left:{{ row.indent }};border-radius:9px;background:linear-gradient(180deg,#1a1e28,#12151d);border:1px solid #2a3040;">
@@ -1777,15 +1777,21 @@ input[type="date"]{color-scheme:dark;}
               </div>
             </sc-if>
             <sc-if value="{{ row.isRow }}" hint-placeholder-val="{{ true }}">
-              <div data-ro-id="{{ row.roId }}" onPointerDown="{{ row.onDown }}" onContextMenu="{{ stopClick }}" style="touch-action:{{ reorderRewardFamily ? 'pan-x' : 'pan-y' }};user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;user-drag:none;-webkit-user-drag:none;cursor:grab;display:flex;align-items:center;gap:10px;padding:14px 14px;margin-left:{{ row.indent }};border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+              <div data-ro-id="{{ row.roId }}" onContextMenu="{{ preventReorderNative }}" style="touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;user-drag:none;-webkit-user-drag:none;display:flex;align-items:center;gap:9px;padding:10px 10px;margin-left:{{ row.indent }};border-radius:10px;border:1px solid {{ row.dragBorder }};background:{{ row.dragBg }};box-shadow:{{ row.dragShadow }};">
+                <div onPointerDown="{{ row.onDown }}" onContextMenu="{{ preventReorderNative }}" draggable="false" aria-label="拖动排序" title="按住拖动" style="width:42px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:9px;background:#171c26;color:#c6cedc;font-size:23px;line-height:1;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-user-drag:none;">⠿</div>
                 <sc-if value="{{ roShowCheck }}" hint-placeholder-val="{{ false }}">
                   <div onPointerDown="{{ stopClick }}" onClick="{{ row.onToggleBatch }}" style="cursor:pointer;width:22px;height:22px;flex-shrink:0;border-radius:5px;border:1.5px solid {{ row.batchBorder }};background:{{ row.batchBg }};display:flex;align-items:center;justify-content:center;font-size:13px;color:#0a0b10;font-weight:800;">{{ row.batchTick }}</div>
                 </sc-if>
-                <div style="font-size:18px;color:#7c8494;line-height:1;">≡</div>
-                <div style="flex:1;min-width:0;">
+                <div style="flex:1;min-width:0;pointer-events:none;">
                   <div style="font-size:14px;font-weight:700;color:#eef1f7;">{{ row.name }}</div>
                   <sc-if value="{{ row.subShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#7c8494;margin-top:3px;">{{ row.sub }}</div></sc-if>
                 </div>
+                <sc-if value="{{ reorderRewardFamily }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+                    <div onClick="{{ row.onMoveUp }}" style="width:30px;height:25px;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:6px;background:#171c26;color:#c8cedb;font-size:14px;font-weight:700;opacity:{{ row.canMoveUp ? 1 : 0.28 }};pointer-events:{{ row.canMoveUp ? 'auto' : 'none' }};">↑</div>
+                    <div onClick="{{ row.onMoveDown }}" style="width:30px;height:25px;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:6px;background:#171c26;color:#c8cedb;font-size:14px;font-weight:700;opacity:{{ row.canMoveDown ? 1 : 0.28 }};pointer-events:{{ row.canMoveDown ? 'auto' : 'none' }};">↓</div>
+                  </div>
+                </sc-if>
               </div>
             </sc-if>
           </sc-for>
@@ -1816,7 +1822,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.15.0';
+const APP_VERSION = 'v1.15.1';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -2603,6 +2609,58 @@ class Component extends DCLogic {
     this.setState({ reorderOpen:true, reorderKind:target, dragId:null, rewardReorderDraft:draft, batchSel:[], roMode:'drag' });
   }
   setRoMode(m) { this.setState({ roMode: m }); }
+  moveRewardOrder(id, direction) {
+    const dir = direction < 0 ? -1 : 1;
+    const kind = this.state.reorderKind || 'tasks';
+    if (kind === 'rewardCategories') {
+      const list = [...(this.state.rewardReorderDraft || this.state.rewardCategories || [])];
+      const from = list.findIndex(item => String(item.id) === String(id));
+      const to = from + dir;
+      if (from < 0 || to < 0 || to >= list.length) return false;
+      const next = ExpRewardOrder.move(list, id, list[to].id, dir > 0);
+      this.setState({ rewardReorderDraft:next });
+      return this.save({ rewardCategories:next });
+    }
+    if (kind === 'rewards') {
+      const list = this.state.rewardReorderDraft || this.state.rewards || [];
+      const item = list.find(entry => String(entry.id) === String(id));
+      if (!item) return false;
+      const peers = list.filter(entry => item.categoryId == null
+        ? entry.categoryId == null
+        : entry.categoryId != null && String(entry.categoryId) === String(item.categoryId));
+      const from = peers.findIndex(entry => String(entry.id) === String(id));
+      const target = peers[from + dir];
+      if (from < 0 || !target) return false;
+      const next = ExpRewardOrder.moveReward(list, id, target.id, dir > 0);
+      this.setState({ rewardReorderDraft:next });
+      return this.save({ rewards:next });
+    }
+    return false;
+  }
+  moveRewardOrder(id, direction) {
+    const dir = direction < 0 ? -1 : 1;
+    const kind = this.state.reorderKind || 'tasks';
+    if (kind === 'rewardCategories') {
+      const list = [...(this.state.rewardCategories || [])];
+      const from = list.findIndex(item => String(item.id) === String(id));
+      const to = from + dir;
+      if (from < 0 || to < 0 || to >= list.length) return false;
+      return this.save({ rewardCategories:ExpRewardOrder.move(list, id, list[to].id, dir > 0) });
+    }
+    if (kind === 'rewards') {
+      const list = this.state.rewards || [];
+      const item = list.find(entry => String(entry.id) === String(id));
+      if (!item) return false;
+      const peers = list.filter(entry => item.categoryId == null
+        ? entry.categoryId == null
+        : entry.categoryId != null && String(entry.categoryId) === String(item.categoryId));
+      const from = peers.findIndex(entry => String(entry.id) === String(id));
+      const target = peers[from + dir];
+      if (from < 0 || !target) return false;
+      return this.save({ rewards:ExpRewardOrder.moveReward(list, id, target.id, dir > 0) });
+    }
+    return false;
+  }
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
   groupBatch() {
     const sel = this.state.batchSel || []; if (!sel.length) return;
@@ -2621,11 +2679,14 @@ class Component extends DCLogic {
     const el = document.getElementById('batch-set-name'); if (el) el.value = '';
   }
   closeReorder() {
-    clearTimeout(this._roTimer);
     if (this._roMove) window.removeEventListener('pointermove', this._roMove);
     if (this._roUp) { window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); }
+    if (this._roTarget && this._roTarget.releasePointerCapture && this._roPointer != null) {
+      try { this._roTarget.releasePointerCapture(this._roPointer); } catch (_) {}
+    }
+    this._roPointer = null; this._roTarget = null;
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    this.setState({ reorderOpen:false, dragId:null, rewardReorderDraft:null });
+    this.setState({ reorderOpen:false, dragId:null, dragOverKey:null, rewardReorderDraft:null });
   }
   openFilePicker(accept, onFile) {
     if (this._filePickerEl) { try { this._filePickerEl.remove(); } catch (_) {} this._filePickerEl = null; }
@@ -2676,24 +2737,31 @@ class Component extends DCLogic {
   askRewardImage(id) { this.setState({ imgEditId: id }); }
   closeImgEdit() { this.setState({ imgEditId: null }); }
   roDown(id, e) {
+    if (this.state.dragId != null) return;
+    if (e && e.button != null && e.button !== 0) return;
+    // Start only from the dedicated grip. Prevent Android/iOS text selection and native callout.
+    if (e && e.cancelable !== false && e.preventDefault) e.preventDefault();
+    if (e && e.stopPropagation) e.stopPropagation();
     this._roLastTargetKey = null; this._roRewardChanged = false;
-    this._roStart = { y: e.clientY, moved: false, id };
-    this._roPointer = e.pointerId; this._roTarget = e.currentTarget;
-    clearTimeout(this._roTimer);
-    this._roTimer = setTimeout(() => {
-      this.setState({ dragId: id });
-      if (this._roTarget && this._roTarget.setPointerCapture) { try { this._roTarget.setPointerCapture(this._roPointer); } catch (_) {} }
-      if (navigator.vibrate) navigator.vibrate(15);
-    }, 180);
+    this._roPointer = e && e.pointerId != null ? e.pointerId : null;
+    this._roTarget = e && e.currentTarget ? e.currentTarget : null;
+    if (this._roTarget && this._roTarget.setPointerCapture && this._roPointer != null) {
+      try { this._roTarget.setPointerCapture(this._roPointer); } catch (_) {}
+    }
+    this.setState({ dragId:id, dragOverKey:null });
     this._roMove = ev => this.roMove(ev);
-    this._roUp = () => this.roUp();
-    window.addEventListener('pointermove', this._roMove, { passive: false });
+    this._roUp = ev => {
+      if (this._roPointer != null && ev && ev.pointerId != null && ev.pointerId !== this._roPointer) return;
+      this.roUp();
+    };
+    window.addEventListener('pointermove', this._roMove, { passive:false });
     window.addEventListener('pointerup', this._roUp);
     window.addEventListener('pointercancel', this._roUp);
+    if (navigator.vibrate) { try { navigator.vibrate(12); } catch (_) {} }
   }
   roMove(e) {
-    if (this.state.dragId == null) { if (Math.abs(e.clientY - this._roStart.y) > 8) clearTimeout(this._roTimer); return; }
-    e.preventDefault();
+    if (this.state.dragId == null) return;
+    if (e && e.preventDefault) e.preventDefault();
     const kind = this.state.reorderKind || 'tasks';
     const items = [...document.querySelectorAll('[data-ro-id],[data-ro-set]')];
     if (!items.length) return;
@@ -2708,7 +2776,7 @@ class Component extends DCLogic {
       const targetId = targetEl.getAttribute('data-ro-id');
       const rect = targetEl.getBoundingClientRect(), after = y > rect.top + rect.height / 2;
       const targetKey = setAttr != null ? 'set:' + setAttr : targetId != null ? 'id:' + targetId + ':' + (after ? 'after' : 'before') : '';
-      if (!targetKey || targetKey === 'id:' + this.state.dragId || targetKey === this._roLastTargetKey) return;
+      if (!targetKey || (targetId != null && String(targetId) === String(this.state.dragId)) || targetKey === this._roLastTargetKey) return;
       let next = draft;
       if (kind === 'rewardCategories' && targetId != null) {
         next = ExpRewardOrder.move(draft, this.state.dragId, targetId, after);
@@ -2720,7 +2788,7 @@ class Component extends DCLogic {
       const changed = !ExpRewardOrder.sameOrder(draft, next, kind === 'rewards');
       if (changed) {
         this._roLastTargetKey = targetKey; this._roRewardChanged = true;
-        this.setState({ rewardReorderDraft:next });
+        this.setState({ rewardReorderDraft:next, dragOverKey:targetKey });
       }
       return;
     }
@@ -2756,16 +2824,20 @@ class Component extends DCLogic {
     this.save(patch);
   }
   roUp() {
-    clearTimeout(this._roTimer);
     window.removeEventListener('pointermove', this._roMove);
     window.removeEventListener('pointerup', this._roUp);
     window.removeEventListener('pointercancel', this._roUp);
+    if (this._roTarget && this._roTarget.releasePointerCapture && this._roPointer != null) {
+      try { this._roTarget.releasePointerCapture(this._roPointer); } catch (_) {}
+    }
+    this._roPointer = null; this._roTarget = null;
     const kind = this.state.reorderKind || 'tasks';
     const draft = this.state.rewardReorderDraft;
     const shouldSave = this.state.dragId != null && this._roRewardChanged && Array.isArray(draft);
-    if (shouldSave) this.save(kind === 'rewards' ? { rewards:draft } : { rewardCategories:draft });
+    const patch = shouldSave ? (kind === 'rewards' ? { rewards:draft } : { rewardCategories:draft }) : null;
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    if (this.state.dragId != null || this.state.rewardReorderDraft) this.setState({ dragId:null, rewardReorderDraft:null });
+    this.setState({ dragId:null, dragOverKey:null, rewardReorderDraft:null });
+    if (patch) this.save(patch);
   }
   armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
   undo() {
@@ -3892,20 +3964,28 @@ class Component extends DCLogic {
       dragBg: String(st.dragId) === String(m.id) ? '#1a1f2b' : (m.setId != null ? '#0b1017' : '#0d0f14'), dragShadow: String(st.dragId) === String(m.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(m.id, e) });
     let reorderRows;
     if (roKind === 'sets' || roKind === 'milestoneSets' || roKind === 'rewardCategories') {
-      reorderRows = roSrc.map(t => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, sub:t.sub, subShow:!!t.sub, hasSet: true, inGroup: false, indent: ((t.depth || 0) * 16) + 'px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
+      reorderRows = roSrc.map((t, index) => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, sub:t.sub, subShow:!!t.sub, hasSet: true, inGroup: false, indent: ((t.depth || 0) * 16) + 'px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', canMoveUp:index > 0, canMoveDown:index < roSrc.length - 1, onMoveUp:() => this.moveRewardOrder(t.id,-1), onMoveDown:() => this.moveRewardOrder(t.id,1), dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
     } else if (roKind === 'rewards') {
       const rows = [], rewardItems = st.rewardReorderDraft || st.rewards || [];
-      const mkRewardRow = r => ({
-        isSetHeader:false, isRow:true, id:r.id, roId:String(r.id), name:r.name,
-        sub:this.fmtExp(r.cost) + ' EXP', subShow:true, setName:'', hasSet:false,
-        inGroup:r.categoryId != null, indent:'16px', batchOn:false, onToggleBatch:()=>{},
-        batchBorder:'#2f3542', batchBg:'transparent', batchTick:'',
-        dragging:String(st.dragId) === String(r.id),
-        dragBorder:String(st.dragId) === String(r.id) ? accent : '#262b36',
-        dragBg:String(st.dragId) === String(r.id) ? '#1a1f2b' : '#0d0f14',
-        dragShadow:String(st.dragId) === String(r.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
-        onDown:e => this.roDown(r.id, e)
-      });
+      const mkRewardRow = r => {
+        const peers = rewardItems.filter(item => r.categoryId == null
+          ? item.categoryId == null
+          : item.categoryId != null && String(item.categoryId) === String(r.categoryId));
+        const index = peers.findIndex(item => String(item.id) === String(r.id));
+        return ({
+          isSetHeader:false, isRow:true, id:r.id, roId:String(r.id), name:r.name,
+          sub:this.fmtExp(r.cost) + ' EXP', subShow:true, setName:'', hasSet:false,
+          inGroup:r.categoryId != null, indent:'16px', batchOn:false, onToggleBatch:()=>{},
+          batchBorder:'#2f3542', batchBg:'transparent', batchTick:'',
+          canMoveUp:index > 0, canMoveDown:index >= 0 && index < peers.length - 1,
+          onMoveUp:() => this.moveRewardOrder(r.id,-1), onMoveDown:() => this.moveRewardOrder(r.id,1),
+          dragging:String(st.dragId) === String(r.id),
+          dragBorder:String(st.dragId) === String(r.id) ? accent : '#262b36',
+          dragBg:String(st.dragId) === String(r.id) ? '#1a1f2b' : '#0d0f14',
+          dragShadow:String(st.dragId) === String(r.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none',
+          onDown:e => this.roDown(r.id, e)
+        });
+      };
       (st.rewardCategories || []).forEach(category => {
         const group = rewardItems.filter(r => r.categoryId === category.id);
         rows.push({ isSetHeader:true, isRow:false, roSet:String(category.id), name:category.name,
@@ -4330,7 +4410,7 @@ class Component extends DCLogic {
       editStashTarget: editItem && ed && ed.type === 'stash' ? editItem.target : '', editStashCurrencySymbol: editItem && ed && ed.type === 'stash' ? ExpMoney.CURRENCIES.find(c => c.code === editItem.currencyCode).symbol : '',
       editStashSaved: editItem && ed && ed.type === 'stash' ? ExpMoney.format(ExpMoney.balance(st, editItem.id), editItem.currencyCode) : '',
       closeEdit: () => this.closeEdit(), confirmEdit: () => this.confirmEdit(),
-      saveEdit: () => this.saveEdit(), stopClick: e => e.stopPropagation(),
+      saveEdit: () => this.saveEdit(), stopClick: e => e.stopPropagation(), preventReorderNative: e => { if (e && e.preventDefault) e.preventDefault(); if (e && e.stopPropagation) e.stopPropagation(); },
       backupOpen: !!st.backupOpen, backupCode: st.backupOpen ? ((st.backupFull && st.backupFullCode) ? st.backupFullCode : this.makeBackupCode()) : '',
       copyLabel: st.copyLabel || '复制备份码', backupMsg: st.backupMsg || '', backupMsgColor: st.backupMsgColor || '#8b93a4',
       openBackup: () => this.openBackup(), closeBackup: () => this.closeBackup(),

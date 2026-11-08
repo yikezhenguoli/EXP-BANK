@@ -28,7 +28,7 @@ function create(seed = null, shared = sharedStorage(seed)) {
 const seed = saved => ({ appVersion: 'v1.9.2', tasks: [], rewards: [], ledger: [], exp: 10, nextId: 500, stash: [{ id: 41, name: '旅游', target: 1000, saved, claimed: true }], opex: [] });
 async function test(name, fn) { await fn(); results.push(name); console.log('PASS ' + name); }
 await test('新用户及旧用户启动完成schema，余额、EXP和达成保持', async () => {
-  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.0'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
+  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.1'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
   await t.c.save({}); assert.equal(t.stored().stash[0].saved, 800); assert.equal(t.stored().updateNoteOpen, undefined);
   assert.equal(create().c.state.opexCategories.length, 6);
 });
@@ -264,6 +264,18 @@ await test('奖励拖放、奖励集排序与商城展示顺序在保存和恢�
   const t=create(data);
   const el=(attrs,top)=>({getAttribute:key=>Object.prototype.hasOwnProperty.call(attrs,key)?attrs[key]:null,
     getBoundingClientRect:()=>({top,bottom:top+30,height:30})});
+  const startTouchDrag=(id)=>{
+    let prevented=false,stopped=false,captured=null,released=null;
+    const target={setPointerCapture:value=>{captured=value;},releasePointerCapture:value=>{released=value;}};
+    t.c.roDown(id,{button:0,pointerId:17,currentTarget:target,cancelable:true,
+      preventDefault:()=>{prevented=true;},stopPropagation:()=>{stopped=true;}});
+    assert.equal(prevented,true,'drag handle must prevent native text selection');
+    assert.equal(stopped,true,'drag handle must not bubble to modal');
+    assert.equal(captured,17,'drag handle must capture the active pointer');
+    assert.equal(t.c.state.dragId,id,'drag must start immediately without a long-press timer');
+    return {target,released:()=>released};
+  };
+
 
   // 先把“咖啡”拖到“学习”奖励集标题，验证归属变更和商城分组视图。
   t.c.startReorder('rewards');
@@ -272,10 +284,11 @@ await test('奖励拖放、奖励集排序与商城展示顺序在保存和恢�
     el({'data-ro-set':'501'},64),el({'data-ro-id':'502'},96),
     el({'data-ro-set':'none'},128)
   ];
-  t.c.setState({dragId:503});
-  t.c.roMove({clientY:70,preventDefault(){}});
+  const dragReward=startTouchDrag(503);
+  t.c.roMove({clientY:70,pointerId:17,preventDefault(){}});
   assert.equal(t.c.state.rewardReorderDraft.find(r=>r.id===503).categoryId,501);
   t.c.roUp();
+  assert.equal(dragReward.released(),17,'pointer capture must be released on drop');
   await t.c.save({});
   assert.equal(t.stored().rewards.find(r=>r.id===503).categoryId,501);
   let view=t.c.renderVals();
@@ -285,8 +298,8 @@ await test('奖励拖放、奖励集排序与商城展示顺序在保存和恢�
   // 独立调整奖励集顺序，商城分组顺序应立即跟随持久化数组。
   t.c.startReorder('rewardCategories');
   t.context.document.querySelectorAll=()=>[el({'data-ro-id':'500'},0),el({'data-ro-id':'501'},40)];
-  t.c.setState({dragId:501});
-  t.c.roMove({clientY:10,preventDefault(){}});
+  startTouchDrag(501);
+  t.c.roMove({clientY:10,pointerId:17,preventDefault(){}});
   t.c.roUp();
   await t.c.save({});
   assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),[501,500]);
@@ -300,8 +313,8 @@ await test('奖励拖放、奖励集排序与商城展示顺序在保存和恢�
     el({'data-ro-id':'503'},64),el({'data-ro-set':'500'},96),
     el({'data-ro-set':'none'},128)
   ];
-  t.c.setState({dragId:503});
-  t.c.roMove({clientY:35,preventDefault(){}});
+  startTouchDrag(503);
+  t.c.roMove({clientY:35,pointerId:17,preventDefault(){}});
   t.c.roUp();
   await t.c.save({});
   assert.deepEqual(t.stored().rewards.map(x=>x.id),[503,502]);
@@ -323,6 +336,32 @@ await test('奖励拖放、奖励集排序与商城展示顺序在保存和恢�
   assert.deepEqual(restored.stored().rewards.map(x=>x.id),[503,502]);
   assert.equal(restored.stored().rewardReorderDraft,undefined);
   assert.equal(restored.stored().reorderKind,undefined);
+});
+await test('奖励排序面板提供可靠的单击上下移备用操作', async () => {
+  const data=seed(0);
+  data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'},{id:502,name:'阅读'}];
+  data.rewards=[
+    {id:503,name:'学习卡',cost:20,categoryId:501,redeems:[]},
+    {id:504,name:'咖啡',cost:30,categoryId:500,redeems:[]},
+    {id:505,name:'课程',cost:40,categoryId:501,redeems:[]}
+  ];
+  data.nextId=506;
+  const t=create(data);
+  t.c.startReorder('rewardCategories');
+  let view=t.c.renderVals();
+  const learningSet=view.reorderRows.find(row=>row.id===501);
+  assert.equal(learningSet.canMoveUp,true);
+  await learningSet.onMoveUp();
+  assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),[501,500,502]);
+
+  t.c.startReorder('rewards');
+  view=t.c.renderVals();
+  const course=view.reorderRows.find(row=>row.id===505);
+  assert.equal(course.canMoveUp,true);
+  await course.onMoveUp();
+  assert.deepEqual(t.stored().rewards.filter(x=>x.categoryId===501).map(x=>x.id),[505,503]);
+  const first=view.reorderRows.find(row=>row.id===503);
+  assert.equal(first.canMoveUp,false);
 });
 await test('Agent 地址和访问令牌使用独立本机配置，不进入主数据备份', async () => {
   const t=create(seed(0));
