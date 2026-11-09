@@ -418,11 +418,11 @@ await test('奖励排序保存失败回滚草稿，修复存储后可重试', as
   assert.equal(await t.c.moveRewardOrder(501,-1),false);
   assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),before);
   assert.deepEqual(t.c.state.rewardReorderDraft.map(x=>x.id),before);
-  assert.equal(t.c.state.rewardOrderStatus,'保存失败，已恢复上一次顺序');
+  assert.equal(t.c._rewardOrderStatus,'保存失败，已恢复上一次顺序');
   t.flags.failWrite=false;
   assert.equal(await t.c.moveRewardOrder(501,-1),true);
   assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),[501,500]);
-  assert.equal(t.c.state.rewardOrderStatus,'✓ 已保存');
+  assert.equal(t.c._rewardOrderStatus,'✓ 已保存');
 });
 await test('移动端排序控件提供44px触控目标、状态反馈并保护保存中的草稿', async () => {
   const data=seed(0);
@@ -438,12 +438,15 @@ await test('移动端排序控件提供44px触控目标、状态反馈并保护�
   assert.equal(learning.moveDownDisabled,true);
   assert.equal(view.rewardOrderStatusShow,false);
   const pending=t.c.moveRewardOrder(501,-1);
-  assert.equal(t.c.state.rewardOrderBusy,true);
+  assert.equal(t.c.renderVals().rewardOrderBusy,true);
   assert.equal(t.c.closeReorder(),false);
   assert.equal(t.c.state.reorderOpen,true);
   assert.equal(await pending,true);
-  assert.equal(t.c.state.rewardOrderBusy,false);
-  assert.equal(t.c.state.rewardOrderStatus,'✓ 已保存');
+  assert.equal(t.c.renderVals().rewardOrderBusy,false);
+  assert.equal(t.c._rewardOrderStatus,'✓ 已保存');
+  assert.equal(t.stored().rewardOrderBusy,undefined);
+  assert.equal(t.stored().rewardOrderStatus,undefined);
+  assert.equal(t.stored().rewardOrderStatusColor,undefined);
   view=t.c.renderVals();
   assert.equal(view.rewardOrderStatusShow,true);
   assert.equal(view.rewardOrderStatusColor,'#4ade80');
