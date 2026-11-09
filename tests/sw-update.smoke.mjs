@@ -47,7 +47,7 @@ await test('缺文件、404、HTML误作JS、版本不一致、写入失败均�
   }
 });
 await test('未修改模块与 v1.15.0 功能模块可构成完整 v1.15.5 触屏修复发布', async () => {
-  const markers = [['money.js','v1.15.0'], ['progression.js','v1.12.0'], ['life-architecture.js','v1.12.0'], ['task-assistant.js','v1.12.0'], ['reward-order.js','v1.15.0'], ['agent-client.js','v1.15.0']];
+  const markers = [['money.js','v1.15.0'], ['progression.js','v1.12.0'], ['life-architecture.js','v1.12.0'], ['task-assistant.js','v1.12.0'], ['reward-order.js','v1.15.0'], ['agent-client.js','v1.15.5']];
   for (const [name, marker] of markers) assert.match(fs.readFileSync(new URL('../'+name, import.meta.url), 'utf8'), new RegExp('EXP BANK '+marker.replaceAll('.', '\\.')));
   const w = worker(); await w.dispatch('install'); assert.equal(w.maps.get('exp-bank-v1.15.5-agent-routing-20261109').size, 16);
 });
