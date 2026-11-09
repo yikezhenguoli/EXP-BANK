@@ -1,6 +1,6 @@
 # EXP BANK
 
-本地优先的个人成长管理 PWA。当前版本 **v1.15.4 — Mobile Sorting Reliability**。
+本地优先的个人成长管理 PWA。当前版本 **v1.15.5 — Independent AI Agent Worker**。
 
 ## 本版更新
 
@@ -17,7 +17,7 @@
 
 ## AI Agent 部署
 
-在线 Agent 需要单独部署 Cloudflare Worker，并配置 `DEEPSEEK_API_KEY`、`AGENT_ACCESS_TOKEN` 与 `ALLOWED_ORIGINS`。详细步骤见 [AI Agent Worker 部署说明](docs/agent-worker-deploy.md)。DeepSeek API Key 不要放入前端、GitHub 仓库或 EXP BANK 设置面板。
+在线 Agent 必须独立部署名为 `exp-bank-agent` 的 Cloudflare Worker（与承载网页的 `exp-bank-ai` 分离），部署时显式使用 `worker/wrangler.toml`，并配置 `DEEPSEEK_API_KEY`、`AGENT_ACCESS_TOKEN` 与 `ALLOWED_ORIGINS`。客户端会自动把已保存的旧 `exp-bank-ai` Agent 地址迁移到独立 Worker 地址并保留访问令牌；详细步骤见 [AI Agent Worker 部署说明](docs/agent-worker-deploy.md)。DeepSeek API Key 不要放入前端、GitHub 仓库或 EXP BANK 设置面板。
 
 AI Agent 只负责生成任务草稿；本地校验与人工确认后才写入任务系统。它只接收用户主动提交的目标描述和必要任务集名称，不默认上传完整任务账本、EXP 余额、奖励或财务记录。本地规则助手继续支持离线使用。
 

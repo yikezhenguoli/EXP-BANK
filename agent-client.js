@@ -1,4 +1,4 @@
-/* EXP BANK v1.15.0 — browser client for the private AI planning Worker.
+/* EXP BANK v1.15.5 — browser client for the private AI planning Worker.
  * DeepSeek credentials never belong in this file or the PWA's main data record.
  */
 (function (root, factory) {
@@ -8,6 +8,8 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const STORAGE_KEY = 'exp-bank-agent-config-v1';
   const MAX_INPUT = 12000;
+  const LEGACY_WORKER_HOST = 'exp-bank-ai.yikezhenguoli.workers.dev';
+  const DEDICATED_WORKER_HOST = 'exp-bank-agent.yikezhenguoli.workers.dev';
 
   function storageOf(storage) {
     if (storage) return storage;
@@ -30,14 +32,30 @@
     return url.toString();
   }
 
+  function migrateLegacyEndpoint(endpoint) {
+    if (!endpoint) return endpoint;
+    try {
+      const url = new URL(endpoint);
+      if (url.hostname !== LEGACY_WORKER_HOST) return endpoint;
+      url.hostname = DEDICATED_WORKER_HOST;
+      return url.toString();
+    } catch (_) { return endpoint; }
+  }
+
   function loadConfig(storage) {
     try {
-      const raw = storageOf(storage).getItem(STORAGE_KEY);
+      const target = storageOf(storage);
+      const raw = target.getItem(STORAGE_KEY);
       const value = raw ? JSON.parse(raw) : {};
-      return {
-        endpoint: value && typeof value.endpoint === 'string' ? value.endpoint : '',
-        token: value && typeof value.token === 'string' ? value.token : ''
-      };
+      const endpoint = typeof value?.endpoint === 'string' ? value.endpoint : '';
+      const migratedEndpoint = migrateLegacyEndpoint(endpoint);
+      const token = typeof value?.token === 'string' ? value.token : '';
+      if (migratedEndpoint !== endpoint) {
+        // Migrate only the known legacy hostname. Preserve the existing token and
+        // every other local record; no account data or task data is touched.
+        target.setItem(STORAGE_KEY, JSON.stringify({ endpoint: migratedEndpoint, token }));
+      }
+      return { endpoint: migratedEndpoint, token };
     } catch (_) { return { endpoint: '', token: '' }; }
   }
 
@@ -97,11 +115,14 @@
       return payload;
     } catch (error) {
       if (error && error.name === 'AbortError') throw new Error('Agent 请求超时；输入已保留，可以使用本地助手。');
+      if (error instanceof TypeError && /fetch/i.test(error.message || '')) {
+        throw new Error('无法连接 AI Worker。请检查网络、Worker 地址和跨域设置；任务描述已保留。');
+      }
       throw error;
     } finally {
       if (timer) clearTimeout(timer);
     }
   }
 
-  return { STORAGE_KEY, MAX_INPUT, normalizeEndpoint, loadConfig, saveConfig, clearConfig, plan };
+  return { STORAGE_KEY, MAX_INPUT, normalizeEndpoint, loadConfig, saveConfig, clearConfig, plan, migrateLegacyEndpoint };
 });

@@ -11,6 +11,22 @@ const storage = {
 let count = 0;
 async function test(name, fn) { await fn(); count++; console.log('PASS ' + name); }
 
+await test('旧混合 Worker 地址自动迁移到独立 Agent Worker，保留访问令牌', async () => {
+  map.set(A.STORAGE_KEY, JSON.stringify({
+    endpoint: 'https://exp-bank-ai.yikezhenguoli.workers.dev/api/agent/plan',
+    token: 'agent-token-1234567890'
+  }));
+  assert.deepEqual(A.loadConfig(storage), {
+    endpoint: 'https://exp-bank-agent.yikezhenguoli.workers.dev/api/agent/plan',
+    token: 'agent-token-1234567890'
+  });
+  assert.deepEqual(JSON.parse(map.get(A.STORAGE_KEY)), {
+    endpoint: 'https://exp-bank-agent.yikezhenguoli.workers.dev/api/agent/plan',
+    token: 'agent-token-1234567890'
+  });
+  map.clear();
+});
+
 await test('Worker endpoint 自动补全路由并强制 HTTPS', async () => {
   assert.equal(A.normalizeEndpoint('https://example.workers.dev'), 'https://example.workers.dev/api/agent/plan');
   assert.throws(() => A.normalizeEndpoint('http://example.com'));
