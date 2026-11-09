@@ -28,7 +28,7 @@ function create(seed = null, shared = sharedStorage(seed)) {
 const seed = saved => ({ appVersion: 'v1.9.2', tasks: [], rewards: [], ledger: [], exp: 10, nextId: 500, stash: [{ id: 41, name: '旅游', target: 1000, saved, claimed: true }], opex: [] });
 async function test(name, fn) { await fn(); results.push(name); console.log('PASS ' + name); }
 await test('新用户及旧用户启动完成schema，余额、EXP和达成保持', async () => {
-  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.2'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
+  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.3'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
   await t.c.save({}); assert.equal(t.stored().stash[0].saved, 800); assert.equal(t.stored().updateNoteOpen, undefined);
   assert.equal(create().c.state.opexCategories.length, 6);
 });
@@ -358,6 +358,9 @@ await test('奖励排序面板提供可靠的单击上下移备用操作', async
   view=t.c.renderVals();
   const course=view.reorderRows.find(row=>row.id===505);
   assert.equal(course.canMoveUp,true);
+  assert.equal(course.moveUpLabel,'将课程上移一位');
+  assert.equal(course.moveUpDisabled,false);
+  assert.equal(course.moveDownDisabled,true);
   await course.onMoveUp();
   assert.deepEqual(t.stored().rewards.filter(x=>x.categoryId===501).map(x=>x.id),[505,503]);
   const first=view.reorderRows.find(row=>row.id===503);
@@ -380,6 +383,50 @@ await test('奖励排序面板提供可靠的单击上下移备用操作', async
   assert.equal(movedCoffee.categoryValue,'501');
   assert.equal(movedCoffee.categoryLabel,'当前：学习');
   assert.equal(movedCoffee.canMoveUp,true);
+  assert.equal(view.rewardOrderStatus,'✓ 已保存');
+  assert.equal(view.rewardOrderBusy,false);
+
+  // 可从奖励集移回未分类，也可再次归入已有奖励集。
+  t.input(movedCoffee.moveSelectId,'none');
+  await movedCoffee.onMoveCategory();
+  assert.equal(t.stored().rewards.find(x=>x.id===504).categoryId,null);
+  view=t.c.renderVals();
+  assert.ok(view.rewardGroups.some(group=>group.key==='uncategorized'));
+  const unclassifiedCoffee=view.reorderRows.find(row=>row.id===504);
+  assert.equal(unclassifiedCoffee.categoryValue,'none');
+  t.input(unclassifiedCoffee.moveSelectId,'501');
+  await unclassifiedCoffee.onMoveCategory();
+  assert.equal(t.stored().rewards.find(x=>x.id===504).categoryId,501);
+  assert.equal(t.c.state.rewardOrderStatus,'✓ 已保存');
+});
+await test('奖励排序保存失败会回滚草稿；快速重复点击不会并发覆盖', async () => {
+  const data=seed(0);
+  data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'}];
+  data.rewards=[
+    {id:503,name:'学习卡',cost:20,categoryId:501,redeems:[],img:'learning-image'},
+    {id:504,name:'咖啡',cost:30,categoryId:500,redeems:[1760000000000],img:'coffee-image'},
+    {id:505,name:'课程',cost:40,categoryId:501,redeems:[],img:'course-image'}
+  ];
+  const t=create(data);
+  t.c.startReorder('rewards');
+  const before=t.stored().rewards.map(x=>x.id);
+  const row=t.c.renderVals().reorderRows.find(x=>x.id===505);
+  t.flags.failWrite=true;
+  assert.equal(await row.onMoveUp(),false);
+  assert.deepEqual(t.stored().rewards.map(x=>x.id),before);
+  assert.deepEqual(t.c.state.rewardReorderDraft.map(x=>x.id),before);
+  assert.equal(t.c.state.rewardOrderBusy,false);
+  assert.match(t.c.state.rewardOrderStatus,/存储空间不足|保存失败/);
+  assert.equal(t.stored().rewards.find(x=>x.id===504).img,'coffee-image');
+  assert.deepEqual(Array.from(t.stored().rewards.find(x=>x.id===504).redeems),[1760000000000]);
+
+  t.flags.failWrite=false;
+  const retry=t.c.renderVals().reorderRows.find(x=>x.id===505);
+  const results=await Promise.all([retry.onMoveUp(),retry.onMoveUp()]);
+  assert.equal(results.filter(Boolean).length,1);
+  assert.deepEqual(t.stored().rewards.filter(x=>x.categoryId===501).map(x=>x.id),[505,503]);
+  assert.equal(t.c.state.rewardOrderStatus,'✓ 已保存');
+  assert.equal(t.c.state.rewardOrderBusy,false);
 });
 await test('Agent 地址和访问令牌使用独立本机配置，不进入主数据备份', async () => {
   const t=create(seed(0));
@@ -393,4 +440,7 @@ await test('Agent 地址和访问令牌使用独立本机配置，不进入主�
   const backup=JSON.parse(Buffer.from(t.c.makeBackupCode(),'base64').toString('utf8'));
   assert.equal(backup.agentConfig,undefined);
 });
+assert.match(html, /aria-label="{{ row\.moveUpLabel }}"/);
+assert.match(html, /aria-label="{{ row\.moveDownLabel }}"/);
+assert.match(html, /min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center/);
 console.log('Component checks passed: ' + results.length);
