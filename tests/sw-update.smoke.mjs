@@ -22,7 +22,7 @@ function worker(options = {}) {
       fetched++; if (options.offline || options.missing && new URL(req.url).pathname.endsWith(options.missing)) throw new Error('offline');
       const p = new URL(req.url).pathname;
       if (options.status404 && p.endsWith(options.status404)) return new Response('not found', { status: 404 });
-      if (p.endsWith('index.html') || p.endsWith('/')) return new Response(options.oldHtml ? html.replace("APP_VERSION = 'v1.15.2'", "APP_VERSION = 'v1.12.0'") : html, { headers: { 'Content-Type': 'text/html' } });
+      if (p.endsWith('index.html') || p.endsWith('/')) return new Response(options.oldHtml ? html.replace("APP_VERSION = 'v1.15.3'", "APP_VERSION = 'v1.12.0'") : html, { headers: { 'Content-Type': 'text/html' } });
       if (['money.js','progression.js','life-architecture.js','task-assistant.js','reward-order.js','agent-client.js'].some(name=>p.endsWith(name))) {
         const name = p.split('/').at(-1); let source = fs.readFileSync(new URL('../'+name, import.meta.url), 'utf8');
         if (options.invalidVersion === name) source = source.replace(/EXP BANK v\d+\.\d+\.\d+/, 'EXP BANK v0.0.0');
@@ -38,7 +38,7 @@ function worker(options = {}) {
 let count = 0;
 async function test(name, fn) { await fn(); count++; console.log('PASS ' + name); }
 await test('完整预缓存后才可激活，仅删除本应用旧缓存', async () => {
-  const w = worker(); await w.dispatch('install'); assert.equal(w.skips(), 0); assert.equal(w.maps.get('exp-bank-v1.15.2-touch-reorder-20261108').size, 16);
+  const w = worker(); await w.dispatch('install'); assert.equal(w.skips(), 0); assert.equal(w.maps.get('exp-bank-v1.15.3-reward-order-queue-20261109').size, 16);
   await w.dispatch('activate'); assert.equal(w.maps.has('exp-bank-v1.13.1-asset-compat-20261014'), false); assert.equal(w.maps.has('other-app-cache'), true); assert.equal(w.claims(), 1);
 });
 await test('缺文件、404、HTML误作JS、版本不一致、写入失败均拒绝安装，旧缓存保留', async () => {
@@ -46,18 +46,18 @@ await test('缺文件、404、HTML误作JS、版本不一致、写入失败均�
     const w = worker(opts); await assert.rejects(w.dispatch('install')); assert.equal(w.maps.has('exp-bank-v1.13.1-asset-compat-20261014'), true); assert.equal(w.skips(), 0); assert.equal(w.claims(), 0);
   }
 });
-await test('未修改模块与 v1.15.0 功能模块可构成完整 v1.15.2 触屏修复发布', async () => {
+await test('未修改模块与 v1.15.0 功能模块可构成完整 v1.15.3 触屏修复发布', async () => {
   const markers = [['money.js','v1.15.0'], ['progression.js','v1.12.0'], ['life-architecture.js','v1.12.0'], ['task-assistant.js','v1.12.0'], ['reward-order.js','v1.15.0'], ['agent-client.js','v1.15.0']];
   for (const [name, marker] of markers) assert.match(fs.readFileSync(new URL('../'+name, import.meta.url), 'utf8'), new RegExp('EXP BANK '+marker.replaceAll('.', '\\.')));
-  const w = worker(); await w.dispatch('install'); assert.equal(w.maps.get('exp-bank-v1.15.2-touch-reorder-20261108').size, 16);
+  const w = worker(); await w.dispatch('install'); assert.equal(w.maps.get('exp-bank-v1.15.3-reward-order-queue-20261109').size, 16);
 });
 await test('导航和脚本离线从同版本资源读取，不发起混版网络请求', async () => {
   const w = worker(); await w.dispatch('install'); await w.dispatch('activate'); w.options.offline = true; const before = w.fetched();
-  const nav = await w.dispatch('fetch', { request: { method: 'GET', url: scope, mode: 'navigate' } }); assert.match(await nav.text(), /APP_VERSION = 'v1.15.2'/);
+  const nav = await w.dispatch('fetch', { request: { method: 'GET', url: scope, mode: 'navigate' } }); assert.match(await nav.text(), /APP_VERSION = 'v1.15.3'/);
   const js = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.match(await js.text(), /integer money/); assert.equal(w.fetched(), before);
 });
 await test('缺JS离线返回错误，联网404仍返回404，不能回退HTML', async () => {
-  const w = worker(); await w.dispatch('install'); w.maps.get('exp-bank-v1.15.2-touch-reorder-20261108').delete(scope + 'money.js'); w.options.offline = true;
+  const w = worker(); await w.dispatch('install'); w.maps.get('exp-bank-v1.15.3-reward-order-queue-20261109').delete(scope + 'money.js'); w.options.offline = true;
   const error = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.equal(error.type, 'error'); assert.equal(await error.text(), '');
   w.options.offline = false; w.options.status404 = 'money.js'; const res = await w.dispatch('fetch', { request: new Request(scope + 'money.js') }); assert.equal(res.status, 404);
 });
