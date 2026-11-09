@@ -34,7 +34,7 @@ const server = http.createServer((req,res) => {
   const relative = pathname.endsWith('/') ? pathname + 'index.html' : pathname;
   const file = path.resolve(root,'.' + relative);
   if (!file.startsWith(root + path.sep)) { res.writeHead(403); res.end('forbidden'); return; }
-  if (!file.startsWith(root + path.sep) || !fs.existsSync(file) || !fs.statSync(file).isFile()) { res.writeHead(404); res.end('not found'); return; }
+  if (!fs.existsSync(file) || !fs.statSync(file).isFile()) { res.writeHead(404); res.end('not found'); return; }
   res.writeHead(200,{'Content-Type':mime[path.extname(file)] || 'application/octet-stream','Cache-Control':'no-store'});
   fs.createReadStream(file).pipe(res);
 });
