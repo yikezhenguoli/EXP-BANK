@@ -356,7 +356,7 @@ input[type="date"]{color-scheme:dark;}
       <div style="display:flex;align-items:center;gap:8px;"><div style="width:3px;height:14px;border-radius:2px;background:{{ tierGrad }};"></div><div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#c8cedb;flex:1;">SHOPPING MALL // REDEEM</div><div onClick="{{ openRewardCategoryManager }}" title="管理奖励类型" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 8px;" style-hover="border-color:{{ accent }};color:{{ accent }};">▤ 类型</div><div onClick="{{ startReorderRewards }}" title="拖动排序奖励，或切换排序奖励集" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#c8cedb;border:1px solid #2a2f3a;border-radius:8px;padding:6px 10px;" style-hover="border-color:{{ accent }};">⇅</div><div onClick="{{ openNewReward }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);border-radius:8px;padding:6px 12px;" style-hover="filter:brightness(1.12);">+ 新建奖励</div></div>
       <sc-if value="{{ rewardsEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:18px 8px;text-align:center;color:#697084;font-size:12px;">还没有奖励，先创建一项属于自己的现实奖励。</div></sc-if>
       <sc-for list="{{ rewardGroups }}" as="rg" hint-placeholder-count="1">
-        <div style="border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(7,9,13,.22);overflow:hidden;">
+        <div data-reward-category="{{ rg.key }}" style="border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(7,9,13,.22);overflow:hidden;">
           <div onClick="{{ rg.onToggle }}" style="cursor:pointer;display:flex;align-items:center;gap:9px;padding:11px 12px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(10,12,17,.2));">
             <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:{{ accent }};width:14px;">{{ rg.chevron }}</div>
             <div style="font-size:12.5px;font-weight:700;color:#dce1eb;letter-spacing:.3px;flex:1;">{{ rg.name }}</div>
@@ -366,7 +366,7 @@ input[type="date"]{color-scheme:dark;}
             <sc-if value="{{ rg.empty }}" hint-placeholder-val="{{ false }}"><div style="padding:13px 12px;color:#697084;font-size:11px;">这个类型还没有奖励，可以在新建奖励时归入这里。</div></sc-if>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 10px 10px;">
               <sc-for list="{{ rg.rewards }}" as="r" hint-placeholder-count="2">
-              <div style="background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05) 42%,rgba(255,255,255,0.02)) border-box;border:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 28px rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;position:relative;">
+              <div data-reward-id="{{ r.id }}" style="background:linear-gradient(180deg,{{ rowTop }} 0%,{{ rowBot }} 100%) padding-box,linear-gradient(200deg,rgba(255,255,255,0.2),rgba(255,255,255,0.05) 42%,rgba(255,255,255,0.02)) border-box;border:1px solid transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 12px 28px rgba(0,0,0,0.4);border-radius:12px;overflow:hidden;position:relative;">
                 <div onClick="{{ r.onDel }}" style="cursor:pointer;position:absolute;top:6px;right:8px;z-index:2;color:rgba(230,233,240,0.55);font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,0.8);" style-hover="color:#f87171;">×</div>
                 <div style="position:relative;height:104px;">
                   <sc-if value="{{ r.hasImg }}" hint-placeholder-val="{{ false }}">
@@ -1732,7 +1732,7 @@ input[type="date"]{color-scheme:dark;}
     <div onClick="{{ closeReorder }}" style="position:fixed;inset:0;background:rgba(6,7,10,0.66);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;">
       <div onClick="{{ stopClick }}" style="width:400px;max-width:100%;max-height:82vh;display:flex;flex-direction:column;background:#101218;border:1px solid #2a2f3a;border-radius:14px;padding:18px;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.65);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:2px;color:#aeb6c6;">{{ reorderTitle }}</div>
-        <sc-if value="{{ reorderRewardFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderRewards }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindRewards ? accent : '#2f3542' }};background:{{ reorderKindRewards ? btnGrad : '#161a22' }};color:{{ reorderKindRewards ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">奖励</div><div onClick="{{ switchReorderRewardCategories }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindRewardCategories ? accent : '#2f3542' }};background:{{ reorderKindRewardCategories ? btnGrad : '#161a22' }};color:{{ reorderKindRewardCategories ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">奖励集</div></div></sc-if>
+        <sc-if value="{{ reorderRewardFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><button type="button" onClick="{{ switchReorderRewards }}" aria-label="切换到奖励排序" disabled="{{ rewardOrderBusy }}" style="appearance:none;-webkit-appearance:none;cursor:pointer;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;text-align:center;border:1px solid {{ reorderKindRewards ? accent : '#2f3542' }};background:{{ reorderKindRewards ? btnGrad : '#161a22' }};color:{{ reorderKindRewards ? '#14151c' : '#aeb6c6' }};border-radius:9px;padding:8px;font-size:12px;font-weight:700;">奖励</button><button type="button" onClick="{{ switchReorderRewardCategories }}" aria-label="切换到奖励集排序" disabled="{{ rewardOrderBusy }}" style="appearance:none;-webkit-appearance:none;cursor:pointer;min-height:44px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;text-align:center;border:1px solid {{ reorderKindRewardCategories ? accent : '#2f3542' }};background:{{ reorderKindRewardCategories ? btnGrad : '#161a22' }};color:{{ reorderKindRewardCategories ? '#14151c' : '#aeb6c6' }};border-radius:9px;padding:8px;font-size:12px;font-weight:700;">奖励集</button></div></sc-if>
         <sc-if value="{{ reorderTaskFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderTasks }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindTasks ? accent : '#2f3542' }};background:{{ reorderKindTasks ? btnGrad : '#161a22' }};color:{{ reorderKindTasks ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">任务</div><div onClick="{{ switchReorderSets }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindSets ? accent : '#2f3542' }};background:{{ reorderKindSets ? btnGrad : '#161a22' }};color:{{ reorderKindSets ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">任务集</div></div></sc-if>
         <sc-if value="{{ reorderMilestoneFamily }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;"><div onClick="{{ switchReorderMilestones }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindMilestones ? accent : '#2f3542' }};background:{{ reorderKindMilestones ? btnGrad : '#161a22' }};color:{{ reorderKindMilestones ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">里程碑</div><div onClick="{{ switchReorderMilestoneSets }}" style="cursor:pointer;text-align:center;border:1px solid {{ reorderKindMilestoneSets ? accent : '#2f3542' }};background:{{ reorderKindMilestoneSets ? btnGrad : '#161a22' }};color:{{ reorderKindMilestoneSets ? '#14151c' : '#aeb6c6' }};border-radius:8px;padding:7px;font-size:11.5px;font-weight:700;">里程碑集</div></div></sc-if>
         <sc-if value="{{ reorderIsMilestones }}" hint-placeholder-val="{{ false }}">
@@ -1759,8 +1759,9 @@ input[type="date"]{color-scheme:dark;}
             <div onClick="{{ setRoSelect }}" style="cursor:pointer;flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;border-radius:8px;padding:8px 0;color:{{ roSelTextColor }};background:{{ roSelBg }};border:1px solid {{ roSelBorder }};box-shadow:{{ roSelShadow }};">勾选归集</div>
           </div>
         </sc-if>
-        <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">不必拖拽也能完成排序：点每项右侧的“上移 / 下移”调整本奖励集内顺序；要换奖励集，在下方选择目标后点“移动”。左侧 ⠿ 把手仍可用于快速拖动。每次操作自动保存。</div></sc-if>
-        <sc-if value="{{ reorderRewardCategoriesMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">点每个奖励集右侧的“上移 / 下移”即可调整商城分组顺序；也可以使用左侧 ⠿ 把手拖动。每次操作自动保存。</div></sc-if>
+        <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">点右侧上移 / 下移调整组内顺序；选择目标奖励集后点“移动”，也可以移回未分类。左侧 ⠿ 仅作为快捷拖动方式。操作会自动保存。</div></sc-if>
+        <sc-if value="{{ reorderRewardCategoriesMode }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#8b93a4;line-height:1.65;">点右侧上移 / 下移调整商城分组顺序；左侧 ⠿ 仅作为快捷拖动方式。操作会自动保存。</div></sc-if>
+        <sc-if value="{{ rewardOrderStatusShow }}" hint-placeholder-val="{{ false }}"><div role="status" aria-live="polite" style="min-height:18px;font-size:11px;line-height:1.5;color:{{ rewardOrderStatusColor }};">{{ rewardOrderStatus }}</div></sc-if>
         <sc-if value="{{ roDragMode }}" hint-placeholder-val="{{ true }}">
           <div style="font-size:12px;color:#8b93a4;line-height:1.6;">在任意一条{{ reorderItemName }}上<b style="color:#c3c9d6;">长按并上下拖动</b>整条即可调整顺序,松手完成,保存生效。</div>
         </sc-if>
@@ -1787,18 +1788,18 @@ input[type="date"]{color-scheme:dark;}
                   <sc-if value="{{ row.subShow }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#7c8494;margin-top:3px;">{{ row.sub }}</div></sc-if>
                   <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;align-items:center;gap:6px;margin-top:8px;min-width:0;">
-                      <select id="{{ row.moveSelectId }}" style="flex:1;min-width:0;max-width:190px;background:#0d0f14;border:1px solid #303747;border-radius:7px;padding:7px 6px;color:#c8cedb;font-size:11px;">
+                      <select id="{{ row.moveSelectId }}" aria-label="为{{ row.name }}选择目标奖励集" style="flex:1;min-width:0;max-width:190px;min-height:44px;box-sizing:border-box;background:#0d0f14;border:1px solid #303747;border-radius:8px;padding:8px 7px;color:#c8cedb;font-size:11.5px;touch-action:manipulation;">
                         <option value="{{ row.categoryValue }}">{{ row.categoryLabel }}</option>
                         <sc-for list="{{ row.categoryOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.value }}">{{ o.name }}</option></sc-for>
                       </select>
-                      <div onClick="{{ row.onMoveCategory }}" style="flex-shrink:0;cursor:pointer;border:1px solid #3b4659;border-radius:7px;background:#1a2230;color:#dce5f4;padding:7px 10px;font-size:11px;font-weight:700;">移动</div>
+                      <button type="button" onClick="{{ row.onMoveCategory }}" aria-label="将{{ row.name }}移动到所选奖励集" style="appearance:none;-webkit-appearance:none;flex-shrink:0;cursor:pointer;min-width:56px;min-height:44px;box-sizing:border-box;border:1px solid #3b4659;border-radius:8px;background:#1a2230;color:#dce5f4;padding:8px 10px;font-size:11.5px;font-weight:700;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">移动</button>
                     </div>
                   </sc-if>
                 </div>
                 <sc-if value="{{ reorderRewardFamily }}" hint-placeholder-val="{{ false }}">
-                  <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
-                    <div onClick="{{ row.onMoveUp }}" title="上移一位" style="width:48px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:7px;background:#171c26;color:#c8cedb;font-size:10.5px;font-weight:700;opacity:{{ row.canMoveUp ? 1 : 0.28 }};pointer-events:{{ row.canMoveUp ? 'auto' : 'none' }};">↑ 上移</div>
-                    <div onClick="{{ row.onMoveDown }}" title="下移一位" style="width:48px;height:28px;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:7px;background:#171c26;color:#c8cedb;font-size:10.5px;font-weight:700;opacity:{{ row.canMoveDown ? 1 : 0.28 }};pointer-events:{{ row.canMoveDown ? 'auto' : 'none' }};">↓ 下移</div>
+                  <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+                    <button type="button" onClick="{{ row.onMoveUp }}" disabled="{{ row.moveUpDisabled }}" aria-label="{{ row.moveUpLabel }}" style="appearance:none;-webkit-appearance:none;width:60px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:9px;background:#171c26;color:#c8cedb;font-size:11px;font-weight:700;opacity:{{ row.moveUpDisabled ? 0.32 : 1 }};cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">↑ 上移</button>
+                    <button type="button" onClick="{{ row.onMoveDown }}" disabled="{{ row.moveDownDisabled }}" aria-label="{{ row.moveDownLabel }}" style="appearance:none;-webkit-appearance:none;width:60px;min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center;border:1px solid #303747;border-radius:9px;background:#171c26;color:#c8cedb;font-size:11px;font-weight:700;opacity:{{ row.moveDownDisabled ? 0.32 : 1 }};cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">↓ 下移</button>
                   </div>
                 </sc-if>
               </div>
@@ -1823,7 +1824,7 @@ input[type="date"]{color-scheme:dark;}
           </div>
         </sc-if>
         <div style="display:flex;justify-content:flex-end;">
-          <div onClick="{{ closeReorder }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">完成</div>
+          <button type="button" onClick="{{ closeReorder }}" disabled="{{ reorderCloseDisabled }}" aria-label="完成排序" style="appearance:none;-webkit-appearance:none;cursor:pointer;min-height:44px;min-width:76px;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border:0;border-radius:9px;padding:8px 18px;touch-action:manipulation;">完成</button>
         </div>
       </div>
     </div>
@@ -1831,7 +1832,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.15.3';
+const APP_VERSION = 'v1.15.4';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -2158,10 +2159,12 @@ class Component extends DCLogic {
     return '每 ' + rule.interval + ' ' + unit + ' · 可兑 ' + rule.times + ' 次 · 本期 ' + n + '/' + rule.times;
   }
   switchReorderKind(kind) {
+    if ((this._rewardOrderPendingCount || 0) > 0) return false;
     const draft = (kind === 'rewards' || kind === 'rewardCategories')
       ? (this.state[kind] || []).map(item => ({ ...item })) : null;
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    this.setState({ reorderKind:kind, dragId:null, rewardReorderDraft:draft, batchSel:[], batchMsg:'', roMode:'drag' });
+    this.setState({ reorderKind:kind, dragId:null, rewardReorderDraft:draft, rewardOrderStatus:'', rewardOrderStatusColor:'#8b93a4', rewardOrderBusy:false, batchSel:[], batchMsg:'', roMode:'drag' });
+    return true;
   }
 
   persistentState(state = this.state) { return ExpMoney.persistent(state); }
@@ -2611,31 +2614,50 @@ class Component extends DCLogic {
   sortOpexByDate(list) { return [...(list || [])].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.ts || 0) - (a.ts || 0))); }
   restoreOpexSort() { this.save({ opexSortMode: 'date' }); }
   startReorder(kind) {
+    if ((this._rewardOrderPendingCount || 0) > 0) return false;
     const target = kind || 'tasks';
     const draft = (target === 'rewards' || target === 'rewardCategories')
       ? (this.state[target] || []).map(item => ({ ...item })) : null;
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    this.setState({ reorderOpen:true, reorderKind:target, dragId:null, rewardReorderDraft:draft, batchSel:[], roMode:'drag' });
+    this.setState({ reorderOpen:true, reorderKind:target, dragId:null, rewardReorderDraft:draft, rewardOrderBusy:false, rewardOrderStatus:'', rewardOrderStatusColor:'#8b93a4', batchSel:[], roMode:'drag' });
+    return true;
   }
   setRoMode(m) { this.setState({ roMode: m }); }
   commitRewardOrder(kind, transform, optimistic) {
     const key = kind === 'rewardCategories' ? 'rewardCategories' : 'rewards';
-    // UI actions may arrive faster than localStorage commits. Queue the intent,
-    // not a stale array snapshot, so each tap applies to the latest committed order.
+    // Queue intent, not an array snapshot, so rapid taps apply to the latest committed order.
     const revision = (this._rewardOrderRevision || 0) + 1;
     this._rewardOrderRevision = revision;
-    this.setState({ rewardReorderDraft:optimistic });
+    this._rewardOrderPendingCount = (this._rewardOrderPendingCount || 0) + 1;
+    this.setState({ rewardReorderDraft:optimistic, rewardOrderBusy:true, rewardOrderStatus:'正在保存…', rewardOrderStatusColor:'#aeb6c6' });
     return this.writeState(() => {
       const current = this.state;
       const source = Array.isArray(current[key]) ? current[key] : [];
       return { ...current, [key]:transform(source) };
     }).then(ok => {
-      // Do not let an earlier queued save overwrite a newer optimistic draft.
+      // Only the newest queued action may settle the visible draft/status.
       if (this._rewardOrderRevision === revision) {
         const latest = Array.isArray(this.state[key]) ? this.state[key].map(item => ({ ...item })) : [];
-        this.setState({ rewardReorderDraft:latest });
+        this.setState({
+          rewardReorderDraft:latest,
+          rewardOrderStatus:ok ? '✓ 已保存' : '保存失败，已恢复上一次顺序',
+          rewardOrderStatusColor:ok ? '#4ade80' : '#fca5a5'
+        });
       }
       return ok;
+    }, error => {
+      if (this._rewardOrderRevision === revision) {
+        const latest = Array.isArray(this.state[key]) ? this.state[key].map(item => ({ ...item })) : [];
+        this.setState({
+          rewardReorderDraft:latest,
+          rewardOrderStatus:'保存失败，已恢复上一次顺序',
+          rewardOrderStatusColor:'#fca5a5'
+        });
+      }
+      return false;
+    }).finally(() => {
+      this._rewardOrderPendingCount = Math.max(0, (this._rewardOrderPendingCount || 1) - 1);
+      this.setState({ rewardOrderBusy:this._rewardOrderPendingCount > 0 });
     });
   }
   moveRewardOrder(id, direction) {
@@ -2683,6 +2705,7 @@ class Component extends DCLogic {
     const el = document.getElementById('batch-set-name'); if (el) el.value = '';
   }
   closeReorder() {
+    if ((this._rewardOrderPendingCount || 0) > 0) return false;
     if (this._roMove) window.removeEventListener('pointermove', this._roMove);
     if (this._roUp) { window.removeEventListener('pointerup', this._roUp); window.removeEventListener('pointercancel', this._roUp); }
     if (this._roTarget && this._roTarget.releasePointerCapture && this._roPointer != null) {
@@ -2690,7 +2713,8 @@ class Component extends DCLogic {
     }
     this._roPointer = null; this._roTarget = null;
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    this.setState({ reorderOpen:false, dragId:null, dragOverKey:null, rewardReorderDraft:null });
+    this.setState({ reorderOpen:false, dragId:null, dragOverKey:null, rewardReorderDraft:null, rewardOrderBusy:false, rewardOrderStatus:'', rewardOrderStatusColor:'#8b93a4' });
+    return true;
   }
   openFilePicker(accept, onFile) {
     if (this._filePickerEl) { try { this._filePickerEl.remove(); } catch (_) {} this._filePickerEl = null; }
@@ -2754,7 +2778,7 @@ class Component extends DCLogic {
     return this.commitRewardOrder('rewards', transform, next);
   }
   roDown(id, e) {
-    if (this.state.dragId != null) return;
+    if ((this._rewardOrderPendingCount || 0) > 0 || this.state.dragId != null) return;
     if (e && e.button != null && e.button !== 0) return;
     // Start only from the dedicated grip. Prevent Android/iOS text selection and native callout.
     if (e && e.cancelable !== false && e.preventDefault) e.preventDefault();
@@ -2850,11 +2874,23 @@ class Component extends DCLogic {
     this._roPointer = null; this._roTarget = null;
     const kind = this.state.reorderKind || 'tasks';
     const draft = this.state.rewardReorderDraft;
-    const shouldSave = this.state.dragId != null && this._roRewardChanged && Array.isArray(draft);
-    const patch = shouldSave ? (kind === 'rewards' ? { rewards:draft } : { rewardCategories:draft }) : null;
+    const shouldSave = this.state.dragId != null && this._roRewardChanged && Array.isArray(draft)
+      && (kind === 'rewards' || kind === 'rewardCategories');
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    this.setState({ dragId:null, dragOverKey:null, rewardReorderDraft:null });
-    if (patch) this.save(patch);
+    this.setState({ dragId:null, dragOverKey:null });
+    if (shouldSave) {
+      const intended = draft.map(item => ({ ...item }));
+      const ids = new Set(intended.map(item => String(item.id)));
+      const transform = source => {
+        const latestById = new Map(source.map(item => [String(item.id), item]));
+        const ordered = intended.map(item => {
+          const latest = latestById.get(String(item.id));
+          return latest ? (kind === 'rewards' ? { ...latest, categoryId:item.categoryId } : latest) : item;
+        });
+        return [...ordered, ...source.filter(item => !ids.has(String(item.id)))];
+      };
+      this.commitRewardOrder(kind, transform, intended);
+    } else this.setState({ rewardReorderDraft:null });
   }
   armTimer(key) { clearTimeout(this._pt); this._pt = setTimeout(() => { if (this.state.pending && this.state.pending.key === key) this.setState({ pending: null }); }, 4500); }
   undo() {
@@ -3981,7 +4017,7 @@ class Component extends DCLogic {
       dragBg: String(st.dragId) === String(m.id) ? '#1a1f2b' : (m.setId != null ? '#0b1017' : '#0d0f14'), dragShadow: String(st.dragId) === String(m.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(m.id, e) });
     let reorderRows;
     if (roKind === 'sets' || roKind === 'milestoneSets' || roKind === 'rewardCategories') {
-      reorderRows = roSrc.map((t, index) => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, sub:t.sub, subShow:!!t.sub, hasSet: true, inGroup: false, indent: ((t.depth || 0) * 16) + 'px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', canMoveUp:index > 0, canMoveDown:index < roSrc.length - 1, onMoveUp:() => this.moveRewardOrder(t.id,-1), onMoveDown:() => this.moveRewardOrder(t.id,1), dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
+      reorderRows = roSrc.map((t, index) => ({ isSetHeader: false, isRow: true, id: t.id, roId: String(t.id), name: t.name, setName: t.sub, sub:t.sub, subShow:!!t.sub, hasSet: true, inGroup: false, indent: ((t.depth || 0) * 16) + 'px', batchOn: false, onToggleBatch: () => {}, batchBorder: '#2f3542', batchBg: 'transparent', batchTick: '', canMoveUp:index > 0, canMoveDown:index < roSrc.length - 1, moveUpLabel:'将'+t.name+'上移一位', moveDownLabel:'将'+t.name+'下移一位', moveUpDisabled:index === 0, moveDownDisabled:index >= roSrc.length - 1, onMoveUp:() => this.moveRewardOrder(t.id,-1), onMoveDown:() => this.moveRewardOrder(t.id,1), dragging: String(st.dragId) === String(t.id), dragBorder: String(st.dragId) === String(t.id) ? accent : '#262b36', dragBg: String(st.dragId) === String(t.id) ? '#1a1f2b' : '#0d0f14', dragShadow: String(st.dragId) === String(t.id) ? '0 10px 28px rgba(0,0,0,0.6)' : 'none', onDown: e => this.roDown(t.id, e) }));
     } else if (roKind === 'rewards') {
       const rows = [], rewardItems = st.rewardReorderDraft || st.rewards || [];
       const mkRewardRow = r => {
@@ -3995,6 +4031,8 @@ class Component extends DCLogic {
           inGroup:r.categoryId != null, indent:'16px', batchOn:false, onToggleBatch:()=>{},
           batchBorder:'#2f3542', batchBg:'transparent', batchTick:'',
           canMoveUp:index > 0, canMoveDown:index >= 0 && index < peers.length - 1,
+          moveUpLabel:'将'+r.name+'上移一位', moveDownLabel:'将'+r.name+'下移一位',
+          moveUpDisabled:index <= 0, moveDownDisabled:index < 0 || index >= peers.length - 1,
           onMoveUp:() => this.moveRewardOrder(r.id,-1), onMoveDown:() => this.moveRewardOrder(r.id,1),
           moveSelectId:'ro-move-' + r.id, categoryValue:r.categoryId == null ? 'none' : String(r.categoryId),
           categoryLabel:'当前：' + ((st.rewardCategories || []).find(c => c.id === r.categoryId)?.name || '未分类'),
@@ -4255,7 +4293,10 @@ class Component extends DCLogic {
       aiHelpOpen: !!st.aiHelpOpen, aiHelpMsg: st.aiHelpMsg || '', aiHelpMsgShow: !!st.aiHelpMsg, aiHelpMsgColor: st.aiHelpMsgColor || '#8b93a4', openAiHelp: () => this.openAiHelp(), closeAiHelp: () => this.closeAiHelp(), runAiHelp: () => this.runAiHelp(), runAiHelpAgent: () => this.runAiHelpAgent(), newTaskAiMsg: st.newTaskAiMsg || '', newTaskAiMsgShow: !!st.newTaskAiMsg, newTaskAiMsgColor: st.newTaskAiMsgColor || '#8b93a4', runNewTaskAI: () => this.runNewTaskAI(), runNewTaskAgent: () => this.runNewTaskAgent(),
       taskFocusOpen: !!taskFocusTask, taskFocusName: taskFocusTask ? taskFocusTask.name : '', taskFocusMin: st.taskFocusMin || 25, closeTaskFocus: () => this.closeTaskFocus(), taskFocusDirect: () => this.taskFocusDirect(), taskFocusStart: () => this.taskFocusStart(),
       daylineAlertOpen: !!st.daylineAlert, daylineAlertTime: st.daylineAlert ? st.daylineAlert.time : '', daylineAlertName: st.daylineAlert ? st.daylineAlert.name : '', closeDaylineAlert: () => this.closeDaylineAlert(),
-      reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle, reorderTaskFamily: ['tasks','sets'].includes(st.reorderKind || 'tasks'), reorderMilestoneFamily: ['milestones','milestoneSets'].includes(st.reorderKind || 'tasks'), reorderRewardFamily: ['rewards','rewardCategories'].includes(st.reorderKind || 'tasks'),
+      reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
+      rewardOrderBusy:!!st.rewardOrderBusy, rewardOrderStatus:st.rewardOrderStatus || '', rewardOrderStatusShow:!!st.rewardOrderStatus,
+      rewardOrderStatusColor:st.rewardOrderStatusColor || '#8b93a4', reorderCloseDisabled:!!st.rewardOrderBusy,
+      reorderTaskFamily: ['tasks','sets'].includes(st.reorderKind || 'tasks'), reorderMilestoneFamily: ['milestones','milestoneSets'].includes(st.reorderKind || 'tasks'), reorderRewardFamily: ['rewards','rewardCategories'].includes(st.reorderKind || 'tasks'),
       reorderKindTasks: (st.reorderKind || 'tasks') === 'tasks', reorderKindSets: (st.reorderKind || 'tasks') === 'sets', reorderKindMilestones: (st.reorderKind || 'tasks') === 'milestones', reorderKindMilestoneSets: (st.reorderKind || 'tasks') === 'milestoneSets',
       reorderKindRewards: (st.reorderKind || 'tasks') === 'rewards', reorderKindRewardCategories: (st.reorderKind || 'tasks') === 'rewardCategories',
       switchReorderTasks: () => this.switchReorderKind('tasks'), switchReorderSets: () => this.switchReorderKind('sets'), switchReorderMilestones: () => this.switchReorderKind('milestones'), switchReorderMilestoneSets: () => this.switchReorderKind('milestoneSets'),
