@@ -2163,7 +2163,8 @@ class Component extends DCLogic {
     const draft = (kind === 'rewards' || kind === 'rewardCategories')
       ? (this.state[kind] || []).map(item => ({ ...item })) : null;
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    this.setState({ reorderKind:kind, dragId:null, rewardReorderDraft:draft, rewardOrderStatus:'', rewardOrderStatusColor:'#8b93a4', rewardOrderBusy:false, batchSel:[], batchMsg:'', roMode:'drag' });
+    this._rewardOrderStatus = ''; this._rewardOrderStatusColor = '#8b93a4';
+    this.setState({ reorderKind:kind, dragId:null, rewardReorderDraft:draft, batchSel:[], batchMsg:'', roMode:'drag' });
     return true;
   }
 
@@ -2619,7 +2620,8 @@ class Component extends DCLogic {
     const draft = (target === 'rewards' || target === 'rewardCategories')
       ? (this.state[target] || []).map(item => ({ ...item })) : null;
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    this.setState({ reorderOpen:true, reorderKind:target, dragId:null, rewardReorderDraft:draft, rewardOrderBusy:false, rewardOrderStatus:'', rewardOrderStatusColor:'#8b93a4', batchSel:[], roMode:'drag' });
+    this._rewardOrderStatus = ''; this._rewardOrderStatusColor = '#8b93a4';
+    this.setState({ reorderOpen:true, reorderKind:target, dragId:null, rewardReorderDraft:draft, batchSel:[], roMode:'drag' });
     return true;
   }
   setRoMode(m) { this.setState({ roMode: m }); }
@@ -2629,7 +2631,8 @@ class Component extends DCLogic {
     const revision = (this._rewardOrderRevision || 0) + 1;
     this._rewardOrderRevision = revision;
     this._rewardOrderPendingCount = (this._rewardOrderPendingCount || 0) + 1;
-    this.setState({ rewardReorderDraft:optimistic, rewardOrderBusy:true, rewardOrderStatus:'正在保存…', rewardOrderStatusColor:'#aeb6c6' });
+    this._rewardOrderStatus = '正在保存…'; this._rewardOrderStatusColor = '#aeb6c6';
+    this.setState({ rewardReorderDraft:optimistic });
     return this.writeState(() => {
       const current = this.state;
       const source = Array.isArray(current[key]) ? current[key] : [];
@@ -2638,26 +2641,22 @@ class Component extends DCLogic {
       // Only the newest queued action may settle the visible draft/status.
       if (this._rewardOrderRevision === revision) {
         const latest = Array.isArray(this.state[key]) ? this.state[key].map(item => ({ ...item })) : [];
-        this.setState({
-          rewardReorderDraft:latest,
-          rewardOrderStatus:ok ? '✓ 已保存' : '保存失败，已恢复上一次顺序',
-          rewardOrderStatusColor:ok ? '#4ade80' : '#fca5a5'
-        });
+        this._rewardOrderStatus = ok ? '✓ 已保存' : '保存失败，已恢复上一次顺序';
+        this._rewardOrderStatusColor = ok ? '#4ade80' : '#fca5a5';
+        this.setState({ rewardReorderDraft:latest });
       }
       return ok;
     }, error => {
       if (this._rewardOrderRevision === revision) {
         const latest = Array.isArray(this.state[key]) ? this.state[key].map(item => ({ ...item })) : [];
-        this.setState({
-          rewardReorderDraft:latest,
-          rewardOrderStatus:'保存失败，已恢复上一次顺序',
-          rewardOrderStatusColor:'#fca5a5'
-        });
+        this._rewardOrderStatus = '保存失败，已恢复上一次顺序';
+        this._rewardOrderStatusColor = '#fca5a5';
+        this.setState({ rewardReorderDraft:latest });
       }
       return false;
     }).finally(() => {
       this._rewardOrderPendingCount = Math.max(0, (this._rewardOrderPendingCount || 1) - 1);
-      this.setState({ rewardOrderBusy:this._rewardOrderPendingCount > 0 });
+      this.setState({ rewardReorderDraft:this.state.rewardReorderDraft });
     });
   }
   moveRewardOrder(id, direction) {
@@ -2713,7 +2712,8 @@ class Component extends DCLogic {
     }
     this._roPointer = null; this._roTarget = null;
     this._roRewardChanged = false; this._roLastTargetKey = null;
-    this.setState({ reorderOpen:false, dragId:null, dragOverKey:null, rewardReorderDraft:null, rewardOrderBusy:false, rewardOrderStatus:'', rewardOrderStatusColor:'#8b93a4' });
+    this._rewardOrderStatus = ''; this._rewardOrderStatusColor = '#8b93a4';
+    this.setState({ reorderOpen:false, dragId:null, dragOverKey:null, rewardReorderDraft:null });
     return true;
   }
   openFilePicker(accept, onFile) {
@@ -4294,8 +4294,8 @@ class Component extends DCLogic {
       taskFocusOpen: !!taskFocusTask, taskFocusName: taskFocusTask ? taskFocusTask.name : '', taskFocusMin: st.taskFocusMin || 25, closeTaskFocus: () => this.closeTaskFocus(), taskFocusDirect: () => this.taskFocusDirect(), taskFocusStart: () => this.taskFocusStart(),
       daylineAlertOpen: !!st.daylineAlert, daylineAlertTime: st.daylineAlert ? st.daylineAlert.time : '', daylineAlertName: st.daylineAlert ? st.daylineAlert.name : '', closeDaylineAlert: () => this.closeDaylineAlert(),
       reorderOpen: !!st.reorderOpen, reorderRows, reorderTitle,
-      rewardOrderBusy:!!st.rewardOrderBusy, rewardOrderStatus:st.rewardOrderStatus || '', rewardOrderStatusShow:!!st.rewardOrderStatus,
-      rewardOrderStatusColor:st.rewardOrderStatusColor || '#8b93a4', reorderCloseDisabled:!!st.rewardOrderBusy,
+      rewardOrderBusy:(this._rewardOrderPendingCount || 0) > 0, rewardOrderStatus:this._rewardOrderStatus || '', rewardOrderStatusShow:!!this._rewardOrderStatus,
+      rewardOrderStatusColor:this._rewardOrderStatusColor || '#8b93a4', reorderCloseDisabled:(this._rewardOrderPendingCount || 0) > 0,
       reorderTaskFamily: ['tasks','sets'].includes(st.reorderKind || 'tasks'), reorderMilestoneFamily: ['milestones','milestoneSets'].includes(st.reorderKind || 'tasks'), reorderRewardFamily: ['rewards','rewardCategories'].includes(st.reorderKind || 'tasks'),
       reorderKindTasks: (st.reorderKind || 'tasks') === 'tasks', reorderKindSets: (st.reorderKind || 'tasks') === 'sets', reorderKindMilestones: (st.reorderKind || 'tasks') === 'milestones', reorderKindMilestoneSets: (st.reorderKind || 'tasks') === 'milestoneSets',
       reorderKindRewards: (st.reorderKind || 'tasks') === 'rewards', reorderKindRewardCategories: (st.reorderKind || 'tasks') === 'rewardCategories',
