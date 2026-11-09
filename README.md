@@ -1,10 +1,10 @@
 # EXP BANK
 
-本地优先的个人成长管理 PWA。当前版本 **v1.15.3 — Serialized Reward Ordering**。
+本地优先的个人成长管理 PWA。当前版本 **v1.15.4 — Mobile Sorting Reliability**。
 
 ## 本版更新
 
-- **奖励排序修复**：奖励集与奖励继续提供上移/下移、跨组移动和触屏拖拽；快速连续操作改为基于最新已提交顺序串行执行，避免旧快照冲突。保存失败时排序草稿回滚到已保存顺序，可直接重试。
+- **奖励排序可靠性**：保留 v1.15.3 的意图队列和失败回滚；上移/下移、奖励集切换、跨组移动控件扩大至至少 44px 触控高度，并增加无障碍标签和保存状态反馈。拖拽也复用同一串行持久化路径。
 - **AI Agent MVP**：新增 DeepSeek 在线任务规划 Worker；自然语言输入生成结构化任务草稿，经现有任务助手校验、人工编辑和确认后才创建。在线调用失败时自动回退本地规则助手。
 - **安全边界**：DeepSeek API Key 只保存在 Cloudflare Worker Secret；PWA 不直接持有模型密钥。Worker 地址与访问令牌保存在本机独立配置，不进入主数据备份。
 - **数据兼容**：奖励、奖励集、兑换记录继续使用现有数据结构，不要求清空 localStorage 或重新导入数据。
@@ -36,7 +36,7 @@ node tests/agent-client.smoke.mjs
 node tests/agent-worker.smoke.mjs
 ```
 
-浏览器脚本需要 Playwright 与 Chromium；已配置 Playwright 的环境可运行 `node tests/browser.smoke.mjs`、`node tests/assistant-browser.smoke.mjs` 和 `node tests/life-browser.smoke.mjs`。脚本使用合成数据，不读取日常账本。
+浏览器脚本需要 Playwright 与 Chromium；`node tests/reward-order.browser.smoke.mjs` 使用触屏模拟在 360px、390px 和 768px 视口验收奖励集排序、组内排序、跨组移动、未分类往返、商城展示及刷新恢复。CI 会自动安装 Chromium 并运行该测试。其他已配置 Playwright 的环境也可运行 `node tests/browser.smoke.mjs`、`node tests/assistant-browser.smoke.mjs` 和 `node tests/life-browser.smoke.mjs`。脚本使用合成数据，不读取日常账本。
 
 ## 数据与能力边界
 

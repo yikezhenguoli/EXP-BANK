@@ -28,7 +28,7 @@ function create(seed = null, shared = sharedStorage(seed)) {
 const seed = saved => ({ appVersion: 'v1.9.2', tasks: [], rewards: [], ledger: [], exp: 10, nextId: 500, stash: [{ id: 41, name: '旅游', target: 1000, saved, claimed: true }], opex: [] });
 async function test(name, fn) { await fn(); results.push(name); console.log('PASS ' + name); }
 await test('新用户及旧用户启动完成schema，余额、EXP和达成保持', async () => {
-  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.3'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
+  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.4'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
   await t.c.save({}); assert.equal(t.stored().stash[0].saved, 800); assert.equal(t.stored().updateNoteOpen, undefined);
   assert.equal(create().c.state.opexCategories.length, 6);
 });
@@ -418,9 +418,42 @@ await test('奖励排序保存失败回滚草稿，修复存储后可重试', as
   assert.equal(await t.c.moveRewardOrder(501,-1),false);
   assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),before);
   assert.deepEqual(t.c.state.rewardReorderDraft.map(x=>x.id),before);
+  assert.equal(t.c._rewardOrderStatus,'保存失败，已恢复上一次顺序');
   t.flags.failWrite=false;
   assert.equal(await t.c.moveRewardOrder(501,-1),true);
   assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),[501,500]);
+  assert.equal(t.c._rewardOrderStatus,'✓ 已保存');
+});
+await test('移动端排序控件提供44px触控目标、状态反馈并保护保存中的草稿', async () => {
+  const data=seed(0);
+  data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'}];
+  data.rewards=[{id:503,name:'学习卡',cost:20,categoryId:501,redeems:[]},{id:504,name:'咖啡',cost:30,categoryId:500,redeems:[]}];
+  const t=create(data);
+  t.c.startReorder('rewardCategories');
+  let view=t.c.renderVals();
+  const learning=view.reorderRows.find(row=>row.id===501);
+  assert.equal(learning.moveUpLabel,'将学习上移一位');
+  assert.equal(learning.moveDownLabel,'将学习下移一位');
+  assert.equal(learning.moveUpDisabled,false);
+  assert.equal(learning.moveDownDisabled,true);
+  assert.equal(view.rewardOrderStatusShow,false);
+  const pending=t.c.moveRewardOrder(501,-1);
+  assert.equal(t.c.renderVals().rewardOrderBusy,true);
+  assert.equal(t.c.closeReorder(),false);
+  assert.equal(t.c.state.reorderOpen,true);
+  assert.equal(await pending,true);
+  assert.equal(t.c.renderVals().rewardOrderBusy,false);
+  assert.equal(t.c._rewardOrderStatus,'✓ 已保存');
+  assert.equal(t.stored().rewardOrderBusy,undefined);
+  assert.equal(t.stored().rewardOrderStatus,undefined);
+  assert.equal(t.stored().rewardOrderStatusColor,undefined);
+  view=t.c.renderVals();
+  assert.equal(view.rewardOrderStatusShow,true);
+  assert.equal(view.rewardOrderStatusColor,'#4ade80');
+  const first=view.reorderRows.find(row=>row.id===501);
+  assert.equal(first.moveUpDisabled,true);
+  assert.equal(first.moveDownDisabled,false);
+  assert.equal(t.c.closeReorder(),true);
 });
 await test('Agent 地址和访问令牌使用独立本机配置，不进入主数据备份', async () => {
   const t=create(seed(0));
@@ -434,4 +467,9 @@ await test('Agent 地址和访问令牌使用独立本机配置，不进入主�
   const backup=JSON.parse(Buffer.from(t.c.makeBackupCode(),'base64').toString('utf8'));
   assert.equal(backup.agentConfig,undefined);
 });
+assert.ok(html.includes('aria-label="{{ row.moveUpLabel }}"'));
+assert.ok(html.includes('aria-label="{{ row.moveDownLabel }}"'));
+assert.ok(html.includes('min-height:44px;box-sizing:border-box;display:flex;align-items:center;justify-content:center'));
+assert.ok(html.includes('data-reward-category="{{ rg.key }}"'));
+assert.ok(html.includes('data-reward-id="{{ r.id }}"'));
 console.log('Component checks passed: ' + results.length);

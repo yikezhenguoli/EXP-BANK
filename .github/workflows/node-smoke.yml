@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   smoke:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -31,3 +31,9 @@ jobs:
           node tests/reward-order.smoke.mjs
           node tests/agent-client.smoke.mjs
           node tests/agent-worker.smoke.mjs
+      - name: Install Playwright Chromium for mobile touch acceptance
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Run mobile reward sorting browser acceptance
+        run: node tests/reward-order.browser.smoke.mjs
