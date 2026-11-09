@@ -28,7 +28,7 @@ function create(seed = null, shared = sharedStorage(seed)) {
 const seed = saved => ({ appVersion: 'v1.9.2', tasks: [], rewards: [], ledger: [], exp: 10, nextId: 500, stash: [{ id: 41, name: '旅游', target: 1000, saved, claimed: true }], opex: [] });
 async function test(name, fn) { await fn(); results.push(name); console.log('PASS ' + name); }
 await test('新用户及旧用户启动完成schema，余额、EXP和达成保持', async () => {
-  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.2'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
+  const t = create(seed(800)); assert.equal(t.c.state.appVersion, 'v1.15.3'); assert.equal(t.c.state.stash[0].saved, 800); assert.equal(t.c.state.exp, 10); assert.equal(t.c.state.moneySchemaVersion, 1);
   await t.c.save({}); assert.equal(t.stored().stash[0].saved, 800); assert.equal(t.stored().updateNoteOpen, undefined);
   assert.equal(create().c.state.opexCategories.length, 6);
 });
@@ -380,6 +380,47 @@ await test('奖励排序面板提供可靠的单击上下移备用操作', async
   assert.equal(movedCoffee.categoryValue,'501');
   assert.equal(movedCoffee.categoryLabel,'当前：学习');
   assert.equal(movedCoffee.canMoveUp,true);
+});
+await test('连续快速点击排序按最新顺序串行提交，不丢操作', async () => {
+  const data=seed(0);
+  data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'},{id:502,name:'阅读'}];
+  data.rewards=[
+    {id:503,name:'奖励A',cost:10,categoryId:500,redeems:[]},
+    {id:504,name:'奖励B',cost:20,categoryId:500,redeems:[]},
+    {id:505,name:'奖励C',cost:30,categoryId:500,redeems:[]}
+  ];
+  const t=create(data);
+  t.c.startReorder('rewardCategories');
+  const categoryMoves=await Promise.all([
+    t.c.moveRewardOrder(502,-1),
+    t.c.moveRewardOrder(502,-1)
+  ]);
+  assert.deepEqual(categoryMoves,[true,true]);
+  assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),[502,500,501]);
+  assert.deepEqual(t.c.state.rewardReorderDraft.map(x=>x.id),[502,500,501]);
+
+  t.c.startReorder('rewards');
+  const rewardMoves=await Promise.all([
+    t.c.moveRewardOrder(505,-1),
+    t.c.moveRewardOrder(505,-1)
+  ]);
+  assert.deepEqual(rewardMoves,[true,true]);
+  assert.deepEqual(t.stored().rewards.map(x=>x.id),[505,503,504]);
+  assert.deepEqual(t.c.state.rewardReorderDraft.map(x=>x.id),[505,503,504]);
+});
+await test('奖励排序保存失败回滚草稿，修复存储后可重试', async () => {
+  const data=seed(0);
+  data.rewardCategories=[{id:500,name:'体验'},{id:501,name:'学习'}];
+  const t=create(data);
+  t.c.startReorder('rewardCategories');
+  const before=t.stored().rewardCategories.map(x=>x.id);
+  t.flags.failWrite=true;
+  assert.equal(await t.c.moveRewardOrder(501,-1),false);
+  assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),before);
+  assert.deepEqual(t.c.state.rewardReorderDraft.map(x=>x.id),before);
+  t.flags.failWrite=false;
+  assert.equal(await t.c.moveRewardOrder(501,-1),true);
+  assert.deepEqual(t.stored().rewardCategories.map(x=>x.id),[501,500]);
 });
 await test('Agent 地址和访问令牌使用独立本机配置，不进入主数据备份', async () => {
   const t=create(seed(0));

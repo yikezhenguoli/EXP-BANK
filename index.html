@@ -1831,7 +1831,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.15.2';
+const APP_VERSION = 'v1.15.3';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
@@ -2618,33 +2618,52 @@ class Component extends DCLogic {
     this.setState({ reorderOpen:true, reorderKind:target, dragId:null, rewardReorderDraft:draft, batchSel:[], roMode:'drag' });
   }
   setRoMode(m) { this.setState({ roMode: m }); }
+  commitRewardOrder(kind, transform, optimistic) {
+    const key = kind === 'rewardCategories' ? 'rewardCategories' : 'rewards';
+    // UI actions may arrive faster than localStorage commits. Queue the intent,
+    // not a stale array snapshot, so each tap applies to the latest committed order.
+    const revision = (this._rewardOrderRevision || 0) + 1;
+    this._rewardOrderRevision = revision;
+    this.setState({ rewardReorderDraft:optimistic });
+    return this.writeState(() => {
+      const current = this.state;
+      const source = Array.isArray(current[key]) ? current[key] : [];
+      return { ...current, [key]:transform(source) };
+    }).then(ok => {
+      // Do not let an earlier queued save overwrite a newer optimistic draft.
+      if (this._rewardOrderRevision === revision) {
+        const latest = Array.isArray(this.state[key]) ? this.state[key].map(item => ({ ...item })) : [];
+        this.setState({ rewardReorderDraft:latest });
+      }
+      return ok;
+    });
+  }
   moveRewardOrder(id, direction) {
     const dir = direction < 0 ? -1 : 1;
     const kind = this.state.reorderKind || 'tasks';
-    if (kind === 'rewardCategories') {
-      const list = [...(this.state.rewardReorderDraft || this.state.rewardCategories || [])];
-      const from = list.findIndex(item => String(item.id) === String(id));
-      const to = from + dir;
-      if (from < 0 || to < 0 || to >= list.length) return false;
-      const next = ExpRewardOrder.move(list, id, list[to].id, dir > 0);
-      this.setState({ rewardReorderDraft:next });
-      return this.save({ rewardCategories:next });
-    }
-    if (kind === 'rewards') {
-      const list = this.state.rewardReorderDraft || this.state.rewards || [];
-      const item = list.find(entry => String(entry.id) === String(id));
-      if (!item) return false;
-      const peers = list.filter(entry => item.categoryId == null
+    if (kind !== 'rewardCategories' && kind !== 'rewards') return false;
+    const key = kind === 'rewardCategories' ? 'rewardCategories' : 'rewards';
+    const draft = this.state.rewardReorderDraft || this.state[key] || [];
+    const transform = source => {
+      if (kind === 'rewardCategories') {
+        const from = source.findIndex(item => String(item.id) === String(id));
+        const to = from + dir;
+        if (from < 0 || to < 0 || to >= source.length) return source;
+        return ExpRewardOrder.move(source, id, source[to].id, dir > 0);
+      }
+      const item = source.find(entry => String(entry.id) === String(id));
+      if (!item) return source;
+      const peers = source.filter(entry => item.categoryId == null
         ? entry.categoryId == null
         : entry.categoryId != null && String(entry.categoryId) === String(item.categoryId));
       const from = peers.findIndex(entry => String(entry.id) === String(id));
       const target = peers[from + dir];
-      if (from < 0 || !target) return false;
-      const next = ExpRewardOrder.moveReward(list, id, target.id, dir > 0);
-      this.setState({ rewardReorderDraft:next });
-      return this.save({ rewards:next });
-    }
-    return false;
+      if (from < 0 || !target) return source;
+      return ExpRewardOrder.moveReward(source, id, target.id, dir > 0);
+    };
+    const next = transform(draft);
+    if (ExpRewardOrder.sameOrder(draft, next, kind === 'rewards')) return false;
+    return this.commitRewardOrder(kind, transform, next);
   }
   toggleBatch(id) { const cur = this.state.batchSel || []; const has = cur.includes(id); this.setState({ batchSel: has ? cur.filter(x => x !== id) : [...cur, id] }); }
   groupBatch() {
@@ -2726,12 +2745,13 @@ class Component extends DCLogic {
     if (selected === '') return false;
     const categoryId = selected === 'none' ? null : Number(selected);
     if (categoryId !== null && (!Number.isSafeInteger(categoryId) || !(this.state.rewardCategories || []).some(c => c.id === categoryId))) return false;
-    const list = [...(this.state.rewardReorderDraft || this.state.rewards || [])];
-    const current = list.find(r => String(r.id) === String(id));
-    if (!current || (current.categoryId ?? null) === categoryId) return false;
-    const next = ExpRewardOrder.moveToCategory(list, id, categoryId);
-    this.setState({ rewardReorderDraft:next });
-    return this.save({ rewards:next });
+    const draft = this.state.rewardReorderDraft || this.state.rewards || [];
+    const current = draft.find(r => String(r.id) === String(id));
+    if (!current || String(current.categoryId ?? 'none') === String(categoryId ?? 'none')) return false;
+    const transform = source => ExpRewardOrder.moveToCategory(source, id, categoryId);
+    const next = transform(draft);
+    if (ExpRewardOrder.sameOrder(draft, next, true)) return false;
+    return this.commitRewardOrder('rewards', transform, next);
   }
   roDown(id, e) {
     if (this.state.dragId != null) return;
