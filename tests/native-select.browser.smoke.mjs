@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES
   ? path.join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES, 'playwright') : 'playwright');
-const root = fileURLToPath(new URL('../', import.meta.url));
+const root = path.resolve(fileURLToPath(new URL('../', import.meta.url)));
 const mime = { '.html':'text/html', '.js':'text/javascript', '.json':'application/json', '.png':'image/png' };
 const version = fs.readFileSync(path.join(root, 'index.html'), 'utf8').match(/const APP_VERSION = '([^']+)'/)[1];
 const seed = {
@@ -40,7 +40,8 @@ try {
     await context.route('https://**', route => route.abort());
     const page = await context.newPage();
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto('http://127.0.0.1:'+server.address().port+'/');
+    const response = await page.goto('http://127.0.0.1:'+server.address().port+'/');
+    assert.equal(response.status(), 200, 'test server must serve the application');
     await page.locator('[data-task-id="1"]').tap();
     await page.getByText('编辑', {exact:true}).tap();
     const before = await page.evaluate(() => JSON.parse(localStorage.getItem('exp-bank-v1')));
