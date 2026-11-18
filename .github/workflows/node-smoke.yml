@@ -37,3 +37,5 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Run mobile reward sorting browser acceptance
         run: node tests/reward-order.browser.smoke.mjs
+      - name: Run mobile native select regression
+        run: node tests/native-select.browser.smoke.mjs

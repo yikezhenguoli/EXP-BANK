@@ -39,6 +39,9 @@ a{color:#4ade80;text-decoration:none;} a:hover{color:#86efac;}
 ::placeholder{color:#535a6a;}
 input,select{outline:none;}
 input[type="date"]{color-scheme:dark;}
+/* Native mobile pickers need an explicit palette and option labels. */
+select{color-scheme:dark;}
+select option,select optgroup{color:#e6e9f0;background-color:#0d0f14;}
 @keyframes bingoBurst{0%{transform:translate3d(0,-4vh,0) rotate(0deg) scale(.7);opacity:0}12%{opacity:1}100%{transform:translate3d(var(--drift),58vh,0) rotate(var(--rot)) scale(1);opacity:0}}
 @keyframes bingoGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(255,255,255,0))}50%{filter:drop-shadow(0 0 18px rgba(255,236,184,.38))}}
 .bingo-particle{position:absolute;top:35%;width:7px;height:12px;border-radius:2px;opacity:0;animation:bingoBurst var(--dur) cubic-bezier(.18,.72,.2,1) var(--delay) forwards;pointer-events:none;}
@@ -862,12 +865,12 @@ input[type="date"]{color-scheme:dark;}
           </sc-if>
           <sc-if value="{{ editIsSet }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">上级任务集
-              <select id="ed-set-parent" defaultValue="{{ editParentId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层任务集</option><sc-for list="{{ editSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+              <select id="ed-set-parent" defaultValue="{{ editParentId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层任务集</option><sc-for list="{{ editSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}" label="{{ s.name }}">{{ s.name }}</option></sc-for></select>
             </label>
           </sc-if>
           <sc-if value="{{ editIsMilestoneSet }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">上级里程碑集
-              <select id="ed-ms-parent" defaultValue="{{ editParentId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层里程碑集</option><sc-for list="{{ editMilestoneSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+              <select id="ed-ms-parent" defaultValue="{{ editParentId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层里程碑集</option><sc-for list="{{ editMilestoneSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}" label="{{ s.name }}">{{ s.name }}</option></sc-for></select>
             </label>
           </sc-if>
           <sc-if value="{{ editIsTask }}" hint-placeholder-val="{{ false }}">
@@ -892,7 +895,7 @@ input[type="date"]{color-scheme:dark;}
             <label style="display:block;font-size:11px;color:#697084;">归入任务集
               <select id="ed-set" defaultValue="{{ editSetId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
                 <option value="">无任务集</option>
-                <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
+                <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}" label="{{ s.name }}">{{ s.name }}</option></sc-for>
               </select>
             </label>
             <label style="display:block;font-size:12px;color:#aeb6c6;">人生分类<select id="ed-life-type" class="money-input" defaultValue="{{ editLifeType }}"><option value="CORE">CORE · 核心维持</option><option value="GROWTH">GROWTH · 成长推进</option><option value="MAINTENANCE">MAINTENANCE · 系统维护</option><option value="EXPLORATION">EXPLORATION · 探索体验</option></select></label>
@@ -903,7 +906,7 @@ input[type="date"]{color-scheme:dark;}
           <sc-if value="{{ editIsReward }}" hint-placeholder-val="{{ false }}">
             <label style="display:block;font-size:11px;color:#697084;">奖励类型
               <select id="ed-reward-category" defaultValue="{{ editRewardCategoryId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px;color:#aeb6c6;font-size:12px;">
-                <sc-for list="{{ editRewardCategoryOptions }}" as="c" hint-placeholder-count="1"><option value="{{ c.idStr }}">{{ c.name }}</option></sc-for>
+                <sc-for list="{{ editRewardCategoryOptions }}" as="c" hint-placeholder-count="1"><option value="{{ c.idStr }}" label="{{ c.name }}">{{ c.name }}</option></sc-for>
               </select>
             </label>
             <label style="display:block;font-size:11px;color:#697084;">基础价格(EXP)
@@ -954,15 +957,15 @@ input[type="date"]{color-scheme:dark;}
             <label style="display:block;font-size:11px;color:#697084;">归入里程碑集
               <select id="ed-ms-set" defaultValue="{{ editSetId }}" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:8px 6px;color:#aeb6c6;font-size:12px;">
                 <option value="">无里程碑集</option>
-                <sc-for list="{{ milestoneSetOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
+                <sc-for list="{{ milestoneSetOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}" label="{{ s.name }}">{{ s.name }}</option></sc-for>
               </select>
             </label>
           </sc-if>
-          <sc-if value="{{ editIsOpex }}" hint-placeholder-val="{{ false }}"><label>币种<select id="ed-opex-currency" class="money-input" value="{{ editExpenseCurrency }}" onChange="{{ onEditExpenseCurrency }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}">{{ c.label }}</option></sc-for></select></label>
+          <sc-if value="{{ editIsOpex }}" hint-placeholder-val="{{ false }}"><label>币种<select id="ed-opex-currency" class="money-input" value="{{ editExpenseCurrency }}" onChange="{{ onEditExpenseCurrency }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}" label="{{ c.label }}">{{ c.label }}</option></sc-for></select></label>
 <label>金额（{{ editExpenseCurrencySymbol }}）<input id="ed-opex-amount" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="如：28.50" value="{{ editExpenseAmount }}" onInput="{{ onEditExpenseAmount }}"></label>
-<label>类别<select id="ed-opex-cat" class="money-input" value="{{ editExpenseCategoryId }}" onChange="{{ onEditExpenseCategory }}"><sc-for list="{{ editCategoryOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.id }}">{{ c.name }}</option></sc-for></select></label>
+<label>类别<select id="ed-opex-cat" class="money-input" value="{{ editExpenseCategoryId }}" onChange="{{ onEditExpenseCategory }}"><sc-for list="{{ editCategoryOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.id }}" label="{{ c.name }}">{{ c.name }}</option></sc-for></select></label>
 <div class="money-line"><button class="money-btn" onClick="{{ openEditCategory }}">+ 自定义类别</button></div>
-<label>付款目标<select id="ed-opex-stash" class="money-input" value="{{ editExpenseStashId }}" onChange="{{ onEditExpenseStash }}"><option value="">不关联目标</option><sc-for list="{{ editExpenseGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}" disabled="{{ g.disabled }}">{{ g.name }}</option></sc-for></select></label>
+<label>付款目标<select id="ed-opex-stash" class="money-input" value="{{ editExpenseStashId }}" onChange="{{ onEditExpenseStash }}"><option value="">不关联目标</option><sc-for list="{{ editExpenseGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}" disabled="{{ g.disabled }}" label="{{ g.name }}">{{ g.name }}</option></sc-for></select></label>
 <div class="money-preview" aria-live="polite">{{ editExpensePreview }}</div>
 <label>备注<input id="ed-opex-note" class="money-input" placeholder="如：旅行车票" value="{{ editExpenseNote }}" onInput="{{ onEditExpenseNote }}"></label>
 <label>日期<input id="ed-opex-date" class="money-input" type="date" value="{{ editExpenseDate }}" onInput="{{ onEditExpenseDate }}"></label>
@@ -1179,7 +1182,7 @@ input[type="date"]{color-scheme:dark;}
         </label>
         <label style="display:block;font-size:11px;color:#697084;">奖励类型
           <select id="nr-category" defaultValue="" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px;color:#aeb6c6;font-size:12px;">
-            <sc-for list="{{ rewardCategoryOptions }}" as="c" hint-placeholder-count="1"><option value="{{ c.idStr }}">{{ c.name }}</option></sc-for>
+            <sc-for list="{{ rewardCategoryOptions }}" as="c" hint-placeholder-count="1"><option value="{{ c.idStr }}" label="{{ c.name }}">{{ c.name }}</option></sc-for>
           </select>
         </label>
         <label style="display:block;font-size:11px;color:#697084;">基础价格(EXP，金额留空时使用)
@@ -1231,7 +1234,7 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">归入里程碑集
           <select id="nm-ms-set" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;">
             <option value="">无里程碑集</option>
-            <sc-for list="{{ milestoneSetOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
+            <sc-for list="{{ milestoneSetOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}" label="{{ s.name }}">{{ s.name }}</option></sc-for>
           </select>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
@@ -1252,7 +1255,7 @@ input[type="date"]{color-scheme:dark;}
           <input id="nms-name" placeholder="例如:考试 / 旅行 / 长期作品" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
         <label style="display:block;font-size:11px;color:#697084;">上级里程碑集（可留空）
-          <select id="nms-parent" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层里程碑集</option><sc-for list="{{ milestoneSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+          <select id="nms-parent" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层里程碑集</option><sc-for list="{{ milestoneSetParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}" label="{{ s.name }}">{{ s.name }}</option></sc-for></select>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1388,11 +1391,11 @@ input[type="date"]{color-scheme:dark;}
 
   <!-- NEW OPEX MODAL -->
   <sc-if value="{{ newOpexOpen }}" hint-placeholder-val="{{ false }}"><div class="money-overlay" onClick="{{ closeNew }}"><div class="money-panel" role="dialog" aria-modal="true" aria-label="记一笔开销" onClick="{{ stopClick }}"><div class="money-title">记一笔 // OPEX</div>
-<label>币种<select id="no-currency" class="money-input" value="{{ expenseCurrency }}" onChange="{{ onExpenseCurrency }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}">{{ c.label }}</option></sc-for></select></label>
+<label>币种<select id="no-currency" class="money-input" value="{{ expenseCurrency }}" onChange="{{ onExpenseCurrency }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}" label="{{ c.label }}">{{ c.label }}</option></sc-for></select></label>
 <label>金额（{{ expenseCurrencySymbol }}）<input id="no-amount" class="money-input" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="如：28.50" value="{{ expenseAmount }}" onInput="{{ onExpenseAmount }}"></label>
-<label>类别<select id="no-cat" class="money-input" value="{{ expenseCategoryId }}" onChange="{{ onExpenseCategory }}"><sc-for list="{{ categoryOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.id }}">{{ c.name }}</option></sc-for></select></label>
+<label>类别<select id="no-cat" class="money-input" value="{{ expenseCategoryId }}" onChange="{{ onExpenseCategory }}"><sc-for list="{{ categoryOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.id }}" label="{{ c.name }}">{{ c.name }}</option></sc-for></select></label>
 <div class="money-line"><button class="money-btn" onClick="{{ openNewCategory }}">+ 自定义类别</button></div>
-<label>付款目标<select id="no-stash" class="money-input" value="{{ expenseStashId }}" onChange="{{ onExpenseStash }}"><option value="">不关联目标</option><sc-for list="{{ expenseGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}" disabled="{{ g.disabled }}">{{ g.name }}</option></sc-for></select></label>
+<label>付款目标<select id="no-stash" class="money-input" value="{{ expenseStashId }}" onChange="{{ onExpenseStash }}"><option value="">不关联目标</option><sc-for list="{{ expenseGoals }}" as="g" hint-placeholder-count="0"><option value="{{ g.idStr }}" disabled="{{ g.disabled }}" label="{{ g.name }}">{{ g.name }}</option></sc-for></select></label>
 <div class="money-preview" aria-live="polite">{{ expensePreview }}</div>
 <label>备注<input id="no-note" class="money-input" placeholder="如：旅行车票" value="{{ expenseNote }}" onInput="{{ onExpenseNote }}"></label>
 <label>日期<input id="no-date" class="money-input" type="date" value="{{ expenseDate }}" onInput="{{ onExpenseDate }}"></label>
@@ -1410,7 +1413,7 @@ input[type="date"]{color-scheme:dark;}
         <label style="display:block;font-size:11px;color:#697084;">目标金额
           <input id="ns2-target" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="2000" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:15px;font-family:'JetBrains Mono',monospace;">
         </label>
-        <label>币种<select id="ns2-currency" class="money-input" defaultValue="{{ defaultCurrencyCode }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}">{{ c.label }}</option></sc-for></select></label><sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
+        <label>币种<select id="ns2-currency" class="money-input" defaultValue="{{ defaultCurrencyCode }}"><sc-for list="{{ currencyOptions }}" as="c" hint-placeholder-count="0"><option value="{{ c.code }}" label="{{ c.label }}">{{ c.label }}</option></sc-for></select></label><sc-if value="{{ moneyHasError }}" hint-placeholder-val="{{ false }}"><div class="money-error" role="alert">{{ moneyError }}<sc-if value="{{ moneyConflict }}" hint-placeholder-val="{{ false }}"><button class="money-btn" style="display:block;margin-top:8px;" onClick="{{ syncLatestMoney }}">同步最新数据</button></sc-if></div></sc-if>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
           <div onClick="{{ addStash }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),inset 0 -1px 0 rgba(0,0,0,0.35);border-radius:8px;padding:8px 18px;" style-hover="filter:brightness(1.12);">创建</div>
@@ -1447,7 +1450,7 @@ input[type="date"]{color-scheme:dark;}
       <div onClick="{{ stopClick }}" style="width:344px;max-width:100%;background:#101218;border:1px solid #2a2f3a;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:0 24px 64px rgba(0,0,0,0.7);">
         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;color:{{ accent }};">UPDATED</div>
         <div style="font-size:17px;font-weight:700;color:#eef1f7;">EXP BANK 已更新到 {{ appVersion }}</div>
-        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。Life Architecture 将任务分为核心维持、成长推进、系统维护和探索体验。四象限入口可查看四层列表、调整顺序；WAR MODE 聚焦 CORE 最低运行目标。</div>
+        <div style="font-size:12.5px;color:#8b93a4;line-height:1.75;">从 {{ prevVersion }} 升级。本次修复手机浏览器下拉选项空白：任务集、奖励集与记账类别等动态选项增加明确标签，并统一深色选项配色。</div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#535a6a;line-height:1.7;">金额以整数分保存，历史币种不会随切换改变；更新会保留账本和照片。</div>
         <div style="display:flex;justify-content:flex-end;">
           <div onClick="{{ closeUpdateNote }}" style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:700;color:#14151c;background:{{ btnGrad }};box-shadow:inset 0 1px 0 rgba(255,255,255,0.65);border-radius:8px;padding:8px 20px;" style-hover="filter:brightness(1.12);">知道了</div>
@@ -1685,7 +1688,7 @@ input[type="date"]{color-scheme:dark;}
           <label style="flex:1;font-size:11px;color:#697084;">归入任务集
             <select id="nt-set" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;">
               <option value="">无任务集</option>
-              <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for>
+              <sc-for list="{{ setOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}" label="{{ s.name }}">{{ s.name }}</option></sc-for>
             </select>
           </label>
         </div>
@@ -1717,7 +1720,7 @@ input[type="date"]{color-scheme:dark;}
           <input id="ns-name" placeholder="例如:学习区 / 健身区" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:10px;color:#e6e9f0;font-size:14px;font-family:inherit;">
         </label>
         <label style="display:block;font-size:11px;color:#697084;">上级任务集（可留空）
-          <select id="ns-parent" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层任务集</option><sc-for list="{{ setParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}">{{ s.name }}</option></sc-for></select>
+          <select id="ns-parent" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 6px;color:#aeb6c6;font-size:12px;"><option value="">顶层任务集</option><sc-for list="{{ setParentOptions }}" as="s" hint-placeholder-count="0"><option value="{{ s.idStr }}" label="{{ s.name }}">{{ s.name }}</option></sc-for></select>
         </label>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
           <div onClick="{{ closeNew }}" style="cursor:pointer;font-size:12.5px;color:#8b93a4;border:1px solid #262b36;border-radius:8px;padding:8px 14px;" style-hover="color:#e6e9f0;">取消</div>
@@ -1789,8 +1792,8 @@ input[type="date"]{color-scheme:dark;}
                   <sc-if value="{{ reorderRewardsMode }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;align-items:center;gap:6px;margin-top:8px;min-width:0;">
                       <select id="{{ row.moveSelectId }}" aria-label="为{{ row.name }}选择目标奖励集" style="flex:1;min-width:0;max-width:190px;min-height:44px;box-sizing:border-box;background:#0d0f14;border:1px solid #303747;border-radius:8px;padding:8px 7px;color:#c8cedb;font-size:11.5px;touch-action:manipulation;">
-                        <option value="{{ row.categoryValue }}">{{ row.categoryLabel }}</option>
-                        <sc-for list="{{ row.categoryOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.value }}">{{ o.name }}</option></sc-for>
+                        <option value="{{ row.categoryValue }}" label="{{ row.categoryLabel }}">{{ row.categoryLabel }}</option>
+                        <sc-for list="{{ row.categoryOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.value }}" label="{{ o.name }}">{{ o.name }}</option></sc-for>
                       </select>
                       <button type="button" onClick="{{ row.onMoveCategory }}" aria-label="将{{ row.name }}移动到所选奖励集" style="appearance:none;-webkit-appearance:none;flex-shrink:0;cursor:pointer;min-width:56px;min-height:44px;box-sizing:border-box;border:1px solid #3b4659;border-radius:8px;background:#1a2230;color:#dce5f4;padding:8px 10px;font-size:11.5px;font-weight:700;touch-action:manipulation;-webkit-tap-highlight-color:transparent;">移动</button>
                     </div>
@@ -1811,9 +1814,9 @@ input[type="date"]{color-scheme:dark;}
             <div style="font-size:12px;color:#8b93a4;">勾选{{ reorderItemName }}后,归入一个{{ reorderSetName }}(选已有,或填新名):</div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
               <select id="batch-set-pick" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 8px;color:#aeb6c6;font-size:12.5px;">
-                <option value="">选已有{{ reorderSetName }}…</option>
-                <option value="__none">↑ 移出{{ reorderSetName }}(不归任何集)</option>
-                <sc-for list="{{ batchSetOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.id }}">{{ o.name }}</option></sc-for>
+                <option value="" label="选已有{{ reorderSetName }}…">选已有{{ reorderSetName }}…</option>
+                <option value="__none" label="↑ 移出{{ reorderSetName }}(不归任何集)">↑ 移出{{ reorderSetName }}(不归任何集)</option>
+                <sc-for list="{{ batchSetOptions }}" as="o" hint-placeholder-count="0"><option value="{{ o.id }}" label="{{ o.name }}">{{ o.name }}</option></sc-for>
               </select>
               <input id="batch-set-name" placeholder="或填新{{ reorderSetName }}名" style="flex:1;min-width:120px;background:#0d0f14;border:1px solid #262b36;border-radius:8px;padding:9px 10px;color:#e6e9f0;font-size:12.5px;font-family:inherit;">
             </div>
@@ -1832,7 +1835,7 @@ input[type="date"]{color-scheme:dark;}
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;goldAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:300,&quot;min&quot;:100,&quot;max&quot;:10000,&quot;step&quot;:50,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;diamondAt&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:900,&quot;min&quot;:200,&quot;max&quot;:50000,&quot;step&quot;:100,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;等级门槛&quot;},&quot;interestRate&quot;:{&quot;editor&quot;:&quot;float&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:20,&quot;step&quot;:0.5,&quot;unit&quot;:&quot;%/日&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;利息&quot;},&quot;coreQuota&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:1,&quot;max&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;战时模式&quot;},&quot;showLedger&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;模块&quot;}}">
-const APP_VERSION = 'v1.15.4';
+const APP_VERSION = 'v1.15.5';
 class Component extends DCLogic {
   constructor(props) {
     super(props);
