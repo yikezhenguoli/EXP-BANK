@@ -42,7 +42,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     const response = await page.goto('http://127.0.0.1:'+server.address().port+'/');
     assert.equal(response.status(), 200, 'test server must serve the application');
-    await page.locator('[data-task-id="1"]').tap();
+    await page.locator('[data-task-id="1"]').getByText(seed.tasks[0].name, {exact:true}).tap();
     await page.getByText('编辑', {exact:true}).tap();
     const before = await page.evaluate(() => JSON.parse(localStorage.getItem('exp-bank-v1')));
     const options = await page.locator('#ed-set option').evaluateAll(nodes => nodes.map(node => ({
@@ -72,7 +72,7 @@ try {
     }
     for (const key of ['exp','ledger','sets','galleryEntries','rewards','stash','opex']) assert.deepEqual(saved[key],before[key],key+' must be preserved');
     await page.reload();
-    await page.locator('[data-task-id="1"]').tap();
+    await page.locator('[data-task-id="1"]').getByText(seed.tasks[0].name, {exact:true}).tap();
     await page.getByText('编辑', {exact:true}).tap();
     assert.equal(await page.locator('#ed-set').inputValue(),'111');
     assert.ok((await page.locator('#ed-set').evaluate(node => node.selectedOptions[0].label)).includes(seed.sets.at(-1).name));
