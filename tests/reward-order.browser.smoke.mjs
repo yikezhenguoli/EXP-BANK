@@ -15,7 +15,7 @@ const mime = {
   '.woff2':'font/woff2', '.ico':'image/x-icon'
 };
 const seed = {
-  appVersion:'v1.15.4', welcomed:true, tab:'lists', exp:1000, nextId:600,
+  appVersion:fs.readFileSync(path.join(root,'index.html'),'utf8').match(/const APP_VERSION = '([^']+)'/)[1], welcomed:true, tab:'lists', exp:1000, nextId:600,
   tasks:[], sets:[], milestones:[], milestoneSets:[], funds:[], countdowns:[],
   ledger:[], stash:[], opex:[], galleryEntries:[], dayline:[],
   rewardFold:{},
